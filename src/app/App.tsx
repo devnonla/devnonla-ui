@@ -1,36 +1,56 @@
-import { type ReactNode, createContext, useContext, useLayoutEffect, useMemo } from "react";
+import { type ReactNode, useLayoutEffect, useMemo, useState } from "react";
 import * as TooltipPrimitive from "@radix-ui/react-tooltip";
+import { message, MessageHolder } from "../message/message";
+import { ConfirmHolder, Modal } from "../modal/Modal";
+import { ControlSizeContext, normalizeSize, type ControlSize } from "../lib/sizes";
 import { applyNonlaTheme, type NonlaThemeConfig } from "../theme";
+import { AppContext, useAppConfig, usePopupContainer, useToken, type NonlaAppConfig } from "./context";
 
-export type NonlaAppConfig = {
-  getPopupContainer?: () => HTMLElement;
-};
-
-const AppContext = createContext<NonlaAppConfig>({});
-
-export function useAppConfig() {
-  return useContext(AppContext);
-}
+export type { NonlaAppConfig };
+export { useAppConfig, usePopupContainer, useToken };
 
 export type AppProps = {
   children: ReactNode;
   getPopupContainer?: () => HTMLElement;
-  /** Override `--nonla-*` knobs on `:root`. Prefer CSS in the host app when possible. */
+  /** Default control size (`componentSize`). Per-control `size` still wins. */
+  componentSize?: ControlSize;
+  /** Override `--nonla-*` knobs on `:root` (portals inherit). Prefer CSS in the host when possible. */
   theme?: NonlaThemeConfig;
-  message?: unknown;
-  modal?: unknown;
 };
 
-/** Root host for NonlaUI (tooltip provider + theme). Mount once near app root. */
-export function App({ children, getPopupContainer, theme }: AppProps) {
-  const value = useMemo<NonlaAppConfig>(() => ({ getPopupContainer }), [getPopupContainer]);
+/** Root host for NonlaUI — ConfigProvider + message/modal holders. Mount once near app root. */
+export function App({ children, getPopupContainer, componentSize, theme }: AppProps) {
+  const [themeRev, setThemeRev] = useState(0);
+  const size = componentSize ? normalizeSize(componentSize) : undefined;
+  const value = useMemo<NonlaAppConfig>(
+    () => ({ getPopupContainer, componentSize: size, themeRev }),
+    [getPopupContainer, size, themeRev],
+  );
+
   useLayoutEffect(() => {
     if (!theme) return;
-    return applyNonlaTheme(theme);
+    const restore = applyNonlaTheme(theme);
+    setThemeRev((n) => n + 1);
+    return () => {
+      restore();
+      setThemeRev((n) => n + 1);
+    };
   }, [theme]);
+
   return (
     <AppContext.Provider value={value}>
-      <TooltipPrimitive.Provider delayDuration={100}>{children}</TooltipPrimitive.Provider>
+      <ControlSizeContext.Provider value={size}>
+        <TooltipPrimitive.Provider delayDuration={100}>
+          {children}
+          <MessageHolder />
+          <ConfirmHolder />
+        </TooltipPrimitive.Provider>
+      </ControlSizeContext.Provider>
     </AppContext.Provider>
   );
+}
+
+/** Static APIs that follow this App tree (`useApp`). */
+export function useApp() {
+  return { message, modal: Modal };
 }

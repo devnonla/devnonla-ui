@@ -4,10 +4,12 @@ import {
   type CSSProperties,
   type ReactNode,
   useEffect,
+  useLayoutEffect,
   useRef,
   useState,
 } from "react";
 import { createRoot, type Root } from "react-dom/client";
+import { usePopupContainer } from "../app/context";
 import { Button } from "../button/Button";
 import { cn } from "../lib/cn";
 import { glassSurfaceClass } from "../lib/surface";
@@ -37,7 +39,7 @@ export type ModalProps = {
   closable?: boolean;
   maskClosable?: boolean;
   className?: string;
-  /** Root positioning (antd `style={{ top }}`). */
+  /** Root positioning (`style={{ top }}`). */
   style?: CSSProperties;
   styles?: { body?: CSSProperties; content?: CSSProperties; header?: CSSProperties; footer?: CSSProperties; container?: CSSProperties };
   onOpenChange?: (open: boolean) => void;
@@ -154,6 +156,8 @@ function ModalView({
     if (!isOpen) finishExit();
   };
 
+  const portal = usePopupContainer()?.();
+
   return (
     <Dialog.Root
       open={isOpen}
@@ -166,7 +170,7 @@ function ModalView({
       }}
     >
       {isOpen || present ? (
-        <Dialog.Portal>
+        <Dialog.Portal container={portal}>
           <Dialog.Overlay className="nonla-modal-overlay" />
           <Dialog.Content
             className={cn("nonla-modal-content", glassSurfaceClass, className)}
@@ -211,6 +215,10 @@ function ConfirmHost({ initial, onDone }: { initial: ModalConfirmProps; onDone: 
   const [loading, setLoading] = useState(false);
 
   useEffect(() => {
+    setProps(initial);
+  }, [initial]);
+
+  useEffect(() => {
     (ConfirmHost as unknown as { _update?: (p: Partial<ModalConfirmProps>) => void })._update = (p) => setProps((prev) => ({ ...prev, ...p }));
   }, []);
 
@@ -253,7 +261,12 @@ function ConfirmHost({ initial, onDone }: { initial: ModalConfirmProps; onDone: 
   );
 }
 
-function mountConfirm(props: ModalConfirmProps): ConfirmHandle {
+type ConfirmJob = { id: number; props: ModalConfirmProps };
+type ConfirmOpener = (props: ModalConfirmProps) => ConfirmHandle;
+
+let openConfirm: ConfirmOpener | null = null;
+
+function mountFallback(props: ModalConfirmProps): ConfirmHandle {
   const el = document.createElement("div");
   document.body.appendChild(el);
   const root: Root = createRoot(el);
@@ -266,6 +279,39 @@ function mountConfirm(props: ModalConfirmProps): ConfirmHandle {
     destroy,
     update: (p) => (ConfirmHost as unknown as { _update?: (x: Partial<ModalConfirmProps>) => void })._update?.(p),
   };
+}
+
+function mountConfirm(props: ModalConfirmProps): ConfirmHandle {
+  return openConfirm ? openConfirm(props) : mountFallback(props);
+}
+
+/** Mounted by `App` so `Modal.confirm` shares theme / context. */
+export function ConfirmHolder() {
+  const [jobs, setJobs] = useState<ConfirmJob[]>([]);
+  const seq = useRef(0);
+
+  useLayoutEffect(() => {
+    openConfirm = (props) => {
+      const id = ++seq.current;
+      setJobs((list) => [...list, { id, props }]);
+      return {
+        destroy: () => setJobs((list) => list.filter((job) => job.id !== id)),
+        update: (p) =>
+          setJobs((list) => list.map((job) => (job.id === id ? { ...job, props: { ...job.props, ...p } } : job))),
+      };
+    };
+    return () => {
+      openConfirm = null;
+    };
+  }, []);
+
+  return (
+    <>
+      {jobs.map((job) => (
+        <ConfirmHost key={job.id} initial={job.props} onDone={() => setJobs((list) => list.filter((j) => j.id !== job.id))} />
+      ))}
+    </>
+  );
 }
 
 export const Modal = Object.assign(ModalView, {

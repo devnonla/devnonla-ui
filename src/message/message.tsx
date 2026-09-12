@@ -1,4 +1,4 @@
-import { type CSSProperties, type ReactNode } from "react";
+import { type CSSProperties, type ReactNode, useLayoutEffect, useState } from "react";
 import { createRoot, type Root } from "react-dom/client";
 
 export type MessageType = "success" | "error" | "info" | "warning" | "loading";
@@ -117,8 +117,19 @@ function MessageList({ list }: { list: Active[] }) {
   );
 }
 
+type MessageRenderer = (list: Active[]) => void;
+let renderer: MessageRenderer | null = null;
+
+function dropFallbackHost() {
+  if (!hostEl) return;
+  root?.unmount();
+  hostEl.remove();
+  hostEl = null;
+  root = null;
+}
+
 function ensureHost() {
-  if (hostEl && root) return;
+  if (renderer || (hostEl && root)) return;
   hostEl = document.createElement("div");
   hostEl.className = "nonla-message-host";
   document.body.appendChild(hostEl);
@@ -126,8 +137,30 @@ function ensureHost() {
 }
 
 function render() {
+  if (renderer) {
+    renderer(items);
+    return;
+  }
   ensureHost();
   root?.render(<MessageList list={items} />);
+}
+
+/** Mounted by `App` so toasts inherit theme. Falls back to `document.body` if no App. */
+export function MessageHolder() {
+  const [list, setList] = useState<Active[]>(items);
+  useLayoutEffect(() => {
+    dropFallbackHost();
+    renderer = setList;
+    setList(items);
+    return () => {
+      renderer = null;
+    };
+  }, []);
+  return (
+    <div className="nonla-message-host" aria-live="polite" aria-relevant="additions">
+      <MessageList list={list} />
+    </div>
+  );
 }
 
 function beginLeave(id: string) {
