@@ -1,8 +1,9 @@
-import type { CSSProperties } from "react";
+import { createContext, useContext, type CSSProperties } from "react";
 
 /**
  * Canonical control sizes for NonlaUI.
- * Height + radius live as `--nonla-*` CSS knobs (theme). Other metrics stay here.
+ * Live height / radius come from `--nonla-height*` / `--nonla-radius*` (seed).
+ * Numbers here are fallbacks for padding / font / icon — keep in sync with CSS 24 / 32 / 40.
  * Radius small/large = `--nonla-radius` ± 2px.
  */
 export const CONTROL_SIZES = {
@@ -45,12 +46,21 @@ export type ControlSize = CanonicalSize | "middle" | "medium" | "xs";
 
 export type ControlSizeTokens = (typeof CONTROL_SIZES)[CanonicalSize];
 
-/** Map legacy / antd aliases → small | default | large */
+/** Map legacy aliases → small | default | large */
 export function normalizeSize(size: ControlSize | undefined): CanonicalSize {
   if (size === "small" || size === "xs") return "small";
   if (size === "large") return "large";
   // default | middle | medium | undefined
   return "default";
+}
+
+/** App `componentSize` — prop on the control wins, then this. */
+export const ControlSizeContext = createContext<CanonicalSize | undefined>(undefined);
+
+/** Resolve size: control prop → App `componentSize` → default. */
+export function useControlSize(size?: ControlSize): CanonicalSize {
+  const fromApp = useContext(ControlSizeContext);
+  return normalizeSize(size ?? fromApp);
 }
 
 export function getSizeTokens(size: ControlSize | undefined): ControlSizeTokens {

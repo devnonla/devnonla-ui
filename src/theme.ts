@@ -1,7 +1,7 @@
 /**
  * Theme knobs for NonlaUI.
  *
- * Defaults live in `styles.css` on `:root` / `.dark` / `.nonla-ui`.
+ * Defaults live in `styles.css` on `:root` / `.nonla-ui`.
  * `--brand-50`…`--brand-800` follow `--nonla-brand` (500 = the knob).
  * Consumers retheme without touching components:
  *   1. CSS:  `:root { --nonla-brand: #3b82f6; }`
@@ -43,6 +43,11 @@ export const NONLA_THEME_KEYS = {
   inkActive: "--nonla-ink-active",
   inkLine: "--nonla-ink-line",
   desktopBarHeight: "--nonla-desktop-bar-height",
+  zBase: "--nonla-z-base",
+  zDesktop: "--nonla-z-desktop",
+  zWindow: "--nonla-z-window",
+  zHeader: "--nonla-z-header",
+  zPopupBase: "--nonla-z-popup-base",
   blue: "--nonla-blue",
   purple: "--nonla-purple",
   cyan: "--nonla-cyan",
@@ -61,9 +66,12 @@ export const NONLA_THEME_KEYS = {
 export type NonlaThemeKnobName = keyof typeof NONLA_THEME_KEYS;
 export type NonlaThemeKnob = (typeof NONLA_THEME_KEYS)[NonlaThemeKnobName];
 
-const METRIC_KEYS = new Set<NonlaThemeKnobName>(["radius", "height", "heightSm", "heightLg", "desktopBarHeight"]);
+const METRIC_KEYS = new Set<NonlaThemeKnobName>(["radius", "height", "heightSm", "heightLg", "desktopBarHeight", "zBase", "zDesktop", "zWindow", "zHeader", "zPopupBase"]);
 
-export type NonlaThemeColorName = Exclude<NonlaThemeKnobName, "radius" | "height" | "heightSm" | "heightLg">;
+export type NonlaThemeColorName = Exclude<
+  NonlaThemeKnobName,
+  "radius" | "height" | "heightSm" | "heightLg" | "desktopBarHeight" | "zBase" | "zDesktop" | "zWindow" | "zHeader" | "zPopupBase"
+>;
 export type NonlaThemeColors = { [K in NonlaThemeColorName]?: string };
 
 /** Flat aliases → knob name (`colorBorder` == `colors.border`). */
@@ -115,6 +123,18 @@ function entriesOf(theme: NonlaThemeConfig): [string, string][] {
     }
   }
   return [...map.entries()];
+}
+
+export type NonlaTokenSnapshot = { [K in NonlaThemeKnobName]: string };
+
+/** Read computed `--nonla-*` knobs (`getDesignToken`). */
+export function getDesignToken(target?: HTMLElement): NonlaTokenSnapshot {
+  const el = target ?? (typeof document === "undefined" ? null : document.documentElement);
+  const token = {} as NonlaTokenSnapshot;
+  for (const name of Object.keys(NONLA_THEME_KEYS) as NonlaThemeKnobName[]) {
+    token[name] = el ? getComputedStyle(el).getPropertyValue(NONLA_THEME_KEYS[name]).trim() : "";
+  }
+  return token;
 }
 
 /** Apply knobs on an element (defaults to `:root`). Returns a restore function. */

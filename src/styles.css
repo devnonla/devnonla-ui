@@ -3,26 +3,30 @@
 /**
  * NonlaUI theme — single source of color.
  *
- * Light-only. Warm paper + charcoal ink, amber brand.
+ * Layers:
+ *   Seed  — `--nonla-*` knobs in the first block. Consumer overrides these.
+ *   Map   — derived (brand-50…800, radius-sm/lg, z-popup). Do not set unless exception.
+ *   Alias — `--background`, `--brand`, `--destructive` (shadcn + Nonla names).
+ *
+ * Light-only defaults. `.dark` is not an alias of this sheet.
  * Override `--nonla-*` knobs in the consuming app (CSS or `<App theme>`).
  * Components read only these tokens — never edit Button/Tag/… to retheme.
  */
 
 :root,
-.dark,
 .nonla-ui {
   color-scheme: light;
 
-  /* ── Knobs (override these) ──────────────────────────────────────────── */
+  /* ── Knobs / Seed (override these) ──────────────────────────────────── */
   --nonla-bg: #fffcf1;
   --nonla-fg: #1f1f1e;
   /* Text rank on cream — same ink, contrast steps ~13.6 / 7 / 4.5 / 3 (WCAG AAA body → AA body → AA UI). */
   --nonla-fg-muted: color-mix(in oklab, var(--nonla-fg) 78%, var(--nonla-bg));
   --nonla-fg-tertiary: color-mix(in oklab, var(--nonla-fg) 64%, var(--nonla-bg));
   --nonla-fg-quaternary: color-mix(in oklab, var(--nonla-fg) 50%, var(--nonla-bg));
-  --nonla-brand: #eb9d29;
-  /* Ink on brand fills — charcoal, not white (white fails WCAG on amber). */
-  --nonla-solid-fg: var(--nonla-fg);
+  --nonla-brand: #f18d00;
+  /* Label on brand fills (Button primary, Tag solid, Checkbox). Override via `colors.solidFg`. */
+  --nonla-solid-fg: #ffffff;
   --nonla-danger: #c0392b;
   --nonla-success: #1f9d55;
   --nonla-warn: #c47d12;
@@ -53,6 +57,11 @@
   --nonla-ink-active: color-mix(in srgb, var(--nonla-ink) 8%, transparent);
   --nonla-ink-line: color-mix(in srgb, var(--nonla-ink) 14%, transparent);
   --nonla-desktop-bar-height: 42px;
+  --nonla-z-base: 0;
+  --nonla-z-desktop: 20;
+  --nonla-z-window: 30;
+  --nonla-z-header: 40;
+  --nonla-z-popup-base: 1000;
 
   /* Preset accents — Button color="blue" / Tag color="purple" / … */
   --nonla-blue: #1677ff;
@@ -69,9 +78,13 @@
   --nonla-lime: #a0d911;
   --nonla-gold: #faad14;
 
-  /* ── Derived map (do not set unless you need a one-off exception) ───── */
+  /* ── Map + Alias (do not set unless you need a one-off exception) ───── */
   --nonla-radius-sm: max(0px, calc(var(--nonla-radius) - 2px));
   --nonla-radius-lg: calc(var(--nonla-radius) + 2px);
+  --nonla-z-drawer: var(--nonla-z-popup-base);
+  --nonla-z-modal: var(--nonla-z-popup-base);
+  --nonla-z-message: calc(var(--nonla-z-popup-base) + 10);
+  --nonla-z-popup: calc(var(--nonla-z-popup-base) + 50);
   --radius: var(--nonla-radius);
   --background: var(--nonla-bg);
   --foreground: var(--nonla-fg);
@@ -106,6 +119,7 @@
   --brand-800: color-mix(in oklab, var(--nonla-brand) 48%, black);
   --brand: var(--brand-500);
   --brand-text: var(--brand-700);
+  --solid-fg: var(--nonla-solid-fg);
   --link: var(--nonla-link);
   --success: var(--nonla-success);
   --warn: var(--nonla-warn);
@@ -202,6 +216,7 @@
   --color-brand-700: var(--brand-700);
   --color-brand-800: var(--brand-800);
   --color-brand-text: var(--brand-text);
+  --color-solid-fg: var(--solid-fg);
   --color-link: var(--link);
   --color-success: var(--success);
   --color-warn: var(--warn);
@@ -225,13 +240,13 @@
   --shadow-panel: 0 0 0 1px var(--border), 0 4px 16px color-mix(in oklab, var(--nonla-fg) 10%, transparent);
 
   --spacing-control-xs: 24px;
-  --spacing-control-sm: 28px;
+  --spacing-control-sm: 24px;
   --spacing-control-md: 32px;
-  --spacing-control-lg: 36px;
+  --spacing-control-lg: 40px;
   --spacing-nav-item: 32px;
-  --spacing-field-sm: 28px;
+  --spacing-field-sm: 24px;
   --spacing-field-md: 32px;
-  --spacing-field-lg: 36px;
+  --spacing-field-lg: 40px;
   --spacing-field-nav: 32px;
   --spacing-desktop-bar: var(--nonla-desktop-bar-height);
 
@@ -271,7 +286,7 @@
   }
 }
 
-@keyframes nonla-chat-shimmer {
+@keyframes nonla-shimmer {
   0% {
     background-position: 100% 0;
   }
@@ -280,21 +295,31 @@
   }
 }
 
-.nonla-chat-shimmer {
-  background-image: linear-gradient(90deg, var(--muted-foreground) 0%, var(--foreground) 45%, var(--muted-foreground) 90%);
-  background-size: 200% 100%;
+.nonla-shimmer {
+  display: inline-block;
+  background-image: linear-gradient(
+    90deg,
+    var(--tertiary-foreground) 0%,
+    var(--foreground) 40%,
+    color-mix(in oklab, var(--foreground) 25%, white) 50%,
+    var(--foreground) 60%,
+    var(--tertiary-foreground) 100%
+  );
+  background-size: 220% 100%;
   background-clip: text;
   -webkit-background-clip: text;
+  -webkit-text-fill-color: transparent;
   color: transparent;
-  animation: nonla-chat-shimmer 1.8s ease-in-out infinite;
+  animation: nonla-shimmer 1.6s ease-in-out infinite;
 }
 
 @media (prefers-reduced-motion: reduce) {
-  .nonla-chat-shimmer {
+  .nonla-shimmer {
     animation: none;
     background-image: none;
     background-clip: border-box;
     -webkit-background-clip: border-box;
+    -webkit-text-fill-color: unset;
     color: var(--muted-foreground);
   }
 }
@@ -305,7 +330,7 @@
   top: 16px;
   left: 50%;
   transform: translateX(-50%);
-  z-index: 10000;
+  z-index: var(--nonla-z-message);
   display: flex;
   flex-direction: column;
   align-items: center;
@@ -589,18 +614,29 @@
   }
 }
 
-/* Frosted overlay — macOS menu chrome: outer hairline + inner white rim */
+/* Frosted overlay — one hairline + lift. No stacked black/white rings. */
 .nonla-glass {
-  border: 1px solid rgb(255 255 255 / 0.78);
+  border: 1px solid var(--glass-border);
   background: var(--glass);
   color: var(--foreground);
-  box-shadow:
-    0 0 0 0.5px color-mix(in srgb, black 22%, transparent),
-    0 10px 28px color-mix(in srgb, black 14%, transparent),
-    inset 0 0 0 0.5px rgb(255 255 255 / 0.55),
-    inset 0 1px 0 rgb(255 255 255 / 0.92);
+  box-shadow: 0 10px 28px color-mix(in srgb, black 12%, transparent);
   -webkit-backdrop-filter: blur(24px) saturate(160%);
   backdrop-filter: blur(24px) saturate(160%);
+}
+
+/* Desktop window — cream wash + less saturate so meadow doesn't tint the panel. */
+.nonla-window-glass {
+  background: color-mix(in srgb, var(--nonla-bg) 81%, transparent);
+  -webkit-backdrop-filter: blur(40px) saturate(108%);
+  backdrop-filter: blur(40px) saturate(108%);
+}
+
+/* Fluent Color desktop tile — same frost as the window, macOS squircle. */
+.nonla-desktop-icon-plate {
+  overflow: hidden;
+  border: 0;
+  border-radius: 22%;
+  box-shadow: none;
 }
 
 .nonla-btn-glass {
@@ -646,6 +682,7 @@
 .nonla-overlay {
   position: fixed;
   inset: 0;
+  z-index: var(--nonla-z-drawer);
   background: var(--mask);
 }
 .nonla-overlay[data-state="open"] {
@@ -658,7 +695,7 @@
 .nonla-modal-overlay {
   position: fixed;
   inset: 0;
-  z-index: 9990;
+  z-index: var(--nonla-z-modal);
   background: var(--mask);
 }
 .nonla-modal-overlay[data-state="open"] {
@@ -673,7 +710,7 @@
   position: fixed;
   left: 50%;
   top: 60px;
-  z-index: 9991;
+  z-index: calc(var(--nonla-z-modal) + 1);
   transform: translate(-50%, 0);
   display: flex;
   flex-direction: column;
@@ -761,6 +798,7 @@
 
 .nonla-drawer-panel {
   will-change: transform;
+  z-index: calc(var(--nonla-z-drawer) + 1);
 }
 .nonla-drawer-panel[data-side="right"][data-state="open"] {
   animation: nonla-drawer-in-right var(--nonla-dur-slow) var(--nonla-ease-out);
@@ -785,6 +823,22 @@
 }
 .nonla-drawer-panel[data-side="top"][data-state="closed"] {
   animation: nonla-drawer-out-top var(--nonla-dur) var(--nonla-ease-in);
+}
+
+.nonla-popup-layer {
+  z-index: var(--nonla-z-popup, 1050);
+}
+
+.nonla-desktop-layer {
+  z-index: var(--nonla-z-desktop, 20);
+}
+
+.nonla-window-layer {
+  z-index: var(--nonla-z-window, 30);
+}
+
+.nonla-header-layer {
+  z-index: var(--nonla-z-header, 40);
 }
 
 .nonla-popper {
