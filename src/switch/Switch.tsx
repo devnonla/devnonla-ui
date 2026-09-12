@@ -1,29 +1,30 @@
 import * as SwitchPrimitive from "@radix-ui/react-switch";
 import { type CSSProperties, type ComponentPropsWithoutRef, forwardRef } from "react";
 import { cn } from "../lib/cn";
-import { type ControlSize, controlRadiusVar, normalizeSize } from "../lib/sizes";
+import { type ControlSize, controlRadiusVar, useControlSize } from "../lib/sizes";
 
 export type SwitchVariant = "default" | "square";
 
 export type SwitchProps = Omit<ComponentPropsWithoutRef<typeof SwitchPrimitive.Root>, "onCheckedChange" | "checked" | "onChange"> & {
   checked?: boolean;
   defaultChecked?: boolean;
-  /** antd-style — receives the next checked boolean (not a DOM event). */
+  /** Receives the next checked boolean (not a DOM event). */
   onChange?: (checked: boolean) => void;
   size?: ControlSize;
   variant?: SwitchVariant;
 };
 
-/** Switch track heights — shorter than Button/Input (antd-like). */
+/** Switch track heights — shorter than Button/Input. */
 const SWITCH_TRACK_H = { small: 16, default: 22, large: 28 } as const;
 
 export const Switch = forwardRef<HTMLButtonElement, SwitchProps>(function Switch({ className, checked, defaultChecked, onChange, size, variant = "default", disabled, style, ...rest }, ref) {
-  const trackH = SWITCH_TRACK_H[normalizeSize(size)];
+  const resolvedSize = useControlSize(size);
+  const trackH = SWITCH_TRACK_H[resolvedSize];
   const trackW = Math.round(trackH * 1.8);
   const thumb = trackH - 4;
   const travel = trackW - thumb - 3;
   const square = variant === "square";
-  const squareRadius = `max(3px, calc(${controlRadiusVar(size)} * 0.55))`;
+  const squareRadius = `max(3px, calc(${controlRadiusVar(resolvedSize)} * 0.55))`;
 
   return (
     <SwitchPrimitive.Root

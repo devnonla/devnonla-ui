@@ -3,6 +3,8 @@ import { cn } from "../lib/cn";
 
 export type OverlayScrollVisibility = "hover" | "always";
 
+const HIDE_MS = 1000;
+
 export type OverlayScrollProps = {
   /** `hover` shows the thumb on hover / while scrolling. `always` keeps it visible. */
   visibility?: OverlayScrollVisibility;
@@ -75,7 +77,7 @@ export function OverlayScroll({ visibility = "hover", className, innerClassName,
     if (visibility === "hover" && !dragging) {
       setScrolling(true);
       if (hideTimer.current) clearTimeout(hideTimer.current);
-      hideTimer.current = setTimeout(() => setScrolling(false), 700);
+      hideTimer.current = setTimeout(() => setScrolling(false), HIDE_MS);
     }
     onScroll?.(e);
   };
@@ -109,7 +111,7 @@ export function OverlayScroll({ visibility = "hover", className, innerClassName,
       window.removeEventListener("pointercancel", onUp, true);
       setDragging(false);
       if (hideTimer.current) clearTimeout(hideTimer.current);
-      hideTimer.current = setTimeout(() => setScrolling(false), 700);
+      hideTimer.current = setTimeout(() => setScrolling(false), HIDE_MS);
     };
     window.addEventListener("pointermove", onMove, true);
     window.addEventListener("pointerup", onUp, true);
@@ -131,7 +133,7 @@ export function OverlayScroll({ visibility = "hover", className, innerClassName,
             "nonla-overlay-thumb absolute z-20 rounded-full transition-opacity duration-150",
             visibility === "always" || dragging
               ? "pointer-events-auto opacity-100"
-              : "pointer-events-none opacity-0 group-hover/scroll:pointer-events-auto group-hover/scroll:opacity-100 group-data-[scrolling]/scroll:pointer-events-auto group-data-[scrolling]/scroll:opacity-100",
+              : "pointer-events-none opacity-0 group-hover/scroll:pointer-events-auto group-hover/scroll:opacity-100 group-data-scrolling/scroll:pointer-events-auto group-data-scrolling/scroll:opacity-100",
           )}
           style={{ right: 2, width: "var(--nonla-scrollbar-size)", height: thumb.height, transform: `translateY(${thumb.top}px)` }}
         />

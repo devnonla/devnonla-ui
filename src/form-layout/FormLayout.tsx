@@ -1,8 +1,8 @@
-import { type HTMLAttributes, type ReactNode } from "react";
+import type { HTMLAttributes, ReactNode } from "react";
 import { cn } from "../lib/cn";
 
 export type FormLayoutProps = HTMLAttributes<HTMLDivElement> & {
-  /** antd Form layout — only vertical is used in this app. */
+  /** Form layout — only vertical is used in this app. */
   layout?: "horizontal" | "vertical" | "inline";
   children?: ReactNode;
 };
@@ -25,7 +25,7 @@ function FormRoot({ layout = "vertical", className, children, ...rest }: FormLay
 export type FormLayoutItemProps = {
   label?: ReactNode;
   required?: boolean;
-  /** antd `extra` — help text under the control. */
+  /** Help text under the control. */
   extra?: ReactNode;
   help?: ReactNode;
   validateStatus?: "success" | "warning" | "error" | "validating";
@@ -53,10 +53,10 @@ function FormItem({
       )}
     >
       {label != null && label !== false ? (
-        <label className={cn("text-sm text-foreground", layout === "horizontal" && "pt-1.5 shrink-0")}>
+        <div className={cn("text-sm text-foreground", layout === "horizontal" && "pt-1.5 shrink-0")}>
           {label}
           {required ? <span className="ml-1 text-destructive">*</span> : null}
-        </label>
+        </div>
       ) : null}
       <div className="min-w-0 flex-1">
         {children}
@@ -69,6 +69,6 @@ function FormItem({
   );
 }
 
-/** Layout-only Form (antd Form / Form.Item drop-in). Schema forms use `SchemaForm`. */
+/** Layout-only Form (`Form` / `Form.Item`). Schema forms use `SchemaForm`. */
 export const Form = Object.assign(FormRoot, { Item: FormItem });
 export { FormItem };

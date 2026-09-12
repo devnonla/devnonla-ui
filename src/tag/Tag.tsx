@@ -6,7 +6,7 @@ export type TagVariant = "soft" | "solid";
 export type TagProps = {
   children?: ReactNode;
   color?: string;
-  /** @deprecated prefer `variant="soft"` — kept for antd-ish callers */
+  /** @deprecated prefer `variant="soft"` */
   bordered?: boolean;
   /**
    * `soft` — quiet wash (default).
@@ -78,7 +78,7 @@ export function Tag({
   return (
     <span
       className={cn(
-        "inline-flex h-[22px] max-w-full items-center gap-1.5 rounded-full px-2.5 text-[11px] font-medium tracking-[0.01em]",
+        "inline-flex h-5.5 max-w-full items-center gap-1.5 rounded-full px-2.5 text-[11px] font-medium tracking-[0.01em]",
         isDefault && (solid ? "bg-foreground/10 text-(--nonla-ink)" : "bg-muted text-muted-foreground"),
         !isDefault && (solid ? SOLID : SOFT),
         className,

@@ -24,7 +24,7 @@ export function FieldColor({ field, options, status }: Props) {
         trigger="click"
         placement="bottom"
         content={
-          <div className="flex flex-col gap-2 p-1 min-w-[180px]">
+          <div className="flex flex-col gap-2 p-1 min-w-45">
             <input
               type="color"
               value={hex}

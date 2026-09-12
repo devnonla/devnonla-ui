@@ -1,4 +1,4 @@
-import { type CSSProperties, type ReactNode } from "react";
+import type { CSSProperties, ReactNode } from "react";
 import { cn } from "../lib/cn";
 
 export type SkeletonProps = {
@@ -20,8 +20,8 @@ function SkeletonRoot({ active = true, loading = true, paragraph = true, title =
       {avatar ? <div className={cn("size-10 shrink-0 rounded-full bg-secondary", pulse)} /> : null}
       <div className="flex-1 space-y-2">
         {title ? <div className={cn("h-4 w-1/3 rounded bg-secondary", pulse)} /> : null}
-        {Array.from({ length: rows }).map((_, i) => (
-          <div key={i} className={cn("h-3 rounded bg-secondary", pulse, i === rows - 1 ? "w-2/3" : "w-full")} />
+        {Array.from({ length: rows }, (_, i) => `sk-${i}`).map((key, i) => (
+          <div key={key} className={cn("h-3 rounded bg-secondary", pulse, i === rows - 1 ? "w-2/3" : "w-full")} />
         ))}
       </div>
     </div>

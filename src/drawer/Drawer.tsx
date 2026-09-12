@@ -1,5 +1,6 @@
 import * as Dialog from "@radix-ui/react-dialog";
 import { type AnimationEvent, type CSSProperties, type ReactNode, useEffect, useRef, useState } from "react";
+import { usePopupContainer } from "../app/context";
 import { cn } from "../lib/cn";
 import { glassSurfaceClass } from "../lib/surface";
 
@@ -17,7 +18,7 @@ export type DrawerProps = {
   extra?: ReactNode;
   children?: ReactNode;
   width?: number | string;
-  /** antd: width for left/right, height for top/bottom. */
+  /** Width for left/right, height for top/bottom. */
   size?: number | string;
   placement?: DrawerPlacement;
   destroyOnClose?: boolean;
@@ -66,6 +67,7 @@ export function Drawer({
   }, [isOpen, shouldDestroy]);
 
   const showBody = !shouldDestroy || present;
+  const portal = usePopupContainer()?.();
 
   const onContentAnimationEnd = (e: AnimationEvent<HTMLDivElement>) => {
     if (e.target !== e.currentTarget) return;
@@ -80,17 +82,17 @@ export function Drawer({
         if (!next) onClose?.();
       }}
     >
-      <Dialog.Portal>
-        <Dialog.Overlay className="nonla-overlay z-[9980]" />
+      <Dialog.Portal container={portal}>
+        <Dialog.Overlay className="nonla-overlay" />
         <Dialog.Content
           data-side={placement}
           className={cn(
-            "nonla-drawer-panel fixed z-[9981] flex flex-col outline-none",
+            "nonla-drawer-panel fixed flex flex-col outline-none",
             glassSurfaceClass,
             placement === "right" && "top-0 right-0 bottom-0 max-w-[100vw]",
             placement === "left" && "top-0 left-0 bottom-0 max-w-[100vw]",
-            placement === "bottom" && "right-0 bottom-0 left-0 max-h-[100vh]",
-            placement === "top" && "top-0 right-0 left-0 max-h-[100vh]",
+            placement === "bottom" && "right-0 bottom-0 left-0 max-h-screen",
+            placement === "top" && "top-0 right-0 left-0 max-h-screen",
             className,
           )}
           style={{

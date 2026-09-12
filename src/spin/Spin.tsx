@@ -1,6 +1,6 @@
 import { type ReactNode, useEffect, useState } from "react";
 import { cn } from "../lib/cn";
-import { type ControlSize, getSizeTokens } from "../lib/sizes";
+import { type ControlSize, getSizeTokens, useControlSize } from "../lib/sizes";
 
 export type SpinVariant = "default" | "agent" | "subAgent";
 
@@ -34,6 +34,8 @@ function DefaultSpinner({ size }: { size: ControlSize | undefined }) {
 type Cell = number; // 0..8 on a 3×3 grid
 /** Snake = [head, mid, tail] — always 3 orthogonally adjacent cells. */
 type Snake = [Cell, Cell, Cell];
+
+const MATRIX_CELLS = [0, 1, 2, 3, 4, 5, 6, 7, 8] as const;
 
 const NEIGHBORS: Record<number, number[]> = {
   0: [1, 3],
@@ -103,8 +105,8 @@ function MatrixSnake({ size, tickMs = 220 }: { size: ControlSize | undefined; ti
       }}
       aria-hidden
     >
-      {Array.from({ length: 9 }, (_, i) => (
-        <span key={`c${i % 3}-r${Math.floor(i / 3)}`} className={cn("nonla-spin-matrix-cell", lit.has(i) && "is-on")} />
+      {MATRIX_CELLS.map((cell) => (
+        <span key={cell} className={cn("nonla-spin-matrix-cell", lit.has(cell) && "is-on")} />
       ))}
     </span>
   );
@@ -138,10 +140,11 @@ function Indicator({
 }
 
 export function Spin({ spinning = true, tip, size, variant = "default", indicator, children, className }: SpinProps) {
+  const resolvedSize = useControlSize(size);
   if (children == null) {
     return (
       <div className={cn("inline-flex flex-col items-center gap-2", className)} role={spinning ? "status" : undefined} aria-live={spinning ? "polite" : undefined}>
-        {spinning ? <Indicator size={size} variant={variant} indicator={indicator} /> : null}
+        {spinning ? <Indicator size={resolvedSize} variant={variant} indicator={indicator} /> : null}
         {tip ? <span className="text-xs text-muted-foreground">{tip}</span> : null}
       </div>
     );
@@ -151,7 +154,7 @@ export function Spin({ spinning = true, tip, size, variant = "default", indicato
       {children}
       {spinning ? (
         <div className="absolute inset-0 z-10 flex flex-col items-center justify-center gap-2 bg-background/50" role="status" aria-live="polite">
-          <Indicator size={size} variant={variant} indicator={indicator} />
+          <Indicator size={resolvedSize} variant={variant} indicator={indicator} />
           {tip ? <span className="text-xs text-muted-foreground">{tip}</span> : null}
         </div>
       ) : null}

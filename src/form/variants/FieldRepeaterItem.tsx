@@ -17,7 +17,7 @@ export function FieldRepeaterItem({ index, remove, namePrefix, childItems, contr
 
   return (
     <div className="relative">
-      <div className={`absolute bottom-0 left-0 border-l border-dashed border-border ${index === 0 ? "top-0" : "top-[-20px]"}`} />
+      <div className={`absolute bottom-0 left-0 border-l border-dashed border-border ${index === 0 ? "top-0" : "-top-5"}`} />
 
       <div className="flex items-center gap-2">
         <div className="flex flex-1 items-center gap-2">
@@ -37,7 +37,7 @@ export function FieldRepeaterItem({ index, remove, namePrefix, childItems, contr
         <button
           type="button"
           aria-label="Remove item"
-          className="inline-flex size-5 items-center justify-center rounded border-0 bg-muted text-muted-foreground cursor-pointer hover:bg-destructive hover:text-[var(--destructive-foreground)]"
+          className="inline-flex size-5 items-center justify-center rounded border-0 bg-muted text-muted-foreground cursor-pointer hover:bg-destructive hover:text-destructive-foreground"
           onClick={() => remove(index)}
         >
           <svg width="12" height="12" viewBox="0 0 12 12" fill="none" aria-hidden>
@@ -47,11 +47,11 @@ export function FieldRepeaterItem({ index, remove, namePrefix, childItems, contr
       </div>
 
       <div className={`mt-2 grid grid-cols-12 gap-x-4 overflow-hidden pl-8 ${collapsed ? "max-h-0" : ""}`}>
-        {(childItems ?? []).map((child, childIndex) => {
+        {(childItems ?? []).map((child) => {
           const childName = fieldNameOf(child.name);
           return (
             <FormItem
-              key={`${namePrefix}.${childName}-${childIndex}`}
+              key={`${namePrefix}.${childName}`}
               {...child}
               name={`${namePrefix}.${childName}`}
               control={control}

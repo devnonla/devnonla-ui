@@ -1,6 +1,6 @@
 import { type CSSProperties, type InputHTMLAttributes, type KeyboardEvent, type ReactNode, type TextareaHTMLAttributes, forwardRef, useCallback, useEffect, useImperativeHandle, useLayoutEffect, useRef, useState } from "react";
 import { cn } from "../lib/cn";
-import { type ControlSize, controlFieldFocusBorder, controlFieldStyle, controlFieldSurface, controlFieldTransition, controlHeightVar, controlRadiusVar, controlStatusClass, getSizeTokens, normalizeSize } from "../lib/sizes";
+import { type ControlSize, controlFieldFocusBorder, controlFieldStyle, controlFieldSurface, controlFieldTransition, controlHeightVar, controlRadiusVar, controlStatusClass, getSizeTokens, useControlSize } from "../lib/sizes";
 
 export type InputSize = ControlSize;
 
@@ -11,7 +11,7 @@ export type InputProps = Omit<InputHTMLAttributes<HTMLInputElement>, "size" | "p
   suffix?: ReactNode;
   allowClear?: boolean;
   variant?: "outlined" | "borderless" | "filled";
-  /** antd — fires on Enter (ignored while composing). */
+  /** Fires on Enter (ignored while composing). */
   onPressEnter?: (e: KeyboardEvent<HTMLInputElement>) => void;
 };
 
@@ -24,7 +24,7 @@ function variantClass(variant: InputProps["variant"]) {
 }
 
 const InputRoot = forwardRef<HTMLInputElement, InputProps>(function Input({ className, size, status, prefix, suffix, allowClear, variant = "outlined", disabled, value, onChange, onPressEnter, onKeyDown, style, ...rest }, ref) {
-  const fieldStyle = controlFieldStyle(size);
+  const fieldStyle = controlFieldStyle(useControlSize(size));
   const showClear = allowClear && !disabled && value != null && String(value).length > 0;
   const wrapped = Boolean(prefix || suffix || showClear);
 
@@ -72,13 +72,13 @@ export type TextAreaProps = TextareaHTMLAttributes<HTMLTextAreaElement> & {
   size?: ControlSize;
 };
 
-/** antd-compatible ref used by chat InputArea (`resizableTextArea.textArea`). */
+/** Ref used by chat InputArea (`resizableTextArea.textArea`). */
 export type TextAreaRef = HTMLTextAreaElement & {
   resizableTextArea?: { textArea: HTMLTextAreaElement };
 };
 
 const TextArea = forwardRef<TextAreaRef, TextAreaProps>(function TextArea({ className, status, variant = "outlined", autoSize, rows, style, size, onChange, value, ...rest }, ref) {
-  const tok = getSizeTokens(size);
+  const tok = getSizeTokens(useControlSize(size));
   const innerRef = useRef<HTMLTextAreaElement | null>(null);
   const minRows = typeof autoSize === "object" ? (autoSize.minRows ?? 1) : autoSize ? 1 : undefined;
   const maxRows = typeof autoSize === "object" ? autoSize.maxRows : undefined;
@@ -139,7 +139,7 @@ export type InputNumberProps = Omit<InputProps, "type" | "onChange" | "value" | 
   min?: number;
   max?: number;
   step?: number;
-  /** Show antd-style up/down handlers (default true). */
+  /** Show up/down handlers (default true). */
   controls?: boolean;
   /** Precision after decimal; omit to keep free typing. */
   precision?: number;
@@ -175,8 +175,9 @@ const InputNumber = forwardRef<HTMLInputElement, InputNumberProps>(function Inpu
   const [text, setText] = useState(() => (numeric == null ? "" : String(numeric)));
   const [focused, setFocused] = useState(false);
   const inputRef = useRef<HTMLInputElement | null>(null);
-  const tok = getSizeTokens(size);
-  const fieldStyle = controlFieldStyle(size);
+  const resolvedSize = useControlSize(size);
+  const tok = getSizeTokens(resolvedSize);
+  const fieldStyle = controlFieldStyle(resolvedSize);
 
   // Sync display from external value when not editing
   useEffect(() => {
@@ -215,7 +216,7 @@ const InputNumber = forwardRef<HTMLInputElement, InputNumberProps>(function Inpu
 
   const atMin = numeric != null && min != null && numeric <= min;
   const atMax = numeric != null && max != null && numeric >= max;
-  const handlerW = normalizeSize(size) === "small" ? 18 : 22;
+  const handlerW = resolvedSize === "small" ? 18 : 22;
 
   const setRefs = (node: HTMLInputElement | null) => {
     inputRef.current = node;
@@ -254,7 +255,7 @@ const InputNumber = forwardRef<HTMLInputElement, InputNumberProps>(function Inpu
         onChange={(e) => {
           const raw = e.target.value;
           setText(raw);
-          // Live update when parseable (antd-like); keep typing free otherwise
+          // Live update when parseable; keep typing free otherwise
           if (raw === "" || raw === "-" || raw === "." || raw === "-.") return;
           const n = parseRaw(raw);
           if (n != null) {

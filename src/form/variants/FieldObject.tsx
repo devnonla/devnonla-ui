@@ -13,11 +13,11 @@ export function FieldObject({ control, name, childItems }: Props) {
   const prefix = fieldNameOf(name);
   return (
     <div className="grid grid-cols-12 gap-x-4">
-      {(childItems ?? []).map((child, index) => {
+      {(childItems ?? []).map((child) => {
         const childName = fieldNameOf(child.name);
         return (
           <FormItem
-            key={`${prefix}.${childName}-${index}`}
+            key={`${prefix}.${childName}`}
             {...child}
             name={`${prefix}.${childName}`}
             control={control}

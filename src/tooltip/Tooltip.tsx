@@ -1,6 +1,6 @@
 import * as TooltipPrimitive from "@radix-ui/react-tooltip";
-import { type ReactNode } from "react";
-import { useAppConfig } from "../app/App";
+import type { ReactNode } from "react";
+import { usePopupContainer } from "../app/context";
 import { cn } from "../lib/cn";
 import { type PopperPlacement, placementToRadix } from "../lib/placement";
 import { glassOverlayClass } from "../lib/surface";
@@ -16,10 +16,10 @@ export type TooltipProps = {
   onOpenChange?: (open: boolean) => void;
   mouseEnterDelay?: number;
   className?: string;
-  /** antd alias */
+  /** Extra class on the overlay panel. */
   overlayClassName?: string;
   getPopupContainer?: () => HTMLElement;
-  /** antd accepts `boolean | { pointAtCenter }` — we only honor truthiness. */
+  /** `boolean | { pointAtCenter }` — we only honor truthiness. */
   arrow?: boolean | { pointAtCenter?: boolean };
 };
 
@@ -35,15 +35,14 @@ export function Tooltip({
   overlayClassName,
   getPopupContainer,
 }: TooltipProps) {
-  const app = useAppConfig();
+  const getContainer = usePopupContainer(getPopupContainer);
   const { side, align } = placementToRadix(placement);
-  const container = getPopupContainer ?? app.getPopupContainer;
   if (title == null || title === false) return <>{children}</>;
   return (
     <TooltipPrimitive.Provider delayDuration={Math.round(mouseEnterDelay * 1000)}>
       <TooltipPrimitive.Root open={open} defaultOpen={defaultOpen} onOpenChange={onOpenChange}>
         <TooltipPrimitive.Trigger asChild>{children}</TooltipPrimitive.Trigger>
-        <TooltipPrimitive.Portal container={container?.()}>
+        <TooltipPrimitive.Portal container={getContainer()}>
           <TooltipPrimitive.Content
             side={side}
             align={align}

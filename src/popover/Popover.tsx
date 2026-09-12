@@ -1,6 +1,6 @@
 import * as PopoverPrimitive from "@radix-ui/react-popover";
 import { type CSSProperties, type ReactNode, useEffect, useRef, useState } from "react";
-import { useAppConfig } from "../app/App";
+import { usePopupContainer } from "../app/context";
 import { cn } from "../lib/cn";
 import { type PopperPlacement, placementToRadix } from "../lib/placement";
 import { glassOverlayClass } from "../lib/surface";
@@ -17,14 +17,14 @@ export type PopoverProps = {
   mouseEnterDelay?: number;
   mouseLeaveDelay?: number;
   getPopupContainer?: () => HTMLElement;
-  /** Show arrow pointing at the trigger (antd default for Popconfirm). */
+  /** Show arrow pointing at the trigger (Popconfirm default). */
   arrow?: boolean | { pointAtCenter?: boolean };
   className?: string;
   overlayClassName?: string;
   /** Extra class on the content panel (padding / width). */
   contentClassName?: string;
   style?: CSSProperties;
-  /** antd `styles` — `root`/`body` map to content panel; `container` accepted as alias. */
+  /** `styles` — `root`/`body` map to content panel; `container` accepted as alias. */
   styles?: {
     root?: CSSProperties;
     body?: CSSProperties;
@@ -52,11 +52,11 @@ export function Popover({
   style,
   styles,
 }: PopoverProps) {
+  const hover = trigger === "hover";
   const showArrow = Boolean(arrow);
   const panelStyle = { ...style, ...styles?.root, ...styles?.content, ...styles?.container, ...styles?.body };
-  const app = useAppConfig();
+  const getContainer = usePopupContainer(getPopupContainer);
   const { side, align } = placementToRadix(placement);
-  const hover = trigger === "hover";
   const [innerOpen, setInnerOpen] = useState(defaultOpen ?? false);
   const open = openProp ?? innerOpen;
   const enterTimer = useRef<number>(0);
@@ -83,8 +83,6 @@ export function Popover({
     leaveTimer.current = window.setTimeout(() => setOpen(false), mouseLeaveDelay * 1000);
   };
 
-  const container = getPopupContainer ?? app.getPopupContainer;
-
   return (
     <PopoverPrimitive.Root
       open={open}
@@ -96,7 +94,7 @@ export function Popover({
       <PopoverPrimitive.Trigger asChild onMouseEnter={onEnter} onMouseLeave={onLeave}>
         {children}
       </PopoverPrimitive.Trigger>
-      <PopoverPrimitive.Portal container={container?.()}>
+      <PopoverPrimitive.Portal container={getContainer()}>
         <PopoverPrimitive.Content
           side={side}
           align={align}

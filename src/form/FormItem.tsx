@@ -111,10 +111,10 @@ export function FormItem(props: FormItemProps) {
                   </svg>
                 </button>
               ) : null}
-              <label className="text-sm text-foreground">
+              <div className="text-sm text-foreground">
                 {label}
                 {required ? <span className="ml-1 text-destructive">*</span> : null}
-              </label>
+              </div>
             </div>
           ) : null}
 

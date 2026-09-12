@@ -1,7 +1,7 @@
 import { type AnchorHTMLAttributes, type ButtonHTMLAttributes, type CSSProperties, type ForwardRefExoticComponent, type MouseEvent, type ReactNode, type RefAttributes, createContext, forwardRef, useContext, useEffect, useLayoutEffect, useMemo, useRef, useState } from "react";
 import { cn } from "../lib/cn";
 import type { ControlSize } from "../lib/sizes";
-import { controlHeightVar, controlRadiusVar, getSizeTokens, normalizeSize } from "../lib/sizes";
+import { controlHeightVar, controlRadiusVar, getSizeTokens, useControlSize } from "../lib/sizes";
 
 export type ButtonType = "default" | "primary" | "dashed" | "link" | "text";
 export type ButtonVariant = "outlined" | "dashed" | "solid" | "filled" | "text" | "link";
@@ -154,7 +154,7 @@ const ButtonInner = forwardRef<HTMLButtonElement | HTMLAnchorElement, ButtonProp
   const resolvedHtmlType = (typeIsHtml ? typeProp : htmlType) as ButtonHtmlType;
 
   const groupSize = useContext(GroupSizeContext);
-  const size = normalizeSize(sizeProp ?? groupSize);
+  const size = useControlSize(sizeProp ?? groupSize);
   const tok = getSizeTokens(size);
   const [mergedColor, mergedVariant] = resolveTone(type, color, variant, danger);
   const preset = PRESET_COLORS.has(mergedColor);

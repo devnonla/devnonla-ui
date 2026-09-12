@@ -1,7 +1,7 @@
 import { type CSSProperties, type ReactNode, useState } from "react";
 import { Button } from "../button/Button";
 import { cn } from "../lib/cn";
-import { type PopperPlacement } from "../lib/placement";
+import type { PopperPlacement } from "../lib/placement";
 import { Popover } from "../popover/Popover";
 
 export type PopconfirmProps = {

@@ -1,4 +1,4 @@
-import { type ButtonHTMLAttributes, type ReactNode } from "react";
+import type { ButtonHTMLAttributes, ReactNode } from "react";
 import { FluentIcon } from "../icon/FluentIcon";
 import { cn } from "../lib/cn";
 import type { PopperPlacement } from "../lib/placement";
@@ -20,7 +20,7 @@ export function Menu({ open, onOpenChange, trigger, children, contentClassName, 
       onOpenChange={onOpenChange}
       trigger="click"
       placement={placement}
-      contentClassName={cn("w-[220px] p-1", contentClassName)}
+      contentClassName={cn("w-55 p-1", contentClassName)}
       content={<div className="flex flex-col gap-px">{children}</div>}
     >
       {trigger}

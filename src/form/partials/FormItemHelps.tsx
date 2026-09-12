@@ -23,8 +23,8 @@ export function FormItemHelps({ items, className }: FormItemHelpsProps) {
   if (!items?.length) return null;
   return (
     <div className={cn("mt-1 flex flex-col gap-1 pl-2.75", className)}>
-      {items.map((item, index) => (
-        <FormItemHelp key={`${index}-${item.text}`} text={item.text} className={item.className} iconClassName={item.iconClassName} />
+      {items.map((item) => (
+        <FormItemHelp key={item.text} text={item.text} className={item.className} iconClassName={item.iconClassName} />
       ))}
     </div>
   );

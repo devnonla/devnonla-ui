@@ -12,10 +12,10 @@ import {
   useRef,
   useState,
 } from "react";
-import { useAppConfig } from "../app/App";
+import { usePopupContainer } from "../app/context";
 import { cn } from "../lib/cn";
 import { type PopperPlacement, placementToRadix } from "../lib/placement";
-import { type ControlSize, controlFieldFocusBorder, controlFieldStyle, controlFieldSurface, controlFieldTransition, controlStatusClass, getSizeTokens } from "../lib/sizes";
+import { type ControlSize, controlFieldFocusBorder, controlFieldStyle, controlFieldSurface, controlFieldTransition, controlStatusClass, getSizeTokens, useControlSize } from "../lib/sizes";
 import { glassOverlayClass } from "../lib/surface";
 
 export type TimeValue = { hours: number; minutes: number; seconds: number };
@@ -244,7 +244,7 @@ function StepperButton({
       tabIndex={-1}
       aria-label={label}
       className={cn(
-        "flex h-10 items-center justify-center rounded-[6px] text-muted-foreground transition-colors",
+        "flex h-10 items-center justify-center rounded-md text-muted-foreground transition-colors",
         "hover:bg-foreground/5 hover:text-foreground active:bg-foreground/8",
       )}
       style={{ width: size }}
@@ -370,7 +370,7 @@ function StepperBoard({
               tabIndex={-1}
               aria-label={`Choose ${col.label}`}
               className={cn(
-                "flex cursor-pointer items-center justify-center rounded-[6px] font-semibold leading-none tracking-tight transition-colors",
+                "flex cursor-pointer items-center justify-center rounded-md font-semibold leading-none tracking-tight transition-colors",
                 col.wide ? "text-[23px]" : "tabular-nums",
                 col.active ? "bg-foreground/6 text-foreground" : "text-foreground hover:bg-foreground/5",
               )}
@@ -414,7 +414,7 @@ export const TimePicker = forwardRef<HTMLInputElement, TimePickerProps>(function
   },
   ref,
 ) {
-  const app = useAppConfig();
+  const appPortal = usePopupContainer();
   const showSeconds = format === "HH:mm:ss";
   const controlled = value !== undefined;
   const [inner, setInner] = useState<TimeValue | null>(() => parseTime(defaultValue));
@@ -428,8 +428,9 @@ export const TimePicker = forwardRef<HTMLInputElement, TimePickerProps>(function
   const [fallback, setFallback] = useState<TimeValue>(nowParts);
   const inputRef = useRef<HTMLInputElement | null>(null);
   const fieldRef = useRef<HTMLDivElement | null>(null);
-  const tok = getSizeTokens(size);
-  const fieldStyle = controlFieldStyle(size);
+  const resolvedSize = useControlSize(size);
+  const tok = getSizeTokens(resolvedSize);
+  const fieldStyle = controlFieldStyle(resolvedSize);
   const { side, align } = placementToRadix(placement);
 
   useEffect(() => {
@@ -593,6 +594,7 @@ export const TimePicker = forwardRef<HTMLInputElement, TimePickerProps>(function
           <span className="inline-flex shrink-0 text-muted-foreground">
             <ClockIcon size={tok.icon} />
           </span>
+          {/* biome-ignore lint/a11y/useAriaPropsSupportedByRole: native time field exposes popup state */}
           <input
             ref={setRefs}
             id={id}
@@ -647,7 +649,7 @@ export const TimePicker = forwardRef<HTMLInputElement, TimePickerProps>(function
           ) : null}
         </div>
       </PopoverPrimitive.Anchor>
-      <PopoverPrimitive.Portal container={app.getPopupContainer?.()}>
+      <PopoverPrimitive.Portal container={appPortal?.()}>
         <PopoverPrimitive.Content
           side={side}
           align={align}
@@ -668,14 +670,14 @@ export const TimePicker = forwardRef<HTMLInputElement, TimePickerProps>(function
             if (fieldRef.current?.contains(e.target as Node)) e.preventDefault();
           }}
           className={cn(
-            "w-[300px] p-0",
+            "w-75 p-0",
             glassOverlayClass,
             popupClassName,
           )}
         >
           <div className="relative overflow-hidden rounded-[inherit]">
             {picking && pickOptions ? (
-              <div className="relative flex h-[220px] items-center px-3 pt-8 pb-3">
+              <div className="relative flex h-55 items-center px-3 pt-8 pb-3">
                 <button
                   type="button"
                   tabIndex={-1}
@@ -690,7 +692,7 @@ export const TimePicker = forwardRef<HTMLInputElement, TimePickerProps>(function
                 </div>
               </div>
             ) : (
-              <div className="flex h-[220px] flex-col items-center justify-center px-4">
+              <div className="flex h-55 flex-col items-center justify-center px-4">
                 <StepperBoard
                   columns={[
                     {

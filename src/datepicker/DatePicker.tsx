@@ -16,8 +16,9 @@ import {
 import type { DateRange } from "react-day-picker";
 import { Calendar } from "../calendar/Calendar";
 import { Button } from "../button/Button";
+import { usePopupContainer } from "../app/context";
 import { cn } from "../lib/cn";
-import { type ControlSize, controlFieldFocusBorder, controlFieldStyle, controlFieldSurface, controlFieldTransition, controlStatusClass, getSizeTokens } from "../lib/sizes";
+import { type ControlSize, controlFieldFocusBorder, controlFieldStyle, controlFieldSurface, controlFieldTransition, controlStatusClass, getSizeTokens, useControlSize } from "../lib/sizes";
 import { glassOverlayClass } from "../lib/surface";
 
 export type DatePickerProps = {
@@ -29,7 +30,7 @@ export type DatePickerProps = {
   allowClear?: boolean;
   format?: string;
   showTime?: boolean;
-  /** Keep the panel open until OK (antd). */
+  /** Keep the panel open until OK. */
   needConfirm?: boolean;
   placeholder?: string;
   disabled?: boolean;
@@ -127,6 +128,7 @@ const TriggerChrome = forwardRef<
     children: ReactNode;
   } & Omit<ButtonHTMLAttributes<HTMLButtonElement>, "children" | "style">
 >(function TriggerChrome({ size, status, disabled, className, style, icon, clear, children, ...rest }, ref) {
+  const resolvedSize = useControlSize(size);
   return (
     <button
       ref={ref}
@@ -141,7 +143,7 @@ const TriggerChrome = forwardRef<
         controlStatusClass(status),
         className,
       )}
-      style={{ ...controlFieldStyle(size), ...style }}
+      style={{ ...controlFieldStyle(resolvedSize), ...style }}
       {...rest}
     >
       {icon}
@@ -185,7 +187,9 @@ const DatePickerRoot = forwardRef<HTMLButtonElement, DatePickerProps>(function D
   };
   const [month, setMonth] = useState<Date>(() => selected ?? new Date());
   const [draft, setDraft] = useState<Date | undefined>(selected);
-  const tok = getSizeTokens(size);
+  const resolvedSize = useControlSize(size);
+  const tok = getSizeTokens(resolvedSize);
+  const portal = usePopupContainer()?.();
   const confirm = Boolean(needConfirm);
 
   useEffect(() => {
@@ -253,7 +257,7 @@ const DatePickerRoot = forwardRef<HTMLButtonElement, DatePickerProps>(function D
       <PopoverPrimitive.Trigger asChild>
         <TriggerChrome
           ref={ref}
-          size={size}
+          size={resolvedSize}
           status={status}
           disabled={disabled}
           className={className}
@@ -277,7 +281,7 @@ const DatePickerRoot = forwardRef<HTMLButtonElement, DatePickerProps>(function D
           <span className={cn(!selected && "text-quaternary-foreground")}>{selected ? label : placeholder}</span>
         </TriggerChrome>
       </PopoverPrimitive.Trigger>
-      <PopoverPrimitive.Portal>
+      <PopoverPrimitive.Portal container={portal}>
         <PopoverPrimitive.Content
           align="start"
           sideOffset={6}
@@ -351,7 +355,9 @@ const RangePicker = forwardRef<HTMLButtonElement, RangePickerProps>(function Ran
   const selected = controlled ? parseRange(value) : inner;
   const [open, setOpen] = useState(false);
   const [month, setMonth] = useState<Date>(() => selected?.from ?? new Date());
-  const tok = getSizeTokens(size);
+  const resolvedSize = useControlSize(size);
+  const tok = getSizeTokens(resolvedSize);
+  const portal = usePopupContainer()?.();
 
   useEffect(() => {
     if (selected?.from) setMonth(selected.from);
@@ -390,7 +396,7 @@ const RangePicker = forwardRef<HTMLButtonElement, RangePickerProps>(function Ran
       <PopoverPrimitive.Trigger asChild>
         <TriggerChrome
           ref={ref}
-          size={size}
+          size={resolvedSize}
           status={status}
           disabled={disabled}
           className={className}
@@ -418,7 +424,7 @@ const RangePicker = forwardRef<HTMLButtonElement, RangePickerProps>(function Ran
           </span>
         </TriggerChrome>
       </PopoverPrimitive.Trigger>
-      <PopoverPrimitive.Portal>
+      <PopoverPrimitive.Portal container={portal}>
         <PopoverPrimitive.Content
           align="start"
           sideOffset={6}

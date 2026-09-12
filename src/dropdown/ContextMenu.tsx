@@ -1,5 +1,6 @@
 import * as ContextMenuPrimitive from "@radix-ui/react-context-menu";
 import type { ReactNode } from "react";
+import { usePopupContainer } from "../app/context";
 import { cn } from "../lib/cn";
 import type { MenuItemType, MenuProps } from "./Dropdown";
 import { menuContentClass, menuIconClass, menuItemClass } from "./menuClasses";
@@ -80,6 +81,7 @@ function MenuItems({
 }
 
 export function ContextMenu({ menu, children, open, onOpenChange, className, overlayClassName, disabled }: ContextMenuProps) {
+  const portal = usePopupContainer()?.();
   if (disabled) return children;
 
   const contentClassName = cn(menuContentClass, className, overlayClassName, menu?.className);
@@ -87,7 +89,7 @@ export function ContextMenu({ menu, children, open, onOpenChange, className, ove
   return (
     <ContextMenuPrimitive.Root modal open={open} onOpenChange={onOpenChange}>
       <ContextMenuPrimitive.Trigger asChild>{children}</ContextMenuPrimitive.Trigger>
-      <ContextMenuPrimitive.Portal>
+      <ContextMenuPrimitive.Portal container={portal}>
         <ContextMenuPrimitive.Content collisionPadding={8} className={contentClassName} style={menu?.style}>
           <MenuItems items={menu?.items ?? []} onClick={menu?.onClick} contentClassName={contentClassName} />
         </ContextMenuPrimitive.Content>

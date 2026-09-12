@@ -5,7 +5,7 @@ export type AlertType = "success" | "info" | "warning" | "error";
 
 export type AlertProps = {
   type?: AlertType;
-  /** Primary text — antd `message` / `title`. */
+  /** Primary text — `message` / `title`. */
   message?: ReactNode;
   title?: ReactNode;
   description?: ReactNode;

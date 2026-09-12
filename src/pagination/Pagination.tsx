@@ -1,6 +1,6 @@
 import type { ReactNode } from "react";
 import { cn } from "../lib/cn";
-import { type ControlSize, controlHeightVar, normalizeSize } from "../lib/sizes";
+import { type ControlSize, controlHeightVar, useControlSize } from "../lib/sizes";
 
 export type PaginationItemType = "page" | "prev" | "next" | "jump-prev" | "jump-next";
 
@@ -20,8 +20,8 @@ export type PaginationProps = {
 function pageList(current: number, pages: number): (number | "ellipsis")[] {
   if (pages <= 7) return Array.from({ length: pages }, (_, i) => i + 1);
   const set = new Set<number>([1, pages, current, current - 1, current + 1]);
-  if (current <= 3) [2, 3, 4].forEach((n) => set.add(n));
-  if (current >= pages - 2) [pages - 1, pages - 2, pages - 3].forEach((n) => set.add(n));
+  if (current <= 3) for (const n of [2, 3, 4]) set.add(n);
+  if (current >= pages - 2) for (const n of [pages - 1, pages - 2, pages - 3]) set.add(n);
   const nums = [...set].filter((n) => n >= 1 && n <= pages).sort((a, b) => a - b);
   const out: (number | "ellipsis")[] = [];
   for (let i = 0; i < nums.length; i++) {
@@ -58,9 +58,10 @@ function ItemBtn({
 }
 
 export function Pagination({ current = 1, pageSize = 10, total = 0, onChange, className, disabled, size, itemRender }: PaginationProps) {
+  const resolvedSize = useControlSize(size);
+  const compact = resolvedSize === "small";
+  const h = compact ? controlHeightVar(resolvedSize) : 28;
   const pages = Math.max(1, Math.ceil(total / pageSize));
-  const compact = normalizeSize(size) === "small";
-  const h = compact ? controlHeightVar(size) : 28;
 
   const wrap = (page: number, type: PaginationItemType, node: ReactNode) => (itemRender ? itemRender(page, type, node) : node);
 

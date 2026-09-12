@@ -11,8 +11,9 @@ import {
   useRef,
   useState,
 } from "react";
+import { usePopupContainer } from "../app/context";
 import { cn } from "../lib/cn";
-import { type ControlSize, controlFieldFocusBorder, controlFieldStyle, controlFieldSurface, controlFieldTransition, controlStatusClass } from "../lib/sizes";
+import { type ControlSize, controlFieldFocusBorder, controlFieldStyle, controlFieldSurface, controlFieldTransition, controlStatusClass, useControlSize } from "../lib/sizes";
 import { glassOverlayClass } from "../lib/surface";
 
 export type SelectValue = string | number;
@@ -26,10 +27,10 @@ export type SelectOptionConfig = {
 export type SelectProps = {
   value?: SelectValue | null;
   defaultValue?: SelectValue | null;
-  // antd interop: call sites often use (v: string) => void
+  // Call sites often use (v: string) => void
   // eslint-disable-next-line @typescript-eslint/no-explicit-any
   onChange?: (value: any) => void;
-  // Looser antd interop — many call sites type handlers as `(v: string) => void`.
+  // Many call sites type handlers as `(v: string) => void`.
   // eslint-disable-next-line @typescript-eslint/no-explicit-any
   options?: SelectOptionConfig[];
   placeholder?: string;
@@ -42,7 +43,7 @@ export type SelectProps = {
   className?: string;
   popupClassName?: string;
   children?: ReactNode;
-  /** antd alias */
+  /** Alias of `onChange` for a single pick. */
   onSelect?: (value: SelectValue) => void;
 };
 
@@ -104,6 +105,8 @@ export const Select = forwardRef<HTMLButtonElement, SelectProps>(function Select
   const triggerRef = useRef<HTMLButtonElement | null>(null);
   const searchRef = useRef<HTMLInputElement>(null);
   const listRef = useRef<HTMLDivElement>(null);
+  const resolvedSize = useControlSize(size);
+  const portal = usePopupContainer()?.();
 
   const searchable = Boolean(showSearch);
   const filterProp =
@@ -219,7 +222,7 @@ export const Select = forwardRef<HTMLButtonElement, SelectProps>(function Select
             controlStatusClass(status),
             className,
           )}
-          style={controlFieldStyle(size)}
+          style={controlFieldStyle(resolvedSize)}
           onKeyDown={onTriggerKey}
         >
           <span className={cn("min-w-0 flex-1 truncate", selected == null || selected === "" ? "text-quaternary-foreground" : "")}>
@@ -244,7 +247,7 @@ export const Select = forwardRef<HTMLButtonElement, SelectProps>(function Select
           <Chevron />
         </button>
       </PopoverPrimitive.Trigger>
-      <PopoverPrimitive.Portal>
+      <PopoverPrimitive.Portal container={portal}>
         <PopoverPrimitive.Content
           align="start"
           sideOffset={4}

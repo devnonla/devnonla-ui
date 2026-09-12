@@ -20,10 +20,10 @@ export type FormProps<T extends FieldValues = FieldValues> = {
 function evalCondition(fieldValue: unknown, operator: string, compareValue: unknown): boolean {
   switch (operator) {
     case "==":
-      // eslint-disable-next-line eqeqeq
+      // biome-ignore lint/suspicious/noDoubleEquals: form condition operator is loose equality
       return fieldValue == compareValue;
     case "!=":
-      // eslint-disable-next-line eqeqeq
+      // biome-ignore lint/suspicious/noDoubleEquals: form condition operator is loose equality
       return fieldValue != compareValue;
     case ">=":
       return (fieldValue as number) >= (compareValue as number);

@@ -1,6 +1,6 @@
 import type { ReactNode } from "react";
 import { cn } from "../lib/cn";
-import { type ControlSize, controlHeightVar, controlRadiusVar, getSizeTokens, normalizeSize } from "../lib/sizes";
+import { type ControlSize, controlHeightVar, controlRadiusVar, getSizeTokens, useControlSize } from "../lib/sizes";
 
 export type SegmentedOption<V extends string | number = string | number> = V | { label: ReactNode; value: V; disabled?: boolean; icon?: ReactNode };
 
@@ -23,16 +23,17 @@ function norm<V extends string | number>(opt: SegmentedOption<V>): { label: Reac
 export function Segmented<V extends string | number = string | number>({ options, value, defaultValue, onChange, size, block, disabled, className }: SegmentedProps<V>) {
   const items = options.map((o) => norm(o));
   const current = value ?? defaultValue ?? items[0]?.value;
-  const tok = getSizeTokens(size);
+  const resolvedSize = useControlSize(size);
+  const tok = getSizeTokens(resolvedSize);
   const itemPadX = Math.max(tok.paddingInline - 4, 6);
-  const radius = controlRadiusVar(size);
+  const radius = controlRadiusVar(resolvedSize);
 
   return (
     <div
       className={cn("inline-flex w-fit max-w-full shrink-0 items-center gap-0.5 rounded-lg bg-brand-50 p-0.5", block && "flex w-full", className)}
       role="tablist"
       style={{ borderRadius: radius }}
-      data-size={normalizeSize(size)}
+      data-size={resolvedSize}
     >
       {items.map((item) => {
         const active = item.value === current;
@@ -49,7 +50,7 @@ export function Segmented<V extends string | number = string | number>({ options
               active ? "bg-brand-200 text-foreground" : "bg-transparent text-foreground hover:bg-brand-100",
             )}
             style={{
-              height: `max(22px, calc(${controlHeightVar(size)} - 4px))`,
+              height: `max(22px, calc(${controlHeightVar(resolvedSize)} - 4px))`,
               paddingLeft: itemPadX,
               paddingRight: itemPadX,
               fontSize: tok.fontSize,

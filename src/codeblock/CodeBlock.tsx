@@ -65,6 +65,7 @@ export function CodeBlock({ code, language, title, lineNumbers = false, wordWrap
         <div className={cn("nonla-codeblock-body nonla-codeblock-well relative min-w-0 overflow-y-auto bg-card font-mono text-[13px] leading-5", children ? "max-h-96" : "mx-0.5 mb-0.5 max-h-96 rounded-lg")}>
           <div className={cn("w-full", !wordWrap && "overflow-x-auto")}>
             <pre className={cn("nonla-codeblock-pre m-0 whitespace-pre break-normal", lineNumbers && "nonla-codeblock-lines", wordWrap && "whitespace-pre-wrap wrap-break-word")}>
+              {/* biome-ignore lint/security/noDangerouslySetInnerHtml: highlight.js emits escaped HTML */}
               <code className={cn("block px-3 py-2.5", !wordWrap && "w-max min-w-full")} dangerouslySetInnerHTML={{ __html: html }} />
             </pre>
           </div>

@@ -2,7 +2,7 @@ import { type CSSProperties, type Key, type ReactNode, useMemo, useState } from 
 import { Checkbox } from "../checkbox/Checkbox";
 import { Empty } from "../empty/Empty";
 import { cn } from "../lib/cn";
-import { type ControlSize, normalizeSize } from "../lib/sizes";
+import { type CanonicalSize, type ControlSize, useControlSize } from "../lib/sizes";
 import { Pagination } from "../pagination/Pagination";
 import { Spin } from "../spin/Spin";
 
@@ -15,7 +15,7 @@ export type ColumnType<T> = {
   width?: number | string;
   minWidth?: number | string;
   align?: "left" | "center" | "right";
-  /** Custom cell — Ant Design style `(value, record, index) => ReactNode`. */
+  /** Custom cell — `(value, record, index) => ReactNode`. */
   render?: (value: any, record: T, index: number) => ReactNode;
   className?: string;
   ellipsis?: boolean;
@@ -127,8 +127,7 @@ function SortIcon({ order }: { order: SortOrder | undefined }) {
   );
 }
 
-function sizeClasses(size: ControlSize | undefined) {
-  const s = normalizeSize(size);
+function sizeClasses(s: CanonicalSize) {
   if (s === "small") {
     return {
       head: "h-9 px-2 text-xs",
@@ -152,7 +151,7 @@ function sizeClasses(size: ControlSize | undefined) {
 }
 
 export function Table<T extends object = Record<string, unknown>>({ columns = [], dataSource = [], rowKey, loading, pagination, className, size, bordered, scroll, onRow, locale, showHeader = true, title, footer, rowSelection, rowClassName, onChange }: TableProps<T>) {
-  const sz = sizeClasses(size);
+  const sz = sizeClasses(useControlSize(size));
 
   const selectionControlled = rowSelection?.selectedRowKeys !== undefined;
   const [innerSelected, setInnerSelected] = useState<Key[]>(() => rowSelection?.defaultSelectedRowKeys ?? []);
@@ -324,8 +323,8 @@ export function Table<T extends object = Record<string, unknown>>({ columns = []
                     return (
                       <tr key={key} data-slot="table-row" data-state={selected ? "selected" : undefined} className={cn("border-b border-border transition-colors hover:bg-muted/50 data-[state=selected]:bg-muted", rowProps?.className, extraClass)} style={rowProps?.style} onClick={rowProps?.onClick}>
                         {rowSelection ? (
-                          <td data-slot="table-cell" className={cn(sz.cell, sz.check, "align-middle")} style={selectionColWidth != null ? { width: selectionColWidth } : undefined}>
-                            <div className="flex items-center justify-center" onClick={(e) => e.stopPropagation()}>
+                          <td data-slot="table-cell" className={cn(sz.cell, sz.check, "align-middle")} style={selectionColWidth != null ? { width: selectionColWidth } : undefined} onClick={(e) => e.stopPropagation()}>
+                            <div className="flex items-center justify-center">
                               {rowSelection.type === "radio" ? (
                                 <input type="radio" name="nonla-table-row-select" checked={selected} disabled={rowSelection.getCheckboxProps?.(record)?.disabled} aria-label="Select row" className="size-3.5 accent-foreground" onChange={() => emitSelection([key])} />
                               ) : (

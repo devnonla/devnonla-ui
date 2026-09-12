@@ -5,7 +5,7 @@ import { cn } from "../lib/cn";
 export type CheckboxProps = Omit<ComponentPropsWithoutRef<typeof CheckboxPrimitive.Root>, "onCheckedChange" | "checked" | "onChange"> & {
   checked?: boolean | "indeterminate";
   defaultChecked?: boolean;
-  /** antd-style — receives next checked boolean (not a DOM event). */
+  /** Receives next checked boolean (not a DOM event). */
   onChange?: (checked: boolean) => void;
   children?: ReactNode;
   indeterminate?: boolean;
@@ -25,6 +25,7 @@ export const Checkbox = forwardRef<HTMLButtonElement, CheckboxProps>(function Ch
 ) {
   const resolved = indeterminate ? "indeterminate" : checked;
   return (
+    // biome-ignore lint/a11y/noLabelWithoutControl: wraps Radix checkbox button, not a native input
     <label className={cn("inline-flex items-center gap-2 text-sm text-foreground cursor-pointer", disabled && "opacity-45 cursor-not-allowed")}>
       <CheckboxPrimitive.Root
         ref={ref}
@@ -33,9 +34,9 @@ export const Checkbox = forwardRef<HTMLButtonElement, CheckboxProps>(function Ch
         disabled={disabled}
         onCheckedChange={(v) => onChange?.(v === true)}
         className={cn(
-          "size-4 shrink-0 rounded-[4px] border border-input bg-[var(--control-bg)] transition-colors duration-150 ease-[cubic-bezier(0.16,1,0.3,1)]",
-          "focus-visible:outline-none data-[state=checked]:bg-brand data-[state=checked]:border-brand data-[state=checked]:text-[var(--nonla-solid-fg)]",
-          "data-[state=indeterminate]:bg-brand data-[state=indeterminate]:border-brand data-[state=indeterminate]:text-[var(--nonla-solid-fg)]",
+          "size-4 shrink-0 rounded-sm border border-input bg-(--control-bg) transition-colors duration-150 ease-[cubic-bezier(0.16,1,0.3,1)]",
+          "focus-visible:outline-none data-[state=checked]:bg-brand data-[state=checked]:border-brand data-[state=checked]:text-(--nonla-solid-fg)",
+          "data-[state=indeterminate]:bg-brand data-[state=indeterminate]:border-brand data-[state=indeterminate]:text-(--nonla-solid-fg)",
           className,
         )}
         {...rest}

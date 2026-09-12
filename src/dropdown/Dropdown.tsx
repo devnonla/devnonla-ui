@@ -1,5 +1,6 @@
 import * as DropdownMenu from "@radix-ui/react-dropdown-menu";
 import { type CSSProperties, type MouseEvent, type ReactNode, useState } from "react";
+import { usePopupContainer } from "../app/context";
 import { cn } from "../lib/cn";
 import { type PopperPlacement, placementToRadix } from "../lib/placement";
 import { menuContentClass, menuIconClass, menuItemClass } from "./menuClasses";
@@ -34,7 +35,7 @@ export type DropdownProps = {
   className?: string;
   overlayClassName?: string;
   disabled?: boolean;
-  /** antd 5.25+ alias — accepted, no-op (Radix unmounts when closed). */
+  /** Alias — accepted, no-op (Radix unmounts when closed). */
   destroyOnHidden?: boolean;
   classNames?: { root?: string; overlay?: string };
 };
@@ -51,7 +52,7 @@ function itemKey(item: MenuItemType, i: number) {
   return item.key ?? (item.type === "divider" ? `divider-${i}` : `item-${i}`);
 }
 
-function MenuItems({ items, onClick }: { items: (MenuItemType | null | undefined)[]; onClick?: MenuProps["onClick"] }) {
+function MenuItems({ items, onClick, portal }: { items: (MenuItemType | null | undefined)[]; onClick?: MenuProps["onClick"]; portal?: HTMLElement }) {
   return (
     <>
       {items.map((item, i) => {
@@ -68,9 +69,9 @@ function MenuItems({ items, onClick }: { items: (MenuItemType | null | undefined
                 <span className="min-w-0 flex-1">{item.label}</span>
                 <ChevronRight />
               </DropdownMenu.SubTrigger>
-              <DropdownMenu.Portal>
+              <DropdownMenu.Portal container={portal}>
                 <DropdownMenu.SubContent sideOffset={4} className={cn(menuContentClass, "nonla-popper")}>
-                  <MenuItems items={item.children} onClick={onClick} />
+                  <MenuItems items={item.children} onClick={onClick} portal={portal} />
                 </DropdownMenu.SubContent>
               </DropdownMenu.Portal>
             </DropdownMenu.Sub>
@@ -98,6 +99,7 @@ function MenuItems({ items, onClick }: { items: (MenuItemType | null | undefined
 
 export function Dropdown({ menu, children, trigger = ["click"], open, onOpenChange, placement = "bottomLeft", className, overlayClassName, disabled }: DropdownProps) {
   const { side, align } = placementToRadix(placement);
+  const portal = usePopupContainer()?.();
   const hover = trigger.includes("hover");
   const contextMenu = trigger.includes("contextMenu");
   const click = trigger.includes("click") || (!hover && !contextMenu);
@@ -119,7 +121,7 @@ export function Dropdown({ menu, children, trigger = ["click"], open, onOpenChan
       <DropdownMenu.Trigger asChild disabled={disabled} onClick={click || contextMenu ? undefined : (e) => e.preventDefault()} onMouseEnter={hover && !disabled ? () => setIsOpen(true) : undefined} onMouseLeave={hover ? () => setIsOpen(false) : undefined} onContextMenu={handleContext}>
         {children}
       </DropdownMenu.Trigger>
-      <DropdownMenu.Portal>
+      <DropdownMenu.Portal container={portal}>
         <DropdownMenu.Content
           side={side}
           align={align === "center" ? "start" : align}
@@ -129,7 +131,7 @@ export function Dropdown({ menu, children, trigger = ["click"], open, onOpenChan
           onMouseEnter={hover ? () => setIsOpen(true) : undefined}
           onMouseLeave={hover ? () => setIsOpen(false) : undefined}
         >
-          <MenuItems items={menu?.items ?? []} onClick={menu?.onClick} />
+          <MenuItems items={menu?.items ?? []} onClick={menu?.onClick} portal={portal} />
         </DropdownMenu.Content>
       </DropdownMenu.Portal>
     </DropdownMenu.Root>
