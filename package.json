@@ -1,0 +1,66 @@
+{
+  "name": "devnonla-ui",
+  "version": "0.1.0",
+  "type": "module",
+  "description": "NonlaUI — antd-like React controls for Nonla Agents",
+  "author": "devlangla <devlangla0x01@gmail.com>",
+  "license": "MIT",
+  "repository": {
+    "type": "git",
+    "url": "git+https://github.com/devnonla/devnonla-ui.git"
+  },
+  "homepage": "https://github.com/devnonla/devnonla-ui",
+  "bugs": {
+    "url": "https://github.com/devnonla/devnonla-ui/issues"
+  },
+  "publishConfig": {
+    "access": "public"
+  },
+  "sideEffects": [
+    "**/*.css"
+  ],
+  "exports": {
+    ".": "./src/index.ts",
+    "./styles.css": "./src/styles.css"
+  },
+  "main": "./src/index.ts",
+  "types": "./src/index.ts",
+  "files": [
+    "src"
+  ],
+  "scripts": {
+    "typecheck": "tsc --noEmit"
+  },
+  "peerDependencies": {
+    "react": ">=19",
+    "react-dom": ">=19",
+    "react-hook-form": "^7.0.0"
+  },
+  "dependencies": {
+    "@iconify-json/fluent-color": "^1.2.21",
+    "@radix-ui/react-checkbox": "^1.3.3",
+    "@radix-ui/react-context-menu": "^2.3.7",
+    "@radix-ui/react-dialog": "^1.1.15",
+    "@radix-ui/react-dropdown-menu": "^2.1.16",
+    "@radix-ui/react-popover": "^1.1.15",
+    "@radix-ui/react-select": "^2.2.6",
+    "@radix-ui/react-switch": "^1.2.6",
+    "@radix-ui/react-tooltip": "^1.2.8",
+    "clsx": "^2.1.1",
+    "date-fns": "^4.4.0",
+    "highlight.js": "^11.12.0",
+    "mermaid": "^11.14.0",
+    "react-day-picker": "^10.0.1",
+    "react-markdown": "^10.1.0",
+    "remark-gfm": "^4.0.1",
+    "tailwind-merge": "^3.5.0"
+  },
+  "devDependencies": {
+    "@types/react": "^19.1.8",
+    "@types/react-dom": "^19.1.6",
+    "react": "19.2.8",
+    "react-dom": "19.2.8",
+    "react-hook-form": "^7.87.0",
+    "typescript": "~5.8.3"
+  }
+}
