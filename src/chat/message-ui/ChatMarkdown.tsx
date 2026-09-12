@@ -24,11 +24,11 @@ export const chatMarkdownClass = cn(
   "[&_strong]:font-semibold [&_em]:italic",
   "[&_blockquote]:m-0 [&_blockquote]:mb-(--chat-p-mb) [&_blockquote]:border-0 [&_blockquote]:p-0 [&_blockquote]:not-italic [&_blockquote]:text-inherit [&_blockquote:last-child]:mb-0",
   "[&_ul]:mt-2 [&_ul]:mb-(--chat-p-mb)",
-  "[&_ul:not(.contains-task-list)]:list-disc [&_ul:not(.contains-task-list)]:pl-[26px]",
-  "[&_ul.contains-task-list]:list-none [&_ul.contains-task-list]:pl-[26px]",
+  "[&_ul:not(.contains-task-list)]:list-disc [&_ul:not(.contains-task-list)]:pl-6.5",
+  "[&_ul.contains-task-list]:list-none [&_ul.contains-task-list]:pl-6.5",
   "[&_li.task-list-item]:relative",
-  "[&_li.task-list-item>.nonla-md-task-check]:absolute [&_li.task-list-item>.nonla-md-task-check]:top-0 [&_li.task-list-item>.nonla-md-task-check]:left-[-22px]",
-  "[&_ol]:mt-2 [&_ol]:mb-(--chat-p-mb) [&_ol]:list-decimal [&_ol]:pl-[26px]",
+  "[&_li.task-list-item>.nonla-md-task-check]:absolute [&_li.task-list-item>.nonla-md-task-check]:top-0 [&_li.task-list-item>.nonla-md-task-check]:-left-5.5",
+  "[&_ol]:mt-2 [&_ol]:mb-(--chat-p-mb) [&_ol]:list-decimal [&_ol]:pl-6.5",
   "[&_li]:my-1.5 [&_li]:leading-(--chat-body-leading)",
   "[&_a]:text-link [&_a]:no-underline [&_a]:hover:underline [&_a]:hover:underline-offset-[3px]",
 );
@@ -78,14 +78,14 @@ export function createChatMarkdownComponents(getState?: () => ChatMarkdownStream
     th({ children }) {
       return (
         <th>
-          <div className="inline-block max-w-[300px] wrap-break-word">{children}</div>
+          <div className="inline-block max-w-75 wrap-break-word">{children}</div>
         </th>
       );
     },
     td({ children }) {
       return (
         <td>
-          <div className="inline-block max-w-[300px] wrap-break-word">{children}</div>
+          <div className="inline-block max-w-75 wrap-break-word">{children}</div>
         </td>
       );
     },

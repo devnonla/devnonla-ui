@@ -25,21 +25,13 @@ export function ChatUserMessage({ content, className }: ChatUserMessageProps) {
 
   const collapsed = isOverflow && !isExpanded;
 
-  const toggle = () => {
-    const sel = window.getSelection();
-    if (sel?.toString()) return;
-    setIsExpanded((v) => !v);
-  };
-
   return (
     <div
       className={cn(
         "nonla-chat-user relative isolate mt-6 mb-3 mx-4 overflow-hidden rounded-xl px-3 py-2.5",
         "border border-brand/40 bg-[color-mix(in_oklab,var(--brand)_14%,var(--glass))] backdrop-blur-xl backdrop-saturate-150",
-        isOverflow && "cursor-pointer",
         className,
       )}
-      onClick={isOverflow ? toggle : undefined}
     >
       <div
         ref={contentRef}

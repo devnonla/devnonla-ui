@@ -1,7 +1,7 @@
 import { type ReactNode, useCallback, useEffect, useLayoutEffect, useRef, useState } from "react";
 import { cn } from "../lib/cn";
 import { OverlayScroll, type OverlayScrollVisibility } from "../scroll/OverlayScroll";
-import type { AgentMessage, AgentPanelEndpoint, AgentToolAction } from "./common/types";
+import type { AgentMessage, AgentPanelEndpoint, AgentToolAction, AgentToolHook } from "./common/types";
 import { parseBgTaskRef } from "./common/bgTasks";
 import { useAgentStream } from "./common/useAgentStream";
 import { formatToolName } from "./common/utils";
@@ -14,7 +14,8 @@ import { ChatUserMessage } from "./message-ui/ChatUserMessage";
 import { ChatWelcome } from "./message-ui/ChatWelcome";
 import { BackgroundTaskToolUI } from "./tool-ui/BackgroundTaskToolUI";
 import { ChatToolCall } from "./tool-ui/ChatToolCall";
-import { resolveToolUI } from "./tool-ui/registry";
+import { resolveToolUI, type AgentToolUI } from "./tool-ui/registry";
+import { Shimmer } from "../shimmer/Shimmer";
 
 export type AgentPanelProps = {
   /** POST URL, or a function that returns an SSE `Response`. */
@@ -31,7 +32,12 @@ export type AgentPanelProps = {
   headers?: Record<string, string>;
   fetcher?: typeof fetch;
   initialMessages?: AgentMessage[];
+  /** Custom node in the composer toolbar (model picker, tools, …). */
   toolbar?: ReactNode;
+  /** Extra tool cards keyed by stream `toolName`. Checked before builtins. */
+  toolUis?: AgentToolUI[];
+  /** Tool lifecycle hooks, matched by `name` like `toolUis`. Omit `name` to hear every tool. */
+  toolHooks?: AgentToolHook[];
   accessory?: ReactNode;
   emptyState?: ReactNode;
   /** Overlay scrollbar — does not reserve layout space. */
@@ -77,14 +83,14 @@ function useStickToBottom() {
   return { scrollRef, onScroll, scrollToBottom };
 }
 
-function MessageRow({ msg, generating }: { msg: AgentMessage; generating: boolean }) {
+function MessageRow({ msg, generating, toolUis }: { msg: AgentMessage; generating: boolean; toolUis?: AgentToolUI[] }) {
   if (msg.role === "user") return <ChatUserMessage content={msg.content} />;
   if (msg.role === "error") return <ChatError>{msg.content}</ChatError>;
   if (msg.role === "thinking") {
     return <ChatThinking thinking={msg.content} duration={(msg.meta?.thinkingDuration as number) ?? 0} />;
   }
   if (msg.role === "tool-call") {
-    const CustomUI = resolveToolUI(msg.toolName);
+    const CustomUI = resolveToolUI(msg.toolName, toolUis);
     if (CustomUI) {
       return <CustomUI msg={msg} generating={generating} showAvatar={false} />;
     }
@@ -126,6 +132,8 @@ export function AgentPanel({
   fetcher,
   initialMessages,
   toolbar,
+  toolUis,
+  toolHooks,
   accessory,
   emptyState,
   scrollbar = "hover",
@@ -140,6 +148,7 @@ export function AgentPanel({
     fetcher,
     initialMessages,
     onToolAction,
+    toolHooks,
   });
   const { scrollRef, onScroll, scrollToBottom } = useStickToBottom();
   const [epoch, setEpoch] = useState(0);
@@ -180,11 +189,11 @@ export function AgentPanel({
           ) : (
             <div className="flex flex-col">
               {messages.map((msg) => (
-                <MessageRow key={msg.id} msg={msg} generating={generating} />
+                <MessageRow key={msg.id} msg={msg} generating={generating} toolUis={toolUis} />
               ))}
               {showFooter ? (
                 <div className="mt-1 px-4 pb-0.5">
-                  <span className="nonla-chat-shimmer text-(length:--chat-body-size) leading-5.5 font-medium">{status}</span>
+                  <Shimmer className="text-(length:--chat-body-size) leading-5.5 font-medium">{status}</Shimmer>
                 </div>
               ) : null}
             </div>

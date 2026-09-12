@@ -1,3 +1,5 @@
+import type { AgentToolNameMatch } from "./types";
+
 /** snake_case / camelCase → Title Case (e.g. edit_code → Edit Code). */
 export function formatToolName(name: string): string {
   return name
@@ -70,4 +72,15 @@ export function timestampMs(value: unknown): number {
     if (!Number.isNaN(parsed)) return parsed;
   }
   return Date.now();
+}
+
+export function matchesToolName(match: AgentToolNameMatch, toolName: string): boolean {
+  if (typeof match === "function") return match(toolName);
+  if (typeof match === "string") return match === toolName;
+  return match.includes(toolName);
+}
+
+export function matchesToolHook(match: AgentToolNameMatch | undefined, toolName: string): boolean {
+  if (match == null || match === "*") return true;
+  return matchesToolName(match, toolName);
 }

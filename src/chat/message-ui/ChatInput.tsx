@@ -136,7 +136,7 @@ export function ChatInput({ generating = false, placeholder = "Message…", disa
         <div className="flex-1" />
 
         {generating ? (
-          <button type="button" onClick={onCancel} title="Stop" className="w-6 h-6 rounded-full bg-brand text-white flex items-center justify-center shrink-0 cursor-pointer hover:bg-brand/90 active:scale-95 transition-all duration-100 border-0">
+          <button type="button" onClick={onCancel} title="Stop" className="w-6 h-6 rounded-full bg-brand text-(--nonla-solid-fg) flex items-center justify-center shrink-0 cursor-pointer hover:bg-brand/90 active:scale-95 transition-all duration-100 border-0">
             <svg width="12" height="12" viewBox="0 0 12 12" fill="none" aria-hidden>
               <rect x="1.5" y="1.5" width="9" height="9" rx="2" fill="currentColor" />
             </svg>

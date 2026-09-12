@@ -1,5 +1,6 @@
 import { type ReactNode, useState } from "react";
 import { cn } from "../../lib/cn";
+import { Shimmer } from "../../shimmer/Shimmer";
 import { formatToolName, hasMeaningfulInput, prettyJson } from "../common/utils";
 import { ChatSpinner } from "../message-ui/ChatSpinner";
 import { ToolUiTrailing } from "./ToolUiTrailing";
@@ -37,7 +38,7 @@ export function ChatToolCall({ toolName = "Tool", label, toolInput, toolOutput, 
   const header = (
     <>
       {identityIcon}
-      <span className={cn("min-w-0 flex-1 truncate text-left text-[14px] font-medium", running ? "nonla-chat-shimmer" : "text-muted-foreground", expandable && !running && "transition-colors group-hover:text-foreground")}>{displayLabel}</span>
+      <Shimmer active={running} className={cn("min-w-0 flex-1 truncate text-left text-[14px] font-medium", !running && "text-muted-foreground", expandable && !running && "transition-colors group-hover:text-foreground")}>{displayLabel}</Shimmer>
       <ToolUiTrailing running={running} failed={hasError} chevron={expandable} chevronClassName={cn("group-hover:opacity-100", open && "opacity-100 rotate-90")} />
     </>
   );
@@ -60,7 +61,7 @@ export function ChatToolCall({ toolName = "Tool", label, toolInput, toolOutput, 
               {running ? (
                 <div className="flex items-center gap-2 border-t border-border bg-muted/40 px-3 py-2 text-muted-foreground">
                   <ChatSpinner />
-                  <span className="italic">Running…</span>
+                  <Shimmer className="italic">Running…</Shimmer>
                 </div>
               ) : null}
               {!isPending ? (

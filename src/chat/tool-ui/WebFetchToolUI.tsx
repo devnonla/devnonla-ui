@@ -1,5 +1,6 @@
 import { FluentIcon } from "../../icon/FluentIcon";
 import { cn } from "../../lib/cn";
+import { Shimmer } from "../../shimmer/Shimmer";
 import { parseJsonObject } from "../common/utils";
 import { ToolUiBadge } from "./ToolUiBadge";
 import { ToolUiTrailing } from "./ToolUiTrailing";
@@ -39,9 +40,9 @@ export function WebFetchToolUI({ msg, assistantLabel = "Assistant", assistantCol
       <details className="group/webfetch px-4 pb-2" style={{ overflowAnchor: "none" }}>
         <summary className="flex cursor-pointer list-none items-center gap-2 py-0.5 text-[14px] leading-5.5 select-none [&::-webkit-details-marker]:hidden">
           <FluentIcon name="globe-24" size={13} className="shrink-0 text-muted-foreground" />
-          <span className={cn("min-w-0 truncate font-medium text-muted-foreground", running && "nonla-chat-shimmer")}>
+          <Shimmer active={running} className="min-w-0 truncate font-medium text-muted-foreground">
             {verb} <span className="font-normal text-tertiary-foreground">{url}</span>
-          </span>
+          </Shimmer>
           <ToolUiTrailing running={running} failed={failed} chevron chevronClassName="group-hover/webfetch:opacity-100 group-open/webfetch:opacity-100 group-open/webfetch:rotate-90" />
         </summary>
         {body ? (

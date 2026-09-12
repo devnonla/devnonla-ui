@@ -1,5 +1,6 @@
 import { FluentIcon } from "../../icon/FluentIcon";
 import { cn } from "../../lib/cn";
+import { Shimmer } from "../../shimmer/Shimmer";
 import { parseJsonObject } from "../common/utils";
 import { ToolUiBadge } from "./ToolUiBadge";
 import { ToolUiTrailing } from "./ToolUiTrailing";
@@ -55,10 +56,10 @@ export function ReadSkillToolUI({ msg, assistantLabel = "Assistant", assistantCo
       <details className="group/readskill px-4 pb-2" style={{ overflowAnchor: "none" }}>
         <summary className="flex cursor-pointer list-none items-center gap-2 py-0.5 text-[14px] leading-5.5 select-none [&::-webkit-details-marker]:hidden">
           <FluentIcon name={reference ? "document-text-24" : "book-24"} size={13} className="shrink-0 text-muted-foreground" />
-          <span className={cn("min-w-0 truncate font-medium text-muted-foreground", running && "nonla-chat-shimmer")}>
+          <Shimmer active={running} className="min-w-0 truncate font-medium text-muted-foreground">
             {verb}
             {targetLabel ? <span className="font-normal text-tertiary-foreground"> {targetLabel}</span> : null}
-          </span>
+          </Shimmer>
           <ToolUiTrailing running={running} failed={failed} chevron chevronClassName="group-hover/readskill:opacity-100 group-open/readskill:opacity-100 group-open/readskill:rotate-90" />
         </summary>
         {body ? (

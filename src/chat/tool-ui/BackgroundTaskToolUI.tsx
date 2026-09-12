@@ -1,4 +1,5 @@
 import { useEffect, useState } from "react";
+import { Shimmer } from "../../shimmer/Shimmer";
 import { formatBgElapsed, parseBgTaskRef } from "../common/bgTasks";
 import { formatToolName, timestampMs } from "../common/utils";
 import { ChatSpinner } from "../message-ui/ChatSpinner";
@@ -24,7 +25,7 @@ export function BackgroundTaskToolUI({ msg, assistantLabel = "Assistant", assist
           <div className="min-w-0 flex-1 pl-2">
             <div className="flex items-center gap-2 py-1">
               <ChatSpinner />
-              <span className="min-w-0 flex-1 truncate text-[14px] font-medium text-foreground">{label}</span>
+              <Shimmer className="min-w-0 flex-1 truncate text-[14px] font-medium text-foreground">{label}</Shimmer>
               <span className="shrink-0 rounded px-1 py-px text-[9px] font-semibold uppercase tracking-wider text-brand-700">Background</span>
               <span className="shrink-0 text-[14px] tabular-nums text-muted-foreground">{formatBgElapsed(timestampMs(msg.timestamp), now)}</span>
             </div>

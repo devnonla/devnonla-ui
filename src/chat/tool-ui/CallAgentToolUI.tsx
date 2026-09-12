@@ -1,6 +1,7 @@
 import { type ReactNode, useEffect, useRef, useState } from "react";
 import { FluentIcon } from "../../icon/FluentIcon";
 import { cn } from "../../lib/cn";
+import { Shimmer } from "../../shimmer/Shimmer";
 import { formatBgElapsed, parseBgTaskRef } from "../common/bgTasks";
 import { parseJsonObject, prettyJson, timestampMs } from "../common/utils";
 import { ChatMarkdown } from "../message-ui/ChatMarkdown";
@@ -30,7 +31,7 @@ function parseCallAgentOutput(raw: unknown): CallAgentParsed | null {
 
 function TypingDots() {
   return (
-    <div className="flex items-center gap-1 px-0.5 py-0.5" aria-label="Typing">
+    <div className="flex items-center gap-1 px-0.5 py-0.5" role="status" aria-label="Typing">
       {[0, 1, 2].map((i) => (
         <span key={i} className="size-1.5 rounded-full bg-muted-foreground/50 animate-bounce" style={{ animationDelay: `${i * 150}ms` }} />
       ))}
@@ -121,7 +122,7 @@ export function CallAgentToolUI({ msg, assistantLabel = "Assistant", assistantCo
         <div className={cn("overflow-hidden rounded-xl border bg-card", failed ? "border-destructive/35" : "border-border")}>
           <div className="flex items-center gap-2 border-b border-border-subtle px-3 py-2">
             <FluentIcon name="chat-24" size={13} className="shrink-0 text-muted-foreground" />
-            <span className="min-w-0 flex-1 truncate text-[14px] font-medium text-foreground">Calling {calleeName}</span>
+            <Shimmer active={composing || awaitingReply} className="min-w-0 flex-1 truncate text-[14px] font-medium text-foreground">Calling {calleeName}</Shimmer>
             {bgRunning ? <span className="text-[14px] tabular-nums text-muted-foreground">{formatBgElapsed(timestampMs(msg.timestamp), now)}</span> : null}
             {statusLabel ? <span className="max-w-40 truncate text-[13px] italic text-destructive">{statusLabel}</span> : null}
             <ToolUiTrailing running={composing || awaitingReply} failed={failed && !awaitingReply} />

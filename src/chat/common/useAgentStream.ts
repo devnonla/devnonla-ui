@@ -1,7 +1,7 @@
 import { useCallback, useEffect, useRef, useState } from "react";
 import { parseSseStream } from "./sse";
-import type { AgentHistoryMessage, AgentMessage, AgentPanelEndpoint, AgentToolAction } from "./types";
-import { formatToolName } from "./utils";
+import type { AgentHistoryMessage, AgentMessage, AgentPanelEndpoint, AgentToolAction, AgentToolCallEvent, AgentToolHook, AgentToolResultEvent } from "./types";
+import { formatToolName, matchesToolHook } from "./utils";
 
 let _id = 0;
 function nextId(prefix: string) {
@@ -69,9 +69,12 @@ export type UseAgentStreamOptions = {
   fetcher?: typeof fetch;
   initialMessages?: AgentMessage[];
   onToolAction?: (event: AgentToolAction) => void;
+  toolHooks?: AgentToolHook[];
 };
 
-export function useAgentStream({ endpoint, extraBody, headers, fetcher = fetch, initialMessages, onToolAction }: UseAgentStreamOptions) {
+type OpenTool = AgentToolCallEvent;
+
+export function useAgentStream({ endpoint, extraBody, headers, fetcher = fetch, initialMessages, onToolAction, toolHooks }: UseAgentStreamOptions) {
   const [messages, setMessages] = useState<AgentMessage[]>(() => initialMessages ?? []);
   const [generating, setGenerating] = useState(false);
   const thinkingRef = useRef("");
@@ -79,10 +82,44 @@ export function useAgentStream({ endpoint, extraBody, headers, fetcher = fetch, 
   const abortRef = useRef<AbortController | null>(null);
   const onToolActionRef = useRef(onToolAction);
   onToolActionRef.current = onToolAction;
+  const toolHooksRef = useRef(toolHooks);
+  toolHooksRef.current = toolHooks;
   const extraBodyRef = useRef(extraBody);
   extraBodyRef.current = extraBody;
   const endpointRef = useRef(endpoint);
   endpointRef.current = endpoint;
+  const openToolsRef = useRef<Map<string, OpenTool>>(new Map());
+
+  const emitCall = useCallback((event: AgentToolCallEvent) => {
+    for (const hook of toolHooksRef.current ?? []) {
+      if (matchesToolHook(hook.name, event.toolName)) hook.onCall?.(event);
+    }
+    onToolActionRef.current?.({ type: "tool-call", ...event });
+  }, []);
+
+  const emitResult = useCallback((event: AgentToolResultEvent) => {
+    for (const hook of toolHooksRef.current ?? []) {
+      if (matchesToolHook(hook.name, event.toolName)) hook.onResult?.(event);
+    }
+    onToolActionRef.current?.({ type: "tool-result", ...event });
+  }, []);
+
+  const flushOpenTools = useCallback(
+    (error: string) => {
+      const open = [...openToolsRef.current.values()];
+      if (!open.length) return;
+      openToolsRef.current.clear();
+      for (const tool of open) {
+        emitResult({
+          toolCallId: tool.toolCallId,
+          toolName: tool.toolName,
+          output: { success: false, error },
+          error,
+        });
+      }
+    },
+    [emitResult],
+  );
 
   useEffect(() => {
     return () => {
@@ -94,20 +131,22 @@ export function useAgentStream({ endpoint, extraBody, headers, fetcher = fetch, 
   const cancel = useCallback(() => {
     abortRef.current?.abort();
     abortRef.current = null;
+    flushOpenTools("Cancelled");
     setMessages((prev) => finalizeStreaming(failOpenTools(prev, "Cancelled")));
     setGenerating(false);
     thinkingRef.current = "";
     thinkingStartRef.current = 0;
-  }, []);
+  }, [flushOpenTools]);
 
   const clear = useCallback(() => {
     abortRef.current?.abort();
     abortRef.current = null;
+    flushOpenTools("Cancelled");
     setMessages([]);
     setGenerating(false);
     thinkingRef.current = "";
     thinkingStartRef.current = 0;
-  }, []);
+  }, [flushOpenTools]);
 
   const send = useCallback(
     async (text: string) => {
@@ -115,6 +154,7 @@ export function useAgentStream({ endpoint, extraBody, headers, fetcher = fetch, 
       if (!trimmed || generating) return;
 
       abortRef.current?.abort();
+      flushOpenTools("Cancelled");
       const controller = new AbortController();
       abortRef.current = controller;
 
@@ -259,10 +299,18 @@ export function useAgentStream({ endpoint, extraBody, headers, fetcher = fetch, 
             onToolCall: (event) => {
               const label = event.toolLabel ? (event.toolLabel.includes(" ") ? event.toolLabel : formatToolName(event.toolLabel)) : formatToolName(event.toolName);
               freezeOpen();
+              const id = nextId("tc");
+              const call: AgentToolCallEvent = {
+                toolCallId: event.toolCallId,
+                toolName: event.toolName,
+                toolLabel: label,
+                input: event.input,
+              };
+              openToolsRef.current.set(event.toolCallId || id, call);
               setMessages((prev) => [
                 ...prev,
                 {
-                  id: nextId("tc"),
+                  id,
                   role: "tool-call",
                   content: event.toolName,
                   toolCallId: event.toolCallId,
@@ -272,11 +320,21 @@ export function useAgentStream({ endpoint, extraBody, headers, fetcher = fetch, 
                   timestamp: new Date(),
                 },
               ]);
-              onToolActionRef.current?.({ type: "tool-call", toolName: event.toolName, toolLabel: label, input: event.input });
+              emitCall(call);
             },
             onToolResult: (event) => {
               const raw = event.result;
               const resultStr = typeof raw === "string" ? raw : JSON.stringify(raw);
+              if (event.toolCallId) {
+                openToolsRef.current.delete(event.toolCallId);
+              } else {
+                for (const [key, tool] of [...openToolsRef.current.entries()].reverse()) {
+                  if (tool.toolName === event.toolName) {
+                    openToolsRef.current.delete(key);
+                    break;
+                  }
+                }
+              }
               setMessages((prev) => {
                 let matchIdx = -1;
                 if (event.toolCallId) {
@@ -289,15 +347,18 @@ export function useAgentStream({ endpoint, extraBody, headers, fetcher = fetch, 
                 if (matchIdx === -1) return prev;
                 return prev.map((m, i) => (i === matchIdx ? { ...m, toolOutput: resultStr } : m));
               });
-              onToolActionRef.current?.({ type: "tool-result", toolName: event.toolName, output: raw });
+              emitResult({ toolCallId: event.toolCallId, toolName: event.toolName, output: raw });
             },
             onDone: () => {
+              flushOpenTools("Tool did not return a result");
               setMessages((prev) => finalizeStreaming(failOpenTools(prev, "Tool did not return a result")));
               setGenerating(false);
               thinkingRef.current = "";
               thinkingStartRef.current = 0;
             },
             onError: (error) => {
+              const reason = error === "cancelled" ? "Cancelled" : error;
+              flushOpenTools(reason);
               if (error === "Connection lost") {
                 setMessages((prev) => finalizeStreaming(failOpenTools(prev, "Connection lost")));
                 setGenerating(false);
@@ -306,7 +367,7 @@ export function useAgentStream({ endpoint, extraBody, headers, fetcher = fetch, 
                 return;
               }
               setMessages((prev) => [
-                ...finalizeStreaming(failOpenTools(prev, error === "cancelled" ? "Cancelled" : error)),
+                ...finalizeStreaming(failOpenTools(prev, reason)),
                 ...(error === "cancelled" ? [] : [{ id: nextId("err"), role: "error" as const, content: error, timestamp: new Date() }]),
               ]);
               setGenerating(false);
@@ -318,6 +379,7 @@ export function useAgentStream({ endpoint, extraBody, headers, fetcher = fetch, 
         );
 
         if (result === "aborted") {
+          flushOpenTools("Cancelled");
           setMessages((prev) => finalizeStreaming(failOpenTools(prev, "Cancelled")));
           setGenerating(false);
           thinkingRef.current = "";
@@ -325,26 +387,30 @@ export function useAgentStream({ endpoint, extraBody, headers, fetcher = fetch, 
           return;
         }
 
+        flushOpenTools("Tool did not return a result");
         setMessages((prev) => finalizeStreaming(failOpenTools(prev, "Tool did not return a result")));
         setGenerating(false);
       } catch (err: unknown) {
         if ((err as Error)?.name === "AbortError") {
+          flushOpenTools("Cancelled");
           setMessages((prev) => finalizeStreaming(failOpenTools(prev, "Cancelled")));
           setGenerating(false);
           thinkingRef.current = "";
           thinkingStartRef.current = 0;
           return;
         }
+        const message = err instanceof Error ? err.message : String(err);
+        flushOpenTools(message);
         setMessages((prev) => [
-          ...finalizeStreaming(failOpenTools(prev, err instanceof Error ? err.message : String(err))),
-          { id: nextId("err"), role: "error", content: err instanceof Error ? err.message : String(err), timestamp: new Date() },
+          ...finalizeStreaming(failOpenTools(prev, message)),
+          { id: nextId("err"), role: "error", content: message, timestamp: new Date() },
         ]);
         setGenerating(false);
       } finally {
         abortRef.current = null;
       }
     },
-    [generating, messages, fetcher, headers],
+    [generating, messages, fetcher, headers, emitCall, emitResult, flushOpenTools],
   );
 
   return { messages, generating, send, cancel, clear };

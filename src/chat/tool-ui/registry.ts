@@ -1,5 +1,6 @@
 import type { ComponentType } from "react";
-import { isCallAgentToolName } from "../common/utils";
+import type { AgentToolNameMatch } from "../common/types";
+import { isCallAgentToolName, matchesToolName } from "../common/utils";
 import { CallAgentToolUI } from "./CallAgentToolUI";
 import { GetCurrentTimeToolUI } from "./GetCurrentTimeToolUI";
 import { ReadSkillToolUI } from "./ReadSkillToolUI";
@@ -7,23 +8,34 @@ import { RunJsToolUI } from "./RunJsToolUI";
 import type { ToolUIProps } from "./types";
 import { WebFetchToolUI } from "./WebFetchToolUI";
 
-type ToolUIEntry = {
-  match: (toolName: string) => boolean;
+/** Exact name, aliases, or a predicate (e.g. `call_agent__*`). */
+export type AgentToolUIName = AgentToolNameMatch;
+
+export type AgentToolUI = {
+  name: AgentToolUIName;
   component: ComponentType<ToolUIProps>;
 };
 
-const TOOL_UIS: ToolUIEntry[] = [
-  { match: isCallAgentToolName, component: CallAgentToolUI },
-  { match: (n) => n === "web_fetch" || n === "fetch_url" || n === "browser", component: WebFetchToolUI },
-  { match: (n) => n === "get_current_time", component: GetCurrentTimeToolUI },
-  { match: (n) => n === "read_skill", component: ReadSkillToolUI },
-  { match: (n) => n === "run_js", component: RunJsToolUI },
+export function matchesToolUIName(name: AgentToolUIName, toolName: string): boolean {
+  return matchesToolName(name, toolName);
+}
+
+export const builtinToolUis: AgentToolUI[] = [
+  { name: isCallAgentToolName, component: CallAgentToolUI },
+  { name: ["web_fetch", "fetch_url", "browser"], component: WebFetchToolUI },
+  { name: "get_current_time", component: GetCurrentTimeToolUI },
+  { name: "read_skill", component: ReadSkillToolUI },
+  { name: "run_js", component: RunJsToolUI },
 ];
 
-export function resolveToolUI(toolName: string | null | undefined): ComponentType<ToolUIProps> | null {
+/** App `toolUis` win on the same name; builtins are the fallback. */
+export function resolveToolUI(toolName: string | null | undefined, extras?: readonly AgentToolUI[] | null): ComponentType<ToolUIProps> | null {
   if (!toolName) return null;
-  for (const entry of TOOL_UIS) {
-    if (entry.match(toolName)) return entry.component;
+  const lists = extras?.length ? [extras, builtinToolUis] : [builtinToolUis];
+  for (const list of lists) {
+    for (const entry of list) {
+      if (matchesToolUIName(entry.name, toolName)) return entry.component;
+    }
   }
   return null;
 }

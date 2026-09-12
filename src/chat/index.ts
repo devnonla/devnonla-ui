@@ -13,8 +13,10 @@ export type { ChatErrorProps } from "./message-ui/ChatError";
 export { ChatToolCall } from "./tool-ui/ChatToolCall";
 export type { ChatToolCallProps } from "./tool-ui/ChatToolCall";
 
-export { resolveToolUI } from "./tool-ui/registry";
+export { resolveToolUI, builtinToolUis, matchesToolUIName } from "./tool-ui/registry";
+export type { AgentToolUI, AgentToolUIName } from "./tool-ui/registry";
 export type { ToolUIProps, ChatToolMessage } from "./tool-ui/types";
+export { isToolRunning } from "./tool-ui/types";
 export { CallAgentToolUI } from "./tool-ui/CallAgentToolUI";
 export { WebFetchToolUI } from "./tool-ui/WebFetchToolUI";
 export { GetCurrentTimeToolUI } from "./tool-ui/GetCurrentTimeToolUI";
@@ -48,9 +50,9 @@ export type { UseAgentStreamOptions } from "./common/useAgentStream";
 export { parseSseStream, normalizeSseEvent } from "./common/sse";
 export type { AgentSseEvent, AgentSseCallbacks, ParseSseResult } from "./common/sse";
 
-export type { AgentMessage, AgentMessageRole, AgentHistoryMessage, AgentStreamRequest, AgentPanelEndpoint, AgentToolAction } from "./common/types";
+export type { AgentMessage, AgentMessageRole, AgentHistoryMessage, AgentStreamRequest, AgentPanelEndpoint, AgentToolAction, AgentToolHook, AgentToolCallEvent, AgentToolResultEvent, AgentToolNameMatch } from "./common/types";
 
-export { formatToolName, prettyJson, isCallAgentToolName, parseCallAgentToolTargetId } from "./common/utils";
+export { formatToolName, prettyJson, isCallAgentToolName, parseCallAgentToolTargetId, matchesToolName, matchesToolHook } from "./common/utils";
 
 export { parseBgTaskRef, formatBgElapsed } from "./common/bgTasks";
 export type { ChatBgTask, ChatBgTaskStatus } from "./common/bgTasks";

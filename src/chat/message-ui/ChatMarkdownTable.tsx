@@ -35,7 +35,7 @@ export function ChatMarkdownTable({ children }: { children: ReactNode }) {
       <div className="overflow-x-auto">
         <table
           ref={tableRef}
-          className="w-max min-w-full wrap-normal border-separate border-spacing-0 text-[14px] [&_th]:bg-foreground/[0.04] [&_th]:text-foreground [&_th]:font-semibold [&_th]:px-2.5 [&_th]:py-1.5 [&_th]:text-left [&_th]:align-top [&_th]:border-r [&_th]:border-b [&_th]:border-border [&_th:last-child]:border-r-0 [&_td]:px-2.5 [&_td]:py-1.5 [&_td]:align-top [&_td]:text-foreground [&_td]:bg-card [&_td]:border-r [&_td]:border-b [&_td]:border-border [&_td:last-child]:border-r-0 [&_tbody_tr:last-child_td]:border-b-0"
+          className="w-max min-w-full wrap-normal border-separate border-spacing-0 text-[14px] [&_th]:bg-foreground/4 [&_th]:text-foreground [&_th]:font-semibold [&_th]:px-2.5 [&_th]:py-1.5 [&_th]:text-left [&_th]:align-top [&_th]:border-r [&_th]:border-b [&_th]:border-border [&_th:last-child]:border-r-0 [&_td]:px-2.5 [&_td]:py-1.5 [&_td]:align-top [&_td]:text-foreground [&_td]:bg-card [&_td]:border-r [&_td]:border-b [&_td]:border-border [&_td:last-child]:border-r-0 [&_tbody_tr:last-child_td]:border-b-0"
         >
           {children}
         </table>

@@ -257,7 +257,17 @@ export function MermaidBlock({ children, className }: MermaidBlockProps) {
           ) : null}
         </div>
 
-        <div onWheel={handleWheel} onMouseDown={handleMouseDown} onMouseMove={handleMouseMove} onMouseUp={handleMouseUp} onMouseLeave={handleMouseLeave} onDoubleClick={resetView} className={cn("flex-1 overflow-hidden w-full h-full select-none", isDragging ? "cursor-grabbing" : "cursor-grab")}>
+        <div
+          role="application"
+          aria-label="Pan and zoom diagram"
+          onWheel={handleWheel}
+          onMouseDown={handleMouseDown}
+          onMouseMove={handleMouseMove}
+          onMouseUp={handleMouseUp}
+          onMouseLeave={handleMouseLeave}
+          onDoubleClick={resetView}
+          className={cn("flex-1 overflow-hidden w-full h-full select-none", isDragging ? "cursor-grabbing" : "cursor-grab")}
+        >
           <div ref={fullscreenRef} className="flex items-center justify-center w-full h-full origin-center [&_svg]:max-w-none [&_svg]:max-h-none pointer-events-none" style={{ transform: `translate(${pan.x}px, ${pan.y}px) scale(${zoom})` }} />
         </div>
       </dialog>
