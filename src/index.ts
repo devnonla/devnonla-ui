@@ -1,4 +1,4 @@
-export { App, useAppConfig } from "./app/App";
+export { App, useApp, useAppConfig, usePopupContainer, useToken } from "./app/App";
 export type { AppProps, NonlaAppConfig } from "./app/App";
 
 export { Button } from "./button/Button";
@@ -10,7 +10,7 @@ export { Input, TextArea, InputNumber } from "./input/Input";
 export type { InputProps, TextAreaProps, InputNumberProps, InputSize, TextAreaRef, PasswordProps } from "./input/Input";
 export { SearchInput } from "./input/SearchInput";
 export type { SearchInputProps } from "./input/SearchInput";
-/** antd `InputRef` compatibility — native input element. */
+/** Native input element ref. */
 export type InputRef = HTMLInputElement;
 
 export { Select, SelectOption } from "./select/Select";
@@ -55,7 +55,7 @@ export type {
   IFormItemHelpProps,
 } from "./form";
 
-/** Layout-only Form + Form.Item (antd drop-in for labeled fields). */
+/** Layout-only Form + Form.Item for labeled fields. */
 export { Form } from "./form-layout/FormLayout";
 export type { FormLayoutProps, FormLayoutItemProps } from "./form-layout/FormLayout";
 
@@ -102,6 +102,9 @@ export type { SpinProps, SpinVariant } from "./spin/Spin";
 export { Skeleton } from "./skeleton/Skeleton";
 export type { SkeletonProps } from "./skeleton/Skeleton";
 
+export { Shimmer } from "./shimmer/Shimmer";
+export type { ShimmerProps } from "./shimmer/Shimmer";
+
 export { Segmented } from "./segmented/Segmented";
 export type { SegmentedProps, SegmentedOption } from "./segmented/Segmented";
 
@@ -143,9 +146,14 @@ export {
   prettyJson,
   isCallAgentToolName,
   parseCallAgentToolTargetId,
+  matchesToolName,
+  matchesToolHook,
   parseBgTaskRef,
   formatBgElapsed,
   resolveToolUI,
+  builtinToolUis,
+  matchesToolUIName,
+  isToolRunning,
   CallAgentToolUI,
   WebFetchToolUI,
   GetCurrentTimeToolUI,
@@ -173,20 +181,26 @@ export type {
   AgentStreamRequest,
   AgentPanelEndpoint,
   AgentToolAction,
+  AgentToolHook,
+  AgentToolCallEvent,
+  AgentToolResultEvent,
+  AgentToolNameMatch,
   ToolUIProps,
   ChatToolMessage,
+  AgentToolUI,
+  AgentToolUIName,
   ChatBgTask,
   BackgroundTasksBarProps,
 } from "./chat";
 
 export { cn } from "./lib/cn";
 export { glassSurfaceClass, glassOverlayClass, meadowSurfaceClass } from "./lib/surface";
-export { CONTROL_SIZES, normalizeSize, getSizeTokens, controlHeightVar, controlRadiusVar, controlStatusClass } from "./lib/sizes";
+export { CONTROL_SIZES, normalizeSize, getSizeTokens, controlHeightVar, controlRadiusVar, controlStatusClass, useControlSize } from "./lib/sizes";
 export type { ControlSize, CanonicalSize, ControlSizeTokens } from "./lib/sizes";
 export { placementToRadix } from "./lib/placement";
 export type { PopperPlacement } from "./lib/placement";
-export { NONLA_THEME_KNOBS, NONLA_THEME_KEYS, applyNonlaTheme } from "./theme";
-export type { NonlaThemeKnob, NonlaThemeKnobName, NonlaThemeColorName, NonlaThemeColors, NonlaThemeConfig } from "./theme";
+export { NONLA_THEME_KNOBS, NONLA_THEME_KEYS, applyNonlaTheme, getDesignToken } from "./theme";
+export type { NonlaThemeKnob, NonlaThemeKnobName, NonlaThemeColorName, NonlaThemeColors, NonlaThemeConfig, NonlaTokenSnapshot } from "./theme";
 
 export { FluentIcon } from "./icon/FluentIcon";
 export {

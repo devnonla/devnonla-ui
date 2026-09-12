@@ -1,6 +1,6 @@
 # devnonla-ui (NonlaUI)
 
-Ant Design–like React controls for Nonla Agents.
+React controls for Nonla Agents.
 
 ```bash
 bun add devnonla-ui
@@ -10,7 +10,7 @@ Peer deps: `react` / `react-dom` >= 19, `react-hook-form`. Consumer should use T
 
 ```tsx
 import "devnonla-ui/styles.css";
-import { App, Button, EFormItemType, Form, Modal, message, type TFormItemProps } from "devnonla-ui";
+import { App, Button, EFormItemType, SchemaForm, Modal, message, type TFormItemProps } from "devnonla-ui";
 import { useForm } from "react-hook-form";
 
 message.success("Saved");
@@ -31,7 +31,7 @@ function Example() {
   return (
     <App>
       <form onSubmit={form.handleSubmit(console.log)}>
-        <Form form={form} items={items} />
+        <SchemaForm form={form} items={items} />
         <Button type="primary" htmlType="submit">
           Save
         </Button>
@@ -41,7 +41,7 @@ function Example() {
 }
 ```
 
-`Form` is JSON-schema driven (ZoForm-style) on `react-hook-form`. The BE can return `TFormItemProps[]`; FE hydrates `rules.pattern` strings to `RegExp`. Pass `fetcher` for `select_remote` fields.
+`SchemaForm` is JSON-schema driven (ZoForm-style) on `react-hook-form`. The BE can return `TFormItemProps[]`; FE hydrates `rules.pattern` strings to `RegExp`. Pass `fetcher` for `select_remote` fields. Layout-only labeled fields use `Form` / `Form.Item`.
 
 # Sizes
 
@@ -67,7 +67,7 @@ All color lives in **`--nonla-*` knobs** (`src/styles.css`). Components never ha
 }
 ```
 
-`--brand-50` … `--brand-800` follow `--nonla-brand` (500 = the knob). Text on cream uses `brand-700`.
+`--brand-50` … `--brand-800` follow `--nonla-brand` (500 = the knob). Text on cream uses `brand-700`. Text **on** the brand fill (Button primary, Tag solid, Checkbox) is `--nonla-solid-fg` / `colors.solidFg` — default white.
 
 Or at runtime:
 
@@ -83,13 +83,21 @@ Or at runtime:
 
 Flat knobs still work (`brand`, `colorBorder`, `colorBorderInput`, …). `applyNonlaTheme({ brand: "#3b82f6" })` does the same on `:root`.
 
-Core knobs: `--nonla-bg`, `--nonla-fg`, `--nonla-brand`, `--nonla-danger`, `--nonla-success`, `--nonla-warn`, `--nonla-link`, `--nonla-radius` (small = −2px, large = +2px), `--nonla-height` / `--nonla-height-sm` / `--nonla-height-lg`, plus surfaces (`--nonla-surface`, `--nonla-chip`, …) and preset accents (`--nonla-blue`, `--nonla-purple`, …).
+Core knobs: `--nonla-bg`, `--nonla-fg`, `--nonla-brand`, `--nonla-solid-fg`, `--nonla-danger`, `--nonla-success`, `--nonla-warn`, `--nonla-link`, `--nonla-radius` (small = −2px, large = +2px), `--nonla-height` / `--nonla-height-sm` / `--nonla-height-lg`, plus surfaces (`--nonla-surface`, `--nonla-chip`, …) and preset accents (`--nonla-blue`, `--nonla-purple`, …).
 
 Those map into shadcn-standard tokens (`--background`, `--destructive`, …) plus Nonla aliases (`--brand`, `--success`, …).
 
 - You: only touch `--nonla-*` (CSS or `theme` / `applyNonlaTheme`).
 - Shadcn consumers: can still override `--background` / `--primary` / etc.
-- Nonla CTA = `--brand` (from `--nonla-brand`). `--primary` = ink (emphasis), not the amber button.
+- Nonla CTA = `--brand` (from `--nonla-brand`). Label on that fill = `--nonla-solid-fg`. `--primary` = ink (emphasis), not the brand button.
+
+`<App>` is the ConfigProvider: `theme`, `componentSize`, `getPopupContainer`. Overlay portals (Select, Dropdown, DatePicker, Modal, Drawer, …) read `getPopupContainer`. `message.*` and `Modal.confirm` render into holders under `App`. `useToken()` / `getDesignToken()` read the live seed knobs.
+
+```tsx
+<App componentSize="large" getPopupContainer={() => document.getElementById("app")!}>
+  …
+</App>
+```
 
 # Desktop
 
@@ -119,13 +127,17 @@ import { AgentPanel } from "devnonla-ui";
 <AgentPanel
   endpoint="/api/agents/abc/assistant/stream"
   title="Nova"
-  extraBody={{ providerId, modelId: model }}
+  toolbar={<ModelPicker />}
+  toolUis={[{ name: "get_calendar_events", component: CalendarToolUI }]}
+  toolHooks={[
+    { name: "web_fetch", onCall: (e) => console.log("fetch", e.input), onResult: (e) => console.log("done", e.output) },
+  ]}
 />
 ```
 
-`endpoint` can also be a function that returns a `Response` (tests, mocks).
+`endpoint` can also be a function that returns a `Response` (tests, mocks). Pass any node to `toolbar` for the composer (model picker, tools, …). Extra tool cards go in `toolUis` and win over builtins on the same `toolName`. `toolHooks` fire `onCall` / `onResult` for matching tools (omit `name` to hear every tool). `onToolAction` still catches all events.
 
-POST body: `{ messages, ...extraBody }`. Stream events:
+POST body: `{ messages }` plus optional `extraBody`. Stream events:
 
 `text-delta` | `thinking-delta` | `tool-call` | `tool-result` | `done` | `error`
 
