@@ -5,6 +5,23 @@ All notable changes to this project will be documented in this file.
 The format is based on [Keep a Changelog](https://keepachangelog.com/en/1.1.0/),
 and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0.html).
 
+## [0.3.0] - 2026-09-12
+
+### Added
+
+- `Splitter` / `Splitter.Panel` — resizable split panels (`orientation`, min/max size, `onResize`).
+- `ColorPicker` panel: saturation/brightness, hue/alpha, HEX / RGB / HSB, presets, `showText`, `allowClear`, sizes.
+- `Color` helper (`toHexString`, `toRgbString`, `toHsbString`, `toCssString`).
+
+### Changed
+
+- `ColorPicker` public API now matches Ant Design-style props (`value` / `onChange(color, css)`, `size` as control size). SchemaForm `color` fields use the new picker.
+
+### Upgrade notes
+
+- Replace `ColorPicker` usage: `onChange` is `(color: Color, css: string) => void`; `size` is `"small" | "default" | "large"`; `presets` is optional `{ label, colors }[]`.
+- Store `Color` in controlled mode to avoid HEX round-trip drift.
+
 ## [0.2.0] - 2026-09-12
 
 ### Added
@@ -31,4 +48,5 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 - Replace class `nonla-chat-shimmer` with `Shimmer` or `.nonla-shimmer`.
 - `resolveToolUI(toolName, extras?)` — second argument is optional; extra UIs are checked first.
 
+[0.3.0]: https://github.com/devnonla/devnonla-ui/compare/v0.2.0...v0.3.0
 [0.2.0]: https://github.com/devnonla/devnonla-ui/compare/v0.1.0...v0.2.0
