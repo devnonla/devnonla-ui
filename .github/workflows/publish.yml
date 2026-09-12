@@ -28,5 +28,7 @@ jobs:
 
       - name: Publish
         env:
-          NODE_AUTH_TOKEN: ${{ secrets.DEVNONLA_NPM_TOKEN }}
-        run: bun publish --access public
+          NPM_TOKEN: ${{ secrets.DEVNONLA_NPM_TOKEN }}
+        run: |
+          echo "//registry.npmjs.org/:_authToken=${NPM_TOKEN}" > .npmrc
+          bun publish --access public
