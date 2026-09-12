@@ -77,6 +77,9 @@ export type { PopconfirmProps } from "./popconfirm/Popconfirm";
 export { Drawer } from "./drawer/Drawer";
 export type { DrawerProps, DrawerPlacement } from "./drawer/Drawer";
 
+export { Splitter, SplitterPanel } from "./splitter/Splitter";
+export type { SplitterProps, SplitterPanelProps, SplitterOrientation, SplitterSize, SplitterSemanticSlot } from "./splitter/Splitter";
+
 export { Table } from "./table/Table";
 export type {
   TableProps,
