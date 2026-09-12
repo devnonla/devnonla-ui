@@ -78,7 +78,7 @@ export function DesktopHeader({
   profile?: ReactNode;
 }) {
   return (
-    <header className="fixed inset-x-0 top-0 z-40 flex h-desktop-bar items-center justify-between gap-3 border-0 bg-glass-bar px-3 backdrop-blur-lg">
+    <header className="nonla-header-layer fixed inset-x-0 top-0 flex h-desktop-bar items-center justify-between gap-3 border-0 bg-glass-bar px-3 backdrop-blur-lg">
       <div className="flex min-w-0 items-center">
         {logo}
         {leading}

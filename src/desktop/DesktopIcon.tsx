@@ -6,9 +6,7 @@ const iconButtonClass =
 
 const labelClass = "text-xs leading-[18px] font-semibold text-center line-clamp-2 w-full";
 
-function plateClass(active: boolean) {
-  return `w-11 h-11 flex items-center justify-center filter-[drop-shadow(0_1px_2px_rgba(0,0,0,0.45))] ${active ? "ring-2 ring-brand rounded-[10px]" : ""}`;
-}
+const plateClass = "nonla-window-glass nonla-desktop-icon-plate w-11 h-11 flex items-center justify-center";
 
 export const DesktopIcon = forwardRef<
   HTMLButtonElement,
@@ -24,7 +22,7 @@ export const DesktopIcon = forwardRef<
   return (
     <button ref={ref} type="button" title={label} aria-label={label} aria-current={active ? "true" : undefined} dir="ltr" onClick={onClick} className={iconButtonClass}>
       {media ?? (
-        <span className={plateClass(active)}>
+        <span className={plateClass}>
           <FluentIcon name={icon ?? "sparkle-24"} size={32} />
         </span>
       )}

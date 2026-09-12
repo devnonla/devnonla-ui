@@ -1,6 +1,7 @@
 import { type MouseEvent as ReactMouseEvent, type PointerEvent as ReactPointerEvent, type ReactNode, createContext, useContext, useEffect, useLayoutEffect, useMemo, useRef, useState } from "react";
 import { createPortal } from "react-dom";
 import { cn } from "../lib/cn";
+import { OverlayScroll, type OverlayScrollVisibility } from "../scroll/OverlayScroll";
 import { glassSurfaceClass } from "../lib/surface";
 
 type Phase = "open" | "leaving";
@@ -211,12 +212,17 @@ export function DesktopWindow({
   expanded,
   onClose,
   onToggleExpand,
+  scroll = true,
+  scrollbar = "hover",
   children,
 }: {
   title?: ReactNode;
   expanded: boolean;
   onClose: () => void;
   onToggleExpand: () => void;
+  /** Overlay auto-hide scrollbar on the body. Pass `false` when children manage their own scroll (split panes, AgentPanel). */
+  scroll?: boolean;
+  scrollbar?: OverlayScrollVisibility;
   children: ReactNode;
 }) {
   const overlayRef = useRef<HTMLDivElement>(null);
@@ -444,7 +450,7 @@ export function DesktopWindow({
 
   return (
     <WindowHeaderSlotContext.Provider value={headerChrome}>
-      <div ref={overlayRef} className="pointer-events-none absolute inset-x-0 bottom-0 top-desktop-bar z-30">
+      <div ref={overlayRef} className="nonla-window-layer pointer-events-none absolute inset-x-0 bottom-0 top-desktop-bar">
         <section
           ref={frameRef}
           aria-label={typeof title === "string" && title ? title : "Window"}
@@ -464,16 +470,16 @@ export function DesktopWindow({
             opacity: visible ? 1 : 0,
             transform: visible ? "scale(1)" : "scale(0.18)",
             transition: [geom, fade].filter(Boolean).join(", ") || undefined,
-            ["--glass" as string]: "color-mix(in srgb, white 72%, transparent)",
           }}
           data-expanded={expanded || undefined}
-          className={cn("absolute flex flex-col rounded-xl pointer-events-auto transform-gpu", glassSurfaceClass, leaving && "pointer-events-none")}
+          className={cn("absolute flex flex-col rounded-xl pointer-events-auto transform-gpu", glassSurfaceClass, "nonla-window-glass", leaving && "pointer-events-none")}
         >
           <div className="flex min-h-0 flex-1 flex-col overflow-hidden rounded-xl">
+            {/* biome-ignore lint/a11y/noStaticElementInteractions: title bar is a pointer drag surface */}
             <header
               onPointerDown={startDrag}
               onDoubleClick={onTitleBarDoubleClick}
-              className="flex h-8 shrink-0 cursor-default items-center gap-4 border-0 border-b border-solid border-glass-border px-3 select-none touch-none"
+              className="flex h-8 shrink-0 cursor-default items-center gap-4 border-0 border-b border-solid border-ink-line px-3 select-none touch-none"
             >
               <div className="group/traffic flex shrink-0 items-center gap-2">
                 <TrafficLight label="Close window" tone="close" onClick={requestClose} shortcut="Esc">
@@ -489,7 +495,15 @@ export function DesktopWindow({
               </div>
             </header>
 
-            <div className="min-h-0 flex-1 overflow-hidden">{children}</div>
+            <div className="min-h-0 flex-1 overflow-hidden">
+              {scroll ? (
+                <OverlayScroll visibility={scrollbar} className="h-full">
+                  {children}
+                </OverlayScroll>
+              ) : (
+                children
+              )}
+            </div>
           </div>
 
           {!expanded && !leaving
