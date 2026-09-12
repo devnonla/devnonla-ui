@@ -949,3 +949,18 @@
 .group\/scroll:hover .nonla-overlay-thumb {
   background: var(--nonla-scrollbar-thumb-hover);
 }
+
+.nonla-color-checkered {
+  background-color: #fff;
+  background-image: conic-gradient(#d9d9d9 0.25turn, #fff 0.25turn 0.5turn, #d9d9d9 0.5turn 0.75turn, #fff 0.75turn);
+  background-size: 8px 8px;
+}
+
+.nonla-color-cleared {
+  background: linear-gradient(
+    to bottom left,
+    transparent calc(50% - 1px),
+    var(--destructive) calc(50% - 1px) calc(50% + 1px),
+    transparent calc(50% + 1px)
+  );
+}

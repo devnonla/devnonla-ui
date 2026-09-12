@@ -22,8 +22,8 @@ export type { SwitchProps, SwitchVariant } from "./switch/Switch";
 export { Checkbox } from "./checkbox/Checkbox";
 export type { CheckboxProps } from "./checkbox/Checkbox";
 
-export { ColorPicker } from "./colorpicker/ColorPicker";
-export type { ColorPickerProps } from "./colorpicker/ColorPicker";
+export { ColorPicker, Color } from "./colorpicker/ColorPicker";
+export type { ColorPickerProps, ColorFormat, ColorType, PresetColorType, ColorPickerSemanticSlot } from "./colorpicker/ColorPicker";
 
 export { Tooltip } from "./tooltip/Tooltip";
 export type { TooltipProps, TooltipPlacement } from "./tooltip/Tooltip";
