@@ -1,14 +1,14 @@
 import { type ReactNode, useEffect, useState } from "react";
 import { cn } from "../lib/cn";
-import { type ControlSize, getSizeTokens, useControlSize } from "../lib/sizes";
+import { type ControlSize, getSizeTokens, normalizeSize, useControlSize } from "../lib/sizes";
 
-export type SpinVariant = "default" | "agent" | "subAgent";
+export type SpinVariant = "default" | "agent";
 
 export type SpinProps = {
   spinning?: boolean;
   tip?: ReactNode;
   size?: ControlSize;
-  /** Visual style — agent / subAgent for AI run states. */
+  /** Visual style — `agent` is the 3×3 snake for AI run states. */
   variant?: SpinVariant;
   /** Replace the built-in indicator entirely. */
   indicator?: ReactNode;
@@ -75,11 +75,17 @@ function stepSnake(snake: Snake): Snake {
   return [next, head, mid];
 }
 
+/** 3×3 metrics so `small` is visibly smaller than default (icon-aligned). */
+function matrixMetrics(size: ControlSize | undefined): { cell: number; gap: number } {
+  const s = normalizeSize(size);
+  if (s === "small") return { cell: 3, gap: 1.5 };
+  if (s === "large") return { cell: 6, gap: 3 };
+  return { cell: 4, gap: 2 };
+}
+
 /** 3×3 fixed dots — 3 adjacent lit cells crawl randomly (snake). */
-function MatrixSnake({ size, tickMs = 220 }: { size: ControlSize | undefined; tickMs?: number }) {
-  const scale = getSizeTokens(size).icon / 16;
-  const cell = Math.max(4, Math.round(5 * scale));
-  const gap = Math.max(2, Math.round(2 * scale));
+function MatrixSnake({ size, tickMs = 240 }: { size: ControlSize | undefined; tickMs?: number }) {
+  const { cell, gap } = matrixMetrics(size);
   const dim = cell * 3 + gap * 2;
   const [snake, setSnake] = useState<Snake>(() => randomSnake());
 
@@ -112,17 +118,8 @@ function MatrixSnake({ size, tickMs = 220 }: { size: ControlSize | undefined; ti
   );
 }
 
-function AgentSpinner({ size }: { size: ControlSize | undefined }) {
-  return <MatrixSnake size={size} tickMs={240} />;
-}
-
-function SubAgentSpinner({ size }: { size: ControlSize | undefined }) {
-  return <MatrixSnake size={size} tickMs={180} />;
-}
-
 function Spinner({ size, variant }: { size: ControlSize | undefined; variant: SpinVariant }) {
-  if (variant === "agent") return <AgentSpinner size={size} />;
-  if (variant === "subAgent") return <SubAgentSpinner size={size} />;
+  if (variant === "agent") return <MatrixSnake size={size} />;
   return <DefaultSpinner size={size} />;
 }
 
