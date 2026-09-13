@@ -3,7 +3,7 @@ import { Checkbox } from "../checkbox/Checkbox";
 import { Empty } from "../empty/Empty";
 import { cn } from "../lib/cn";
 import { type CanonicalSize, type ControlSize, useControlSize } from "../lib/sizes";
-import { Pagination } from "../pagination/Pagination";
+import { Pagination, type PaginationProps } from "../pagination/Pagination";
 import { Spin } from "../spin/Spin";
 
 export type SortOrder = "ascend" | "descend" | null;
@@ -29,14 +29,29 @@ export type ColumnType<T> = {
 
 export type ColumnsType<T> = ColumnType<T>[];
 
-export type TablePaginationConfig = {
-  current?: number;
-  pageSize?: number;
-  total?: number;
-  onChange?: (page: number, pageSize: number) => void;
-  hideOnSinglePage?: boolean;
-  className?: string;
-};
+export type TablePaginationConfig = Pick<
+  PaginationProps,
+  | "align"
+  | "current"
+  | "defaultCurrent"
+  | "pageSize"
+  | "defaultPageSize"
+  | "total"
+  | "onChange"
+  | "onShowSizeChange"
+  | "hideOnSinglePage"
+  | "className"
+  | "showSizeChanger"
+  | "showQuickJumper"
+  | "showTotal"
+  | "simple"
+  | "disabled"
+  | "size"
+  | "pageSizeOptions"
+  | "showLessItems"
+  | "showTitle"
+  | "itemRender"
+>;
 
 export type TableRowSelection<T> = {
   selectedRowKeys?: Key[];
@@ -157,8 +172,8 @@ export function Table<T extends object = Record<string, unknown>>({ columns = []
   const [innerSelected, setInnerSelected] = useState<Key[]>(() => rowSelection?.defaultSelectedRowKeys ?? []);
   const selectedKeys = selectionControlled ? (rowSelection?.selectedRowKeys ?? []) : innerSelected;
 
-  const [innerPage, setInnerPage] = useState(1);
-  const [innerPageSize, setInnerPageSize] = useState(10);
+  const [innerPage, setInnerPage] = useState(() => (typeof pagination === "object" && pagination?.defaultCurrent) || 1);
+  const [innerPageSize, setInnerPageSize] = useState(() => (typeof pagination === "object" && pagination?.defaultPageSize) || 10);
 
   const initialSort = useMemo(() => {
     const col = columns.find((c) => c.defaultSortOrder);
@@ -179,8 +194,9 @@ export function Table<T extends object = Record<string, unknown>>({ columns = []
   const paginationOff = pagination === false;
   const pageConfig: TablePaginationConfig = paginationOff ? {} : (pagination ?? {});
   const pageControlled = pageConfig.current !== undefined;
+  const pageSizeControlled = pageConfig.pageSize !== undefined;
   const current = pageControlled ? (pageConfig.current ?? 1) : innerPage;
-  const pageSize = pageConfig.pageSize ?? (pageControlled ? 10 : innerPageSize);
+  const pageSize = pageSizeControlled ? (pageConfig.pageSize ?? 10) : innerPageSize;
   const serverSide = pageConfig.total !== undefined;
 
   const sortedData = useMemo(() => {
@@ -227,10 +243,8 @@ export function Table<T extends object = Record<string, unknown>>({ columns = []
   };
 
   const handlePageChange = (page: number, nextSize: number) => {
-    if (!pageControlled) {
-      setInnerPage(page);
-      setInnerPageSize(nextSize);
-    }
+    if (!pageControlled) setInnerPage(page);
+    if (!pageSizeControlled) setInnerPageSize(nextSize);
     pageConfig.onChange?.(page, nextSize);
     onChange?.({ current: page, pageSize: nextSize, total }, {}, { columnKey: sortState.key ?? undefined, order: sortState.order });
   };
@@ -377,8 +391,19 @@ export function Table<T extends object = Record<string, unknown>>({ columns = []
       </Spin>
 
       {showPagination ? (
-        <div className={cn("mt-4 flex justify-end", pageConfig.className)}>
-          <Pagination current={current} pageSize={pageSize} total={total} size={size} onChange={handlePageChange} />
+        <div className={cn("mt-4", pageConfig.className)}>
+          <Pagination
+            {...pageConfig}
+            className={undefined}
+            hideOnSinglePage={false}
+            align={pageConfig.align ?? "end"}
+            current={current}
+            pageSize={pageSize}
+            total={total}
+            size={pageConfig.size ?? "small"}
+            showSizeChanger={pageConfig.showSizeChanger ?? false}
+            onChange={handlePageChange}
+          />
         </div>
       ) : null}
     </div>
