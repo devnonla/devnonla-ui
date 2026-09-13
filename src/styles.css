@@ -633,14 +633,6 @@
   backdrop-filter: blur(40px) saturate(108%);
 }
 
-/* Fluent Color desktop tile — same frost as the window, macOS squircle. */
-.nonla-desktop-icon-plate {
-  overflow: hidden;
-  border: 0;
-  border-radius: 22%;
-  box-shadow: none;
-}
-
 .nonla-btn-glass {
   border-color: var(--glass-border);
   background: var(--glass);
