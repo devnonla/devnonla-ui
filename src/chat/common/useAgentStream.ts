@@ -172,6 +172,7 @@ export function useAgentStream({ endpoint, extraBody, headers, fetcher = fetch, 
       let assistantText = "";
       let currentId = assistantId;
       let needsNewBubble = false;
+      const seenToolCallIds = new Set<string>();
 
       const freezeOpen = () => {
         const freezeId = currentId;
@@ -298,6 +299,34 @@ export function useAgentStream({ endpoint, extraBody, headers, fetcher = fetch, 
             },
             onToolCall: (event) => {
               const label = event.toolLabel ? (event.toolLabel.includes(" ") ? event.toolLabel : formatToolName(event.toolLabel)) : formatToolName(event.toolName);
+              const alreadySeen = event.toolCallId ? seenToolCallIds.has(event.toolCallId) : false;
+              if (event.toolCallId) seenToolCallIds.add(event.toolCallId);
+
+              if (alreadySeen) {
+                setMessages((prev) =>
+                  prev.map((m) =>
+                    m.role === "tool-call" && m.toolCallId === event.toolCallId
+                      ? {
+                          ...m,
+                          content: event.toolName,
+                          toolName: event.toolName,
+                          toolLabel: label,
+                          toolInput: event.input !== undefined ? event.input : m.toolInput,
+                        }
+                      : m,
+                  ),
+                );
+                if (event.input !== undefined) {
+                  emitCall({
+                    toolCallId: event.toolCallId,
+                    toolName: event.toolName,
+                    toolLabel: label,
+                    input: event.input,
+                  });
+                }
+                return;
+              }
+
               freezeOpen();
               const id = nextId("tc");
               const call: AgentToolCallEvent = {
