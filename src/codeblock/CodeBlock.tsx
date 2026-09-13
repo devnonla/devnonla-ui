@@ -1,6 +1,9 @@
-import { type ComponentProps, type ReactNode, createContext, useContext, useMemo } from "react";
+import { FileText } from "lucide-react";
+import { type ComponentProps, createContext, type ReactNode, useContext, useMemo } from "react";
 import { ButtonCopy } from "../button/ButtonCopy";
 import { cn } from "../lib/cn";
+import type { ControlSize } from "../lib/sizes";
+import { OverlayScroll } from "../scroll/OverlayScroll";
 import { highlightCode, languageLabel, wrapHljsLines } from "./highlight";
 
 type CodeBlockContextValue = {
@@ -22,16 +25,9 @@ export type CodeBlockProps = ComponentProps<"div"> & {
   wordWrap?: boolean;
 };
 
-function CodeFileIcon({ size = 14 }: { size?: number }) {
-  return (
-    <svg width={size} height={size} viewBox="0 0 256 256" aria-hidden>
-      <path fill="none" stroke="currentColor" strokeWidth="25" strokeLinecap="round" d="M208 128l-80 80M192 40 40 192" />
-    </svg>
-  );
-}
-
-export type CodeBlockCopyButtonProps = ComponentProps<"button"> & {
+export type CodeBlockCopyButtonProps = Omit<ComponentProps<"button">, "size"> & {
   content?: string;
+  size?: ControlSize;
 };
 
 export function CodeBlockCopyButton({ content, className, ...props }: CodeBlockCopyButtonProps) {
@@ -54,7 +50,7 @@ export function CodeBlock({ code, language, title, lineNumbers = false, wordWrap
           <div className="flex min-w-0 items-center gap-2">
             {label ? (
               <>
-                <CodeFileIcon />
+                <FileText size={14} className="shrink-0" aria-hidden />
                 <span className="truncate font-medium">{label}</span>
               </>
             ) : null}
@@ -62,14 +58,16 @@ export function CodeBlock({ code, language, title, lineNumbers = false, wordWrap
           <CodeBlockCopyButton />
         </div>
 
-        <div className={cn("nonla-codeblock-body nonla-codeblock-well relative min-w-0 overflow-y-auto bg-card font-mono text-[13px] leading-5", children ? "max-h-96" : "mx-0.5 mb-0.5 max-h-96 rounded-lg")}>
-          <div className={cn("w-full", !wordWrap && "overflow-x-auto")}>
-            <pre className={cn("nonla-codeblock-pre m-0 whitespace-pre break-normal", lineNumbers && "nonla-codeblock-lines", wordWrap && "whitespace-pre-wrap wrap-break-word")}>
-              {/* biome-ignore lint/security/noDangerouslySetInnerHtml: highlight.js emits escaped HTML */}
-              <code className={cn("block px-3 py-2.5", !wordWrap && "w-max min-w-full")} dangerouslySetInnerHTML={{ __html: html }} />
-            </pre>
-          </div>
-        </div>
+        <OverlayScroll
+          autoHeight
+          className={cn("nonla-codeblock-body nonla-codeblock-well min-w-0 bg-card font-mono text-[13px] leading-5 max-h-96", !children && "mx-0.5 mb-0.5 rounded-lg")}
+          innerClassName={wordWrap ? undefined : "overflow-x-auto"}
+        >
+          <pre className={cn("nonla-codeblock-pre m-0 whitespace-pre break-normal", lineNumbers && "nonla-codeblock-lines", wordWrap && "whitespace-pre-wrap wrap-break-word")}>
+            {/* biome-ignore lint/security/noDangerouslySetInnerHtml: highlight.js emits escaped HTML */}
+            <code className={cn("block px-3 py-2.5", !wordWrap && "w-max min-w-full")} dangerouslySetInnerHTML={{ __html: html }} />
+          </pre>
+        </OverlayScroll>
         {children}
       </div>
     </CodeBlockContext.Provider>
