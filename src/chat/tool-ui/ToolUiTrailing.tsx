@@ -1,4 +1,4 @@
-import { FluentIcon } from "../../icon/FluentIcon";
+import { ChevronRight, CircleX } from "lucide-react";
 import { cn } from "../../lib/cn";
 import { ChatSpinner } from "../message-ui/ChatSpinner";
 
@@ -14,11 +14,7 @@ export function ToolUiTrailing({
   chevronClassName?: string;
 }) {
   if (running) return <ChatSpinner />;
-  if (failed) return <FluentIcon name="error-circle-24" size={13} className="text-destructive" />;
+  if (failed) return <CircleX size={13} className="text-destructive" aria-hidden />;
   if (!chevron) return null;
-  return (
-    <svg className={cn("h-3 w-3 shrink-0 opacity-0 transition-[opacity,transform] duration-150", chevronClassName)} fill="none" stroke="currentColor" viewBox="0 0 24 24" aria-hidden>
-      <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M9 5l7 7-7 7" />
-    </svg>
-  );
+  return <ChevronRight size={12} className={cn("shrink-0 opacity-0 transition-[opacity,transform] duration-150", chevronClassName)} aria-hidden />;
 }

@@ -1,6 +1,6 @@
+import { CodeBlock } from "../../codeblock/CodeBlock";
 import { FluentIcon } from "../../icon/FluentIcon";
 import { cn } from "../../lib/cn";
-import { CodeBlock } from "../../codeblock/CodeBlock";
 import { Shimmer } from "../../shimmer/Shimmer";
 import { parseBgTaskRef } from "../common/bgTasks";
 import { parseJsonObject, prettyJson } from "../common/utils";
@@ -87,7 +87,7 @@ export function RunJsToolUI({ msg, assistantLabel = "Assistant", assistantColor,
       <ToolUiBadge show={showAvatar} label={assistantLabel} color={assistantColor} />
       <details className="group/runjs px-4 pb-2" style={{ overflowAnchor: "none" }}>
         <summary className="flex cursor-pointer list-none items-center gap-2 py-0.5 text-[14px] leading-5.5 select-none [&::-webkit-details-marker]:hidden">
-          <FluentIcon name="code-24" size={13} className="shrink-0 text-muted-foreground" />
+          <FluentIcon name="code-block-24" size={13} className="shrink-0 text-muted-foreground" />
           <Shimmer active={running} className="min-w-0 truncate font-medium text-muted-foreground">{verb}</Shimmer>
           <ToolUiTrailing running={running} failed={failed} chevron chevronClassName="group-hover/runjs:opacity-100 group-open/runjs:opacity-100 group-open/runjs:rotate-90" />
         </summary>

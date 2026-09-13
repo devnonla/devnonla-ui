@@ -60,16 +60,16 @@ export function ReadSkillToolUI({ msg, assistantLabel = "Assistant", assistantCo
             {verb}
             {targetLabel ? <span className="font-normal text-tertiary-foreground"> {targetLabel}</span> : null}
           </Shimmer>
-          <ToolUiTrailing running={running} failed={failed} chevron chevronClassName="group-hover/readskill:opacity-100 group-open/readskill:opacity-100 group-open/readskill:rotate-90" />
+          <ToolUiTrailing failed={failed} chevron chevronClassName="group-hover/readskill:opacity-100 group-open/readskill:opacity-100 group-open/readskill:rotate-90" />
         </summary>
         {body ? (
-          <pre className={cn("m-0 mt-1.5 mb-1 max-h-40 overflow-y-auto rounded-lg border px-3 py-2 font-mono text-[14px] font-normal leading-[1.65] break-all whitespace-pre-wrap", failed ? "border-destructive/35 bg-destructive/6 text-destructive" : "border-(--popper-border) bg-(--nonla-elevated) text-muted-foreground")}>{body}</pre>
+          <pre className={cn("m-0 mt-1.5 mb-1 max-h-40 overflow-y-auto rounded-lg border px-3 py-2 font-mono text-[13px] font-normal leading-[1.65] break-all whitespace-pre-wrap", failed ? "border-destructive/35 bg-destructive/6 text-destructive" : "border-(--popper-border) bg-(--nonla-elevated) text-muted-foreground")}>{body}</pre>
         ) : null}
         {!running && !reference && available.length > 0 ? (
           <div className="mt-0.5 mb-1 flex flex-wrap items-center gap-1">
             <span className="text-[10px] font-medium tracking-wide text-quaternary-foreground uppercase">Refs</span>
             {available.map((name) => (
-              <span key={name} className="inline-flex max-w-full items-center rounded-md border border-border-subtle bg-muted/40 px-1.5 py-0.5 font-mono text-[14px] leading-[1.4] text-tertiary-foreground">
+              <span key={name} className="inline-flex max-w-full items-center rounded-md border border-border-subtle bg-muted/40 px-1.5 py-0.5 font-mono text-[13px] leading-[1.4] text-tertiary-foreground">
                 {skillName ? `${skillName} / ${name}` : name}
               </span>
             ))}

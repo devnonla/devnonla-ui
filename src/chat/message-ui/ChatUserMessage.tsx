@@ -1,3 +1,4 @@
+import { ChevronDown } from "lucide-react";
 import { useEffect, useRef, useState } from "react";
 import { cn } from "../../lib/cn";
 
@@ -28,8 +29,8 @@ export function ChatUserMessage({ content, className }: ChatUserMessageProps) {
   return (
     <div
       className={cn(
-        "nonla-chat-user relative isolate mt-6 mb-3 mx-4 overflow-hidden rounded-xl px-3 py-2.5",
-        "border border-brand/40 bg-[color-mix(in_oklab,var(--brand)_14%,var(--glass))] backdrop-blur-xl backdrop-saturate-150",
+        "nonla-chat-user relative isolate mt-6 mb-3 mx-4 overflow-hidden rounded-xl px-3 py-1.5",
+        "border border-solid border-border bg-[color-mix(in_oklab,var(--nonla-ink)_7%,transparent)] backdrop-blur-xl",
         className,
       )}
     >
@@ -54,9 +55,7 @@ export function ChatUserMessage({ content, className }: ChatUserMessageProps) {
           }}
           className="flex w-full cursor-pointer items-center justify-center border-0 bg-transparent pt-1 text-muted-foreground hover:text-foreground"
         >
-          <svg width="12" height="12" viewBox="0 0 12 12" fill="none" aria-hidden className={cn("transition-transform duration-200", isExpanded && "rotate-180")}>
-            <path d="M2.5 4.5 6 8l3.5-3.5" stroke="currentColor" strokeWidth="1.5" strokeLinecap="round" strokeLinejoin="round" />
-          </svg>
+          <ChevronDown size={12} className={cn("transition-transform duration-200", isExpanded && "rotate-180")} aria-hidden />
         </button>
       ) : null}
     </div>

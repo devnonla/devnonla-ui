@@ -1,3 +1,4 @@
+import { Download, Maximize2, Minimize2, Moon, Sun } from "lucide-react";
 import { useCallback, useEffect, useId, useRef, useState } from "react";
 import { CodeBlock } from "../../codeblock/CodeBlock";
 import { cn } from "../../lib/cn";
@@ -11,47 +12,6 @@ export type MermaidBlockProps = {
 type MermaidTheme = "light" | "dark";
 
 const btnClass = "flex items-center gap-1 px-2 py-1 rounded-lg border border-border text-muted-foreground text-xs cursor-pointer transition-colors hover:text-primary hover:border-primary/30 bg-transparent";
-
-function IconSun({ size = 14 }: { size?: number }) {
-  return (
-    <svg width={size} height={size} viewBox="0 0 24 24" fill="none" aria-hidden>
-      <circle cx="12" cy="12" r="4" stroke="currentColor" strokeWidth="1.75" />
-      <path d="M12 3v2M12 19v2M4.9 4.9l1.4 1.4M17.7 17.7l1.4 1.4M3 12h2M19 12h2M4.9 19.1l1.4-1.4M17.7 6.3l1.4-1.4" stroke="currentColor" strokeWidth="1.75" strokeLinecap="round" />
-    </svg>
-  );
-}
-
-function IconMoon({ size = 14 }: { size?: number }) {
-  return (
-    <svg width={size} height={size} viewBox="0 0 24 24" fill="none" aria-hidden>
-      <path d="M21 14.5A8.5 8.5 0 1 1 12 3a7 7 0 0 0 9 11.5z" stroke="currentColor" strokeWidth="1.75" strokeLinejoin="round" />
-    </svg>
-  );
-}
-
-function IconDownload({ size = 14 }: { size?: number }) {
-  return (
-    <svg width={size} height={size} viewBox="0 0 24 24" fill="none" aria-hidden>
-      <path d="M12 4v12M7 12l5 5 5-5M5 20h14" stroke="currentColor" strokeWidth="1.75" strokeLinecap="round" strokeLinejoin="round" />
-    </svg>
-  );
-}
-
-function IconFullScreen({ size = 14 }: { size?: number }) {
-  return (
-    <svg width={size} height={size} viewBox="0 0 24 24" fill="none" aria-hidden>
-      <path d="M8 4H4v4M16 4h4v4M8 20H4v-4M16 20h4v-4" stroke="currentColor" strokeWidth="1.75" strokeLinecap="round" strokeLinejoin="round" />
-    </svg>
-  );
-}
-
-function IconQuitFullScreen({ size = 16 }: { size?: number }) {
-  return (
-    <svg width={size} height={size} viewBox="0 0 24 24" fill="none" aria-hidden>
-      <path d="M9 4v5H4M15 4v5h5M9 20v-5H4M15 20v-5h5" stroke="currentColor" strokeWidth="1.75" strokeLinecap="round" strokeLinejoin="round" />
-    </svg>
-  );
-}
 
 export function MermaidBlock({ children, className }: MermaidBlockProps) {
   const id = useId().replace(/:/g, "_");
@@ -216,13 +176,13 @@ export function MermaidBlock({ children, className }: MermaidBlockProps) {
       <div className={cn("my-3 last:mb-0 group relative rounded-xl border border-border overflow-hidden", surfaceClass, className)}>
         <div className="absolute top-2 right-2 z-10 flex items-center gap-1 opacity-0 group-hover:opacity-100 transition-opacity">
           <button type="button" onClick={toggleTheme} className={cn(btnClass, surfaceClass)} title={isDark ? "Light theme" : "Dark theme"}>
-            {isDark ? <IconSun /> : <IconMoon />}
+            {isDark ? <Sun size={14} aria-hidden /> : <Moon size={14} aria-hidden />}
           </button>
           <button type="button" onClick={downloadSvg} className={cn(btnClass, surfaceClass)} title="Download SVG" disabled={!svgContent}>
-            <IconDownload />
+            <Download size={14} aria-hidden />
           </button>
           <button type="button" onClick={openFullscreen} className={cn(btnClass, surfaceClass)} title="Fullscreen">
-            <IconFullScreen />
+            <Maximize2 size={14} aria-hidden />
           </button>
         </div>
         <div ref={containerRef} className="flex justify-center p-6 overflow-x-auto [&_svg]:max-w-full" />
@@ -237,13 +197,13 @@ export function MermaidBlock({ children, className }: MermaidBlockProps) {
       >
         <div className="fixed top-5 right-5 z-50 flex items-center gap-1.5">
           <button type="button" onClick={toggleTheme} className={cn(btnClass, surfaceClass, "px-3 py-2 text-sm shadow-md")} title={isDark ? "Light theme" : "Dark theme"}>
-            {isDark ? <IconSun size={16} /> : <IconMoon size={16} />}
+            {isDark ? <Sun size={16} aria-hidden /> : <Moon size={16} aria-hidden />}
           </button>
           <button type="button" onClick={downloadSvg} className={cn(btnClass, surfaceClass, "px-3 py-2 text-sm shadow-md")} title="Download SVG" disabled={!svgContent}>
-            <IconDownload size={16} />
+            <Download size={16} aria-hidden />
           </button>
           <button type="button" onClick={closeFullscreen} className={cn(btnClass, surfaceClass, "px-3 py-2 text-sm shadow-md")} title="Exit fullscreen">
-            <IconQuitFullScreen />
+            <Minimize2 size={16} aria-hidden />
             <span>Exit</span>
           </button>
         </div>

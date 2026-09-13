@@ -1,3 +1,4 @@
+import { ChevronRight } from "lucide-react";
 import { useEffect, useLayoutEffect, useRef, useState } from "react";
 import { cn } from "../../lib/cn";
 import { Shimmer } from "../../shimmer/Shimmer";
@@ -49,9 +50,7 @@ export function ChatThinking({ thinking, duration = 0, streaming = false, classN
     >
       <summary className="cursor-pointer select-none text-sm font-medium flex items-center gap-1 py-0.5 list-none [&::-webkit-details-marker]:hidden">
         <Shimmer active={streaming} className="text-tertiary-foreground">{label}</Shimmer>
-        <svg className="w-3 h-3 shrink-0 opacity-0 text-tertiary-foreground transition-[opacity,transform] duration-150 group-hover/thinking:opacity-100 group-open/thinking:opacity-100 group-open/thinking:rotate-90" fill="none" stroke="currentColor" viewBox="0 0 24 24" aria-hidden>
-          <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M9 5l7 7-7 7" />
-        </svg>
+        <ChevronRight className="size-3 shrink-0 opacity-0 text-tertiary-foreground transition-[opacity,transform] duration-150 group-hover/thinking:opacity-100 group-open/thinking:opacity-100 group-open/thinking:rotate-90" aria-hidden />
       </summary>
 
       <div ref={bodyRef} className="pt-2 max-h-40 min-w-0 overflow-y-auto overflow-x-hidden mb-2 text-[14px] leading-normal">

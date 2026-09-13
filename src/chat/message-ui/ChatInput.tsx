@@ -1,5 +1,5 @@
+import { ArrowUp, Eraser, Square } from "lucide-react";
 import { type KeyboardEvent as ReactKeyboardEvent, type ReactNode, useEffect, useLayoutEffect, useRef, useState } from "react";
-import { FluentIcon } from "../../icon/FluentIcon";
 import { cn } from "../../lib/cn";
 
 export type ChatInputProps = {
@@ -128,8 +128,8 @@ export function ChatInput({ generating = false, placeholder = "Message…", disa
 
       <div className="flex items-center gap-1.5 pb-2 px-2">
         {onClear ? (
-          <button type="button" onClick={onClear} title="New chat" aria-label="New chat" className="inline-flex size-6 shrink-0 items-center justify-center rounded-lg border-0 bg-transparent cursor-pointer hover:bg-ink-hover">
-            <FluentIcon name="chat-add-24" size={16} />
+          <button type="button" onClick={onClear} title="Clear chat" aria-label="Clear chat" className="inline-flex size-6 shrink-0 items-center justify-center rounded-lg border-0 bg-transparent cursor-pointer hover:bg-ink-hover">
+            <Eraser size={16} aria-hidden />
           </button>
         ) : null}
         {toolbar}
@@ -137,9 +137,7 @@ export function ChatInput({ generating = false, placeholder = "Message…", disa
 
         {generating ? (
           <button type="button" onClick={onCancel} title="Stop" className="w-6 h-6 rounded-full bg-brand text-(--nonla-solid-fg) flex items-center justify-center shrink-0 cursor-pointer hover:bg-brand/90 active:scale-95 transition-all duration-100 border-0">
-            <svg width="12" height="12" viewBox="0 0 12 12" fill="none" aria-hidden>
-              <rect x="1.5" y="1.5" width="9" height="9" rx="2" fill="currentColor" />
-            </svg>
+            <Square size={12} fill="currentColor" strokeWidth={0} aria-hidden />
             <span className="sr-only">Stop</span>
           </button>
         ) : (
@@ -150,9 +148,7 @@ export function ChatInput({ generating = false, placeholder = "Message…", disa
             title="Send (Enter)"
             className={cn("w-6 h-6 rounded-full flex items-center justify-center shrink-0 transition-all duration-100 border-0", canSend ? "bg-foreground text-background cursor-pointer" : "bg-border text-muted-foreground cursor-not-allowed opacity-50")}
           >
-            <svg width="12" height="12" viewBox="0 0 12 12" fill="none" aria-hidden>
-              <path d="M6 9.5V2.5M6 2.5L3 5.5M6 2.5L9 5.5" stroke="currentColor" strokeWidth="1.6" strokeLinecap="round" strokeLinejoin="round" />
-            </svg>
+            <ArrowUp size={14} strokeWidth={2.5} aria-hidden />
             <span className="sr-only">Send</span>
           </button>
         )}

@@ -1,4 +1,5 @@
 import type { ReactNode } from "react";
+import { Button } from "../../button/Button";
 import { cn } from "../../lib/cn";
 
 export type ChatWelcomeProps = {
@@ -53,15 +54,9 @@ export function ChatWelcome({ name, description, avatar, starters = [...DEFAULT_
       {starters.length > 0 && onStarter ? (
         <div className="mt-8 flex flex-wrap items-center justify-center gap-2 max-w-130">
           {starters.map((text) => (
-            <button
-              key={text}
-              type="button"
-              disabled={disabled}
-              onClick={() => onStarter(text)}
-              className="px-3 py-1.5 rounded-lg border border-border bg-transparent text-[12px] font-medium text-tertiary-foreground cursor-pointer transition-colors duration-150 font-[inherit] hover:border-border hover:bg-muted/60 hover:text-foreground disabled:opacity-40 disabled:cursor-not-allowed"
-            >
+            <Button key={text} type="default" disabled={disabled} onClick={() => onStarter(text)}>
               {text}
-            </button>
+            </Button>
           ))}
         </div>
       ) : null}
