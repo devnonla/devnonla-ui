@@ -1,6 +1,6 @@
 {
   "name": "devnonla-ui",
-  "version": "0.4.0",
+  "version": "0.4.1",
   "type": "module",
   "description": "NonlaUI — React controls for Nonla Agents",
   "author": "devlangla <devlangla0x01@gmail.com>",
