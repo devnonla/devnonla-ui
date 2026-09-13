@@ -1,7 +1,7 @@
 import { useCallback, useEffect, useRef, useState } from "react";
 import { parseSseStream } from "./sse";
 import type { AgentHistoryMessage, AgentMessage, AgentPanelEndpoint, AgentToolAction, AgentToolCallEvent, AgentToolHook, AgentToolResultEvent } from "./types";
-import { formatToolName, matchesToolHook } from "./utils";
+import { formatToolName, hasMeaningfulInput, matchesToolHook } from "./utils";
 
 let _id = 0;
 function nextId(prefix: string) {
@@ -60,6 +60,48 @@ function failOpenTools(prev: AgentMessage[], error: string): AgentMessage[] {
     if (m.role !== "tool-call" || m.toolOutput != null || m.toolError) return m;
     return { ...m, toolError: error, toolOutput: JSON.stringify({ success: false, error }) };
   });
+}
+
+function sameStreamTool(m: AgentMessage, toolName: string, toolLabel: string) {
+  if (m.role !== "tool-call") return false;
+  if (m.toolName === toolName) return true;
+  if (m.toolLabel && (m.toolLabel === toolLabel || m.toolLabel === toolName)) return true;
+  return false;
+}
+
+function lastToolIndex(prev: AgentMessage[], pred: (m: AgentMessage) => boolean): number {
+  for (let i = prev.length - 1; i >= 0; i--) {
+    if (pred(prev[i])) return i;
+  }
+  return -1;
+}
+
+/** Merge a streamed tool-call into an existing card (same id, still running, or result-before-params). */
+function findToolCallMergeIndex(
+  prev: AgentMessage[],
+  event: { toolCallId?: string; toolName: string; toolLabel: string; input: unknown },
+): number {
+  if (event.toolCallId) {
+    const byId = prev.findIndex((m) => m.role === "tool-call" && m.toolCallId === event.toolCallId);
+    if (byId !== -1) return byId;
+  }
+
+  const pending = lastToolIndex(
+    prev,
+    (m) => sameStreamTool(m, event.toolName, event.toolLabel) && m.toolOutput == null && !m.toolError,
+  );
+  if (pending !== -1) {
+    const m = prev[pending];
+    if (!event.toolCallId || !m.toolCallId || m.toolCallId === event.toolCallId) return pending;
+  }
+
+  if (!hasMeaningfulInput(event.input)) return -1;
+
+  const sparse = lastToolIndex(prev, (m) => sameStreamTool(m, event.toolName, event.toolLabel) && !hasMeaningfulInput(m.toolInput));
+  if (sparse === -1) return -1;
+  const m = prev[sparse];
+  if (!event.toolCallId || !m.toolCallId || m.toolCallId === event.toolCallId) return sparse;
+  return -1;
 }
 
 export type UseAgentStreamOptions = {
@@ -299,61 +341,62 @@ export function useAgentStream({ endpoint, extraBody, headers, fetcher = fetch, 
             },
             onToolCall: (event) => {
               const label = event.toolLabel ? (event.toolLabel.includes(" ") ? event.toolLabel : formatToolName(event.toolLabel)) : formatToolName(event.toolName);
-              const alreadySeen = event.toolCallId ? seenToolCallIds.has(event.toolCallId) : false;
               if (event.toolCallId) seenToolCallIds.add(event.toolCallId);
 
-              if (alreadySeen) {
-                setMessages((prev) =>
-                  prev.map((m) =>
-                    m.role === "tool-call" && m.toolCallId === event.toolCallId
-                      ? {
-                          ...m,
-                          content: event.toolName,
-                          toolName: event.toolName,
-                          toolLabel: label,
-                          toolInput: event.input !== undefined ? event.input : m.toolInput,
-                        }
-                      : m,
-                  ),
-                );
-                if (event.input !== undefined) {
-                  emitCall({
-                    toolCallId: event.toolCallId,
-                    toolName: event.toolName,
-                    toolLabel: label,
-                    input: event.input,
-                  });
-                }
-                return;
-              }
-
-              freezeOpen();
-              const id = nextId("tc");
               const call: AgentToolCallEvent = {
                 toolCallId: event.toolCallId,
                 toolName: event.toolName,
                 toolLabel: label,
                 input: event.input,
               };
-              openToolsRef.current.set(event.toolCallId || id, call);
-              setMessages((prev) => [
-                ...prev,
-                {
-                  id,
-                  role: "tool-call",
-                  content: event.toolName,
-                  toolCallId: event.toolCallId,
-                  toolName: event.toolName,
-                  toolLabel: label,
-                  toolInput: event.input,
-                  timestamp: new Date(),
-                },
-              ]);
-              emitCall(call);
+
+              freezeOpen();
+              setMessages((prev) => {
+                const idx = findToolCallMergeIndex(prev, { ...event, toolLabel: label });
+                if (idx !== -1) {
+                  const target = prev[idx];
+                  const nextInput = hasMeaningfulInput(event.input) ? event.input : target.toolInput;
+                  const nextId = event.toolCallId ?? target.toolCallId;
+                  if (target.toolOutput == null) {
+                    const mapKey = [...openToolsRef.current.entries()].find(([, t]) => t.toolCallId === target.toolCallId || t.toolName === target.toolName)?.[0] ?? nextId ?? target.id;
+                    openToolsRef.current.set(mapKey, { ...call, toolCallId: nextId, input: nextInput });
+                  }
+                  return prev.map((m, i) =>
+                    i === idx
+                      ? {
+                          ...m,
+                          content: event.toolName,
+                          toolCallId: nextId,
+                          toolName: event.toolName,
+                          toolLabel: label,
+                          toolInput: nextInput,
+                        }
+                      : m,
+                  );
+                }
+
+                const id = nextId("tc");
+                openToolsRef.current.set(event.toolCallId || id, call);
+                return [
+                  ...prev,
+                  {
+                    id,
+                    role: "tool-call" as const,
+                    content: event.toolName,
+                    toolCallId: event.toolCallId,
+                    toolName: event.toolName,
+                    toolLabel: label,
+                    toolInput: event.input,
+                    timestamp: new Date(),
+                  },
+                ];
+              });
+              if (event.input !== undefined) emitCall(call);
             },
             onToolResult: (event) => {
               const raw = event.result;
               const resultStr = typeof raw === "string" ? raw : JSON.stringify(raw);
+              const resultLabel = formatToolName(event.toolName);
               if (event.toolCallId) {
                 openToolsRef.current.delete(event.toolCallId);
               } else {
@@ -364,17 +407,35 @@ export function useAgentStream({ endpoint, extraBody, headers, fetcher = fetch, 
                   }
                 }
               }
+              freezeOpen();
               setMessages((prev) => {
                 let matchIdx = -1;
                 if (event.toolCallId) {
-                  matchIdx = prev.findIndex((m) => m.role === "tool-call" && m.toolCallId === event.toolCallId && m.toolOutput == null);
+                  matchIdx = prev.findIndex((m) => m.role === "tool-call" && m.toolCallId === event.toolCallId);
                 }
                 if (matchIdx === -1) {
-                  const rev = [...prev].reverse().findIndex((m) => m.role === "tool-call" && m.toolName === event.toolName && !m.toolOutput);
-                  matchIdx = rev === -1 ? -1 : prev.length - 1 - rev;
+                  matchIdx = lastToolIndex(
+                    prev,
+                    (m) => sameStreamTool(m, event.toolName, resultLabel) && m.toolOutput == null,
+                  );
                 }
-                if (matchIdx === -1) return prev;
-                return prev.map((m, i) => (i === matchIdx ? { ...m, toolOutput: resultStr } : m));
+                if (matchIdx !== -1) {
+                  return prev.map((m, i) => (i === matchIdx ? { ...m, toolOutput: resultStr, toolCallId: event.toolCallId ?? m.toolCallId } : m));
+                }
+                const id = nextId("tc");
+                return [
+                  ...prev,
+                  {
+                    id,
+                    role: "tool-call" as const,
+                    content: event.toolName,
+                    toolCallId: event.toolCallId,
+                    toolName: event.toolName,
+                    toolLabel: resultLabel,
+                    toolOutput: resultStr,
+                    timestamp: new Date(),
+                  },
+                ];
               });
               emitResult({ toolCallId: event.toolCallId, toolName: event.toolName, output: raw });
             },

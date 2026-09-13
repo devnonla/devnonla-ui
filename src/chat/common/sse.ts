@@ -26,6 +26,12 @@ export interface AgentSseCallbacks {
 
 export type ParseSseResult = "done" | "error" | "aborted" | "connection-lost";
 
+function readToolCallId(raw: Record<string, unknown>): string | undefined {
+  const v = raw.toolCallId ?? raw.tool_call_id ?? raw.callId ?? raw.call_id;
+  if (typeof v === "string" && v.trim()) return v;
+  return undefined;
+}
+
 export function normalizeSseEvent(raw: Record<string, unknown>): AgentSseEvent | null {
   const type = raw.type;
   if (type === "ping") return null;
@@ -38,18 +44,18 @@ export function normalizeSseEvent(raw: Record<string, unknown>): AgentSseEvent |
   if (type === "tool-call") {
     return {
       type: "tool-call",
-      toolCallId: raw.toolCallId as string | undefined,
-      toolName: String(raw.toolName ?? "unknown"),
-      toolLabel: raw.toolLabel as string | undefined,
-      input: raw.input,
+      toolCallId: readToolCallId(raw),
+      toolName: String(raw.toolName ?? raw.name ?? "unknown"),
+      toolLabel: (raw.toolLabel as string | undefined) ?? (raw.label as string | undefined),
+      input: raw.input ?? raw.arguments ?? raw.args,
     };
   }
   if (type === "tool-result") {
     return {
       type: "tool-result",
-      toolCallId: raw.toolCallId as string | undefined,
-      toolName: String(raw.toolName ?? "unknown"),
-      result: raw.result,
+      toolCallId: readToolCallId(raw),
+      toolName: String(raw.toolName ?? raw.name ?? "unknown"),
+      result: raw.result ?? raw.output,
     };
   }
   if (type === "context-usage" || type === "token-usage") return null;
