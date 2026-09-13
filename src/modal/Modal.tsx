@@ -177,6 +177,9 @@ function ModalView({
             data-centered={centered ? "true" : undefined}
             style={{ width, ...style, ...styles?.container, ...styles?.content }}
             onAnimationEnd={onContentAnimationEnd}
+            onEscapeKeyDown={(e) => {
+              e.stopPropagation();
+            }}
             onPointerDownOutside={(e) => {
               if (!maskClosable) e.preventDefault();
             }}

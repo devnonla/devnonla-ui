@@ -1,8 +1,8 @@
-import { type MouseEvent as ReactMouseEvent, type PointerEvent as ReactPointerEvent, type ReactNode, createContext, useContext, useEffect, useLayoutEffect, useMemo, useRef, useState } from "react";
+import { createContext, type MouseEvent as ReactMouseEvent, type ReactNode, type PointerEvent as ReactPointerEvent, useContext, useEffect, useLayoutEffect, useMemo, useRef, useState } from "react";
 import { createPortal } from "react-dom";
 import { cn } from "../lib/cn";
-import { OverlayScroll, type OverlayScrollVisibility } from "../scroll/OverlayScroll";
 import { glassSurfaceClass } from "../lib/surface";
+import { OverlayScroll, type OverlayScrollVisibility } from "../scroll/OverlayScroll";
 
 type Phase = "open" | "leaving";
 type Size = { w: number; h: number };
@@ -35,6 +35,10 @@ function isEditableTarget(target: EventTarget | null) {
   const tag = target.tagName;
   if (tag === "INPUT" || tag === "TEXTAREA" || tag === "SELECT") return true;
   return Boolean(target.closest(".monaco-editor"));
+}
+
+function hasOpenDialog() {
+  return Boolean(document.querySelector('[role="dialog"][data-state="open"], .nonla-modal-content'));
 }
 
 function originFromActiveIcon(overlay: HTMLElement, frame: HTMLElement) {
@@ -190,33 +194,33 @@ function TrafficLight({
 }
 
 type WindowHeaderSlot = {
-  slot: HTMLElement | null;
-  setCustom: (on: boolean) => void;
+  left: HTMLElement | null;
+  right: HTMLElement | null;
 };
 
 const WindowHeaderSlotContext = createContext<WindowHeaderSlot | null>(null);
 
-export function WindowHeader({ children }: { children: ReactNode }) {
+export type WindowHeaderProps = {
+  left?: ReactNode;
+  right?: ReactNode;
+};
+
+/** Injects into the window title bar from a child. Prefer `DesktopWindow` `left` / `right` when the parent can pass them. */
+export function WindowHeader({ left, right }: WindowHeaderProps) {
   const ctx = useContext(WindowHeaderSlotContext);
-  useLayoutEffect(() => {
-    if (!ctx) return;
-    ctx.setCustom(true);
-    return () => ctx.setCustom(false);
-  }, [ctx]);
-  if (!ctx?.slot) return null;
-  return createPortal(children, ctx.slot);
+  if (!ctx) return null;
+  return (
+    <>
+      {ctx.left && left != null ? createPortal(left, ctx.left) : null}
+      {ctx.right && right != null ? createPortal(right, ctx.right) : null}
+    </>
+  );
 }
 
-export function DesktopWindow({
-  title,
-  expanded,
-  onClose,
-  onToggleExpand,
-  scroll = true,
-  scrollbar = "hover",
-  children,
-}: {
+export type DesktopWindowProps = {
   title?: ReactNode;
+  left?: ReactNode;
+  right?: ReactNode;
   expanded: boolean;
   onClose: () => void;
   onToggleExpand: () => void;
@@ -224,7 +228,19 @@ export function DesktopWindow({
   scroll?: boolean;
   scrollbar?: OverlayScrollVisibility;
   children: ReactNode;
-}) {
+};
+
+export function DesktopWindow({
+  title,
+  left,
+  right,
+  expanded,
+  onClose,
+  onToggleExpand,
+  scroll = true,
+  scrollbar = "hover",
+  children,
+}: DesktopWindowProps) {
   const overlayRef = useRef<HTMLDivElement>(null);
   const frameRef = useRef<HTMLElement>(null);
   const closedRef = useRef(false);
@@ -253,9 +269,9 @@ export function DesktopWindow({
     w: window.innerWidth,
     h: Math.max(0, window.innerHeight - 42),
   }));
-  const [headerSlot, setHeaderSlot] = useState<HTMLDivElement | null>(null);
-  const [customHeader, setCustomHeader] = useState(false);
-  const headerChrome = useMemo(() => ({ slot: headerSlot, setCustom: setCustomHeader }), [headerSlot]);
+  const [leftSlot, setLeftSlot] = useState<HTMLDivElement | null>(null);
+  const [rightSlot, setRightSlot] = useState<HTMLDivElement | null>(null);
+  const headerChrome = useMemo(() => ({ left: leftSlot, right: rightSlot }), [leftSlot, rightSlot]);
   const requestCloseRef = useRef<() => void>(() => {});
   const viewRef = useRef(view);
   const offsetRef = useRef(offset);
@@ -325,7 +341,7 @@ export function DesktopWindow({
 
   useEffect(() => {
     const onKey = (e: KeyboardEvent) => {
-      if (e.key !== "Escape" || isEditableTarget(e.target)) return;
+      if (e.key !== "Escape" || e.defaultPrevented || isEditableTarget(e.target) || hasOpenDialog()) return;
       e.preventDefault();
       requestCloseRef.current();
     };
@@ -475,10 +491,8 @@ export function DesktopWindow({
           className={cn("absolute flex flex-col rounded-xl pointer-events-auto transform-gpu", glassSurfaceClass, "nonla-window-glass", leaving && "pointer-events-none")}
         >
           <div className="flex min-h-0 flex-1 flex-col overflow-hidden rounded-xl">
-            {/* biome-ignore lint/a11y/noStaticElementInteractions: title bar is a pointer drag surface */}
             <header
               onPointerDown={startDrag}
-              onDoubleClick={onTitleBarDoubleClick}
               className="flex h-8 shrink-0 cursor-default items-center gap-4 border-0 border-b border-solid border-ink-line px-3 select-none touch-none"
             >
               <div className="group/traffic flex shrink-0 items-center gap-2">
@@ -490,8 +504,18 @@ export function DesktopWindow({
                 </TrafficLight>
               </div>
               <div className="flex min-w-0 flex-1 items-center">
-                {customHeader ? null : typeof title === "string" ? <span className="min-w-0 truncate text-xs font-semibold leading-none text-foreground/90">{title}</span> : title}
-                <div ref={setHeaderSlot} className="contents" />
+                <div className="flex min-w-0 items-center">
+                  {left}
+                  <div ref={setLeftSlot} className="contents" />
+                </div>
+                {/* biome-ignore lint/a11y/noStaticElementInteractions: middle strip double-clicks to expand */}
+                <div onDoubleClick={onTitleBarDoubleClick} className="flex min-w-8 flex-1 items-center self-stretch px-2">
+                  {typeof title === "string" ? <span className="min-w-0 truncate text-xs font-semibold leading-none text-foreground/90">{title}</span> : title}
+                </div>
+                <div className="flex shrink-0 items-center">
+                  {right}
+                  <div ref={setRightSlot} className="contents" />
+                </div>
               </div>
             </header>
 

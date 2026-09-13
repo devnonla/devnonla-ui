@@ -66,27 +66,22 @@ export function DesktopBarDivider({ className }: { className?: string }) {
   return <span className={cn("mx-2 h-4 w-px bg-ink-line", className)} aria-hidden />;
 }
 
-export function DesktopHeader({
-  logo,
-  leading,
-  trailing,
-  profile,
-}: {
-  logo?: ReactNode;
-  leading?: ReactNode;
-  trailing?: ReactNode;
-  profile?: ReactNode;
-}) {
+export type DesktopHeaderProps = {
+  left?: ReactNode;
+  right?: ReactNode;
+  className?: string;
+};
+
+export function DesktopHeader({ left, right, className }: DesktopHeaderProps) {
   return (
-    <header className="nonla-header-layer fixed inset-x-0 top-0 flex h-desktop-bar items-center justify-between gap-3 border-0 bg-glass-bar px-3 backdrop-blur-lg">
-      <div className="flex min-w-0 items-center">
-        {logo}
-        {leading}
-      </div>
-      <div className="flex min-w-0 shrink-0 items-center">
-        {trailing}
-        {profile}
-      </div>
+    <header
+      className={cn(
+        "nonla-header-layer fixed inset-x-0 top-0 flex h-desktop-bar items-center justify-between gap-3 border-0 bg-glass-bar px-3 backdrop-blur-lg",
+        className,
+      )}
+    >
+      <div className="flex min-w-0 items-center">{left}</div>
+      <div className="flex min-w-0 shrink-0 items-center">{right}</div>
     </header>
   );
 }
