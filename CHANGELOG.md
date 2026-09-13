@@ -5,6 +5,38 @@ All notable changes to this project will be documented in this file.
 The format is based on [Keep a Changelog](https://keepachangelog.com/en/1.1.0/),
 and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0.html).
 
+## [0.4.0] - 2026-09-13
+
+### Added
+
+- `Pagination`: Ant Design-style pager (`align`, `showTotal`, `showQuickJumper`, `showSizeChanger`, `simple`, `hideOnSinglePage`, `responsive`, size changer, jump ellipses). Types: `PaginationAlign`, `PaginationSemanticSlot`, `PaginationSizeChangerProps`.
+- `Table` `pagination` forwards the same Pagination options (`showTotal`, `showQuickJumper`, `align`, …).
+- `OverlayScroll` `autoHeight` and a horizontal overlay thumb.
+- `ButtonCopy` / `CodeBlockCopyButton` `size` (`ControlSize`).
+- Tailwind theme colors `--color-well` / `--color-well-strong`; `.nonla-chat-tool-result-ok`.
+- Public types: `DesktopHeaderProps`, `DesktopWindowProps`, `WindowHeaderProps`.
+
+### Changed
+
+- `DesktopHeader` slots are `left` / `right` (was `logo` / `leading` / `trailing` / `profile`).
+- `DesktopWindow` chrome is `left` · title (double-click expands) · `right`. `WindowHeader` fills those slots from a child (`left` / `right`, not `children`).
+- `Spin` `variant="agent"` matrix uses brand cells and explicit small / default / large metrics. `variant="subAgent"` removed (same as `agent`).
+- `CodeBlock` body uses `OverlayScroll`.
+- Chat tool / message UI: lucide icons, `Spin variant="agent"` for running tools, quieter tool cards.
+
+### Fixed
+
+- Escape on an open Modal no longer closes `DesktopWindow`.
+- Input number / password / search icons follow control size.
+
+### Upgrade notes
+
+- `DesktopHeader`: `logo` + `leading` → `left`; `trailing` + `profile` → `right`.
+- `WindowHeader`: pass `left` / `right` instead of `children`.
+- Replace `Spin variant="subAgent"` with `variant="agent"`.
+- `ButtonCopy` / `CodeBlockCopyButton` `size` is `"small" | "default" | "large"`, not the native button attribute.
+- Standalone `Pagination`: `showSizeChanger` turns on when `total > 50` unless `simple` or you pass `false`. `Table` still defaults `showSizeChanger={false}`.
+
 ## [0.3.0] - 2026-09-12
 
 ### Added
@@ -48,5 +80,6 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 - Replace class `nonla-chat-shimmer` with `Shimmer` or `.nonla-shimmer`.
 - `resolveToolUI(toolName, extras?)` — second argument is optional; extra UIs are checked first.
 
+[0.4.0]: https://github.com/devnonla/devnonla-ui/compare/v0.3.0...v0.4.0
 [0.3.0]: https://github.com/devnonla/devnonla-ui/compare/v0.2.0...v0.3.0
 [0.2.0]: https://github.com/devnonla/devnonla-ui/compare/v0.1.0...v0.2.0
