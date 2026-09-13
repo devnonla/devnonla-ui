@@ -232,6 +232,8 @@
   --color-ink-active: var(--ink-active);
   --color-ink-line: var(--ink-line);
   --color-chat: var(--nonla-chat-bg);
+  --color-well: color-mix(in oklab, var(--foreground) 5.5%, var(--card));
+  --color-well-strong: color-mix(in oklab, var(--foreground) 10%, var(--card));
 
   --shadow-card: none;
   --shadow-whisper: none;
@@ -402,7 +404,7 @@
   }
 }
 
-/* ── Spin: agent / subAgent (3×3 random snake — color only) ─────────────── */
+/* ── Spin: agent (3×3 random snake) ────────────────────────────────────── */
 .nonla-spin-matrix {
   align-content: center;
   justify-content: center;
@@ -413,12 +415,12 @@
   width: 100%;
   height: 100%;
   border-radius: 999px;
-  background: var(--nonla-chip-hover);
+  background: color-mix(in oklab, var(--brand) 10%, transparent);
   transition: background 120ms linear;
 }
 
 .nonla-spin-matrix-cell.is-on {
-  background: var(--nonla-ink);
+  background: var(--brand);
 }
 
 @media (prefers-reduced-motion: reduce) {
@@ -862,6 +864,14 @@
 }
 .nonla-popper[data-state="closed"] {
   animation: nonla-pop-out 100ms var(--nonla-ease-in);
+}
+
+.nonla-chat-tool-result-ok {
+  background-image: linear-gradient(
+    165deg,
+    color-mix(in oklab, var(--success) 14%, var(--card)) 0%,
+    color-mix(in oklab, var(--success) 5%, var(--card)) 100%
+  );
 }
 
 .nonla-codeblock-pre code,
