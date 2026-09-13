@@ -193,7 +193,7 @@ export function AgentPanel({
               ))}
               {showFooter ? (
                 <div className="mt-1 px-4 pb-0.5">
-                  <Shimmer className="text-(length:--chat-body-size) leading-5.5 font-medium">{status}</Shimmer>
+                  <Shimmer className="text-sm font-medium text-tertiary-foreground">{status}</Shimmer>
                 </div>
               ) : null}
             </div>
