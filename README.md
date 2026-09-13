@@ -108,14 +108,14 @@ import { DesktopStage, DesktopHeader, MeadowDesktop, DesktopWindow, MeadowShell,
 
 <DesktopStage>
   <MeadowDesktop>{icons}</MeadowDesktop>
-  <DesktopHeader logo={logo} leading={nav} trailing={apps} profile={avatar} />
-  <DesktopWindow title="Tools" expanded={false} onClose={close} onToggleExpand={toggle}>
+  <DesktopHeader left={nav} right={apps} />
+  <DesktopWindow title="Tools" left={nav} right={actions} expanded={false} onClose={close} onToggleExpand={toggle}>
     {children}
   </DesktopWindow>
 </DesktopStage>
 ```
 
-`MeadowShell` is the login/setup backdrop. `Menu` is the glass picker (trigger + items + hover action) used by AgentsMenu. Wallpaper defaults to the bundled meadow; pass `src` on `MeadowWallpaper` to swap.
+`MeadowShell` is the login/setup backdrop. `DesktopWindow` chrome is inline: traffic lights, `left`, a flex middle (title — double-click to expand), then `right`. A child can fill the same slots with `WindowHeader`. `Menu` is the glass picker (trigger + items + hover action) used by AgentsMenu. Wallpaper defaults to the bundled meadow; pass `src` on `MeadowWallpaper` to swap.
 
 # Chat
 
