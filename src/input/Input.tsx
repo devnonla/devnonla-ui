@@ -1,4 +1,4 @@
-import { type CSSProperties, type InputHTMLAttributes, type KeyboardEvent, type ReactNode, type TextareaHTMLAttributes, forwardRef, useCallback, useEffect, useImperativeHandle, useLayoutEffect, useRef, useState } from "react";
+import { type CSSProperties, forwardRef, type InputHTMLAttributes, type KeyboardEvent, type ReactNode, type TextareaHTMLAttributes, useCallback, useEffect, useImperativeHandle, useLayoutEffect, useRef, useState } from "react";
 import { cn } from "../lib/cn";
 import { type ControlSize, controlFieldFocusBorder, controlFieldStyle, controlFieldSurface, controlFieldTransition, controlHeightVar, controlRadiusVar, controlStatusClass, getSizeTokens, useControlSize } from "../lib/sizes";
 
@@ -160,9 +160,9 @@ function roundTo(n: number, precision?: number) {
   return Math.round(n * f) / f;
 }
 
-function HandlerChevron({ dir }: { dir: "up" | "down" }) {
+function HandlerChevron({ dir, size }: { dir: "up" | "down"; size: number }) {
   return (
-    <svg width="10" height="10" viewBox="0 0 10 10" fill="none" aria-hidden className="opacity-70">
+    <svg width={size} height={size} viewBox="0 0 10 10" fill="none" aria-hidden className="opacity-70">
       {dir === "up" ? <path d="M2.5 6.25L5 3.75L7.5 6.25" stroke="currentColor" strokeWidth="1.4" strokeLinecap="round" strokeLinejoin="round" /> : <path d="M2.5 3.75L5 6.25L7.5 3.75" stroke="currentColor" strokeWidth="1.4" strokeLinecap="round" strokeLinejoin="round" />}
     </svg>
   );
@@ -216,7 +216,8 @@ const InputNumber = forwardRef<HTMLInputElement, InputNumberProps>(function Inpu
 
   const atMin = numeric != null && min != null && numeric <= min;
   const atMax = numeric != null && max != null && numeric >= max;
-  const handlerW = resolvedSize === "small" ? 18 : 22;
+  const handlerW = resolvedSize === "small" ? 18 : resolvedSize === "large" ? 26 : 22;
+  const chevronSize = Math.max(8, tok.icon - 4);
 
   const setRefs = (node: HTMLInputElement | null) => {
     inputRef.current = node;
@@ -302,7 +303,7 @@ const InputNumber = forwardRef<HTMLInputElement, InputNumberProps>(function Inpu
             onMouseDown={(e) => e.preventDefault()}
             onClick={() => stepBy(1)}
           >
-            <HandlerChevron dir="up" />
+            <HandlerChevron dir="up" size={chevronSize} />
           </button>
           <button
             type="button"
@@ -313,7 +314,7 @@ const InputNumber = forwardRef<HTMLInputElement, InputNumberProps>(function Inpu
             onMouseDown={(e) => e.preventDefault()}
             onClick={() => stepBy(-1)}
           >
-            <HandlerChevron dir="down" />
+            <HandlerChevron dir="down" size={chevronSize} />
           </button>
         </div>
       ) : null}
@@ -325,9 +326,9 @@ export type PasswordProps = InputProps & {
   visibilityToggle?: boolean | { visible?: boolean; onVisibleChange?: (visible: boolean) => void };
 };
 
-function EyeIcon({ off }: { off?: boolean }) {
+function EyeIcon({ off, size }: { off?: boolean; size: number }) {
   return (
-    <svg width="14" height="14" viewBox="0 0 24 24" fill="none" aria-hidden>
+    <svg width={size} height={size} viewBox="0 0 24 24" fill="none" aria-hidden>
       <path d="M2 12s3.6-7 10-7 10 7 10 7-3.6 7-10 7S2 12 2 12Z" stroke="currentColor" strokeWidth="1.75" />
       <circle cx="12" cy="12" r="3" stroke="currentColor" strokeWidth="1.75" />
       {off ? <path d="M4 4L20 20" stroke="currentColor" strokeWidth="1.75" strokeLinecap="round" /> : null}
@@ -335,12 +336,13 @@ function EyeIcon({ off }: { off?: boolean }) {
   );
 }
 
-const Password = forwardRef<HTMLInputElement, PasswordProps>(function Password({ visibilityToggle = true, suffix, ...props }, ref) {
+const Password = forwardRef<HTMLInputElement, PasswordProps>(function Password({ visibilityToggle = true, suffix, size, ...props }, ref) {
   const toggle = visibilityToggle;
   const enabled = toggle !== false;
   const controlled = typeof toggle === "object" && toggle.visible !== undefined;
   const [inner, setInner] = useState(false);
   const visible = enabled && (controlled ? Boolean((toggle as { visible?: boolean }).visible) : inner);
+  const iconSize = getSizeTokens(useControlSize(size)).icon;
 
   const setVisible = (v: boolean) => {
     if (!controlled) setInner(v);
@@ -349,7 +351,7 @@ const Password = forwardRef<HTMLInputElement, PasswordProps>(function Password({
 
   const eye = enabled ? (
     <button type="button" tabIndex={-1} aria-label={visible ? "Hide password" : "Show password"} className="inline-flex items-center text-muted-foreground hover:text-foreground" onClick={() => setVisible(!visible)}>
-      <EyeIcon off={!visible} />
+      <EyeIcon size={iconSize} off={!visible} />
     </button>
   ) : null;
 
@@ -361,7 +363,7 @@ const Password = forwardRef<HTMLInputElement, PasswordProps>(function Password({
       </>
     ) : undefined;
 
-  return <InputRoot ref={ref} type={visible ? "text" : "password"} suffix={mergedSuffix} {...props} />;
+  return <InputRoot ref={ref} type={visible ? "text" : "password"} size={size} suffix={mergedSuffix} {...props} />;
 });
 
 export const Input = Object.assign(InputRoot, {
@@ -369,4 +371,4 @@ export const Input = Object.assign(InputRoot, {
   Password,
 });
 
-export { TextArea, InputNumber };
+export { InputNumber, TextArea };

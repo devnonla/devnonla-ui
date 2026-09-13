@@ -1,4 +1,5 @@
 import { type ChangeEvent, useEffect, useRef, useState } from "react";
+import { getSizeTokens, useControlSize } from "../lib/sizes";
 import { Input, type InputProps } from "./Input";
 
 const DEFAULT_WAIT = 300;
@@ -20,8 +21,9 @@ function SearchIcon({ size = 14 }: { size?: number }) {
   );
 }
 
-export function SearchInput({ defaultValue = "", onChange, wait = DEFAULT_WAIT, allowClear = true, className, placeholder = "Search…", onPressEnter, ...rest }: SearchInputProps) {
+export function SearchInput({ defaultValue = "", onChange, wait = DEFAULT_WAIT, allowClear = true, className, placeholder = "Search…", onPressEnter, size, ...rest }: SearchInputProps) {
   const [value, setValue] = useState(defaultValue);
+  const iconSize = getSizeTokens(useControlSize(size)).icon;
   const onChangeRef = useRef(onChange);
   onChangeRef.current = onChange;
   const timerRef = useRef<ReturnType<typeof setTimeout> | null>(null);
@@ -63,7 +65,8 @@ export function SearchInput({ defaultValue = "", onChange, wait = DEFAULT_WAIT, 
       placeholder={placeholder}
       value={value}
       onChange={handleChange}
-      prefix={<SearchIcon />}
+      prefix={<SearchIcon size={iconSize} />}
+      size={size}
       onPressEnter={(e) => {
         flush(value);
         onPressEnter?.(e);
