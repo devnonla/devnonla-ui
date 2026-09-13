@@ -2,10 +2,10 @@ import * as PopoverPrimitive from "@radix-ui/react-popover";
 import {
   type CSSProperties,
   type FC,
-  type KeyboardEvent,
-  type PointerEvent as ReactPointerEvent,
-  type ReactNode,
   isValidElement,
+  type KeyboardEvent,
+  type ReactNode,
+  type PointerEvent as ReactPointerEvent,
   useEffect,
   useRef,
   useState,
@@ -27,17 +27,17 @@ import {
 import { glassOverlayClass } from "../lib/surface";
 import {
   Color,
-  DEFAULT_COLOR,
-  clamp,
-  hsbaToRgba,
-  parseColor,
   type ColorFormat,
   type ColorType,
+  clamp,
+  DEFAULT_COLOR,
   type HsbaColor,
+  hsbaToRgba,
+  parseColor,
 } from "./color";
 
-export { Color, DEFAULT_COLOR, parseColor };
 export type { ColorFormat, ColorType, HsbaColor };
+export { Color, DEFAULT_COLOR, parseColor };
 
 export type PresetColorType = {
   label: ReactNode;

@@ -1,8 +1,9 @@
 import { type ReactNode, useCallback, useEffect, useLayoutEffect, useRef, useState } from "react";
 import { cn } from "../lib/cn";
 import { OverlayScroll, type OverlayScrollVisibility } from "../scroll/OverlayScroll";
-import type { AgentMessage, AgentPanelEndpoint, AgentToolAction, AgentToolHook } from "./common/types";
+import { Shimmer } from "../shimmer/Shimmer";
 import { parseBgTaskRef } from "./common/bgTasks";
+import type { AgentMessage, AgentPanelEndpoint, AgentToolAction, AgentToolHook } from "./common/types";
 import { useAgentStream } from "./common/useAgentStream";
 import { formatToolName } from "./common/utils";
 import { ChatAgentMessage } from "./message-ui/ChatAgentMessage";
@@ -14,8 +15,7 @@ import { ChatUserMessage } from "./message-ui/ChatUserMessage";
 import { ChatWelcome } from "./message-ui/ChatWelcome";
 import { BackgroundTaskToolUI } from "./tool-ui/BackgroundTaskToolUI";
 import { ChatToolCall } from "./tool-ui/ChatToolCall";
-import { resolveToolUI, type AgentToolUI } from "./tool-ui/registry";
-import { Shimmer } from "../shimmer/Shimmer";
+import { type AgentToolUI, resolveToolUI } from "./tool-ui/registry";
 
 export type AgentPanelProps = {
   /** POST URL, or a function that returns an SSE `Response`. */

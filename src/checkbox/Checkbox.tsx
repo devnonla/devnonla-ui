@@ -1,5 +1,5 @@
 import * as CheckboxPrimitive from "@radix-ui/react-checkbox";
-import { type ComponentPropsWithoutRef, type ReactNode, forwardRef } from "react";
+import { type ComponentPropsWithoutRef, forwardRef, type ReactNode } from "react";
 import { cn } from "../lib/cn";
 
 export type CheckboxProps = Omit<ComponentPropsWithoutRef<typeof CheckboxPrimitive.Root>, "onCheckedChange" | "checked" | "onChange"> & {

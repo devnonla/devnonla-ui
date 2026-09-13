@@ -1,5 +1,5 @@
 import * as SwitchPrimitive from "@radix-ui/react-switch";
-import { type CSSProperties, type ComponentPropsWithoutRef, forwardRef } from "react";
+import { type ComponentPropsWithoutRef, type CSSProperties, forwardRef } from "react";
 import { cn } from "../lib/cn";
 import { type ControlSize, controlRadiusVar, useControlSize } from "../lib/sizes";
 

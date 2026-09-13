@@ -2,11 +2,11 @@ import * as PopoverPrimitive from "@radix-ui/react-popover";
 import {
   type CSSProperties,
   type FocusEvent,
+  Fragment,
+  forwardRef,
   type KeyboardEvent,
   type MouseEvent,
   type PointerEvent,
-  Fragment,
-  forwardRef,
   useCallback,
   useEffect,
   useRef,

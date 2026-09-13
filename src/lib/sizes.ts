@@ -1,4 +1,4 @@
-import { createContext, useContext, type CSSProperties } from "react";
+import { type CSSProperties, createContext, useContext } from "react";
 
 /**
  * Canonical control sizes for NonlaUI.

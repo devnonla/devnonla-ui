@@ -1,35 +1,34 @@
 /** Schema-driven form (react-hook-form). Prefer this name over layout `Form`. */
-export { Form as SchemaForm } from "./Form";
-export type { FormProps as SchemaFormProps } from "./Form";
-/** @deprecated use SchemaForm — kept so existing demo imports keep typechecking during migrate */
-export { Form as FormSchema } from "./Form";
-export { FormItem } from "./FormItem";
-export type { FormItemProps } from "./FormItem";
-export { EFormItemType } from "./common/enum";
-export { hydrateRules, fieldNameOf, isRuleRequired } from "./common/rules";
+
 export type { FormFetcher } from "./common/context";
+export { EFormItemType } from "./common/enum";
+export { fieldNameOf, hydrateRules, isRuleRequired } from "./common/rules";
 export type {
-  TForm,
-  TFormItemProps,
-  TFormRule,
-  TRuleValueMessage,
-  ISelectItemProps,
   IFormItemHelpProps,
+  ISelectItemProps,
+  TForm,
+  TFormItemCheckbox,
+  TFormItemColor,
+  TFormItemCustom,
+  TFormItemDateTime,
+  TFormItemHidden,
   TFormItemInput,
-  TFormItemTextarea,
   TFormItemNumber,
+  TFormItemObject,
+  TFormItemProps,
+  TFormItemRadio,
+  TFormItemRenderCtx,
+  TFormItemRepeater,
   TFormItemSelect,
   TFormItemSelectMultiple,
   TFormItemSelectRemote,
-  TFormItemDateTime,
-  TFormItemTime,
-  TFormItemRepeater,
-  TFormItemObject,
-  TFormItemRadio,
-  TFormItemColor,
-  TFormItemHidden,
   TFormItemSwitch,
-  TFormItemCheckbox,
-  TFormItemCustom,
-  TFormItemRenderCtx,
+  TFormItemTextarea,
+  TFormItemTime,
+  TFormRule,
+  TRuleValueMessage,
 } from "./common/types";
+export type { FormProps as SchemaFormProps } from "./Form";
+export { Form as SchemaForm, Form as FormSchema } from "./Form";
+export type { FormItemProps } from "./FormItem";
+export { FormItem } from "./FormItem";

@@ -1,12 +1,12 @@
 import {
   Children,
-  Fragment,
   type CSSProperties,
+  Fragment,
+  isValidElement,
   type KeyboardEvent,
   type PointerEvent,
   type ReactElement,
   type ReactNode,
-  isValidElement,
   useCallback,
   useEffect,
   useLayoutEffect,
@@ -15,7 +15,7 @@ import {
   useState,
 } from "react";
 import { cn } from "../lib/cn";
-import { applyDrag, distributeSizes, parseSplitterSize, scaleSizes, type SplitterSize } from "./sizes";
+import { applyDrag, distributeSizes, parseSplitterSize, type SplitterSize, scaleSizes } from "./sizes";
 
 export type { SplitterSize };
 export type SplitterOrientation = "horizontal" | "vertical";

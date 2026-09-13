@@ -1,5 +1,5 @@
 import { type CSSProperties, useEffect, useRef } from "react";
-import { DayPicker, getDefaultClassNames, type DayButtonProps, type DayPickerProps } from "react-day-picker";
+import { type DayButtonProps, DayPicker, type DayPickerProps, getDefaultClassNames } from "react-day-picker";
 import { cn } from "../lib/cn";
 
 export type CalendarProps = DayPickerProps;
