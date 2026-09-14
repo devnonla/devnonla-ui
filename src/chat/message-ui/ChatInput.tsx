@@ -23,10 +23,15 @@ export type ChatInputProps = {
 
 function resize(el: HTMLTextAreaElement | null, maxRows = 10) {
   if (!el) return;
-  el.style.height = "auto";
-  const line = Number.parseFloat(getComputedStyle(el).lineHeight) || 22;
-  const max = line * maxRows + 8;
-  el.style.height = `${Math.min(el.scrollHeight, max)}px`;
+  // Collapse first — `height: auto` can keep a stretched/flex height so scrollHeight
+  // stays inflated until a later text change remeasures.
+  el.style.height = "0px";
+  const styles = getComputedStyle(el);
+  const line = Number.parseFloat(styles.lineHeight) || 22;
+  const padY = (Number.parseFloat(styles.paddingTop) || 0) + (Number.parseFloat(styles.paddingBottom) || 0);
+  const min = line + padY;
+  const max = line * maxRows + padY;
+  el.style.height = `${Math.min(Math.max(el.scrollHeight, min), max)}px`;
 }
 
 function isEditableTarget(el: EventTarget | null): boolean {
@@ -45,6 +50,16 @@ export function ChatInput({ generating = false, placeholder = "Message…", disa
   useLayoutEffect(() => {
     resize(textareaRef.current);
   }, [text]);
+
+  // Remeasure when the composer width settles (first paint / panel resize).
+  useEffect(() => {
+    const el = textareaRef.current;
+    const parent = el?.parentElement;
+    if (!el || !parent) return;
+    const ro = new ResizeObserver(() => resize(el));
+    ro.observe(parent);
+    return () => ro.disconnect();
+  }, []);
 
   useEffect(() => {
     const onSignal = focusSignal !== undefined;
