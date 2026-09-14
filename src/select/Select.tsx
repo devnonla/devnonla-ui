@@ -12,6 +12,7 @@ import {
   useState,
 } from "react";
 import { usePopupContainer } from "../app/context";
+import { menuItemClass } from "../dropdown/menuClasses";
 import { cn } from "../lib/cn";
 import { type ControlSize, controlFieldFocusBorder, controlFieldStyle, controlFieldSurface, controlFieldTransition, controlStatusClass, useControlSize } from "../lib/sizes";
 import { glassOverlayClass } from "../lib/surface";
@@ -233,7 +234,7 @@ export const Select = forwardRef<HTMLButtonElement, SelectProps>(function Select
               role="button"
               tabIndex={-1}
               aria-label="Clear"
-              className="inline-flex size-4 shrink-0 cursor-pointer items-center justify-center rounded-full text-muted-foreground opacity-0 transition-opacity hover:bg-foreground/6 hover:text-foreground group-hover/select:opacity-100"
+              className="inline-flex size-4 shrink-0 cursor-pointer items-center justify-center rounded-full text-muted-foreground opacity-0 transition-opacity hover:bg-ink-hover hover:text-foreground group-hover/select:opacity-100"
               onPointerDown={(e) => e.preventDefault()}
               onClick={(e) => {
                 e.preventDefault();
@@ -293,11 +294,12 @@ export const Select = forwardRef<HTMLButtonElement, SelectProps>(function Select
                   tabIndex={-1}
                   aria-selected={opt.value === selected}
                   data-active={i === active ? "true" : undefined}
+                  data-highlighted={!opt.disabled && i === active && opt.value !== selected ? "" : undefined}
                   className={cn(
-                    "relative flex cursor-pointer select-none items-center rounded-md border border-solid border-transparent px-2.5 py-1.5 text-sm outline-none",
+                    menuItemClass,
+                    "cursor-pointer",
                     opt.disabled && "pointer-events-none opacity-40",
                     !opt.disabled && opt.value === selected && "nonla-glass-chip-on text-foreground",
-                    !opt.disabled && i === active && opt.value !== selected && "nonla-glass-chip",
                   )}
                   onMouseEnter={() => setActive(i)}
                   onMouseDown={(e) => e.preventDefault()}

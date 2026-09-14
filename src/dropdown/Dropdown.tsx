@@ -76,7 +76,7 @@ function MenuItems({ items, onClick, portal }: { items: (MenuItemType | null | u
         if (item.children?.length) {
           return (
             <DropdownMenu.Sub key={key}>
-              <DropdownMenu.SubTrigger disabled={item.disabled} className={cn(menuItemClass, "data-[state=open]:bg-foreground/8", item.danger && "text-destructive", item.className)} style={item.style}>
+              <DropdownMenu.SubTrigger disabled={item.disabled} className={cn(menuItemClass, "data-[state=open]:bg-ink-active", item.danger && "text-destructive", item.className)} style={item.style}>
                 {item.icon ? <span className={menuIconClass}>{item.icon}</span> : null}
                 <span className="min-w-0 flex-1">{item.label}</span>
                 <ChevronRight />

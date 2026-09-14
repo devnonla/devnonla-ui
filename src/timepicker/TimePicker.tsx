@@ -245,7 +245,7 @@ function StepperButton({
       aria-label={label}
       className={cn(
         "flex h-10 items-center justify-center rounded-md text-muted-foreground transition-colors",
-        "hover:bg-foreground/5 hover:text-foreground active:bg-foreground/8",
+        "hover:bg-ink-hover hover:text-foreground active:bg-ink-active",
       )}
       style={{ width: size }}
       onPointerDown={onPointerDown}
@@ -298,7 +298,7 @@ function PickGrid({
             tabIndex={-1}
             className={cn(
               "flex h-11 items-center justify-center rounded-md tabular-nums text-[13.5px] font-normal transition-colors",
-              selected ? "bg-foreground/8 text-foreground" : "text-foreground hover:bg-foreground/5",
+              selected ? "bg-ink-active text-foreground" : "text-foreground hover:bg-ink-hover",
             )}
             onClick={() => onSelect(opt.value)}
           >
@@ -372,7 +372,7 @@ function StepperBoard({
               className={cn(
                 "flex cursor-pointer items-center justify-center rounded-md font-semibold leading-none tracking-tight transition-colors",
                 col.wide ? "text-[23px]" : "tabular-nums",
-                col.active ? "bg-foreground/6 text-foreground" : "text-foreground hover:bg-foreground/5",
+                col.active ? "bg-ink-hover text-foreground" : "text-foreground hover:bg-ink-hover",
               )}
               style={{ width: size, height: size, fontSize: col.wide ? undefined : fontSize }}
               onClick={col.onPick}
@@ -640,7 +640,7 @@ export const TimePicker = forwardRef<HTMLInputElement, TimePickerProps>(function
               type="button"
               tabIndex={-1}
               aria-label="Clear"
-              className="inline-flex size-4 shrink-0 cursor-pointer items-center justify-center rounded-full text-muted-foreground opacity-0 transition-opacity hover:bg-foreground/6 hover:text-foreground group-hover/timepicker:opacity-100 group-focus-within/timepicker:opacity-100"
+              className="inline-flex size-4 shrink-0 cursor-pointer items-center justify-center rounded-full text-muted-foreground opacity-0 transition-opacity hover:bg-ink-hover hover:text-foreground group-hover/timepicker:opacity-100 group-focus-within/timepicker:opacity-100"
               onMouseDown={(e) => e.preventDefault()}
               onClick={clear}
             >
@@ -682,7 +682,7 @@ export const TimePicker = forwardRef<HTMLInputElement, TimePickerProps>(function
                   type="button"
                   tabIndex={-1}
                   aria-label="Back"
-                  className="absolute top-2 left-1.5 z-10 flex size-7 items-center justify-center rounded-md text-muted-foreground hover:bg-foreground/5 hover:text-foreground"
+                  className="absolute top-2 left-1.5 z-10 flex size-7 items-center justify-center rounded-md text-muted-foreground hover:bg-ink-hover hover:text-foreground"
                   onClick={() => setPicking(null)}
                 >
                   <Chevron dir="left" />

@@ -606,7 +606,7 @@ export function ColorPicker({
           <button
             type="button"
             aria-label="Clear"
-            className="inline-flex size-6 shrink-0 cursor-pointer items-center justify-center rounded-md text-muted-foreground hover:bg-foreground/6 hover:text-foreground"
+            className="inline-flex size-6 shrink-0 cursor-pointer items-center justify-center rounded-md text-muted-foreground hover:bg-ink-hover hover:text-foreground"
             onClick={() => clear()}
           >
             <ClearIcon />

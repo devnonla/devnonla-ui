@@ -269,7 +269,7 @@ const DatePickerRoot = forwardRef<HTMLButtonElement, DatePickerProps>(function D
                 role="button"
                 tabIndex={-1}
                 aria-label="Clear"
-                className="inline-flex size-4 shrink-0 cursor-pointer items-center justify-center rounded-full text-muted-foreground opacity-0 transition-opacity hover:bg-foreground/6 hover:text-foreground group-hover/datepicker:opacity-100"
+                className="inline-flex size-4 shrink-0 cursor-pointer items-center justify-center rounded-full text-muted-foreground opacity-0 transition-opacity hover:bg-ink-hover hover:text-foreground group-hover/datepicker:opacity-100"
                 onClick={clear}
                 onPointerDown={(e) => e.preventDefault()}
               >
@@ -408,7 +408,7 @@ const RangePicker = forwardRef<HTMLButtonElement, RangePickerProps>(function Ran
                 role="button"
                 tabIndex={-1}
                 aria-label="Clear"
-                className="inline-flex size-4 shrink-0 cursor-pointer items-center justify-center rounded-full text-muted-foreground opacity-0 transition-opacity hover:bg-foreground/6 hover:text-foreground group-hover/datepicker:opacity-100"
+                className="inline-flex size-4 shrink-0 cursor-pointer items-center justify-center rounded-full text-muted-foreground opacity-0 transition-opacity hover:bg-ink-hover hover:text-foreground group-hover/datepicker:opacity-100"
                 onClick={clear}
                 onPointerDown={(e) => e.preventDefault()}
               >

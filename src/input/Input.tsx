@@ -299,7 +299,7 @@ const InputNumber = forwardRef<HTMLInputElement, InputNumberProps>(function Inpu
             tabIndex={-1}
             aria-label="Increase"
             disabled={atMax}
-            className={cn("flex flex-1 items-center justify-center text-muted-foreground", "hover:bg-foreground/5 hover:text-foreground active:bg-foreground/8", "disabled:opacity-30 disabled:pointer-events-none", "border-b border-border/60")}
+            className={cn("flex flex-1 items-center justify-center text-muted-foreground", "hover:bg-ink-hover hover:text-foreground active:bg-ink-active", "disabled:opacity-30 disabled:pointer-events-none", "border-b border-border/60")}
             onMouseDown={(e) => e.preventDefault()}
             onClick={() => stepBy(1)}
           >
@@ -310,7 +310,7 @@ const InputNumber = forwardRef<HTMLInputElement, InputNumberProps>(function Inpu
             tabIndex={-1}
             aria-label="Decrease"
             disabled={atMin}
-            className={cn("flex flex-1 items-center justify-center text-muted-foreground", "hover:bg-foreground/5 hover:text-foreground active:bg-foreground/8", "disabled:opacity-30 disabled:pointer-events-none")}
+            className={cn("flex flex-1 items-center justify-center text-muted-foreground", "hover:bg-ink-hover hover:text-foreground active:bg-ink-active", "disabled:opacity-30 disabled:pointer-events-none")}
             onMouseDown={(e) => e.preventDefault()}
             onClick={() => stepBy(-1)}
           >

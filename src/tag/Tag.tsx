@@ -97,7 +97,7 @@ export function Tag({
       {closable ? (
         <button
           type="button"
-          className="-mr-0.5 inline-flex size-3.5 shrink-0 items-center justify-center rounded-full text-current/55 transition-colors hover:bg-foreground/8 hover:text-current"
+          className="-mr-0.5 inline-flex size-3.5 shrink-0 items-center justify-center rounded-full text-current/55 transition-colors hover:bg-ink-hover hover:text-current"
           aria-label="Remove"
           onClick={onClose}
         >

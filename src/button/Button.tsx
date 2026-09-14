@@ -88,7 +88,7 @@ function tokenAppearance(color: "default" | "primary" | "danger" | "link", varia
   }
   if (color === "link" || variant === "link") return "text-link border-transparent hover:text-link/80";
   if (variant === "filled") return "bg-muted text-foreground border-transparent hover:bg-muted/80";
-  if (variant === "text") return "bg-transparent text-foreground border-transparent hover:bg-foreground/6 hover:text-foreground";
+  if (variant === "text") return "bg-transparent text-foreground border-transparent hover:bg-ink-hover hover:text-foreground";
   if (variant === "dashed") return "bg-transparent text-foreground border-dashed border-glass-border hover:bg-glass-bar backdrop-blur-xl";
   return "nonla-btn-glass text-foreground";
 }

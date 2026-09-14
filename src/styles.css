@@ -650,12 +650,16 @@
 }
 
 /* Nested glass chip — hover is frost only; selected tints with brand */
-.nonla-glass-chip,
-.nonla-menu-item[data-highlighted] {
+.nonla-glass-chip {
   background: var(--glass-bar);
   border-color: var(--glass-border);
   -webkit-backdrop-filter: blur(24px);
   backdrop-filter: blur(24px);
+}
+/* Menu item hover — pure ink tint; panel's warm frost shows through, no milky gray */
+.nonla-menu-item[data-highlighted] {
+  background: var(--ink-hover);
+  border-color: var(--glass-border);
 }
 .nonla-glass-chip-on {
   background: var(--glass-bar);

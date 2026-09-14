@@ -65,7 +65,7 @@ export type MenuItemProps = {
 
 export function MenuItem({ icon, label, extra, selected, action, onClick, className }: MenuItemProps) {
   return (
-    <div className={cn("group relative flex min-h-8 items-center rounded-md", selected ? "bg-ink-active" : "hover:bg-foreground/5", className)}>
+    <div className={cn("group relative flex min-h-8 items-center rounded-md", selected ? "bg-ink-active" : "hover:bg-ink-hover", className)}>
       <button
         type="button"
         aria-current={selected ? "true" : undefined}

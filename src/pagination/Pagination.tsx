@@ -114,7 +114,7 @@ function ItemBtn({
       className={cn(
         "group inline-flex min-w-0 cursor-pointer items-center justify-center px-1.5 tabular-nums select-none",
         "transition-colors disabled:cursor-not-allowed disabled:opacity-40",
-        active ? "bg-brand font-medium text-(--nonla-solid-fg)" : "text-muted-foreground hover:bg-foreground/5 hover:text-foreground",
+        active ? "bg-brand font-medium text-(--nonla-solid-fg)" : "text-muted-foreground hover:bg-ink-hover hover:text-foreground",
         className,
       )}
       style={{
@@ -245,7 +245,7 @@ function GoButton({
         "inline-flex cursor-pointer items-center justify-center px-2 text-foreground",
         controlFieldSurface,
         controlFieldTransition,
-        "hover:bg-foreground/5 disabled:cursor-not-allowed disabled:opacity-45",
+        "hover:bg-ink-hover disabled:cursor-not-allowed disabled:opacity-45",
       )}
       style={{
         height: controlHeightVar(size),
