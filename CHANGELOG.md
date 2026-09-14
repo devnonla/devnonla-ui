@@ -5,6 +5,19 @@ All notable changes to this project will be documented in this file.
 The format is based on [Keep a Changelog](https://keepachangelog.com/en/1.1.0/),
 and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0.html).
 
+## [0.5.1] - 2026-09-14
+
+### Changed
+
+- Hover/active on Button, Menu, Dropdown, Select, pickers, Pagination, and Tag uses ink tint (`ink-hover` / `ink-active`) instead of gray/frost overlays. Menu highlight is ink, not a glass chip.
+- `Segmented` uses a sliding glass thumb on a frosted track.
+- `Splitter` gutter is a 1px line that thickens on hover/drag; the center handle pill is gone.
+- `AgentChatbox` / `AgentPanel` column is slightly wider. `AgentChatbox` composer padding is tighter. Default `ChatToolCall` icon is a code block.
+
+### Fixed
+
+- `ChatInput` textarea height no longer stays stretched after collapse; it remeasures when the composer width changes.
+
 ## [0.5.0] - 2026-09-14
 
 ### Added
@@ -123,6 +136,7 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 - Replace class `nonla-chat-shimmer` with `Shimmer` or `.nonla-shimmer`.
 - `resolveToolUI(toolName, extras?)` — second argument is optional; extra UIs are checked first.
 
+[0.5.1]: https://github.com/devnonla/devnonla-ui/compare/v0.5.0...v0.5.1
 [0.5.0]: https://github.com/devnonla/devnonla-ui/compare/v0.4.3...v0.5.0
 [0.4.3]: https://github.com/devnonla/devnonla-ui/compare/v0.4.2...v0.4.3
 [0.4.2]: https://github.com/devnonla/devnonla-ui/compare/v0.4.1...v0.4.2
