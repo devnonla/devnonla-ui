@@ -668,12 +668,25 @@
   -webkit-backdrop-filter: blur(24px);
   backdrop-filter: blur(24px);
 }
+/* Segmented sliding thumb — glass pill glides between items */
+.nonla-segmented-thumb {
+  top: 0;
+  left: 0;
+  transition:
+    transform 380ms cubic-bezier(0.3, 1.25, 0.5, 1),
+    width 380ms cubic-bezier(0.3, 1.25, 0.5, 1),
+    height 380ms cubic-bezier(0.3, 1.25, 0.5, 1);
+}
+
 @media (prefers-reduced-motion: reduce) {
   .nonla-btn-glass {
     transition: box-shadow var(--nonla-dur-fast) var(--nonla-ease-out);
   }
   .nonla-btn-glass:active:not(:disabled):not([aria-disabled]) {
     transform: none;
+  }
+  .nonla-segmented-thumb {
+    transition: none;
   }
 }
 
