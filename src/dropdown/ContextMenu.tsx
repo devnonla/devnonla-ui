@@ -3,7 +3,7 @@ import type { ReactNode } from "react";
 import { usePopupContainer } from "../app/context";
 import { cn } from "../lib/cn";
 import type { MenuItemType, MenuProps } from "./Dropdown";
-import { menuContentClass, menuIconClass, menuItemClass } from "./menuClasses";
+import { menuContentClass, menuGroupClass, menuGroupLabelClass, menuIconClass, menuItemClass } from "./menuClasses";
 
 export type ContextMenuProps = {
   menu?: MenuProps;
@@ -24,7 +24,7 @@ function ChevronRight() {
 }
 
 function itemKey(item: MenuItemType, i: number) {
-  return item.key ?? (item.type === "divider" ? `divider-${i}` : `item-${i}`);
+  return item.key ?? (item.type === "divider" ? `divider-${i}` : item.type === "group" ? `group-${i}` : `item-${i}`);
 }
 
 function MenuItems({
@@ -43,6 +43,18 @@ function MenuItems({
         const key = itemKey(item, i);
         if (item.type === "divider") {
           return <ContextMenuPrimitive.Separator key={key} className="my-1 h-px bg-border" />;
+        }
+        if (item.type === "group") {
+          return (
+            <ContextMenuPrimitive.Group key={key} className={menuGroupClass}>
+              {item.label != null && item.label !== "" ? (
+                <ContextMenuPrimitive.Label className={cn(menuGroupLabelClass, item.className)} style={item.style}>
+                  {item.label}
+                </ContextMenuPrimitive.Label>
+              ) : null}
+              <MenuItems items={item.children ?? []} onClick={onClick} contentClassName={contentClassName} />
+            </ContextMenuPrimitive.Group>
+          );
         }
         if (item.children?.length) {
           return (

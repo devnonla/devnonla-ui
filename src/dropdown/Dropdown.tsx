@@ -3,7 +3,7 @@ import { type CSSProperties, type MouseEvent, type ReactNode, useState } from "r
 import { usePopupContainer } from "../app/context";
 import { cn } from "../lib/cn";
 import { type PopperPlacement, placementToRadix } from "../lib/placement";
-import { menuContentClass, menuIconClass, menuItemClass } from "./menuClasses";
+import { menuContentClass, menuGroupClass, menuGroupLabelClass, menuIconClass, menuItemClass } from "./menuClasses";
 
 export type MenuItemType = {
   key?: string;
@@ -11,7 +11,7 @@ export type MenuItemType = {
   icon?: ReactNode;
   disabled?: boolean;
   danger?: boolean;
-  type?: "item" | "divider";
+  type?: "item" | "divider" | "group";
   children?: (MenuItemType | null | undefined)[];
   onClick?: (info?: { key: string }) => void;
   style?: CSSProperties;
@@ -49,7 +49,7 @@ function ChevronRight() {
 }
 
 function itemKey(item: MenuItemType, i: number) {
-  return item.key ?? (item.type === "divider" ? `divider-${i}` : `item-${i}`);
+  return item.key ?? (item.type === "divider" ? `divider-${i}` : item.type === "group" ? `group-${i}` : `item-${i}`);
 }
 
 function MenuItems({ items, onClick, portal }: { items: (MenuItemType | null | undefined)[]; onClick?: MenuProps["onClick"]; portal?: HTMLElement }) {
@@ -60,6 +60,18 @@ function MenuItems({ items, onClick, portal }: { items: (MenuItemType | null | u
         const key = itemKey(item, i);
         if (item.type === "divider") {
           return <DropdownMenu.Separator key={key} className="my-1 h-px bg-border" />;
+        }
+        if (item.type === "group") {
+          return (
+            <DropdownMenu.Group key={key} className={menuGroupClass}>
+              {item.label != null && item.label !== "" ? (
+                <DropdownMenu.Label className={cn(menuGroupLabelClass, item.className)} style={item.style}>
+                  {item.label}
+                </DropdownMenu.Label>
+              ) : null}
+              <MenuItems items={item.children ?? []} onClick={onClick} portal={portal} />
+            </DropdownMenu.Group>
+          );
         }
         if (item.children?.length) {
           return (
