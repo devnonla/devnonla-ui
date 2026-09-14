@@ -290,9 +290,12 @@ function SplitterRoot({
                 >
                   <span
                     className={cn(
-                      "pointer-events-none absolute rounded-full transition-colors",
-                      isVertical ? "inset-x-0 top-1/2 h-0.5 -translate-y-1/2" : "inset-y-0 left-1/2 w-0.5 -translate-x-1/2",
+                      "pointer-events-none absolute rounded-full transition-all",
+                      isVertical
+                        ? "inset-x-0 top-1/2 h-px -translate-y-1/2 group-hover:h-[3px] group-focus-visible:h-[3px]"
+                        : "inset-y-0 left-1/2 w-px -translate-x-1/2 group-hover:w-[3px] group-focus-visible:w-[3px]",
                       dragging ? "bg-brand" : "bg-border group-hover:bg-brand group-focus-visible:bg-brand",
+                      dragging && (isVertical ? "h-[3px]" : "w-[3px]"),
                     )}
                   />
                   {draggerIcon ? (
@@ -304,16 +307,7 @@ function SplitterRoot({
                     >
                       {draggerIcon}
                     </span>
-                  ) : (
-                    <span
-                      className={cn(
-                        "pointer-events-none absolute left-1/2 top-1/2 -translate-x-1/2 -translate-y-1/2 rounded-sm bg-card shadow-button-outline transition-opacity",
-                        "opacity-0 group-hover:opacity-100 group-focus-visible:opacity-100",
-                        dragging && "opacity-100",
-                        isVertical ? "h-1 w-8" : "h-8 w-1",
-                      )}
-                    />
-                  )}
+                  ) : null}
                 </div>
               </div>
             ) : null}
