@@ -1,108 +1,11 @@
 import { useCallback, useEffect, useRef, useState } from "react";
+import { buildAgentHistory, failOpenTools, finalizeStreaming, nextId } from "./agentStreamHelpers";
+import { createAgentSseSession } from "./createAgentSseSession";
 import { parseSseStream } from "./sse";
-import type { AgentHistoryMessage, AgentMessage, AgentPanelEndpoint, AgentToolAction, AgentToolCallEvent, AgentToolHook, AgentToolResultEvent } from "./types";
-import { formatToolName, hasMeaningfulInput, matchesToolHook } from "./utils";
+import type { AgentMessage, AgentPanelEndpoint, AgentToolCallEvent, AgentToolHook, AgentToolResultEvent } from "./types";
+import { matchesToolHook } from "./utils";
 
-let _id = 0;
-function nextId(prefix: string) {
-  return `${prefix}-${Date.now()}-${++_id}`;
-}
-
-function thinkingDurationSec(startedAt: number): number {
-  if (!startedAt) return 0;
-  return Math.round((Date.now() - startedAt) / 1000);
-}
-
-export function buildAgentHistory(messages: AgentMessage[]): AgentHistoryMessage[] {
-  return messages
-    .filter((m) => {
-      if (m.role === "user") return m.content.trim() !== "";
-      if (m.role === "assistant") return m.content.trim() !== "";
-      if (m.role === "tool-call") return m.toolOutput != null;
-      return false;
-    })
-    .map((m) => {
-      if (m.role === "tool-call") {
-        return {
-          role: "tool-call" as const,
-          content: "" as const,
-          toolCallId: m.toolCallId,
-          toolName: m.toolName,
-          toolInput: m.toolInput,
-          toolOutput: m.toolOutput,
-        };
-      }
-      return { role: m.role as "user" | "assistant", content: m.content };
-    });
-}
-
-function finalizeStreaming(prev: AgentMessage[]): AgentMessage[] {
-  return prev
-    .map((m) => {
-      if (m.role === "assistant" && m.streaming) {
-        if (!m.content.trim() && m.meta?.thinking) {
-          return {
-            ...m,
-            role: "thinking" as const,
-            content: String(m.meta.thinking),
-            streaming: false,
-          };
-        }
-        return { ...m, streaming: false };
-      }
-      return m;
-    })
-    .filter((m) => !(m.role === "assistant" && !m.content.trim() && !m.meta?.thinking));
-}
-
-function failOpenTools(prev: AgentMessage[], error: string): AgentMessage[] {
-  return prev.map((m) => {
-    if (m.role !== "tool-call" || m.toolOutput != null || m.toolError) return m;
-    return { ...m, toolError: error, toolOutput: JSON.stringify({ success: false, error }) };
-  });
-}
-
-function sameStreamTool(m: AgentMessage, toolName: string, toolLabel: string) {
-  if (m.role !== "tool-call") return false;
-  if (m.toolName === toolName) return true;
-  if (m.toolLabel && (m.toolLabel === toolLabel || m.toolLabel === toolName)) return true;
-  return false;
-}
-
-function lastToolIndex(prev: AgentMessage[], pred: (m: AgentMessage) => boolean): number {
-  for (let i = prev.length - 1; i >= 0; i--) {
-    if (pred(prev[i])) return i;
-  }
-  return -1;
-}
-
-/** Merge a streamed tool-call into an existing card (same id, still running, or result-before-params). */
-function findToolCallMergeIndex(
-  prev: AgentMessage[],
-  event: { toolCallId?: string; toolName: string; toolLabel: string; input: unknown },
-): number {
-  if (event.toolCallId) {
-    const byId = prev.findIndex((m) => m.role === "tool-call" && m.toolCallId === event.toolCallId);
-    if (byId !== -1) return byId;
-  }
-
-  const pending = lastToolIndex(
-    prev,
-    (m) => sameStreamTool(m, event.toolName, event.toolLabel) && m.toolOutput == null && !m.toolError,
-  );
-  if (pending !== -1) {
-    const m = prev[pending];
-    if (!event.toolCallId || !m.toolCallId || m.toolCallId === event.toolCallId) return pending;
-  }
-
-  if (!hasMeaningfulInput(event.input)) return -1;
-
-  const sparse = lastToolIndex(prev, (m) => sameStreamTool(m, event.toolName, event.toolLabel) && !hasMeaningfulInput(m.toolInput));
-  if (sparse === -1) return -1;
-  const m = prev[sparse];
-  if (!event.toolCallId || !m.toolCallId || m.toolCallId === event.toolCallId) return sparse;
-  return -1;
-}
+export { buildAgentHistory } from "./agentStreamHelpers";
 
 export type UseAgentStreamOptions = {
   endpoint: AgentPanelEndpoint;
@@ -110,20 +13,24 @@ export type UseAgentStreamOptions = {
   headers?: Record<string, string>;
   fetcher?: typeof fetch;
   initialMessages?: AgentMessage[];
-  onToolAction?: (event: AgentToolAction) => void;
   toolHooks?: AgentToolHook[];
 };
 
 type OpenTool = AgentToolCallEvent;
 
-export function useAgentStream({ endpoint, extraBody, headers, fetcher = fetch, initialMessages, onToolAction, toolHooks }: UseAgentStreamOptions) {
+export function useAgentStream({
+  endpoint,
+  extraBody,
+  headers,
+  fetcher = fetch,
+  initialMessages,
+  toolHooks,
+}: UseAgentStreamOptions) {
   const [messages, setMessages] = useState<AgentMessage[]>(() => initialMessages ?? []);
   const [generating, setGenerating] = useState(false);
   const thinkingRef = useRef("");
   const thinkingStartRef = useRef(0);
   const abortRef = useRef<AbortController | null>(null);
-  const onToolActionRef = useRef(onToolAction);
-  onToolActionRef.current = onToolAction;
   const toolHooksRef = useRef(toolHooks);
   toolHooksRef.current = toolHooks;
   const extraBodyRef = useRef(extraBody);
@@ -136,14 +43,12 @@ export function useAgentStream({ endpoint, extraBody, headers, fetcher = fetch, 
     for (const hook of toolHooksRef.current ?? []) {
       if (matchesToolHook(hook.name, event.toolName)) hook.onCall?.(event);
     }
-    onToolActionRef.current?.({ type: "tool-call", ...event });
   }, []);
 
   const emitResult = useCallback((event: AgentToolResultEvent) => {
     for (const hook of toolHooksRef.current ?? []) {
       if (matchesToolHook(hook.name, event.toolName)) hook.onResult?.(event);
     }
-    onToolActionRef.current?.({ type: "tool-result", ...event });
   }, []);
 
   const flushOpenTools = useCallback(
@@ -211,83 +116,17 @@ export function useAgentStream({ endpoint, extraBody, headers, fetcher = fetch, 
       thinkingStartRef.current = 0;
 
       const history = buildAgentHistory(historySnapshot);
-      let assistantText = "";
-      let currentId = assistantId;
-      let needsNewBubble = false;
-      const seenToolCallIds = new Set<string>();
-
-      const freezeOpen = () => {
-        const freezeId = currentId;
-        if (freezeId) {
-          const thinkingSnapshot = thinkingRef.current;
-          const liveDuration = thinkingStartRef.current > 0 ? thinkingDurationSec(thinkingStartRef.current) : undefined;
-          if (assistantText.trim()) {
-            setMessages((prev) =>
-              prev.map((m) => {
-                if (m.id !== freezeId) return m;
-                const existing = typeof m.meta?.thinkingDuration === "number" ? m.meta.thinkingDuration : undefined;
-                return {
-                  ...m,
-                  content: assistantText,
-                  streaming: false,
-                  meta: thinkingSnapshot ? { ...m.meta, thinking: thinkingSnapshot, thinkingDuration: liveDuration ?? existing ?? 0 } : m.meta,
-                };
-              }),
-            );
-          } else if (thinkingSnapshot) {
-            setMessages((prev) =>
-              prev.map((m) =>
-                m.id === freezeId
-                  ? {
-                      id: freezeId,
-                      role: "thinking" as const,
-                      content: thinkingSnapshot,
-                      streaming: false,
-                      timestamp: m.timestamp,
-                      meta: { thinking: thinkingSnapshot, thinkingDuration: liveDuration ?? 0 },
-                    }
-                  : m,
-              ),
-            );
-          } else {
-            setMessages((prev) => prev.filter((m) => m.id !== freezeId));
-          }
-        }
-        thinkingRef.current = "";
-        thinkingStartRef.current = 0;
-        assistantText = "";
-        currentId = "";
-        needsNewBubble = true;
-      };
-
-      const ensureBubble = (seed?: { content?: string; thinking?: string }): string => {
-        if (!needsNewBubble && currentId) return currentId;
-        const newId = nextId("a");
-        currentId = newId;
-        needsNewBubble = false;
-        setMessages((prev) => [
-          ...prev,
-          {
-            id: newId,
-            role: "assistant",
-            content: seed?.content ?? "",
-            streaming: true,
-            timestamp: new Date(),
-            meta: seed?.thinking ? { thinking: seed.thinking } : undefined,
-          },
-        ]);
-        return newId;
-      };
-
-      const stampThinkingDuration = () => {
-        if (!thinkingRef.current || !thinkingStartRef.current) return;
-        const duration = thinkingDurationSec(thinkingStartRef.current);
-        const targetId = currentId;
-        if (targetId) {
-          setMessages((prev) => prev.map((m) => (m.id === targetId ? { ...m, meta: { ...m.meta, thinkingDuration: duration } } : m)));
-        }
-        thinkingStartRef.current = 0;
-      };
+      const session = createAgentSseSession({
+        setMessages,
+        setGenerating,
+        thinkingRef,
+        thinkingStartRef,
+        openToolsRef,
+        emitCall,
+        emitResult,
+        flushOpenTools,
+        assistantId,
+      });
 
       try {
         const extra = typeof extraBodyRef.current === "function" ? extraBodyRef.current() : extraBodyRef.current;
@@ -309,193 +148,15 @@ export function useAgentStream({ endpoint, extraBody, headers, fetcher = fetch, 
           throw new Error(errText || `HTTP ${response.status}`);
         }
 
-        const result = await parseSseStream(
-          response.body,
-          {
-            onTextDelta: (delta) => {
-              stampThinkingDuration();
-              if (needsNewBubble || !currentId) {
-                assistantText = delta;
-                thinkingRef.current = "";
-                thinkingStartRef.current = 0;
-                ensureBubble({ content: delta });
-              } else {
-                assistantText += delta;
-                const targetId = currentId;
-                setMessages((prev) => prev.map((m) => (m.id === targetId ? { ...m, content: assistantText, streaming: true } : m)));
-              }
-            },
-            onThinkingDelta: (delta) => {
-              if (needsNewBubble || !currentId) {
-                thinkingRef.current = delta;
-                thinkingStartRef.current = Date.now();
-                assistantText = "";
-                ensureBubble({ thinking: delta });
-                return;
-              }
-              if (!thinkingRef.current) thinkingStartRef.current = Date.now();
-              thinkingRef.current += delta;
-              const thinking = thinkingRef.current;
-              const targetId = currentId;
-              setMessages((prev) => prev.map((m) => (m.id === targetId ? { ...m, meta: { ...m.meta, thinking } } : m)));
-            },
-            onToolCall: (event) => {
-              const label = event.toolLabel ? (event.toolLabel.includes(" ") ? event.toolLabel : formatToolName(event.toolLabel)) : formatToolName(event.toolName);
-              if (event.toolCallId) seenToolCallIds.add(event.toolCallId);
-
-              const call: AgentToolCallEvent = {
-                toolCallId: event.toolCallId,
-                toolName: event.toolName,
-                toolLabel: label,
-                input: event.input,
-              };
-
-              freezeOpen();
-              setMessages((prev) => {
-                const idx = findToolCallMergeIndex(prev, { ...event, toolLabel: label });
-                if (idx !== -1) {
-                  const target = prev[idx];
-                  const nextInput = hasMeaningfulInput(event.input) ? event.input : target.toolInput;
-                  const nextId = event.toolCallId ?? target.toolCallId;
-                  if (target.toolOutput == null) {
-                    const mapKey = [...openToolsRef.current.entries()].find(([, t]) => t.toolCallId === target.toolCallId || t.toolName === target.toolName)?.[0] ?? nextId ?? target.id;
-                    openToolsRef.current.set(mapKey, { ...call, toolCallId: nextId, input: nextInput });
-                  }
-                  return prev.map((m, i) =>
-                    i === idx
-                      ? {
-                          ...m,
-                          content: event.toolName,
-                          toolCallId: nextId,
-                          toolName: event.toolName,
-                          toolLabel: label,
-                          toolInput: nextInput,
-                        }
-                      : m,
-                  );
-                }
-
-                const id = nextId("tc");
-                openToolsRef.current.set(event.toolCallId || id, call);
-                return [
-                  ...prev,
-                  {
-                    id,
-                    role: "tool-call" as const,
-                    content: event.toolName,
-                    toolCallId: event.toolCallId,
-                    toolName: event.toolName,
-                    toolLabel: label,
-                    toolInput: event.input,
-                    timestamp: new Date(),
-                  },
-                ];
-              });
-              if (event.input !== undefined) emitCall(call);
-            },
-            onToolResult: (event) => {
-              const raw = event.result;
-              const resultStr = typeof raw === "string" ? raw : JSON.stringify(raw);
-              const resultLabel = formatToolName(event.toolName);
-              if (event.toolCallId) {
-                openToolsRef.current.delete(event.toolCallId);
-              } else {
-                for (const [key, tool] of [...openToolsRef.current.entries()].reverse()) {
-                  if (tool.toolName === event.toolName) {
-                    openToolsRef.current.delete(key);
-                    break;
-                  }
-                }
-              }
-              freezeOpen();
-              setMessages((prev) => {
-                let matchIdx = -1;
-                if (event.toolCallId) {
-                  matchIdx = prev.findIndex((m) => m.role === "tool-call" && m.toolCallId === event.toolCallId);
-                }
-                if (matchIdx === -1) {
-                  matchIdx = lastToolIndex(
-                    prev,
-                    (m) => sameStreamTool(m, event.toolName, resultLabel) && m.toolOutput == null,
-                  );
-                }
-                if (matchIdx !== -1) {
-                  return prev.map((m, i) => (i === matchIdx ? { ...m, toolOutput: resultStr, toolCallId: event.toolCallId ?? m.toolCallId } : m));
-                }
-                const id = nextId("tc");
-                return [
-                  ...prev,
-                  {
-                    id,
-                    role: "tool-call" as const,
-                    content: event.toolName,
-                    toolCallId: event.toolCallId,
-                    toolName: event.toolName,
-                    toolLabel: resultLabel,
-                    toolOutput: resultStr,
-                    timestamp: new Date(),
-                  },
-                ];
-              });
-              emitResult({ toolCallId: event.toolCallId, toolName: event.toolName, output: raw });
-            },
-            onDone: () => {
-              flushOpenTools("Tool did not return a result");
-              setMessages((prev) => finalizeStreaming(failOpenTools(prev, "Tool did not return a result")));
-              setGenerating(false);
-              thinkingRef.current = "";
-              thinkingStartRef.current = 0;
-            },
-            onError: (error) => {
-              const reason = error === "cancelled" ? "Cancelled" : error;
-              flushOpenTools(reason);
-              if (error === "Connection lost") {
-                setMessages((prev) => finalizeStreaming(failOpenTools(prev, "Connection lost")));
-                setGenerating(false);
-                thinkingRef.current = "";
-                thinkingStartRef.current = 0;
-                return;
-              }
-              setMessages((prev) => [
-                ...finalizeStreaming(failOpenTools(prev, reason)),
-                ...(error === "cancelled" ? [] : [{ id: nextId("err"), role: "error" as const, content: error, timestamp: new Date() }]),
-              ]);
-              setGenerating(false);
-              thinkingRef.current = "";
-              thinkingStartRef.current = 0;
-            },
-          },
-          { signal: controller.signal },
-        );
-
-        if (result === "aborted") {
-          flushOpenTools("Cancelled");
-          setMessages((prev) => finalizeStreaming(failOpenTools(prev, "Cancelled")));
-          setGenerating(false);
-          thinkingRef.current = "";
-          thinkingStartRef.current = 0;
-          return;
-        }
-
-        flushOpenTools("Tool did not return a result");
-        setMessages((prev) => finalizeStreaming(failOpenTools(prev, "Tool did not return a result")));
-        setGenerating(false);
+        const result = await parseSseStream(response.body, session.callbacks, { signal: controller.signal });
+        session.finishAfterParse(result);
       } catch (err: unknown) {
         if ((err as Error)?.name === "AbortError") {
-          flushOpenTools("Cancelled");
-          setMessages((prev) => finalizeStreaming(failOpenTools(prev, "Cancelled")));
-          setGenerating(false);
-          thinkingRef.current = "";
-          thinkingStartRef.current = 0;
+          session.finishAbortError();
           return;
         }
         const message = err instanceof Error ? err.message : String(err);
-        flushOpenTools(message);
-        setMessages((prev) => [
-          ...finalizeStreaming(failOpenTools(prev, message)),
-          { id: nextId("err"), role: "error", content: message, timestamp: new Date() },
-        ]);
-        setGenerating(false);
+        session.finishThrown(message);
       } finally {
         abortRef.current = null;
       }

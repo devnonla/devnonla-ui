@@ -22,7 +22,6 @@ export type {
   AgentPanelEndpoint,
   AgentPanelProps,
   AgentStreamRequest,
-  AgentToolAction,
   AgentToolCallEvent,
   AgentToolHook,
   AgentToolNameMatch,

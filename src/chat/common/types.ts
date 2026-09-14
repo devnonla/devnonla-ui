@@ -62,7 +62,3 @@ export type AgentToolHook = {
   onCall?: (event: AgentToolCallEvent) => void;
   onResult?: (event: AgentToolResultEvent) => void;
 };
-
-export type AgentToolAction =
-  | ({ type: "tool-call" } & AgentToolCallEvent)
-  | ({ type: "tool-result" } & AgentToolResultEvent);

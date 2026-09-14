@@ -1,21 +1,12 @@
-import { type ReactNode, useCallback, useEffect, useLayoutEffect, useRef, useState } from "react";
+import { type ReactNode, useEffect, useLayoutEffect, useState } from "react";
 import { cn } from "../lib/cn";
 import { OverlayScroll, type OverlayScrollVisibility } from "../scroll/OverlayScroll";
-import { Shimmer } from "../shimmer/Shimmer";
-import { parseBgTaskRef } from "./common/bgTasks";
-import type { AgentMessage, AgentPanelEndpoint, AgentToolAction, AgentToolHook } from "./common/types";
+import { AgentMessageList, activityStatus, useStickToBottom } from "./chatMessageList";
+import type { AgentMessage, AgentPanelEndpoint, AgentToolHook } from "./common/types";
 import { useAgentStream } from "./common/useAgentStream";
-import { formatToolName } from "./common/utils";
-import { ChatAgentMessage } from "./message-ui/ChatAgentMessage";
-import { ChatError } from "./message-ui/ChatError";
 import { ChatInput } from "./message-ui/ChatInput";
-import { ChatMarkdown } from "./message-ui/ChatMarkdown";
-import { ChatThinking } from "./message-ui/ChatThinking";
-import { ChatUserMessage } from "./message-ui/ChatUserMessage";
 import { ChatWelcome } from "./message-ui/ChatWelcome";
-import { BackgroundTaskToolUI } from "./tool-ui/BackgroundTaskToolUI";
-import { ChatToolCall } from "./tool-ui/ChatToolCall";
-import { type AgentToolUI, resolveToolUI } from "./tool-ui/registry";
+import type { AgentToolUI } from "./tool-ui/registry";
 
 export type AgentPanelProps = {
   /** POST URL, or a function that returns an SSE `Response`. */
@@ -43,81 +34,8 @@ export type AgentPanelProps = {
   /** Overlay scrollbar — does not reserve layout space. */
   scrollbar?: OverlayScrollVisibility;
   className?: string;
-  onToolAction?: (event: AgentToolAction) => void;
   onGeneratingChange?: (generating: boolean) => void;
 };
-
-function activityStatus(messages: AgentMessage[]): string {
-  const last = messages[messages.length - 1];
-  if (!last) return "Thinking...";
-  if (last.role === "tool-call") {
-    if (last.toolOutput != null || last.toolError) return "Waiting for model...";
-    return `Running ${last.toolLabel ?? formatToolName(last.toolName ?? "tool")}...`;
-  }
-  if (last.role === "assistant" && last.streaming && last.content) return "Writing...";
-  return "Thinking...";
-}
-
-function useStickToBottom() {
-  const elRef = useRef<HTMLDivElement | null>(null);
-  const pinned = useRef(true);
-
-  const scrollRef = useCallback((node: HTMLDivElement | null) => {
-    elRef.current = node;
-  }, []);
-
-  const onScroll = () => {
-    const el = elRef.current;
-    if (!el) return;
-    pinned.current = el.scrollHeight - el.scrollTop - el.clientHeight < 24;
-  };
-
-  const scrollToBottom = useCallback((opts?: { force?: boolean }) => {
-    const el = elRef.current;
-    if (!el) return;
-    if (!opts?.force && !pinned.current) return;
-    pinned.current = true;
-    el.scrollTop = el.scrollHeight;
-  }, []);
-
-  return { scrollRef, onScroll, scrollToBottom };
-}
-
-function MessageRow({ msg, generating, toolUis }: { msg: AgentMessage; generating: boolean; toolUis?: AgentToolUI[] }) {
-  if (msg.role === "user") return <ChatUserMessage content={msg.content} />;
-  if (msg.role === "error") return <ChatError>{msg.content}</ChatError>;
-  if (msg.role === "thinking") {
-    return <ChatThinking thinking={msg.content} duration={(msg.meta?.thinkingDuration as number) ?? 0} />;
-  }
-  if (msg.role === "tool-call") {
-    const CustomUI = resolveToolUI(msg.toolName, toolUis);
-    if (CustomUI) {
-      return <CustomUI msg={msg} generating={generating} showAvatar={false} />;
-    }
-    if (parseBgTaskRef(msg.toolOutput)) {
-      return <BackgroundTaskToolUI msg={msg} generating={generating} showAvatar={false} />;
-    }
-    const pending = msg.toolOutput == null && !msg.toolError;
-    return (
-      <ChatToolCall
-        toolName={msg.toolName}
-        label={msg.toolLabel}
-        toolInput={msg.toolInput}
-        toolOutput={msg.toolOutput}
-        toolError={msg.toolError}
-        running={pending && generating}
-      />
-    );
-  }
-
-  const thinking = msg.meta?.thinking;
-  const thinkingDuration = msg.meta?.thinkingDuration;
-  return (
-    <ChatAgentMessage thinking={thinking} thinkingDuration={thinkingDuration ?? 0} thinkingStreaming={thinking != null && thinkingDuration == null}>
-      {msg.content ? <ChatMarkdown content={msg.content} streaming={!!msg.streaming} /> : null}
-    </ChatAgentMessage>
-  );
-}
 
 export function AgentPanel({
   endpoint,
@@ -138,7 +56,6 @@ export function AgentPanel({
   emptyState,
   scrollbar = "hover",
   className,
-  onToolAction,
   onGeneratingChange,
 }: AgentPanelProps) {
   const { messages, generating, send, cancel, clear } = useAgentStream({
@@ -147,7 +64,6 @@ export function AgentPanel({
     headers,
     fetcher,
     initialMessages,
-    onToolAction,
     toolHooks,
   });
   const { scrollRef, onScroll, scrollToBottom } = useStickToBottom();
@@ -187,16 +103,7 @@ export function AgentPanel({
               <ChatWelcome name={welcomeName} description={description} avatar={avatar} starters={starters} onStarter={sendMessage} disabled={generating} />
             ))
           ) : (
-            <div className="flex flex-col">
-              {messages.map((msg) => (
-                <MessageRow key={msg.id} msg={msg} generating={generating} toolUis={toolUis} />
-              ))}
-              {showFooter ? (
-                <div className="mt-1 px-4 pb-0.5">
-                  <Shimmer className="text-sm font-medium text-tertiary-foreground">{status}</Shimmer>
-                </div>
-              ) : null}
-            </div>
+            <AgentMessageList messages={messages} generating={generating} toolUis={toolUis} showFooter={showFooter} status={status} />
           )}
         </div>
       </OverlayScroll>
