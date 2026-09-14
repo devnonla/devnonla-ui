@@ -1,3 +1,5 @@
+export type { AgentChatboxProps } from "./AgentChatbox";
+export { AgentChatbox } from "./AgentChatbox";
 export type { AgentPanelProps } from "./AgentPanel";
 export { AgentPanel } from "./AgentPanel";
 export type { ChatBgTask, ChatBgTaskStatus } from "./common/bgTasks";
@@ -5,6 +7,8 @@ export { formatBgElapsed, parseBgTaskRef } from "./common/bgTasks";
 export type { AgentSseCallbacks, AgentSseEvent, ParseSseResult } from "./common/sse";
 export { normalizeSseEvent, parseSseStream } from "./common/sse";
 export type { AgentHistoryMessage, AgentMessage, AgentMessageRole, AgentPanelEndpoint, AgentStreamRequest, AgentToolCallEvent, AgentToolHook, AgentToolNameMatch, AgentToolResultEvent } from "./common/types";
+export type { AgentChatResumeRequest, AgentChatSendRequest, UseAgentChatStreamOptions } from "./common/useAgentChatStream";
+export { useAgentChatStream } from "./common/useAgentChatStream";
 export type { UseAgentStreamOptions } from "./common/useAgentStream";
 export { buildAgentHistory, useAgentStream } from "./common/useAgentStream";
 export { formatToolName, isCallAgentToolName, matchesToolHook, matchesToolName, parseCallAgentToolTargetId, prettyJson } from "./common/utils";

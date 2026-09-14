@@ -16,6 +16,7 @@ export { Alert } from "./alert/Alert";
 export type { CalendarProps } from "./calendar/Calendar";
 export { Calendar } from "./calendar/Calendar";
 export type {
+  AgentChatboxProps,
   AgentHistoryMessage,
   AgentMessage,
   AgentMessageRole,
@@ -44,6 +45,7 @@ export type {
   ToolUIProps,
 } from "./chat";
 export {
+  AgentChatbox,
   AgentPanel,
   BackgroundTasksBar,
   BackgroundTaskToolUI,
@@ -80,6 +82,7 @@ export {
   RunJsToolUI,
   resolveToolUI,
   ToolUiTrailing,
+  useAgentChatStream,
   useAgentStream,
   WebFetchToolUI,
 } from "./chat";
