@@ -5,6 +5,21 @@ All notable changes to this project will be documented in this file.
 The format is based on [Keep a Changelog](https://keepachangelog.com/en/1.1.0/),
 and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0.html).
 
+## [0.5.0] - 2026-09-14
+
+### Added
+
+- `AgentChatbox` / `useAgentChatStream`: chat surface where the app POSTs only the new user text and can resume a live SSE stream (`send`, `resume`, `onStop`).
+- `Dropdown` / `ContextMenu` items: `type: "group"` with an optional label.
+
+### Changed
+
+- `ChatToolCall` header spacing; `ChatInput` clear icon is slightly smaller.
+
+### Upgrade notes
+
+- `onToolAction` and type `AgentToolAction` are removed. Listen with `toolHooks` (`onCall` / `onResult`).
+
 ## [0.4.3] - 2026-09-13
 
 ### Changed
@@ -108,6 +123,7 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 - Replace class `nonla-chat-shimmer` with `Shimmer` or `.nonla-shimmer`.
 - `resolveToolUI(toolName, extras?)` — second argument is optional; extra UIs are checked first.
 
+[0.5.0]: https://github.com/devnonla/devnonla-ui/compare/v0.4.3...v0.5.0
 [0.4.3]: https://github.com/devnonla/devnonla-ui/compare/v0.4.2...v0.4.3
 [0.4.2]: https://github.com/devnonla/devnonla-ui/compare/v0.4.1...v0.4.2
 [0.4.1]: https://github.com/devnonla/devnonla-ui/compare/v0.4.0...v0.4.1

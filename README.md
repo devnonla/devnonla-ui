@@ -119,10 +119,12 @@ import { DesktopStage, DesktopHeader, MeadowDesktop, DesktopWindow, MeadowShell,
 
 # Chat
 
-`AgentPanel` is the full chat surface: welcome, messages, thinking, tool calls, markdown, composer. Attach an SSE endpoint and send.
+`AgentPanel` is the full chat surface: welcome, messages, thinking, tool calls, markdown, composer. Attach an SSE endpoint and send. The panel POSTs `{ messages }` (plus optional `extraBody`).
+
+`AgentChatbox` is the same UI when the **app** owns the request: `send` POSTs only the new user text; `resume` reattaches a live stream on mount; `onStop` runs after the client abort.
 
 ```tsx
-import { AgentPanel } from "devnonla-ui";
+import { AgentChatbox, AgentPanel } from "devnonla-ui";
 
 <AgentPanel
   endpoint="/api/agents/abc/assistant/stream"
@@ -133,11 +135,17 @@ import { AgentPanel } from "devnonla-ui";
     { name: "web_fetch", onCall: (e) => console.log("fetch", e.input), onResult: (e) => console.log("done", e.output) },
   ]}
 />
+
+<AgentChatbox
+  send={({ text, signal }) => fetch("/api/chat", { method: "POST", body: JSON.stringify({ text }), signal })}
+  resume={({ signal }) => fetch("/api/chat/stream", { signal })}
+  onStop={() => fetch("/api/chat/stop", { method: "POST" })}
+/>
 ```
 
-`endpoint` can also be a function that returns a `Response` (tests, mocks). Pass any node to `toolbar` for the composer (model picker, tools, …). Extra tool cards go in `toolUis` and win over builtins on the same `toolName`. `toolHooks` fire `onCall` / `onResult` for matching tools (omit `name` to hear every tool). `onToolAction` still catches all events.
+`endpoint` can also be a function that returns a `Response` (tests, mocks). Pass any node to `toolbar` for the composer (model picker, tools, …). Extra tool cards go in `toolUis` and win over builtins on the same `toolName`. `toolHooks` fire `onCall` / `onResult` for matching tools (omit `name` to hear every tool).
 
-POST body: `{ messages }` plus optional `extraBody`. Stream events:
+Stream events:
 
 `text-delta` | `thinking-delta` | `tool-call` | `tool-result` | `done` | `error`
 
