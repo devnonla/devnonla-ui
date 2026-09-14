@@ -129,7 +129,7 @@ export function ChatInput({ generating = false, placeholder = "Message…", disa
       <div className="flex items-center gap-1.5 pb-2 px-2">
         {onClear ? (
           <button type="button" onClick={onClear} title="Clear chat" aria-label="Clear chat" className="inline-flex size-6 shrink-0 items-center justify-center rounded-lg border-0 bg-transparent cursor-pointer hover:bg-ink-hover">
-            <Eraser size={16} aria-hidden />
+            <Eraser size={14} strokeWidth={1.5} aria-hidden />
           </button>
         ) : null}
         {toolbar}
