@@ -28,7 +28,7 @@ export function ChatToolCall({ toolName = "Tool", label, toolInput, toolOutput, 
   const [open, setOpen] = useState(defaultOpen);
   const displayLabel = label ?? formatToolName(toolName);
 
-  const identityIcon = icon ?? <FluentIcon name="board-24" size={13} className="shrink-0" />;
+  const identityIcon = icon ?? <FluentIcon name="code-block-24" size={13} className="shrink-0" />;
 
   const header = (
     <>

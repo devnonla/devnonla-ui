@@ -97,7 +97,7 @@ export function AgentPanel({
   return (
     <div className={cn("nonla-agent-panel relative flex h-full min-h-0 flex-col overflow-hidden bg-chat", className)}>
       <OverlayScroll visibility={scrollbar} scrollRef={scrollRef} onScroll={onScroll} className="flex-1 min-h-0 min-w-0" innerClassName={messages.length === 0 ? "flex flex-col" : undefined}>
-        <div data-chat-scroll-content className={`max-w-190 mx-auto min-w-0 w-full ${messages.length === 0 ? "flex flex-1 flex-col pb-24" : "pt-4 pb-28"}`}>
+        <div data-chat-scroll-content className={`max-w-200 mx-auto min-w-0 w-full ${messages.length === 0 ? "flex flex-1 flex-col pb-24" : "pt-4 pb-28"}`}>
           {messages.length === 0 ? (
             (emptyState ?? (
               <ChatWelcome name={welcomeName} description={description} avatar={avatar} starters={starters} onStarter={sendMessage} disabled={generating} />
@@ -110,7 +110,7 @@ export function AgentPanel({
 
       <div className="relative shrink-0">
         {accessory}
-        <div className="mx-auto w-full max-w-190">
+        <div className="mx-auto w-full max-w-200">
           <ChatInput generating={generating} placeholder={placeholder} onSend={sendMessage} onCancel={cancel} onClear={handleNewChat} toolbar={toolbar} focusSignal={String(epoch)} enableTypeToFocus />
         </div>
       </div>
