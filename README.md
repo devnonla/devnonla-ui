@@ -115,7 +115,31 @@ import { DesktopStage, DesktopHeader, MeadowDesktop, DesktopWindow, MeadowShell,
 </DesktopStage>
 ```
 
-`MeadowShell` is the login/setup backdrop. `DesktopWindow` chrome is inline: traffic lights, `left`, a flex middle (title — double-click to expand), then `right`. A child can fill the same slots with `WindowHeader`. `Menu` is the glass picker (trigger + items + hover action) used by AgentsMenu. Wallpaper defaults to the bundled meadow; pass `src` on `MeadowWallpaper` to swap.
+`MeadowShell` is the login/setup backdrop. `DesktopWindow` chrome is inline: traffic lights, `left`, a flex middle (title — double-click to expand), then `right`. A child can fill the same slots with `WindowHeader`. Last collapsed position and size are restored on reopen (`persistKey`, or `false` to disable). Resize handles stay when expanded; dragging an edge leaves expand and keeps the new size. `Menu` is the glass picker (trigger + items + hover action) used by AgentsMenu. Wallpaper defaults to the bundled meadow; pass `src` on `MeadowWallpaper` to swap.
+
+# Sidebar
+
+Grouped side nav. Pass JSON groups + items; the app owns routing.
+
+```tsx
+import { Sidebar, type SidebarItemType } from "devnonla-ui";
+
+const items: SidebarItemType[] = [
+  {
+    type: "group",
+    key: "chat",
+    label: "Chat",
+    children: [
+      { key: "inbox", label: "Inbox", icon: "chat-24" },
+      { key: "archive", label: "Archive", icon: "library-24" },
+    ],
+  },
+];
+
+<Sidebar items={items} selectedKey={active} searchable onSelect={({ key }) => setActive(key)} />
+```
+
+`icon` may be a Fluent name string (JSON-friendly) or a node. Set `href` to render `<a>`; left-click still goes through `onSelect` so a SPA can `navigate`. Cmd/Ctrl-click keeps the native new-tab. Parent sets width; `Sidebar` fills height.
 
 # Chat
 
