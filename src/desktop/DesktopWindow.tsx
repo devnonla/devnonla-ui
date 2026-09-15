@@ -139,6 +139,69 @@ function offsetFromRect(view: Size, rect: Rect): Point {
   };
 }
 
+type Geometry = Point & Size;
+
+const GEOMETRY_PREFIX = "nonla-desktop-window:";
+const geometryMemory = new Map<string, Geometry>();
+
+function isGeometry(value: unknown): value is Geometry {
+  if (!value || typeof value !== "object") return false;
+  const { x, y, w, h } = value as Record<string, unknown>;
+  return [x, y, w, h].every((n) => typeof n === "number" && Number.isFinite(n));
+}
+
+function geometryStorageKey(persistKey: string) {
+  return `${GEOMETRY_PREFIX}${persistKey}`;
+}
+
+function readGeometry(persistKey: string | false): Geometry | null {
+  if (!persistKey) return null;
+  const cached = geometryMemory.get(persistKey);
+  if (cached) return cached;
+  try {
+    const raw = localStorage.getItem(geometryStorageKey(persistKey));
+    if (!raw) return null;
+    const parsed: unknown = JSON.parse(raw);
+    if (!isGeometry(parsed)) return null;
+    geometryMemory.set(persistKey, parsed);
+    return parsed;
+  } catch {
+    return null;
+  }
+}
+
+function writeGeometry(persistKey: string | false, geometry: Geometry) {
+  if (!persistKey) return;
+  geometryMemory.set(persistKey, geometry);
+  try {
+    localStorage.setItem(geometryStorageKey(persistKey), JSON.stringify(geometry));
+  } catch {
+    /* private mode / quota */
+  }
+}
+
+function initialView(): Size {
+  return { w: window.innerWidth, h: Math.max(0, window.innerHeight - 42) };
+}
+
+function restoreGeometry(persistKey: string | false, view: Size): { offset: Point; size: Size | null } {
+  const stored = readGeometry(persistKey);
+  if (!stored) return { offset: { x: 0, y: 0 }, size: null };
+  const size = clampSize(view, stored);
+  return { offset: clampOffset(view, size, stored), size };
+}
+
+function persistGeometry(persistKey: string | false, view: Size, offset: Point, size: Size | null) {
+  const compact = windowSize(view, size);
+  const clamped = clampOffset(view, compact, offset);
+  writeGeometry(persistKey, {
+    x: Math.round(clamped.x),
+    y: Math.round(clamped.y),
+    w: Math.round(compact.w),
+    h: Math.round(compact.h),
+  });
+}
+
 function lockResizeCursor(cursor: string | null) {
   document.body.style.cursor = cursor ?? "";
   document.body.style.userSelect = cursor ? "none" : "";
@@ -227,6 +290,8 @@ export type DesktopWindowProps = {
   /** Overlay auto-hide scrollbar on the body. Pass `false` when children manage their own scroll (split panes, AgentPanel). */
   scroll?: boolean;
   scrollbar?: OverlayScrollVisibility;
+  /** Last collapsed position and size. Default `"default"`. Pass a unique key per window, or `false` to disable. */
+  persistKey?: string | false;
   children: ReactNode;
 };
 
@@ -239,6 +304,7 @@ export function DesktopWindow({
   onToggleExpand,
   scroll = true,
   scrollbar = "hover",
+  persistKey = "default",
   children,
 }: DesktopWindowProps) {
   const overlayRef = useRef<HTMLDivElement>(null);
@@ -260,15 +326,12 @@ export function DesktopWindow({
     orig: Rect;
   } | null>(null);
   const [phase, setPhase] = useState<Phase>("open");
-  const [offset, setOffset] = useState({ x: 0, y: 0 });
-  const [size, setSize] = useState<Size | null>(null);
+  const [view, setView] = useState<Size>(initialView);
+  const [offset, setOffset] = useState(() => restoreGeometry(persistKey, initialView()).offset);
+  const [size, setSize] = useState<Size | null>(() => restoreGeometry(persistKey, initialView()).size);
   const [dragging, setDragging] = useState(false);
   const [resizing, setResizing] = useState(false);
   const sizeRef = useRef<Size | null>(null);
-  const [view, setView] = useState<Size>(() => ({
-    w: window.innerWidth,
-    h: Math.max(0, window.innerHeight - 42),
-  }));
   const [leftSlot, setLeftSlot] = useState<HTMLDivElement | null>(null);
   const [rightSlot, setRightSlot] = useState<HTMLDivElement | null>(null);
   const headerChrome = useMemo(() => ({ left: leftSlot, right: rightSlot }), [leftSlot, rightSlot]);
@@ -338,6 +401,17 @@ export function DesktopWindow({
     observer.observe(overlay);
     return () => observer.disconnect();
   }, []);
+
+  useEffect(() => {
+    if (dragging || resizing) return;
+    persistGeometry(persistKey, view, offset, size);
+  }, [dragging, resizing, offset, size, view, persistKey]);
+
+  useEffect(() => {
+    return () => {
+      persistGeometry(persistKey, viewRef.current, offsetRef.current, sizeRef.current);
+    };
+  }, [persistKey]);
 
   useEffect(() => {
     const onKey = (e: KeyboardEvent) => {
@@ -423,16 +497,31 @@ export function DesktopWindow({
   };
 
   const startResize = (edge: Edge, e: ReactPointerEvent<HTMLElement>) => {
-    if (e.button !== 0 || expanded || phase === "leaving") return;
+    if (e.button !== 0 || phase === "leaving") return;
     e.stopPropagation();
     e.preventDefault();
+
+    const nextView = viewRef.current;
+    const orig = expandedRef.current
+      ? { x: 0, y: 0, w: nextView.w, h: nextView.h }
+      : collapsedRect(nextView, offsetRef.current, sizeRef.current);
+
+    if (expandedRef.current) {
+      const nextSize = { w: orig.w, h: orig.h };
+      const nextOffset = offsetFromRect(nextView, orig);
+      sizeRef.current = nextSize;
+      offsetRef.current = nextOffset;
+      setSize(nextSize);
+      setOffset(nextOffset);
+      onToggleExpand();
+    }
 
     resizeRef.current = {
       pointerId: e.pointerId,
       edge,
       startX: e.clientX,
       startY: e.clientY,
-      orig: collapsedRect(viewRef.current, offsetRef.current, sizeRef.current),
+      orig,
     };
     setResizing(true);
     lockResizeCursor(HANDLES.find((handle) => handle.edge === edge)?.cursor ?? "nwse-resize");
@@ -530,7 +619,7 @@ export function DesktopWindow({
             </div>
           </div>
 
-          {!expanded && !leaving
+          {!leaving
             ? HANDLES.map((handle) => (
                 <div key={handle.edge} aria-hidden onPointerDown={(e) => startResize(handle.edge, e)} className={cn("absolute z-10 touch-none", handle.className)} />
               ))
