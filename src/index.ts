@@ -174,6 +174,8 @@ export type { SelectOptionConfig, SelectProps, SelectValue } from "./select/Sele
 export { Select, SelectOption } from "./select/Select";
 export type { ShimmerProps } from "./shimmer/Shimmer";
 export { Shimmer } from "./shimmer/Shimmer";
+export type { SidebarItemType, SidebarProps, SidebarSelectInfo } from "./sidebar/Sidebar";
+export { Sidebar } from "./sidebar/Sidebar";
 export type { SkeletonProps } from "./skeleton/Skeleton";
 export { Skeleton } from "./skeleton/Skeleton";
 export type { SpinProps, SpinVariant } from "./spin/Spin";
