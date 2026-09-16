@@ -5,6 +5,22 @@ All notable changes to this project will be documented in this file.
 The format is based on [Keep a Changelog](https://keepachangelog.com/en/1.1.0/),
 and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0.html).
 
+## [0.7.0] - 2026-09-16
+
+### Added
+
+- `EditableInput`: inline display with a pencil control. While editing, a popover field saves via `onSave` (`type`: `text` | `password` | `textarea`). `EditableInput.Key` validates `^[A-Z][A-Z0-9_]*$`.
+- `Table` column `flex`: `true` shares leftover container width equally; a number is a weight. Text wraps in that width instead of forcing horizontal scroll. Ignored when `scroll.x` or `width` is set.
+
+### Changed
+
+- Outlined fields (Input, Select, DatePicker, TimePicker) use the ink `--input` border instead of the glass frost border, so the stroke stays visible on a white page.
+- `Table` body and header use `text-base` (14px in this theme). Header cells use an ink wash (`bg-foreground/4`).
+
+### Upgrade notes
+
+- Once `rowSelection` has any selected key, a row click toggles selection and does not call `onRow.onClick`. Checkbox and radio clicks are unchanged.
+
 ## [0.6.0] - 2026-09-15
 
 ### Added
@@ -147,6 +163,7 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 - Replace class `nonla-chat-shimmer` with `Shimmer` or `.nonla-shimmer`.
 - `resolveToolUI(toolName, extras?)` — second argument is optional; extra UIs are checked first.
 
+[0.7.0]: https://github.com/devnonla/devnonla-ui/compare/v0.6.0...v0.7.0
 [0.6.0]: https://github.com/devnonla/devnonla-ui/compare/v0.5.1...v0.6.0
 [0.5.1]: https://github.com/devnonla/devnonla-ui/compare/v0.5.0...v0.5.1
 [0.5.0]: https://github.com/devnonla/devnonla-ui/compare/v0.4.3...v0.5.0
