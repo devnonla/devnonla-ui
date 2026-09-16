@@ -93,9 +93,12 @@ export function controlStatusClass(status?: "error" | "warning"): string {
 /** Focus surface fade — Input / Select / DatePicker / TimePicker. */
 export const controlFieldTransition = "transition-[background-color,border-color] duration-[var(--nonla-dur-fast,150ms)] ease-[var(--nonla-ease-out,cubic-bezier(0.16,1,0.3,1))] motion-reduce:transition-none";
 
-/** Outlined field fill — meadow glass, same language as DesktopWindow. */
+/**
+ * Outlined field. Border is `--input` (ink on page bg), not glass.
+ * Glass border is white frost — it disappears on white.
+ */
 export const controlFieldSurface =
-  "border border-solid border-glass-border bg-glass-bar text-foreground shadow-[inset_0_1px_0_var(--glass-highlight)] backdrop-blur-xl";
+  "border border-solid border-input bg-glass-bar text-foreground shadow-[inset_0_1px_0_var(--glass-highlight)] backdrop-blur-xl";
 
 /** Focus / open border — brand (Button primary), keep fields outlined. */
 export const controlFieldFocusBorder = "focus:border-brand focus-within:border-brand data-[state=open]:border-brand aria-expanded:border-brand";
