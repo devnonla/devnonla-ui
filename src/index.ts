@@ -4,6 +4,8 @@ export type { ButtonColor, ButtonGroupProps, ButtonProps, ButtonSize, ButtonType
 export { Button } from "./button/Button";
 export type { ButtonCopyProps } from "./button/ButtonCopy";
 export { ButtonCopy } from "./button/ButtonCopy";
+export type { EditableInputProps, EditableKeyProps } from "./input/EditableInput";
+export { EditableInput } from "./input/EditableInput";
 export type { InputNumberProps, InputProps, InputSize, PasswordProps, TextAreaProps, TextAreaRef } from "./input/Input";
 export { Input, InputNumber, TextArea } from "./input/Input";
 export type { SearchInputProps } from "./input/SearchInput";
