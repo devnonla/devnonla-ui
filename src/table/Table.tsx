@@ -1,4 +1,4 @@
-import { type CSSProperties, type Key, type ReactNode, useMemo, useState } from "react";
+import { type CSSProperties, type Key, type ReactNode, useLayoutEffect, useMemo, useRef, useState } from "react";
 import { Checkbox } from "../checkbox/Checkbox";
 import { Empty } from "../empty/Empty";
 import { cn } from "../lib/cn";
@@ -18,6 +18,11 @@ export type ColumnType<T> = {
   /** Custom cell — `(value, record, index) => ReactNode`. */
   render?: (value: any, record: T, index: number) => ReactNode;
   className?: string;
+  /**
+   * Take leftover container width (measured). `true` shares equally with other flex columns.
+   * Text wraps inside that width so the table does not scroll horizontally.
+   */
+  flex?: boolean | number;
   ellipsis?: boolean;
   fixed?: "left" | "right";
   /** `true` = default compare on `dataIndex`; or pass a compare fn. */
@@ -142,6 +147,23 @@ function SortIcon({ order }: { order: SortOrder | undefined }) {
   );
 }
 
+type FlexLayout = { selection?: number; cols: Record<string, number> };
+
+function flexWeight<T>(col: ColumnType<T>): number {
+  if (col.width != null) return 0;
+  if (col.flex === true) return 1;
+  if (typeof col.flex === "number" && col.flex > 0) return col.flex;
+  return 0;
+}
+
+function layoutsClose(prev: FlexLayout | null, next: FlexLayout): boolean {
+  if (!prev) return false;
+  if (Math.abs((prev.selection ?? 0) - (next.selection ?? 0)) > 0.5) return false;
+  const keys = Object.keys(next.cols);
+  if (keys.length !== Object.keys(prev.cols).length) return false;
+  return keys.every((key) => Math.abs((prev.cols[key] ?? -1) - next.cols[key]) <= 0.5);
+}
+
 function sizeClasses(s: CanonicalSize) {
   if (s === "small") {
     return {
@@ -152,15 +174,15 @@ function sizeClasses(s: CanonicalSize) {
   }
   if (s === "large") {
     return {
-      head: "h-12 px-3 text-sm",
-      cell: "px-3 py-3 text-sm",
+      head: "h-12 px-3 text-base",
+      cell: "px-3 py-3 text-base",
       check: "w-12 px-3",
     };
   }
-  // default — matches shadcn TableHead h-10 / TableCell p-2 / text-sm
+  // default — text-base is 14px (`--text-sm` in this theme is 13px)
   return {
-    head: "h-10 px-2 text-sm",
-    cell: "p-2 text-sm",
+    head: "h-10 px-2 text-base",
+    cell: "p-2 text-base",
     check: "w-10 px-2",
   };
 }
@@ -264,19 +286,101 @@ export function Table<T extends object = Record<string, unknown>>({ columns = []
 
   const alignClass = (align?: "left" | "center" | "right") => (align === "center" ? "text-center" : align === "right" ? "text-right" : "text-left");
 
+  const containerRef = useRef<HTMLDivElement>(null);
+  const columnsRef = useRef(columns);
+  columnsRef.current = columns;
+  const [flexLayout, setFlexLayout] = useState<FlexLayout | null>(null);
+  const flexSig = `${scroll?.x ?? ""}|${rowSelection ? 1 : 0}|${showHeader ? 1 : 0}|${dataSource.length}|${columns.map((col, i) => `${getColumnKey(col, i)}:${col.flex ?? ""}:${col.width ?? ""}`).join(",")}`;
+  const flexSigRef = useRef(flexSig);
+  if (flexSigRef.current !== flexSig) {
+    flexSigRef.current = flexSig;
+    if (flexLayout) setFlexLayout(null);
+  }
+
+  useLayoutEffect(() => {
+    const container = containerRef.current;
+    const cols = columnsRef.current;
+    const wantsFlex = scroll?.x == null && cols.some((col) => flexWeight(col) > 0);
+    if (!container || !wantsFlex) {
+      setFlexLayout((prev) => (prev ? null : prev));
+      return;
+    }
+
+    let locked: { selection?: number; fixed: Record<string, number>; weights: { key: string; weight: number }[] } | null = null;
+
+    const apply = () => {
+      const client = container.clientWidth;
+      if (client <= 0) return;
+      if (!locked) {
+        const table = container.querySelector("table");
+        const row = table?.querySelector("thead > tr") ?? table?.querySelector("tbody > tr");
+        if (!row) return;
+        const cells = [...row.children] as HTMLElement[];
+        const start = rowSelection ? 1 : 0;
+        const fixed: Record<string, number> = {};
+        const weights: { key: string; weight: number }[] = [];
+        cols.forEach((col, i) => {
+          const key = getColumnKey(col, i);
+          const weight = flexWeight(col);
+          if (weight > 0) weights.push({ key, weight });
+          else fixed[key] = cells[start + i]?.getBoundingClientRect().width ?? 0;
+        });
+        if (!weights.length) return;
+        locked = {
+          selection: rowSelection ? cells[0]?.getBoundingClientRect().width : undefined,
+          fixed,
+          weights,
+        };
+      }
+      const used = (locked.selection ?? 0) + Object.values(locked.fixed).reduce((sum, n) => sum + n, 0);
+      if (used > client + 1) {
+        setFlexLayout((prev) => (prev ? null : prev));
+        return;
+      }
+      const leftover = Math.max(0, client - used);
+      const weightSum = locked.weights.reduce((sum, item) => sum + item.weight, 0);
+      const colsWidth = { ...locked.fixed };
+      for (const item of locked.weights) colsWidth[item.key] = (leftover * item.weight) / weightSum;
+      const next: FlexLayout = { selection: locked.selection, cols: colsWidth };
+      setFlexLayout((prev) => (layoutsClose(prev, next) ? prev : next));
+    };
+
+    apply();
+    const observer = new ResizeObserver(apply);
+    observer.observe(container);
+    return () => observer.disconnect();
+  }, [flexSig, rowSelection, scroll?.x, showHeader]);
+
+  const wantsFlex = scroll?.x == null && columns.some((col) => flexWeight(col) > 0);
+
+  const colStyle = (col: ColumnType<T>, key: string): CSSProperties => {
+    const measured = flexLayout?.cols[key];
+    if (measured != null) return { width: measured, maxWidth: measured, minWidth: 0 };
+    return { width: col.width, minWidth: col.minWidth };
+  };
+
   return (
     <div className={cn("relative w-full", className)}>
       {titleNode != null ? <div className="mb-3 text-sm font-medium text-foreground">{titleNode}</div> : null}
 
       <Spin spinning={Boolean(loading)}>
-        <div data-slot="table-container" className={cn("relative w-full overflow-x-auto", bordered && "rounded-md border border-border")} style={scroll?.x != null ? { overflowX: "auto" } : undefined}>
+        <div ref={containerRef} data-slot="table-container" className={cn("relative w-full", flexLayout ? "overflow-x-hidden" : "overflow-x-auto", bordered && "rounded-md border border-border")} style={scroll?.x != null ? { overflowX: "auto" } : undefined}>
           <div style={scroll?.y != null ? { maxHeight: scroll.y, overflow: "auto" } : undefined}>
-            <table data-slot="table" className="w-full caption-bottom border-collapse text-sm">
+            <table data-slot="table" className={cn("caption-bottom border-collapse text-base", flexLayout ? "w-full table-fixed" : wantsFlex ? "w-max" : "w-full")}>
+              {flexLayout ? (
+                <colgroup>
+                  {rowSelection ? <col style={{ width: flexLayout.selection }} /> : null}
+                  {columns.map((col, i) => {
+                    const key = getColumnKey(col, i);
+                    return <col key={key} style={{ width: flexLayout.cols[key] }} />;
+                  })}
+                </colgroup>
+              ) : null}
               {showHeader ? (
                 <thead data-slot="table-header" className="[&_tr]:border-b [&_tr]:border-border">
                   <tr data-slot="table-row" className="border-b border-border transition-colors hover:bg-transparent">
                     {rowSelection ? (
-                      <th data-slot="table-head" className={cn(sz.head, sz.check, "align-middle font-medium text-foreground", scroll?.y && "sticky top-0 z-10 bg-background", bordered && "border-b border-border")} style={selectionColWidth != null ? { width: selectionColWidth } : undefined}>
+                      <th data-slot="table-head" className={cn(sz.head, sz.check, "align-middle font-medium text-foreground bg-foreground/4", scroll?.y && "sticky top-0 z-10", bordered && "border-b border-border")} style={selectionColWidth != null ? { width: selectionColWidth } : undefined}>
                         <div className="flex items-center justify-center">
                           {rowSelection.type === "radio" ? null : (
                             <Checkbox
@@ -301,10 +405,9 @@ export function Table<T extends object = Record<string, unknown>>({ columns = []
                         <th
                           key={key}
                           data-slot="table-head"
-                          className={cn(sz.head, "align-middle font-medium whitespace-nowrap text-foreground", alignClass(col.align), scroll?.y && "sticky top-0 z-10 bg-background", bordered && "border-b border-border", sortable && "cursor-pointer select-none", col.className, headerExtra?.className)}
+                          className={cn(sz.head, "align-middle font-medium text-foreground bg-foreground/4", flexLayout && flexWeight(col) > 0 ? "min-w-0" : "whitespace-nowrap", alignClass(col.align), scroll?.y && "sticky top-0 z-10", bordered && "border-b border-border", sortable && "cursor-pointer select-none", col.className, headerExtra?.className)}
                           style={{
-                            width: col.width,
-                            minWidth: col.minWidth,
+                            ...colStyle(col, key),
                             ...headerExtra?.style,
                           }}
                           onClick={sortable ? () => toggleSort(col, i) : undefined}
@@ -334,10 +437,31 @@ export function Table<T extends object = Record<string, unknown>>({ columns = []
                     const rowProps = onRow?.(record, absoluteIndex);
                     const extraClass = typeof rowClassName === "function" ? rowClassName(record, absoluteIndex) : rowClassName;
                     const selected = selectedKeys.includes(key);
+                    const inSelectionMode = Boolean(rowSelection) && selectedKeys.length > 0;
+                    const rowDisabled = Boolean(rowSelection?.getCheckboxProps?.(record)?.disabled);
                     return (
-                      <tr key={key} data-slot="table-row" data-state={selected ? "selected" : undefined} className={cn("border-b border-border transition-colors hover:bg-muted/50 data-[state=selected]:bg-muted", rowProps?.className, extraClass)} style={rowProps?.style} onClick={rowProps?.onClick}>
+                      <tr
+                        key={key}
+                        data-slot="table-row"
+                        data-state={selected ? "selected" : undefined}
+                        className={cn("border-b border-border transition-colors hover:bg-muted/50 data-[state=selected]:bg-muted", inSelectionMode && !rowDisabled && "cursor-pointer", rowProps?.className, extraClass)}
+                        style={rowProps?.style}
+                        onClick={inSelectionMode ? undefined : rowProps?.onClick}
+                        onClickCapture={
+                          inSelectionMode && !rowDisabled
+                            ? (e) => {
+                                if (e.target instanceof Element && e.target.closest("[data-row-select]")) return;
+                                e.preventDefault();
+                                e.stopPropagation();
+                                if (rowSelection?.type === "radio") emitSelection([key]);
+                                else if (selected) emitSelection(selectedKeys.filter((k) => k !== key));
+                                else emitSelection([...selectedKeys, key]);
+                              }
+                            : undefined
+                        }
+                      >
                         {rowSelection ? (
-                          <td data-slot="table-cell" className={cn(sz.cell, sz.check, "align-middle")} style={selectionColWidth != null ? { width: selectionColWidth } : undefined} onClick={(e) => e.stopPropagation()}>
+                          <td data-row-select data-slot="table-cell" className={cn(sz.cell, sz.check, "align-middle")} style={selectionColWidth != null ? { width: selectionColWidth } : undefined} onClick={(e) => e.stopPropagation()}>
                             <div className="flex items-center justify-center">
                               {rowSelection.type === "radio" ? (
                                 <input type="radio" name="nonla-table-row-select" checked={selected} disabled={rowSelection.getCheckboxProps?.(record)?.disabled} aria-label="Select row" className="size-3.5 accent-foreground" onChange={() => emitSelection([key])} />
@@ -362,8 +486,8 @@ export function Table<T extends object = Record<string, unknown>>({ columns = []
                             <td
                               key={getColumnKey(col, i)}
                               data-slot="table-cell"
-                              className={cn(sz.cell, "align-middle", alignClass(col.align), col.ellipsis ? "max-w-0 truncate" : "whitespace-nowrap", col.className)}
-                              style={{ width: col.width, minWidth: col.minWidth }}
+                              className={cn(sz.cell, "align-middle", alignClass(col.align), flexLayout && flexWeight(col) > 0 ? (col.ellipsis ? "max-w-0 truncate" : "min-w-0 whitespace-normal wrap-break-word") : col.ellipsis ? "max-w-0 truncate" : "whitespace-nowrap", col.className)}
+                              style={colStyle(col, getColumnKey(col, i))}
                               title={col.ellipsis && (typeof content === "string" || typeof content === "number") ? String(content) : undefined}
                             >
                               {content}
