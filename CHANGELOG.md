@@ -5,6 +5,20 @@ All notable changes to this project will be documented in this file.
 The format is based on [Keep a Changelog](https://keepachangelog.com/en/1.1.0/),
 and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0.html).
 
+## [0.7.1] - 2026-09-24
+
+### Added
+
+- `OverlayScroll`: optional `style` and `insetTop`. `insetTop` keeps the vertical thumb below a sticky header.
+
+### Changed
+
+- `Table` with `scroll.y` scrolls the body through `OverlayScroll`. The sticky header uses an opaque `--nonla-bg` fill so row text does not show through. The vertical thumb starts below the header. Flex columns account for the scrollbar width.
+
+### Fixed
+
+- `EditableInput` popover Save and Cancel stay small regardless of the field size.
+
 ## [0.7.0] - 2026-09-16
 
 ### Added
@@ -163,6 +177,7 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 - Replace class `nonla-chat-shimmer` with `Shimmer` or `.nonla-shimmer`.
 - `resolveToolUI(toolName, extras?)` — second argument is optional; extra UIs are checked first.
 
+[0.7.1]: https://github.com/devnonla/devnonla-ui/compare/v0.7.0...v0.7.1
 [0.7.0]: https://github.com/devnonla/devnonla-ui/compare/v0.6.0...v0.7.0
 [0.6.0]: https://github.com/devnonla/devnonla-ui/compare/v0.5.1...v0.6.0
 [0.5.1]: https://github.com/devnonla/devnonla-ui/compare/v0.5.0...v0.5.1
