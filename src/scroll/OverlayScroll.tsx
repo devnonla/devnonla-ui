@@ -1,4 +1,4 @@
-import { type ReactNode, type PointerEvent as ReactPointerEvent, type Ref, type UIEventHandler, useCallback, useLayoutEffect, useRef, useState } from "react";
+import { type CSSProperties, type ReactNode, type PointerEvent as ReactPointerEvent, type Ref, type UIEventHandler, useCallback, useLayoutEffect, useRef, useState } from "react";
 import { cn } from "../lib/cn";
 
 export type OverlayScrollVisibility = "hover" | "always";
@@ -12,10 +12,13 @@ export type OverlayScrollProps = {
   /** Size to content (honors max-height on `className`) instead of filling the parent. */
   autoHeight?: boolean;
   className?: string;
+  style?: CSSProperties;
   innerClassName?: string;
   children?: ReactNode;
   onScroll?: UIEventHandler<HTMLDivElement>;
   scrollRef?: Ref<HTMLDivElement>;
+  /** Keep the vertical thumb below this many pixels (sticky table header). */
+  insetTop?: number;
 };
 
 type Thumb = { offset: number; size: number; shown: boolean };
@@ -29,11 +32,12 @@ function assignRef(ref: Ref<HTMLDivElement> | undefined, node: HTMLDivElement | 
   else ref.current = node;
 }
 
-function measure(scroll: number, scrollSize: number, client: number): Thumb {
+function measure(scroll: number, scrollSize: number, client: number, inset = 0): Thumb {
+  const track = Math.max(0, client - inset);
   const overflow = scrollSize - client;
-  if (overflow <= 1) return HIDDEN;
-  const size = Math.max(MIN_THUMB, (client / scrollSize) * client);
-  const offset = (scroll / overflow) * (client - size);
+  if (overflow <= 1 || track <= 1) return HIDDEN;
+  const size = Math.min(track, Math.max(MIN_THUMB, (track / scrollSize) * track));
+  const offset = (scroll / overflow) * Math.max(0, track - size);
   return { offset, size, shown: true };
 }
 
@@ -42,7 +46,7 @@ function canScrollX(el: HTMLDivElement) {
   return overflow === "auto" || overflow === "scroll";
 }
 
-export function OverlayScroll({ visibility = "hover", autoHeight = false, className, innerClassName, children, onScroll, scrollRef }: OverlayScrollProps) {
+export function OverlayScroll({ visibility = "hover", autoHeight = false, className, style, innerClassName, children, onScroll, scrollRef, insetTop = 0 }: OverlayScrollProps) {
   const elRef = useRef<HTMLDivElement | null>(null);
   const hideTimer = useRef<ReturnType<typeof setTimeout> | null>(null);
   const vThumbRef = useRef<Thumb>(HIDDEN);
@@ -54,10 +58,13 @@ export function OverlayScroll({ visibility = "hover", autoHeight = false, classN
   vThumbRef.current = vThumb;
   hThumbRef.current = hThumb;
 
+  const insetTopRef = useRef(insetTop);
+  insetTopRef.current = insetTop;
+
   const updateThumb = useCallback(() => {
     const el = elRef.current;
     if (!el) return;
-    setVThumb(measure(el.scrollTop, el.scrollHeight, el.clientHeight));
+    setVThumb(measure(el.scrollTop, el.scrollHeight, el.clientHeight, insetTopRef.current));
     setHThumb(canScrollX(el) ? measure(el.scrollLeft, el.scrollWidth, el.clientWidth) : HIDDEN);
   }, []);
 
@@ -79,7 +86,7 @@ export function OverlayScroll({ visibility = "hover", autoHeight = false, classN
     const child = el.firstElementChild;
     if (child) ro.observe(child);
     return () => ro.disconnect();
-  }, [updateThumb, innerClassName, autoHeight]);
+  }, [updateThumb, innerClassName, autoHeight, insetTop]);
 
   useLayoutEffect(() => {
     return () => {
@@ -104,8 +111,9 @@ export function OverlayScroll({ visibility = "hover", autoHeight = false, classN
     e.preventDefault();
     e.stopPropagation();
 
+    const inset = axis === "y" ? insetTopRef.current : 0;
     const overflow = axis === "y" ? el.scrollHeight - el.clientHeight : el.scrollWidth - el.clientWidth;
-    const track = (axis === "y" ? el.clientHeight : el.clientWidth) - current.size;
+    const track = (axis === "y" ? el.clientHeight - inset : el.clientWidth) - current.size;
     if (overflow <= 0 || track <= 0) return;
 
     const start = axis === "y" ? e.clientY : e.clientX;
@@ -145,7 +153,7 @@ export function OverlayScroll({ visibility = "hover", autoHeight = false, classN
   );
 
   return (
-    <div className={cn("group/scroll relative min-h-0 min-w-0 w-full overflow-hidden", className)} data-scrolling={thumbVisible ? "true" : undefined}>
+    <div className={cn("group/scroll relative min-h-0 min-w-0 w-full overflow-hidden", className)} style={style} data-scrolling={thumbVisible ? "true" : undefined}>
       <div
         ref={setNode}
         onScroll={handleScroll}
@@ -154,10 +162,10 @@ export function OverlayScroll({ visibility = "hover", autoHeight = false, classN
         {children}
       </div>
       {vThumb.shown ? (
-        <div aria-hidden onPointerDown={onThumbPointerDown("y")} className={thumbClass} style={{ right: 2, width: "var(--nonla-scrollbar-size)", height: vThumb.size, transform: `translateY(${vThumb.offset}px)` }} />
+        <div aria-hidden onPointerDown={onThumbPointerDown("y")} className={thumbClass} style={{ top: insetTop, right: 2, width: "var(--nonla-scrollbar-size)", height: vThumb.size, transform: `translateY(${vThumb.offset}px)` }} />
       ) : null}
       {hThumb.shown ? (
-        <div aria-hidden onPointerDown={onThumbPointerDown("x")} className={thumbClass} style={{ bottom: 2, height: "var(--nonla-scrollbar-size)", width: hThumb.size, transform: `translateX(${hThumb.offset}px)` }} />
+        <div aria-hidden onPointerDown={onThumbPointerDown("x")} className={thumbClass} style={{ left: 0, bottom: 2, height: "var(--nonla-scrollbar-size)", width: hThumb.size, transform: `translateX(${hThumb.offset}px)` }} />
       ) : null}
     </div>
   );
