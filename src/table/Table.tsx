@@ -1,9 +1,10 @@
-import { type CSSProperties, type Key, type ReactNode, useLayoutEffect, useMemo, useRef, useState } from "react";
+import { type CSSProperties, type Key, type ReactNode, type Ref, useLayoutEffect, useMemo, useRef, useState } from "react";
 import { Checkbox } from "../checkbox/Checkbox";
 import { Empty } from "../empty/Empty";
 import { cn } from "../lib/cn";
 import { type CanonicalSize, type ControlSize, useControlSize } from "../lib/sizes";
 import { Pagination, type PaginationProps } from "../pagination/Pagination";
+import { OverlayScroll } from "../scroll/OverlayScroll";
 import { Spin } from "../spin/Spin";
 
 export type SortOrder = "ascend" | "descend" | null;
@@ -164,6 +165,15 @@ function layoutsClose(prev: FlexLayout | null, next: FlexLayout): boolean {
   return keys.every((key) => Math.abs((prev.cols[key] ?? -1) - next.cols[key]) <= 0.5);
 }
 
+function TableBodyScroll({ x, y, scrollRef, insetTop = 0, children }: { x?: number | string; y?: number | string; scrollRef: Ref<HTMLDivElement>; insetTop?: number; children: ReactNode }) {
+  if (y == null) return <div ref={scrollRef}>{children}</div>;
+  return (
+    <OverlayScroll autoHeight visibility="hover" scrollRef={scrollRef} insetTop={insetTop} style={{ maxHeight: y }} innerClassName={x != null ? "overflow-x-auto" : undefined}>
+      {children}
+    </OverlayScroll>
+  );
+}
+
 function sizeClasses(s: CanonicalSize) {
   if (s === "small") {
     return {
@@ -287,10 +297,11 @@ export function Table<T extends object = Record<string, unknown>>({ columns = []
   const alignClass = (align?: "left" | "center" | "right") => (align === "center" ? "text-center" : align === "right" ? "text-right" : "text-left");
 
   const containerRef = useRef<HTMLDivElement>(null);
+  const scrollBodyRef = useRef<HTMLDivElement>(null);
   const columnsRef = useRef(columns);
   columnsRef.current = columns;
   const [flexLayout, setFlexLayout] = useState<FlexLayout | null>(null);
-  const flexSig = `${scroll?.x ?? ""}|${rowSelection ? 1 : 0}|${showHeader ? 1 : 0}|${dataSource.length}|${columns.map((col, i) => `${getColumnKey(col, i)}:${col.flex ?? ""}:${col.width ?? ""}`).join(",")}`;
+  const flexSig = `${scroll?.x ?? ""}|${scroll?.y ?? ""}|${rowSelection ? 1 : 0}|${showHeader ? 1 : 0}|${dataSource.length}|${columns.map((col, i) => `${getColumnKey(col, i)}:${col.flex ?? ""}:${col.width ?? ""}`).join(",")}`;
   const flexSigRef = useRef(flexSig);
   if (flexSigRef.current !== flexSig) {
     flexSigRef.current = flexSig;
@@ -309,7 +320,9 @@ export function Table<T extends object = Record<string, unknown>>({ columns = []
     let locked: { selection?: number; fixed: Record<string, number>; weights: { key: string; weight: number }[] } | null = null;
 
     const apply = () => {
-      const client = container.clientWidth;
+      const scroller = scrollBodyRef.current;
+      const scrollbar = scroller && scroller.scrollHeight > scroller.clientHeight + 1 ? scroller.offsetWidth - scroller.clientWidth : 0;
+      const client = container.clientWidth - Math.max(0, scrollbar);
       if (client <= 0) return;
       if (!locked) {
         const table = container.querySelector("table");
@@ -348,10 +361,25 @@ export function Table<T extends object = Record<string, unknown>>({ columns = []
     apply();
     const observer = new ResizeObserver(apply);
     observer.observe(container);
+    if (scrollBodyRef.current) observer.observe(scrollBodyRef.current);
     return () => observer.disconnect();
-  }, [flexSig, rowSelection, scroll?.x, showHeader]);
+  }, [flexSig, rowSelection, scroll?.x, scroll?.y, showHeader]);
 
   const wantsFlex = scroll?.x == null && columns.some((col) => flexWeight(col) > 0);
+
+  const headSticky = scroll?.y != null;
+  const [thumbInset, setThumbInset] = useState(0);
+  useLayoutEffect(() => {
+    if (!headSticky || !showHeader) {
+      setThumbInset(0);
+      return;
+    }
+    const head = scrollBodyRef.current?.querySelector("thead");
+    const next = head ? Math.ceil(head.getBoundingClientRect().height) + 4 : 0;
+    setThumbInset((prev) => (prev === next ? prev : next));
+  }, [headSticky, showHeader, size, flexLayout]);
+  /** Opaque fill. `bg-foreground/4` is 4% alpha, so body text shows through a sticky header. */
+  const headBg: CSSProperties | undefined = headSticky ? { backgroundColor: "var(--nonla-bg)" } : undefined;
 
   const colStyle = (col: ColumnType<T>, key: string): CSSProperties => {
     const measured = flexLayout?.cols[key];
@@ -365,8 +393,8 @@ export function Table<T extends object = Record<string, unknown>>({ columns = []
 
       <Spin spinning={Boolean(loading)}>
         <div ref={containerRef} data-slot="table-container" className={cn("relative w-full", flexLayout ? "overflow-x-hidden" : "overflow-x-auto", bordered && "rounded-md border border-border")} style={scroll?.x != null ? { overflowX: "auto" } : undefined}>
-          <div style={scroll?.y != null ? { maxHeight: scroll.y, overflow: "auto" } : undefined}>
-            <table data-slot="table" className={cn("caption-bottom border-collapse text-base", flexLayout ? "w-full table-fixed" : wantsFlex ? "w-max" : "w-full")}>
+          <TableBodyScroll y={scroll?.y} x={scroll?.x} scrollRef={scrollBodyRef} insetTop={thumbInset}>
+            <table data-slot="table" className={cn("caption-bottom text-base", headSticky ? "border-separate border-spacing-0" : "border-collapse", flexLayout ? "w-full table-fixed" : wantsFlex ? "w-max" : "w-full")}>
               {flexLayout ? (
                 <colgroup>
                   {rowSelection ? <col style={{ width: flexLayout.selection }} /> : null}
@@ -377,10 +405,10 @@ export function Table<T extends object = Record<string, unknown>>({ columns = []
                 </colgroup>
               ) : null}
               {showHeader ? (
-                <thead data-slot="table-header" className="[&_tr]:border-b [&_tr]:border-border">
+                <thead data-slot="table-header" className={cn("[&_tr]:border-b [&_tr]:border-border", headSticky && "relative z-20")}>
                   <tr data-slot="table-row" className="border-b border-border transition-colors hover:bg-transparent">
                     {rowSelection ? (
-                      <th data-slot="table-head" className={cn(sz.head, sz.check, "align-middle font-medium text-foreground bg-foreground/4", scroll?.y && "sticky top-0 z-10", bordered && "border-b border-border")} style={selectionColWidth != null ? { width: selectionColWidth } : undefined}>
+                      <th data-slot="table-head" className={cn(sz.head, sz.check, "align-middle font-medium text-foreground", headSticky ? "sticky top-0 z-10 border-b border-border" : "bg-foreground/4", bordered && "border-b border-border")} style={{ ...(selectionColWidth != null ? { width: selectionColWidth } : undefined), ...headBg }}>
                         <div className="flex items-center justify-center">
                           {rowSelection.type === "radio" ? null : (
                             <Checkbox
@@ -405,9 +433,10 @@ export function Table<T extends object = Record<string, unknown>>({ columns = []
                         <th
                           key={key}
                           data-slot="table-head"
-                          className={cn(sz.head, "align-middle font-medium text-foreground bg-foreground/4", flexLayout && flexWeight(col) > 0 ? "min-w-0" : "whitespace-nowrap", alignClass(col.align), scroll?.y && "sticky top-0 z-10", bordered && "border-b border-border", sortable && "cursor-pointer select-none", col.className, headerExtra?.className)}
+                          className={cn(sz.head, "align-middle font-medium text-foreground", headSticky ? "sticky top-0 z-10 border-b border-border" : "bg-foreground/4", flexLayout && flexWeight(col) > 0 ? "min-w-0" : "whitespace-nowrap", alignClass(col.align), bordered && "border-b border-border", sortable && "cursor-pointer select-none", col.className, headerExtra?.className)}
                           style={{
                             ...colStyle(col, key),
+                            ...headBg,
                             ...headerExtra?.style,
                           }}
                           onClick={sortable ? () => toggleSort(col, i) : undefined}
@@ -423,7 +452,7 @@ export function Table<T extends object = Record<string, unknown>>({ columns = []
                 </thead>
               ) : null}
 
-              <tbody data-slot="table-body" className="[&_tr:last-child]:border-0">
+              <tbody data-slot="table-body" className={cn("[&_tr:last-child]:border-0", headSticky && "relative z-0")}>
                 {pageData.length === 0 ? (
                   <tr data-slot="table-row" className="border-b border-border">
                     <td data-slot="table-cell" colSpan={colCount} className={cn(sz.cell, "text-center align-middle")}>
@@ -461,7 +490,7 @@ export function Table<T extends object = Record<string, unknown>>({ columns = []
                         }
                       >
                         {rowSelection ? (
-                          <td data-row-select data-slot="table-cell" className={cn(sz.cell, sz.check, "align-middle")} style={selectionColWidth != null ? { width: selectionColWidth } : undefined} onClick={(e) => e.stopPropagation()}>
+                          <td data-row-select data-slot="table-cell" className={cn(sz.cell, sz.check, "align-middle", headSticky && "border-b border-border")} style={selectionColWidth != null ? { width: selectionColWidth } : undefined} onClick={(e) => e.stopPropagation()}>
                             <div className="flex items-center justify-center">
                               {rowSelection.type === "radio" ? (
                                 <input type="radio" name="nonla-table-row-select" checked={selected} disabled={rowSelection.getCheckboxProps?.(record)?.disabled} aria-label="Select row" className="size-3.5 accent-foreground" onChange={() => emitSelection([key])} />
@@ -486,7 +515,7 @@ export function Table<T extends object = Record<string, unknown>>({ columns = []
                             <td
                               key={getColumnKey(col, i)}
                               data-slot="table-cell"
-                              className={cn(sz.cell, "align-middle", alignClass(col.align), flexLayout && flexWeight(col) > 0 ? (col.ellipsis ? "max-w-0 truncate" : "min-w-0 whitespace-normal wrap-break-word") : col.ellipsis ? "max-w-0 truncate" : "whitespace-nowrap", col.className)}
+                              className={cn(sz.cell, "align-middle", headSticky && "border-b border-border", alignClass(col.align), flexLayout && flexWeight(col) > 0 ? (col.ellipsis ? "max-w-0 truncate" : "min-w-0 whitespace-normal wrap-break-word") : col.ellipsis ? "max-w-0 truncate" : "whitespace-nowrap", col.className)}
                               style={colStyle(col, getColumnKey(col, i))}
                               title={col.ellipsis && (typeof content === "string" || typeof content === "number") ? String(content) : undefined}
                             >
@@ -510,7 +539,7 @@ export function Table<T extends object = Record<string, unknown>>({ columns = []
                 </tfoot>
               ) : null}
             </table>
-          </div>
+          </TableBodyScroll>
         </div>
       </Spin>
 
