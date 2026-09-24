@@ -203,10 +203,10 @@ function EditorPopover({
         {field}
       </div>
       <div className="mt-3 flex items-center gap-2">
-        <Button type="primary" size={size} loading={saving} disabled={saveDisabled} onClick={onSave}>
+        <Button type="primary" size="small" loading={saving} disabled={saveDisabled} onClick={onSave}>
           Save
         </Button>
-        <Button type="text" size={size} disabled={saving} onClick={onCancel}>
+        <Button type="text" size="small" disabled={saving} onClick={onCancel}>
           Cancel
         </Button>
       </div>
