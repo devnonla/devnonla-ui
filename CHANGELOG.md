@@ -5,6 +5,25 @@ All notable changes to this project will be documented in this file.
 The format is based on [Keep a Changelog](https://keepachangelog.com/en/1.1.0/),
 and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0.html).
 
+## [0.8.0] - 2026-09-25
+
+### Changed
+
+- Light theme defaults: page `#f3f3f4`, ink `#2e2e34`, muted text steps, chip and border, `--nonla-danger` `#ef4444`, `--nonla-warn` `#f59e0b`. Hover and active use a neutral wash. `--nonla-ink-line` matches the border.
+- Chat body is 14px / 20px (`--chat-body-size`, `--chat-body-leading`).
+- `Table` and markdown table headers use opaque `--nonla-table-head` (4% ink on the page), including headers that are not sticky.
+- User bubbles use a solid brand fill. The composer stroke follows `--nonla-input`. The thinking label is body size.
+- `CodeBlock` header is shorter and has no file icon.
+- Overlay scrollbar thumbs sit 1px from the edge.
+- Desktop window glass uses an inset hairline and a soft drop shadow.
+- `MermaidBlock` always renders the default light theme. Preview actions are fullscreen only. Download SVG stays in the fullscreen dialog. Toolbar controls use `Button`.
+
+### Upgrade notes
+
+- The cream seed is gone. Set `--nonla-bg`, `--nonla-fg`, and the text-rank knobs if you still want that look.
+- Sticky table headers no longer use flat `--nonla-bg`. Override `--nonla-table-head` to recolor them.
+- There is no light/dark toggle on mermaid diagrams.
+
 ## [0.7.1] - 2026-09-24
 
 ### Added
@@ -177,6 +196,7 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 - Replace class `nonla-chat-shimmer` with `Shimmer` or `.nonla-shimmer`.
 - `resolveToolUI(toolName, extras?)` — second argument is optional; extra UIs are checked first.
 
+[0.8.0]: https://github.com/devnonla/devnonla-ui/compare/v0.7.1...v0.8.0
 [0.7.1]: https://github.com/devnonla/devnonla-ui/compare/v0.7.0...v0.7.1
 [0.7.0]: https://github.com/devnonla/devnonla-ui/compare/v0.6.0...v0.7.0
 [0.6.0]: https://github.com/devnonla/devnonla-ui/compare/v0.5.1...v0.6.0
