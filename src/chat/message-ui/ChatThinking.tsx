@@ -48,7 +48,7 @@ export function ChatThinking({ thinking, duration = 0, streaming = false, classN
         if (el) el.scrollTop = el.scrollHeight;
       }}
     >
-      <summary className="cursor-pointer select-none text-sm font-medium flex items-center gap-1 py-0.5 list-none [&::-webkit-details-marker]:hidden">
+      <summary className="cursor-pointer select-none text-base font-medium flex items-center gap-1 py-0.5 list-none [&::-webkit-details-marker]:hidden">
         <Shimmer active={streaming} className="text-tertiary-foreground">{label}</Shimmer>
         <ChevronRight className="size-3 shrink-0 opacity-0 text-tertiary-foreground transition-[opacity,transform] duration-150 group-hover/thinking:opacity-100 group-open/thinking:opacity-100 group-open/thinking:rotate-90" aria-hidden />
       </summary>

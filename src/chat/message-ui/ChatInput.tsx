@@ -124,7 +124,7 @@ export function ChatInput({ generating = false, placeholder = "Message…", disa
   };
 
   return (
-    <div className={cn("nonla-glass relative isolate shrink-0 mx-4 mb-2.5 overflow-hidden pt-1 rounded-xl flex flex-col", disabled && "opacity-70", className)}>
+    <div className={cn("nonla-glass nonla-chat-input relative isolate shrink-0 mx-4 mb-2.5 overflow-hidden pt-1 rounded-xl flex flex-col", disabled && "opacity-70", className)}>
       <textarea
         ref={textareaRef}
         data-chat-input

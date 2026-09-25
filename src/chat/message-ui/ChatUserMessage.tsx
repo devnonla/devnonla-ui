@@ -30,7 +30,7 @@ export function ChatUserMessage({ content, className }: ChatUserMessageProps) {
     <div
       className={cn(
         "nonla-chat-user relative isolate mt-6 mb-3 mx-4 overflow-hidden rounded-xl px-3 py-1.5",
-        "border border-solid border-border bg-[color-mix(in_oklab,var(--nonla-ink)_7%,transparent)] backdrop-blur-xl",
+        "border border-solid border-brand-200 bg-brand-100",
         className,
       )}
     >
