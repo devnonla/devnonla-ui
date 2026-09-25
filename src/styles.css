@@ -18,18 +18,19 @@
   color-scheme: light;
 
   /* ── Knobs / Seed (override these) ──────────────────────────────────── */
-  --nonla-bg: #fffcf1;
-  --nonla-fg: #1f1f1e;
-  /* Text rank on cream — same ink, contrast steps ~13.6 / 7 / 4.5 / 3 (WCAG AAA body → AA body → AA UI). */
-  --nonla-fg-muted: color-mix(in oklab, var(--nonla-fg) 78%, var(--nonla-bg));
-  --nonla-fg-tertiary: color-mix(in oklab, var(--nonla-fg) 64%, var(--nonla-bg));
-  --nonla-fg-quaternary: color-mix(in oklab, var(--nonla-fg) 50%, var(--nonla-bg));
+  /* Neutrals measured from Discord light (Vietnix DEV #website). */
+  --nonla-bg: #f3f3f4;
+  --nonla-fg: #2e2e34;
+  /* Text rank: default / subtle / muted / placeholder. */
+  --nonla-fg-muted: #595a63;
+  --nonla-fg-tertiary: #6c6d76;
+  --nonla-fg-quaternary: #84858d;
   --nonla-brand: #f18d00;
   /* Label on brand fills (Button primary, Tag solid, Checkbox). Override via `colors.solidFg`. */
   --nonla-solid-fg: #ffffff;
-  --nonla-danger: #c0392b;
+  --nonla-danger: #ef4444;
   --nonla-success: #1f9d55;
-  --nonla-warn: #c47d12;
+  --nonla-warn: #f59e0b;
   --nonla-link: var(--nonla-brand);
   --nonla-radius: 8px;
   --nonla-height: 32px;
@@ -39,12 +40,14 @@
   --nonla-ink: var(--nonla-fg);
   --nonla-surface: #ffffff;
   --nonla-elevated: var(--nonla-surface);
-  --nonla-chip: color-mix(in oklab, var(--nonla-fg) 5%, var(--nonla-bg));
-  --nonla-chip-hover: color-mix(in oklab, var(--nonla-fg) 9%, var(--nonla-bg));
-  --nonla-border: color-mix(in oklab, var(--nonla-fg) 7%, var(--nonla-bg));
-  --nonla-input: color-mix(in oklab, var(--nonla-fg) 12%, var(--nonla-bg));
+  --nonla-chip: #e6e6e8;
+  --nonla-chip-hover: #ebeced;
+  --nonla-border: #e2e2e4;
+  --nonla-input: #d5d5d9;
   --nonla-composer: var(--nonla-surface);
-  --nonla-chat-bg: #fcfcfc;
+  --nonla-chat-bg: #fbfbfb;
+  /* Opaque header fill. Alpha `fg/4` picks up whatever sits behind the glass. */
+  --nonla-table-head: color-mix(in srgb, var(--nonla-fg) 4%, var(--nonla-bg));
 
   /* Neutral frost — blur shows whatever sits behind, no page-tint */
   --nonla-meadow: #4f7a32;
@@ -53,9 +56,10 @@
   --nonla-glass-menu: color-mix(in srgb, white 48%, transparent);
   --nonla-glass-border: color-mix(in srgb, white 62%, transparent);
   --nonla-glass-highlight: color-mix(in srgb, white 70%, transparent);
-  --nonla-ink-hover: color-mix(in srgb, var(--nonla-ink) 6%, transparent);
-  --nonla-ink-active: color-mix(in srgb, var(--nonla-ink) 8%, transparent);
-  --nonla-ink-line: color-mix(in srgb, var(--nonla-ink) 14%, transparent);
+  /* Discord interactive wash: hsl(240 4% 60.784%) at hover / active alpha. */
+  --nonla-ink-hover: hsl(240 4% 60.784% / 0.122);
+  --nonla-ink-active: hsl(240 4% 60.784% / 0.161);
+  --nonla-ink-line: #e2e2e4;
   --nonla-desktop-bar-height: 42px;
   --nonla-z-base: 0;
   --nonla-z-desktop: 20;
@@ -150,8 +154,8 @@
   --nonla-dur-slow: 300ms;
 
   /* Chat type — one scale for full-page chat and side panels */
-  --chat-body-size: 15px;
-  --chat-body-leading: 24px;
+  --chat-body-size: 14px;
+  --chat-body-leading: 20px;
   --chat-h1-size: 16px;
   --chat-h2-size: 16px;
   --chat-h3-size: 14px;
@@ -626,8 +630,15 @@
   backdrop-filter: blur(24px) saturate(160%);
 }
 
+/* Composer sits on light glass; the white hairline disappears. Use the input stroke. */
+.nonla-chat-input {
+  border-color: var(--nonla-input);
+}
+
 /* Desktop window — cream wash + less saturate so meadow doesn't tint the panel. */
 .nonla-window-glass {
+  border: 0;
+  box-shadow: inset 0 0 0 1px var(--glass-border), 0 10px 28px color-mix(in srgb, black 12%, transparent);
   background: color-mix(in srgb, var(--nonla-bg) 81%, transparent);
   -webkit-backdrop-filter: blur(40px) saturate(108%);
   backdrop-filter: blur(40px) saturate(108%);
