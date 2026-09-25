@@ -378,8 +378,8 @@ export function Table<T extends object = Record<string, unknown>>({ columns = []
     const next = head ? Math.ceil(head.getBoundingClientRect().height) + 4 : 0;
     setThumbInset((prev) => (prev === next ? prev : next));
   }, [headSticky, showHeader, size, flexLayout]);
-  /** Opaque fill. `bg-foreground/4` is 4% alpha, so body text shows through a sticky header. */
-  const headBg: CSSProperties | undefined = headSticky ? { backgroundColor: "var(--nonla-bg)" } : undefined;
+  /** Opaque fill so a sticky header does not show body text, and every header matches. */
+  const headBg: CSSProperties = { backgroundColor: "var(--nonla-table-head)" };
 
   const colStyle = (col: ColumnType<T>, key: string): CSSProperties => {
     const measured = flexLayout?.cols[key];
@@ -408,7 +408,7 @@ export function Table<T extends object = Record<string, unknown>>({ columns = []
                 <thead data-slot="table-header" className={cn("[&_tr]:border-b [&_tr]:border-border", headSticky && "relative z-20")}>
                   <tr data-slot="table-row" className="border-b border-border transition-colors hover:bg-transparent">
                     {rowSelection ? (
-                      <th data-slot="table-head" className={cn(sz.head, sz.check, "align-middle font-medium text-foreground", headSticky ? "sticky top-0 z-10 border-b border-border" : "bg-foreground/4", bordered && "border-b border-border")} style={{ ...(selectionColWidth != null ? { width: selectionColWidth } : undefined), ...headBg }}>
+                      <th data-slot="table-head" className={cn(sz.head, sz.check, "align-middle font-medium text-foreground", headSticky && "sticky top-0 z-10 border-b border-border", bordered && "border-b border-border")} style={{ ...(selectionColWidth != null ? { width: selectionColWidth } : undefined), ...headBg }}>
                         <div className="flex items-center justify-center">
                           {rowSelection.type === "radio" ? null : (
                             <Checkbox
@@ -433,7 +433,7 @@ export function Table<T extends object = Record<string, unknown>>({ columns = []
                         <th
                           key={key}
                           data-slot="table-head"
-                          className={cn(sz.head, "align-middle font-medium text-foreground", headSticky ? "sticky top-0 z-10 border-b border-border" : "bg-foreground/4", flexLayout && flexWeight(col) > 0 ? "min-w-0" : "whitespace-nowrap", alignClass(col.align), bordered && "border-b border-border", sortable && "cursor-pointer select-none", col.className, headerExtra?.className)}
+                          className={cn(sz.head, "align-middle font-medium text-foreground", headSticky && "sticky top-0 z-10 border-b border-border", flexLayout && flexWeight(col) > 0 ? "min-w-0" : "whitespace-nowrap", alignClass(col.align), bordered && "border-b border-border", sortable && "cursor-pointer select-none", col.className, headerExtra?.className)}
                           style={{
                             ...colStyle(col, key),
                             ...headBg,
