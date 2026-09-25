@@ -1,4 +1,3 @@
-import { FileText } from "lucide-react";
 import { type ComponentProps, createContext, type ReactNode, useContext, useMemo } from "react";
 import { ButtonCopy } from "../button/ButtonCopy";
 import { cn } from "../lib/cn";
@@ -46,21 +45,16 @@ export function CodeBlock({ code, language, title, lineNumbers = false, wordWrap
   return (
     <CodeBlockContext.Provider value={{ code }}>
       <div className={cn("nonla-codeblock relative flex min-w-0 w-full flex-col overflow-clip rounded-lg border border-border bg-glass-bar text-sm text-foreground backdrop-blur-lg", className)} data-language={language} {...props}>
-        <div className="flex h-9 items-center justify-between gap-2 pl-2 pr-1 text-sm text-muted-foreground">
+        <div className="flex h-8 items-center justify-between gap-2 pl-3 pr-1 text-xs text-muted-foreground">
           <div className="flex min-w-0 items-center gap-2">
-            {label ? (
-              <>
-                <FileText size={14} className="shrink-0" aria-hidden />
-                <span className="truncate font-medium">{label}</span>
-              </>
-            ) : null}
+            {label ? <span className="truncate font-medium">{label}</span> : null}
           </div>
           <CodeBlockCopyButton />
         </div>
 
         <OverlayScroll
           autoHeight
-          className={cn("nonla-codeblock-body nonla-codeblock-well min-w-0 bg-card font-mono text-[13px] leading-5 max-h-96", !children && "mx-0.5 mb-0.5 rounded-lg")}
+          className={cn("nonla-codeblock-body nonla-codeblock-well min-w-0 bg-card font-mono text-[13px] leading-5 max-h-96", !children && "mx-0.5 mb-0.5 w-[calc(100%-4px)] rounded-lg")}
           innerClassName={wordWrap ? undefined : "overflow-x-auto"}
         >
           <pre className={cn("nonla-codeblock-pre m-0 whitespace-pre break-normal", lineNumbers && "nonla-codeblock-lines", wordWrap && "whitespace-pre-wrap wrap-break-word")}>
