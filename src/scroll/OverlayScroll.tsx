@@ -162,10 +162,10 @@ export function OverlayScroll({ visibility = "hover", autoHeight = false, classN
         {children}
       </div>
       {vThumb.shown ? (
-        <div aria-hidden onPointerDown={onThumbPointerDown("y")} className={thumbClass} style={{ top: insetTop, right: 2, width: "var(--nonla-scrollbar-size)", height: vThumb.size, transform: `translateY(${vThumb.offset}px)` }} />
+        <div aria-hidden onPointerDown={onThumbPointerDown("y")} className={thumbClass} style={{ top: insetTop, right: 1, width: "var(--nonla-scrollbar-size)", height: vThumb.size, transform: `translateY(${vThumb.offset}px)` }} />
       ) : null}
       {hThumb.shown ? (
-        <div aria-hidden onPointerDown={onThumbPointerDown("x")} className={thumbClass} style={{ left: 0, bottom: 2, height: "var(--nonla-scrollbar-size)", width: hThumb.size, transform: `translateX(${hThumb.offset}px)` }} />
+        <div aria-hidden onPointerDown={onThumbPointerDown("x")} className={thumbClass} style={{ left: 0, bottom: 1, height: "var(--nonla-scrollbar-size)", width: hThumb.size, transform: `translateX(${hThumb.offset}px)` }} />
       ) : null}
     </div>
   );
