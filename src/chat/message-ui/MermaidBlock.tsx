@@ -1,5 +1,6 @@
-import { Download, Maximize2, Minimize2, Moon, Sun } from "lucide-react";
+import { Download, Maximize2, Minimize2 } from "lucide-react";
 import { useCallback, useEffect, useId, useRef, useState } from "react";
+import { Button } from "../../button/Button";
 import { CodeBlock } from "../../codeblock/CodeBlock";
 import { cn } from "../../lib/cn";
 import { sanitizeMermaid } from "./sanitizeMermaid";
@@ -9,10 +10,6 @@ export type MermaidBlockProps = {
   className?: string;
 };
 
-type MermaidTheme = "light" | "dark";
-
-const btnClass = "flex items-center gap-1 px-2 py-1 rounded-lg border border-border text-muted-foreground text-xs cursor-pointer transition-colors hover:text-primary hover:border-primary/30 bg-transparent";
-
 export function MermaidBlock({ children, className }: MermaidBlockProps) {
   const id = useId().replace(/:/g, "_");
   const containerRef = useRef<HTMLDivElement>(null);
@@ -20,14 +17,10 @@ export function MermaidBlock({ children, className }: MermaidBlockProps) {
   const fullscreenRef = useRef<HTMLDivElement>(null);
   const [error, setError] = useState<string | null>(null);
   const [svgContent, setSvgContent] = useState("");
-  const [theme, setTheme] = useState<MermaidTheme>("light");
   const [zoom, setZoom] = useState(1);
   const [pan, setPan] = useState({ x: 0, y: 0 });
   const dragRef = useRef({ active: false, startX: 0, startY: 0, panX: 0, panY: 0 });
   const [isDragging, setIsDragging] = useState(false);
-
-  const isDark = theme === "dark";
-  const surfaceClass = isDark ? "bg-[#1e1e1e]" : "bg-card";
 
   useEffect(() => {
     let cancelled = false;
@@ -36,11 +29,11 @@ export function MermaidBlock({ children, className }: MermaidBlockProps) {
       const { default: mermaid } = await import("mermaid");
       mermaid.initialize({
         startOnLoad: false,
-        theme: isDark ? "dark" : "default",
+        theme: "default",
       });
 
       const raw = children.trim();
-      const renderId = `mermaid-${id}-${theme}`;
+      const renderId = `mermaid-${id}`;
 
       try {
         document.getElementById(`d${renderId}`)?.remove();
@@ -73,7 +66,7 @@ export function MermaidBlock({ children, className }: MermaidBlockProps) {
     return () => {
       cancelled = true;
     };
-  }, [children, id, theme, isDark]);
+  }, [children, id]);
 
   useEffect(() => {
     if (containerRef.current && svgContent) containerRef.current.innerHTML = svgContent;
@@ -89,8 +82,6 @@ export function MermaidBlock({ children, className }: MermaidBlockProps) {
     setZoom(1);
     setPan({ x: 0, y: 0 });
   }, []);
-
-  const toggleTheme = () => setTheme((prev) => (prev === "light" ? "dark" : "light"));
 
   const downloadSvg = () => {
     if (!svgContent) return;
@@ -173,47 +164,33 @@ export function MermaidBlock({ children, className }: MermaidBlockProps) {
 
   return (
     <>
-      <div className={cn("my-3 last:mb-0 group relative rounded-xl border border-border overflow-hidden", surfaceClass, className)}>
+      <div className={cn("my-3 last:mb-0 group relative rounded-xl border border-border overflow-hidden bg-card", className)}>
         <div className="absolute top-2 right-2 z-10 flex items-center gap-1 opacity-0 group-hover:opacity-100 transition-opacity">
-          <button type="button" onClick={toggleTheme} className={cn(btnClass, surfaceClass)} title={isDark ? "Light theme" : "Dark theme"}>
-            {isDark ? <Sun size={14} aria-hidden /> : <Moon size={14} aria-hidden />}
-          </button>
-          <button type="button" onClick={downloadSvg} className={cn(btnClass, surfaceClass)} title="Download SVG" disabled={!svgContent}>
-            <Download size={14} aria-hidden />
-          </button>
-          <button type="button" onClick={openFullscreen} className={cn(btnClass, surfaceClass)} title="Fullscreen">
-            <Maximize2 size={14} aria-hidden />
-          </button>
+          <Button size="small" icon={<Maximize2 aria-hidden />} title="Fullscreen" aria-label="Fullscreen" onClick={openFullscreen} />
         </div>
         <div ref={containerRef} className="flex justify-center p-6 overflow-x-auto [&_svg]:max-w-full" />
       </div>
 
       <dialog
         ref={dialogRef}
-        className={cn("m-0 p-0 w-screen h-screen max-w-none max-h-none backdrop:bg-black/40 open:flex open:flex-col", surfaceClass)}
+        className="m-0 p-0 w-screen h-screen max-w-none max-h-none backdrop:bg-black/40 open:flex open:flex-col bg-card"
         onKeyDown={(e) => {
           if (e.key === "Escape") closeFullscreen();
         }}
       >
         <div className="fixed top-5 right-5 z-50 flex items-center gap-1.5">
-          <button type="button" onClick={toggleTheme} className={cn(btnClass, surfaceClass, "px-3 py-2 text-sm shadow-md")} title={isDark ? "Light theme" : "Dark theme"}>
-            {isDark ? <Sun size={16} aria-hidden /> : <Moon size={16} aria-hidden />}
-          </button>
-          <button type="button" onClick={downloadSvg} className={cn(btnClass, surfaceClass, "px-3 py-2 text-sm shadow-md")} title="Download SVG" disabled={!svgContent}>
-            <Download size={16} aria-hidden />
-          </button>
-          <button type="button" onClick={closeFullscreen} className={cn(btnClass, surfaceClass, "px-3 py-2 text-sm shadow-md")} title="Exit fullscreen">
-            <Minimize2 size={16} aria-hidden />
-            <span>Exit</span>
-          </button>
+          <Button size="small" icon={<Download aria-hidden />} title="Download SVG" aria-label="Download SVG" onClick={downloadSvg} disabled={!svgContent} />
+          <Button size="small" icon={<Minimize2 aria-hidden />} title="Exit fullscreen" onClick={closeFullscreen}>
+            Exit
+          </Button>
         </div>
 
-        <div className={cn("fixed bottom-5 left-1/2 -translate-x-1/2 z-50 flex items-center gap-2 px-3 py-1.5 rounded-full border border-border text-xs text-muted-foreground shadow-md select-none", surfaceClass)}>
+        <div className="fixed bottom-5 left-1/2 -translate-x-1/2 z-50 flex items-center gap-2 px-3 py-1.5 rounded-full border border-border text-xs text-muted-foreground shadow-md select-none bg-card">
           <span>{Math.round(zoom * 100)}%</span>
           {!isDefaultView ? (
-            <button type="button" onClick={resetView} className="text-muted-foreground hover:text-primary cursor-pointer transition-colors border-0 bg-transparent p-0 font-[inherit]">
+            <Button type="text" size="small" onClick={resetView}>
               Reset
-            </button>
+            </Button>
           ) : null}
         </div>
 
