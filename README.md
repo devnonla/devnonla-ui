@@ -67,7 +67,7 @@ All color lives in **`--nonla-*` knobs** (`src/styles.css`). Components never ha
 }
 ```
 
-`--brand-50` … `--brand-800` follow `--nonla-brand` (500 = the knob). Text on cream uses `brand-700`. Text **on** the brand fill (Button primary, Tag solid, Checkbox) is `--nonla-solid-fg` / `colors.solidFg` — default white.
+`--brand-50` … `--brand-800` follow `--nonla-brand` (500 = the knob). Tints mix into the surface; `brand-700` stays with the ink. Text **on** the brand fill (Button primary, Tag solid, Checkbox) is `--nonla-solid-fg` / `colors.solidFg` — default `#181818` on the neutral `#f0f0f0` fill.
 
 Or at runtime:
 
@@ -104,7 +104,7 @@ Those map into shadcn-standard tokens (`--background`, `--destructive`, …) plu
 Meadow wallpaper, window chrome, header bar, and desktop icons live in this package so other Nonla apps share the same shell.
 
 ```tsx
-import { DesktopStage, DesktopHeader, MeadowDesktop, DesktopWindow, MeadowShell, Menu, FluentIcon } from "devnonla-ui";
+import { DesktopStage, DesktopHeader, MeadowDesktop, DesktopWindow, MeadowShell, Menu, SolarIcon } from "devnonla-ui";
 
 <DesktopStage>
   <MeadowDesktop>{icons}</MeadowDesktop>
@@ -177,8 +177,8 @@ Primitives (`ChatWelcome`, `ChatUserMessage`, `ChatAgentMessage`, `ChatThinking`
 
 # Icons
 
-`FluentIcon` renders vendored Fluent Color (`@iconify-json/fluent-color`). No Solar / Lucide.
+`SolarIcon` renders vendored Solar icons (`@iconify-json/solar`) as inline SVG, so they follow `currentColor`. Default style is `linear`. A legacy Fluent Color id such as `settings-24` still resolves to the Solar equivalent.
 
 ```tsx
-<FluentIcon name="settings-24" size={16} />
+<SolarIcon name="settings-linear" size={16} />
 ```
