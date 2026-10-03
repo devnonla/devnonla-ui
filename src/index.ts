@@ -90,7 +90,7 @@ export {
   useAgentStream,
   WebFetchToolUI,
 } from "./chat";
-export type { CheckboxProps } from "./checkbox/Checkbox";
+export type { CheckboxColor, CheckboxProps } from "./checkbox/Checkbox";
 export { Checkbox } from "./checkbox/Checkbox";
 export type { CodeBlockCopyButtonProps, CodeBlockProps } from "./codeblock/CodeBlock";
 export { CodeBlock, CodeBlockCopyButton } from "./codeblock/CodeBlock";
@@ -190,11 +190,11 @@ export type { SidebarItemType, SidebarProps, SidebarSelectInfo } from "./sidebar
 export { Sidebar } from "./sidebar/Sidebar";
 export type { SkeletonProps } from "./skeleton/Skeleton";
 export { Skeleton } from "./skeleton/Skeleton";
-export type { SpinProps, SpinVariant } from "./spin/Spin";
+export type { SpinColor, SpinProps, SpinVariant } from "./spin/Spin";
 export { Spin } from "./spin/Spin";
 export type { SplitterOrientation, SplitterPanelProps, SplitterProps, SplitterSemanticSlot, SplitterSize } from "./splitter/Splitter";
 export { Splitter, SplitterPanel } from "./splitter/Splitter";
-export type { SwitchProps, SwitchVariant } from "./switch/Switch";
+export type { SwitchColor, SwitchProps, SwitchVariant } from "./switch/Switch";
 export { Switch } from "./switch/Switch";
 export type {
   ColumnsType,
@@ -207,8 +207,10 @@ export type {
 export { Table } from "./table/Table";
 export type { TagProps, TagVariant } from "./tag/Tag";
 export { Tag } from "./tag/Tag";
-export type { NonlaThemeColorName, NonlaThemeColors, NonlaThemeConfig, NonlaThemeKnob, NonlaThemeKnobName, NonlaTokenSnapshot } from "./theme";
-export { applyNonlaTheme, getDesignToken, NONLA_THEME_KEYS, NONLA_THEME_KNOBS } from "./theme";
+export type { NonlaColorMode, NonlaThemeColorName, NonlaThemeColors, NonlaThemeConfig, NonlaThemeKnob, NonlaThemeKnobName, NonlaTokenSnapshot } from "./theme";
+export { applyNonlaTheme, getColorMode, getDesignToken, initColorMode, NONLA_COLOR_MODE_KEY, NONLA_THEME_KEYS, NONLA_THEME_KNOBS, setColorMode } from "./theme";
+export type { ThemeToggleProps } from "./theme-toggle/ThemeToggle";
+export { ThemeToggle, useColorMode } from "./theme-toggle/ThemeToggle";
 export type { TimePickerProps, TimeValue } from "./timepicker/TimePicker";
 export { TimePicker } from "./timepicker/TimePicker";
 export type { TooltipPlacement, TooltipProps } from "./tooltip/Tooltip";
