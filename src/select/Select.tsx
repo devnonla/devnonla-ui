@@ -6,6 +6,7 @@ import {
   type ReactElement,
   type ReactNode,
   useEffect,
+  useId,
   useLayoutEffect,
   useMemo,
   useRef,
@@ -103,9 +104,10 @@ export const Select = forwardRef<HTMLButtonElement, SelectProps>(function Select
   const [query, setQuery] = useState("");
   const [active, setActive] = useState(0);
   const [triggerW, setTriggerW] = useState<number>();
-  const triggerRef = useRef<HTMLButtonElement | null>(null);
+  const triggerRef = useRef<HTMLElement | null>(null);
   const searchRef = useRef<HTMLInputElement>(null);
   const listRef = useRef<HTMLDivElement>(null);
+  const listId = useId();
   const resolvedSize = useControlSize(size);
   const portal = usePopupContainer()?.();
 
@@ -133,12 +135,16 @@ export const Select = forwardRef<HTMLButtonElement, SelectProps>(function Select
       setActive(0);
       return;
     }
-    const idx = options.findIndex((o) => o.value === selected);
-    setActive(idx >= 0 ? idx : 0);
-    if (searchable) {
-      const t = window.setTimeout(() => searchRef.current?.focus(), 0);
-      return () => window.clearTimeout(t);
+    // Opening by typing already set `query` and highlight. A click opens with an empty query.
+    if (!query) {
+      const idx = options.findIndex((o) => o.value === selected);
+      setActive(idx >= 0 ? idx : 0);
     }
+    if (!searchable) return;
+    const t = window.setTimeout(() => searchRef.current?.focus(), 0);
+    return () => window.clearTimeout(t);
+    // `query` is only read for the closed → open transition.
+    // eslint-disable-next-line react-hooks/exhaustive-deps
   }, [open, searchable]);
 
   useEffect(() => {
@@ -175,6 +181,42 @@ export const Select = forwardRef<HTMLButtonElement, SelectProps>(function Select
     }
   };
 
+  const onSearchKey = (e: KeyboardEvent<HTMLInputElement>) => {
+    if (disabled || e.nativeEvent.isComposing) return;
+    if (!open) {
+      if (e.key === "ArrowDown" || e.key === "ArrowUp" || e.key === "Enter" || e.key === " ") {
+        e.preventDefault();
+        setOpen(true);
+      }
+      return;
+    }
+    if (e.key === "ArrowDown") {
+      e.preventDefault();
+      move(1);
+    } else if (e.key === "ArrowUp") {
+      e.preventDefault();
+      move(-1);
+    } else if (e.key === "Enter") {
+      e.preventDefault();
+      pickActive();
+    } else if (e.key === "Escape") {
+      e.preventDefault();
+      setOpen(false);
+    } else if (e.key === "Tab") {
+      setOpen(false);
+    }
+  };
+
+  const focusSearch = () => {
+    const input = searchRef.current;
+    if (!input) return;
+    input.focus();
+    const end = input.value.length;
+    input.setSelectionRange(end, end);
+  };
+
+  const eventInsideTrigger = (target: EventTarget | null) => target instanceof Node && !!triggerRef.current?.contains(target);
+
   const onListKey = (e: KeyboardEvent) => {
     if (e.key === "ArrowDown") {
       e.preventDefault();
@@ -191,13 +233,27 @@ export const Select = forwardRef<HTMLButtonElement, SelectProps>(function Select
     }
   };
 
-  const setRefs = (node: HTMLButtonElement | null) => {
+  const setRefs = (node: HTMLElement | null) => {
     triggerRef.current = node;
-    if (typeof ref === "function") ref(node);
-    else if (ref) (ref as { current: HTMLButtonElement | null }).current = node;
+    const buttonNode = node as HTMLButtonElement | null;
+    if (typeof ref === "function") ref(buttonNode);
+    else if (ref) ref.current = buttonNode;
   };
 
   const showClear = allowClear && selected != null && selected !== "" && !disabled;
+  const display = selectedOpt ? selectedOpt.label : selected != null && selected !== "" ? String(selected) : placeholder;
+  const displayEmpty = !selectedOpt && (selected == null || selected === "");
+  const activeId = open && filtered[active] ? `${listId}-opt-${active}` : undefined;
+
+  const fieldClass = cn(
+    "group/select inline-flex w-full items-center gap-2 text-left",
+    controlFieldSurface,
+    controlFieldTransition,
+    controlFieldFocusBorder,
+    "outline-none disabled:cursor-not-allowed disabled:opacity-45",
+    controlStatusClass(status),
+    className,
+  );
 
   return (
     <PopoverPrimitive.Root
@@ -207,56 +263,142 @@ export const Select = forwardRef<HTMLButtonElement, SelectProps>(function Select
         setOpen(v);
       }}
     >
-      <PopoverPrimitive.Trigger asChild>
-        <button
-          ref={setRefs}
-          type="button"
-          disabled={disabled}
-          aria-haspopup="listbox"
-          aria-expanded={open}
-          className={cn(
-            "group/select inline-flex w-full cursor-pointer items-center gap-2 text-left",
-            controlFieldSurface,
-            controlFieldTransition,
-            controlFieldFocusBorder,
-            "focus-visible:outline-none disabled:cursor-not-allowed disabled:opacity-45",
-            controlStatusClass(status),
-            className,
-          )}
-          style={controlFieldStyle(resolvedSize)}
-          onKeyDown={onTriggerKey}
-        >
-          <span className={cn("min-w-0 flex-1 truncate", selected == null || selected === "" ? "text-quaternary-foreground" : "")}>
-            {selectedOpt ? selectedOpt.label : selected != null && selected !== "" ? String(selected) : placeholder}
-          </span>
-          {showClear ? (
+      {searchable ? (
+        <PopoverPrimitive.Anchor asChild>
+          <div
+            ref={setRefs}
+            data-state={open ? "open" : "closed"}
+            aria-disabled={disabled || undefined}
+            className={cn(fieldClass, "cursor-text", disabled && "cursor-not-allowed opacity-45")}
+            style={controlFieldStyle(resolvedSize)}
+            onPointerDown={(e) => {
+              if (disabled) return;
+              const target = e.target as HTMLElement;
+              if (target.closest("[data-select-affix]")) return;
+              if (!open) setOpen(true);
+              if (target !== searchRef.current) {
+                e.preventDefault();
+                focusSearch();
+              }
+            }}
+          >
+            <div className="relative min-w-0 flex-1 overflow-hidden">
+              <span aria-hidden className={cn("block truncate", (open && query) || displayEmpty ? "invisible" : "")}>
+                {displayEmpty ? placeholder : display}
+              </span>
+              <input
+                ref={searchRef}
+                role="combobox"
+                aria-expanded={open}
+                aria-controls={listId}
+                aria-activedescendant={activeId}
+                aria-autocomplete="list"
+                aria-label={placeholder}
+                disabled={disabled}
+                autoComplete="off"
+                autoCorrect="off"
+                spellCheck={false}
+                value={open ? query : ""}
+                placeholder={displayEmpty ? placeholder : undefined}
+                onChange={(e) => {
+                  setQuery(e.target.value);
+                  setActive(0);
+                  if (!open) setOpen(true);
+                }}
+                onKeyDown={onSearchKey}
+                className={cn(
+                  "absolute inset-0 w-full border-0 bg-transparent p-0 font-[inherit] leading-[inherit] text-inherit outline-none placeholder:text-placeholder",
+                  !open && "caret-transparent",
+                )}
+              />
+            </div>
+            {showClear ? (
+              <span
+                data-select-affix=""
+                role="button"
+                tabIndex={-1}
+                aria-label="Clear"
+                className="inline-flex size-4 shrink-0 cursor-pointer items-center justify-center rounded-full text-muted-foreground opacity-0 transition-opacity hover:bg-ink-hover hover:text-foreground group-hover/select:opacity-100"
+                onPointerDown={(e) => {
+                  e.preventDefault();
+                  e.stopPropagation();
+                }}
+                onClick={(e) => {
+                  e.preventDefault();
+                  e.stopPropagation();
+                  commit(null);
+                }}
+              >
+                <ClearIcon />
+              </span>
+            ) : null}
             <span
-              role="button"
-              tabIndex={-1}
-              aria-label="Clear"
-              className="inline-flex size-4 shrink-0 cursor-pointer items-center justify-center rounded-full text-muted-foreground opacity-0 transition-opacity hover:bg-ink-hover hover:text-foreground group-hover/select:opacity-100"
-              onPointerDown={(e) => e.preventDefault()}
-              onClick={(e) => {
+              data-select-affix=""
+              className="inline-flex shrink-0 cursor-pointer"
+              onPointerDown={(e) => {
                 e.preventDefault();
                 e.stopPropagation();
-                commit(null);
+                if (disabled) return;
+                setOpen((v) => !v);
               }}
             >
-              <ClearIcon />
+              <Chevron />
             </span>
-          ) : null}
-          <Chevron />
-        </button>
-      </PopoverPrimitive.Trigger>
+          </div>
+        </PopoverPrimitive.Anchor>
+      ) : (
+        <PopoverPrimitive.Trigger asChild>
+          <button
+            ref={setRefs}
+            type="button"
+            disabled={disabled}
+            aria-haspopup="listbox"
+            aria-expanded={open}
+            className={cn(fieldClass, "cursor-pointer focus-visible:outline-none")}
+            style={controlFieldStyle(resolvedSize)}
+            onKeyDown={onTriggerKey}
+          >
+            <span className={cn("min-w-0 flex-1 truncate", displayEmpty && "text-placeholder")}>{display}</span>
+            {showClear ? (
+              <span
+                role="button"
+                tabIndex={-1}
+                aria-label="Clear"
+                className="inline-flex size-4 shrink-0 cursor-pointer items-center justify-center rounded-full text-muted-foreground opacity-0 transition-opacity hover:bg-ink-hover hover:text-foreground group-hover/select:opacity-100"
+                onPointerDown={(e) => e.preventDefault()}
+                onClick={(e) => {
+                  e.preventDefault();
+                  e.stopPropagation();
+                  commit(null);
+                }}
+              >
+                <ClearIcon />
+              </span>
+            ) : null}
+            <Chevron />
+          </button>
+        </PopoverPrimitive.Trigger>
+      )}
       <PopoverPrimitive.Portal container={portal}>
         <PopoverPrimitive.Content
           align="start"
           sideOffset={4}
           onOpenAutoFocus={(e) => {
-            if (searchable) {
-              e.preventDefault();
-              searchRef.current?.focus();
-            }
+            if (!searchable) return;
+            e.preventDefault();
+            focusSearch();
+          }}
+          onCloseAutoFocus={(e) => {
+            if (searchable) e.preventDefault();
+          }}
+          onFocusOutside={(e) => {
+            if (searchable && eventInsideTrigger(e.target)) e.preventDefault();
+          }}
+          onPointerDownOutside={(e) => {
+            if (searchable && eventInsideTrigger(e.target)) e.preventDefault();
+          }}
+          onInteractOutside={(e) => {
+            if (searchable && eventInsideTrigger(e.target)) e.preventDefault();
           }}
           onKeyDown={onListKey}
           className={cn(
@@ -269,27 +411,14 @@ export const Select = forwardRef<HTMLButtonElement, SelectProps>(function Select
             width: popupMatchSelectWidth ? triggerW : undefined,
           }}
         >
-          {searchable ? (
-            <div className="border-b border-glass-border p-1.5">
-              <input
-                ref={searchRef}
-                value={query}
-                onChange={(e) => {
-                  setQuery(e.target.value);
-                  setActive(0);
-                }}
-                placeholder="Search…"
-                className="h-7 w-full rounded-md border-0 bg-transparent px-2 text-sm text-foreground outline-none placeholder:text-quaternary-foreground"
-              />
-            </div>
-          ) : null}
-          <div ref={listRef} role="listbox" tabIndex={-1} className="flex max-h-72 flex-col gap-px overflow-auto p-1">
+          <div ref={listRef} id={listId} role="listbox" tabIndex={-1} className="nonla-select-options flex max-h-72 flex-col gap-0.5 overflow-auto p-1">
             {filtered.length === 0 ? (
               <div className="px-2.5 py-2 text-sm text-muted-foreground">No results</div>
             ) : (
               filtered.map((opt, i) => (
                 <div
                   key={String(opt.value)}
+                  id={`${listId}-opt-${i}`}
                   role="option"
                   tabIndex={-1}
                   aria-selected={opt.value === selected}
