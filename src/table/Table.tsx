@@ -5,6 +5,7 @@ import { cn } from "../lib/cn";
 import { type CanonicalSize, type ControlSize, useControlSize } from "../lib/sizes";
 import { Pagination, type PaginationProps } from "../pagination/Pagination";
 import { OverlayScroll } from "../scroll/OverlayScroll";
+import { Select } from "../select/Select";
 import { Spin } from "../spin/Spin";
 
 export type SortOrder = "ascend" | "descend" | null;
@@ -76,7 +77,9 @@ export type TableProps<T extends object = Record<string, unknown>> = {
   /** `false` disables; object enables (client-side slice when `total` omitted). */
   pagination?: false | TablePaginationConfig;
   className?: string;
+  /** Row padding. Type size stays the same; `small` is tight, `large` is roomy. */
   size?: ControlSize;
+  /** Card frame around the table. On by default. */
   bordered?: boolean;
   scroll?: { x?: number | string; y?: number | string };
   onRow?: (
@@ -177,28 +180,40 @@ function TableBodyScroll({ x, y, scrollRef, insetTop = 0, children }: { x?: numb
 function sizeClasses(s: CanonicalSize) {
   if (s === "small") {
     return {
-      head: "h-9 px-2 text-xs",
-      cell: "px-2 py-1.5 text-xs",
-      check: "w-9 px-2",
+      head: "h-8 px-2 text-base",
+      cell: "px-2 py-1 text-base",
+      check: "w-8 px-2",
     };
   }
   if (s === "large") {
     return {
-      head: "h-12 px-3 text-base",
-      cell: "px-3 py-3 text-base",
-      check: "w-12 px-3",
+      head: "h-12 px-4 text-base",
+      cell: "px-4 py-3 text-base",
+      check: "w-12 px-4",
     };
   }
-  // default — text-base is 14px (`--text-sm` in this theme is 13px)
   return {
-    head: "h-10 px-2 text-base",
-    cell: "p-2 text-base",
-    check: "w-10 px-2",
+    head: "h-10 px-3 text-base",
+    cell: "px-3 py-2 text-base",
+    check: "w-10 px-3",
   };
 }
 
-export function Table<T extends object = Record<string, unknown>>({ columns = [], dataSource = [], rowKey, loading, pagination, className, size, bordered, scroll, onRow, locale, showHeader = true, title, footer, rowSelection, rowClassName, onChange }: TableProps<T>) {
-  const sz = sizeClasses(useControlSize(size));
+function defaultShowTotal(total: number, [from, to]: [number, number]) {
+  if (total === 0) return "0";
+  return `${from}–${to} of ${total}`;
+}
+
+function pageSizeSelectOptions(pageSize: number, pageSizeOptions?: Array<number | string>) {
+  const raw = pageSizeOptions?.length ? pageSizeOptions.map(Number) : [10, 20, 50, 100];
+  const sizes = [...new Set(raw.filter((n) => Number.isFinite(n) && n > 0))];
+  const list = sizes.includes(pageSize) ? sizes : [pageSize, ...sizes];
+  return list.map((n) => ({ value: n, label: `${n} / page` }));
+}
+
+export function Table<T extends object = Record<string, unknown>>({ columns = [], dataSource = [], rowKey, loading, pagination, className, size, bordered = true, scroll, onRow, locale, showHeader = true, title, footer, rowSelection, rowClassName, onChange }: TableProps<T>) {
+  const resolvedSize = useControlSize(size);
+  const sz = sizeClasses(resolvedSize);
 
   const selectionControlled = rowSelection?.selectedRowKeys !== undefined;
   const [innerSelected, setInnerSelected] = useState<Key[]>(() => rowSelection?.defaultSelectedRowKeys ?? []);
@@ -391,8 +406,9 @@ export function Table<T extends object = Record<string, unknown>>({ columns = []
     <div className={cn("relative w-full", className)}>
       {titleNode != null ? <div className="mb-3 text-sm font-medium text-foreground">{titleNode}</div> : null}
 
+      <div className={cn(bordered && "overflow-hidden rounded-xl border border-hairline")}>
       <Spin spinning={Boolean(loading)}>
-        <div ref={containerRef} data-slot="table-container" className={cn("relative w-full", flexLayout ? "overflow-x-hidden" : "overflow-x-auto", bordered && "rounded-md border border-border")} style={scroll?.x != null ? { overflowX: "auto" } : undefined}>
+        <div ref={containerRef} data-slot="table-container" className={cn("relative w-full", flexLayout ? "overflow-x-hidden" : "overflow-x-auto")} style={scroll?.x != null ? { overflowX: "auto" } : undefined}>
           <TableBodyScroll y={scroll?.y} x={scroll?.x} scrollRef={scrollBodyRef} insetTop={thumbInset}>
             <table data-slot="table" className={cn("caption-bottom text-base", headSticky ? "border-separate border-spacing-0" : "border-collapse", flexLayout ? "w-full table-fixed" : wantsFlex ? "w-max" : "w-full")}>
               {flexLayout ? (
@@ -405,10 +421,10 @@ export function Table<T extends object = Record<string, unknown>>({ columns = []
                 </colgroup>
               ) : null}
               {showHeader ? (
-                <thead data-slot="table-header" className={cn("[&_tr]:border-b [&_tr]:border-border", headSticky && "relative z-20")}>
-                  <tr data-slot="table-row" className="border-b border-border transition-colors hover:bg-transparent">
+                <thead data-slot="table-header" className={cn("[&_tr]:border-b [&_tr]:border-hairline", headSticky && "relative z-20")}>
+                  <tr data-slot="table-row" className="border-b border-hairline transition-colors hover:bg-transparent">
                     {rowSelection ? (
-                      <th data-slot="table-head" className={cn(sz.head, sz.check, "align-middle font-medium text-foreground", headSticky && "sticky top-0 z-10 border-b border-border", bordered && "border-b border-border")} style={{ ...(selectionColWidth != null ? { width: selectionColWidth } : undefined), ...headBg }}>
+                      <th data-slot="table-head" className={cn(sz.head, sz.check, "align-middle font-medium text-foreground", headSticky && "sticky top-0 z-10 border-b border-hairline", bordered && "border-b border-hairline")} style={{ ...(selectionColWidth != null ? { width: selectionColWidth } : undefined), ...headBg }}>
                         <div className="flex items-center justify-center">
                           {rowSelection.type === "radio" ? null : (
                             <Checkbox
@@ -433,7 +449,7 @@ export function Table<T extends object = Record<string, unknown>>({ columns = []
                         <th
                           key={key}
                           data-slot="table-head"
-                          className={cn(sz.head, "align-middle font-medium text-foreground", headSticky && "sticky top-0 z-10 border-b border-border", flexLayout && flexWeight(col) > 0 ? "min-w-0" : "whitespace-nowrap", alignClass(col.align), bordered && "border-b border-border", sortable && "cursor-pointer select-none", col.className, headerExtra?.className)}
+                          className={cn(sz.head, "align-middle font-medium text-foreground", headSticky && "sticky top-0 z-10 border-b border-hairline", flexLayout && flexWeight(col) > 0 ? "min-w-0" : "whitespace-nowrap", alignClass(col.align), bordered && "border-b border-hairline", sortable && "cursor-pointer select-none", col.className, headerExtra?.className)}
                           style={{
                             ...colStyle(col, key),
                             ...headBg,
@@ -454,7 +470,7 @@ export function Table<T extends object = Record<string, unknown>>({ columns = []
 
               <tbody data-slot="table-body" className={cn("[&_tr:last-child]:border-0", headSticky && "relative z-0")}>
                 {pageData.length === 0 ? (
-                  <tr data-slot="table-row" className="border-b border-border">
+                  <tr data-slot="table-row" className="border-b border-hairline">
                     <td data-slot="table-cell" colSpan={colCount} className={cn(sz.cell, "text-center align-middle")}>
                       {locale?.emptyText ?? <Empty description="No data" className="py-10" />}
                     </td>
@@ -473,7 +489,7 @@ export function Table<T extends object = Record<string, unknown>>({ columns = []
                         key={key}
                         data-slot="table-row"
                         data-state={selected ? "selected" : undefined}
-                        className={cn("border-b border-border transition-colors hover:bg-muted/50 data-[state=selected]:bg-muted", inSelectionMode && !rowDisabled && "cursor-pointer", rowProps?.className, extraClass)}
+                        className={cn("border-b border-hairline transition-colors hover:bg-muted/50 data-[state=selected]:bg-muted", inSelectionMode && !rowDisabled && "cursor-pointer", rowProps?.className, extraClass)}
                         style={rowProps?.style}
                         onClick={inSelectionMode ? undefined : rowProps?.onClick}
                         onClickCapture={
@@ -490,7 +506,7 @@ export function Table<T extends object = Record<string, unknown>>({ columns = []
                         }
                       >
                         {rowSelection ? (
-                          <td data-row-select data-slot="table-cell" className={cn(sz.cell, sz.check, "align-middle", headSticky && "border-b border-border")} style={selectionColWidth != null ? { width: selectionColWidth } : undefined} onClick={(e) => e.stopPropagation()}>
+                          <td data-row-select data-slot="table-cell" className={cn(sz.cell, sz.check, "align-middle", headSticky && "border-b border-hairline")} style={selectionColWidth != null ? { width: selectionColWidth } : undefined} onClick={(e) => e.stopPropagation()}>
                             <div className="flex items-center justify-center">
                               {rowSelection.type === "radio" ? (
                                 <input type="radio" name="nonla-table-row-select" checked={selected} disabled={rowSelection.getCheckboxProps?.(record)?.disabled} aria-label="Select row" className="size-3.5 accent-foreground" onChange={() => emitSelection([key])} />
@@ -515,7 +531,7 @@ export function Table<T extends object = Record<string, unknown>>({ columns = []
                             <td
                               key={getColumnKey(col, i)}
                               data-slot="table-cell"
-                              className={cn(sz.cell, "align-middle", headSticky && "border-b border-border", alignClass(col.align), flexLayout && flexWeight(col) > 0 ? (col.ellipsis ? "max-w-0 truncate" : "min-w-0 whitespace-normal wrap-break-word") : col.ellipsis ? "max-w-0 truncate" : "whitespace-nowrap", col.className)}
+                              className={cn(sz.cell, "align-middle", headSticky && "border-b border-hairline", alignClass(col.align), flexLayout && flexWeight(col) > 0 ? (col.ellipsis ? "max-w-0 truncate" : "min-w-0 whitespace-normal wrap-break-word") : col.ellipsis ? "max-w-0 truncate" : "whitespace-nowrap", col.className)}
                               style={colStyle(col, getColumnKey(col, i))}
                               title={col.ellipsis && (typeof content === "string" || typeof content === "number") ? String(content) : undefined}
                             >
@@ -530,7 +546,7 @@ export function Table<T extends object = Record<string, unknown>>({ columns = []
               </tbody>
 
               {footerNode != null ? (
-                <tfoot data-slot="table-footer" className="border-t border-border bg-muted/50 font-medium [&>tr]:last:border-b-0">
+                <tfoot data-slot="table-footer" className="border-t border-hairline bg-muted/50 font-medium [&>tr]:last:border-b-0">
                   <tr>
                     <td colSpan={colCount} className={cn(sz.cell, "align-middle text-muted-foreground")}>
                       {footerNode}
@@ -544,21 +560,40 @@ export function Table<T extends object = Record<string, unknown>>({ columns = []
       </Spin>
 
       {showPagination ? (
-        <div className={cn("mt-4", pageConfig.className)}>
+        <div className={cn("flex flex-wrap items-center justify-between gap-3 px-3 py-2", bordered && "border-t border-hairline", pageConfig.className)}>
+          <div className="flex items-center gap-3">
+            {pageConfig.showSizeChanger !== false ? (
+              <Select
+                size="small"
+                value={pageSize}
+                className="w-[8.5rem]"
+                options={pageSizeSelectOptions(pageSize, pageConfig.pageSizeOptions)}
+                onChange={(value) => {
+                  const nextSize = Number(value);
+                  if (!Number.isFinite(nextSize) || nextSize <= 0) return;
+                  const nextPage = Math.min(current, Math.max(1, Math.ceil(total / nextSize)));
+                  pageConfig.onShowSizeChange?.(current, nextSize);
+                  handlePageChange(nextPage, nextSize);
+                }}
+              />
+            ) : null}
+            {pageConfig.showTotal !== false ? <span className="text-xs text-muted-foreground">{(pageConfig.showTotal ?? defaultShowTotal)(total, [total === 0 ? 0 : (current - 1) * pageSize + 1, Math.min(current * pageSize, total)])}</span> : null}
+          </div>
           <Pagination
             {...pageConfig}
             className={undefined}
             hideOnSinglePage={false}
-            align={pageConfig.align ?? "end"}
             current={current}
             pageSize={pageSize}
             total={total}
-            size={pageConfig.size ?? "small"}
-            showSizeChanger={pageConfig.showSizeChanger ?? false}
+            size="small"
+            showTotal={false}
+            showSizeChanger={false}
             onChange={handlePageChange}
           />
         </div>
       ) : null}
+      </div>
     </div>
   );
 }
