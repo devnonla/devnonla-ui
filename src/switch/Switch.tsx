@@ -4,6 +4,8 @@ import { cn } from "../lib/cn";
 import { type ControlSize, controlRadiusVar, useControlSize } from "../lib/sizes";
 
 export type SwitchVariant = "default" | "square";
+/** Checked track. `white` is the on-state for dark surfaces — thumb stays ink. */
+export type SwitchColor = "brand" | "success" | "white";
 
 export type SwitchProps = Omit<ComponentPropsWithoutRef<typeof SwitchPrimitive.Root>, "onCheckedChange" | "checked" | "onChange"> & {
   checked?: boolean;
@@ -12,12 +14,19 @@ export type SwitchProps = Omit<ComponentPropsWithoutRef<typeof SwitchPrimitive.R
   onChange?: (checked: boolean) => void;
   size?: ControlSize;
   variant?: SwitchVariant;
+  color?: SwitchColor;
+};
+
+const CHECKED_TRACK: Record<SwitchColor, string> = {
+  brand: "data-[state=checked]:border-transparent data-[state=checked]:bg-brand",
+  success: "data-[state=checked]:border-transparent data-[state=checked]:bg-success",
+  white: "data-[state=checked]:border-transparent data-[state=checked]:bg-white",
 };
 
 /** Switch track heights — shorter than Button/Input. */
 const SWITCH_TRACK_H = { small: 16, default: 22, large: 28 } as const;
 
-export const Switch = forwardRef<HTMLButtonElement, SwitchProps>(function Switch({ className, checked, defaultChecked, onChange, size, variant = "default", disabled, style, ...rest }, ref) {
+export const Switch = forwardRef<HTMLButtonElement, SwitchProps>(function Switch({ className, checked, defaultChecked, onChange, size, variant = "default", color = "brand", disabled, style, ...rest }, ref) {
   const resolvedSize = useControlSize(size);
   const trackH = SWITCH_TRACK_H[resolvedSize];
   const trackW = Math.round(trackH * 1.8);
@@ -37,14 +46,19 @@ export const Switch = forwardRef<HTMLButtonElement, SwitchProps>(function Switch
         "peer inline-flex shrink-0 cursor-pointer items-center border transition-colors duration-200 ease-[cubic-bezier(0.16,1,0.3,1)]",
         square ? undefined : "rounded-full",
         "focus-visible:outline-none disabled:cursor-not-allowed disabled:opacity-45",
-        "data-[state=checked]:border-transparent data-[state=checked]:bg-brand data-[state=unchecked]:border-[color-mix(in_oklab,var(--foreground)_40%,var(--background))] data-[state=unchecked]:bg-[color-mix(in_oklab,var(--foreground)_22%,var(--background))]",
+        CHECKED_TRACK[color],
+        "data-[state=unchecked]:border-[color-mix(in_oklab,var(--foreground)_40%,var(--background))] data-[state=unchecked]:bg-[color-mix(in_oklab,var(--foreground)_22%,var(--background))]",
         className,
       )}
       style={{ width: trackW, height: trackH, borderRadius: square ? squareRadius : undefined, ...style }}
       {...rest}
     >
       <SwitchPrimitive.Thumb
-        className={cn("pointer-events-none block bg-(--nonla-surface) shadow-sm transition-transform duration-200 ease-[cubic-bezier(0.16,1,0.3,1)] data-[state=unchecked]:translate-x-0.5 data-[state=checked]:translate-x-(--nonla-switch-travel)", square ? undefined : "rounded-full")}
+        className={cn(
+          "pointer-events-none block bg-(--nonla-surface) shadow-sm transition-transform duration-200 ease-[cubic-bezier(0.16,1,0.3,1)] data-[state=unchecked]:translate-x-0.5 data-[state=checked]:translate-x-(--nonla-switch-travel)",
+          color === "white" && "data-[state=checked]:bg-[#141414]",
+          square ? undefined : "rounded-full",
+        )}
         style={
           {
             width: thumb,
