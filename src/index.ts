@@ -164,6 +164,8 @@ export { placementToRadix } from "./lib/placement";
 export type { CanonicalSize, ControlSize, ControlSizeTokens } from "./lib/sizes";
 export { CONTROL_SIZES, controlHeightVar, controlRadiusVar, controlStatusClass, getSizeTokens, normalizeSize, useControlSize } from "./lib/sizes";
 export { glassOverlayClass, glassSurfaceClass, meadowSurfaceClass } from "./lib/surface";
+export type { MarkdownDiffLayout, MarkdownEditorMode, MarkdownEditorProps } from "./markdown-editor/MarkdownEditor";
+export { MarkdownEditor } from "./markdown-editor/MarkdownEditor";
 export type { MenuItemProps, MenuRootProps, MenuTriggerProps } from "./menu/Menu";
 export { Menu, MenuAction, MenuDivider, MenuItem, MenuTrigger } from "./menu/Menu";
 export type { MessageConfig, MessageType } from "./message/message";
