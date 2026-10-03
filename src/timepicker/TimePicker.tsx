@@ -632,7 +632,7 @@ export const TimePicker = forwardRef<HTMLInputElement, TimePickerProps>(function
             onKeyDown={handleKeyDown}
             onKeyUp={(e) => syncPartFromCaret(e.currentTarget)}
             onClick={(e) => syncPartFromCaret(e.currentTarget)}
-            className="min-w-0 flex-1 border-0 bg-transparent p-0 text-foreground placeholder:text-quaternary-foreground outline-none disabled:cursor-not-allowed"
+            className="min-w-0 flex-1 border-0 bg-transparent p-0 text-foreground placeholder:text-placeholder outline-none disabled:cursor-not-allowed"
             style={{ fontSize: fieldStyle.fontSize, lineHeight: fieldStyle.lineHeight }}
           />
           {allowClear && selected && !disabled ? (

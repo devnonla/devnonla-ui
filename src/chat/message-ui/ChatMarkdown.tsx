@@ -16,11 +16,8 @@ export const chatMarkdownClass = cn(
   chatBodyClass,
   "min-w-0 wrap-anywhere",
   "[&_p]:m-0 [&_p]:mb-(--chat-p-mb) [&_p:last-child]:mb-0",
-  "[&_h1]:mt-(--chat-h-mt) [&_h1]:mb-(--chat-h-mb) [&_h1]:text-(length:--chat-h1-size) [&_h1]:font-semibold [&_h1]:leading-snug",
-  "[&_h2]:mt-(--chat-h-mt) [&_h2]:mb-(--chat-h-mb) [&_h2]:text-(length:--chat-h2-size) [&_h2]:font-semibold [&_h2]:leading-snug",
-  "[&_h3]:mt-(--chat-h-mt) [&_h3]:mb-(--chat-h-mb) [&_h3]:text-(length:--chat-h3-size) [&_h3]:font-semibold [&_h3]:leading-snug",
-  "[&_h4]:mt-(--chat-h-mt) [&_h4]:mb-(--chat-h-mb) [&_h4]:text-(length:--chat-h4-size) [&_h4]:font-semibold [&_h4]:leading-snug",
-  "[&_h1:first-child]:mt-0 [&_h2:first-child]:mt-0 [&_h3:first-child]:mt-0 [&_h4:first-child]:mt-0",
+  "[&_:is(h1,h2,h3,h4,h5,h6)]:mt-(--chat-h-mt) [&_:is(h1,h2,h3,h4,h5,h6)]:mb-(--chat-h-mb) [&_:is(h1,h2,h3,h4,h5,h6)]:text-(length:--chat-body-size) [&_:is(h1,h2,h3,h4,h5,h6)]:font-semibold [&_:is(h1,h2,h3,h4,h5,h6)]:leading-(--chat-body-leading)",
+  "[&_:is(h1,h2,h3,h4,h5,h6):first-child]:mt-0",
   "[&_strong]:font-semibold [&_em]:italic",
   "[&_blockquote]:m-0 [&_blockquote]:mb-(--chat-p-mb) [&_blockquote]:border-0 [&_blockquote]:p-0 [&_blockquote]:not-italic [&_blockquote]:text-inherit [&_blockquote:last-child]:mb-0",
   "[&_ul]:mt-2 [&_ul]:mb-(--chat-p-mb)",
@@ -67,7 +64,7 @@ export function createChatMarkdownComponents(getState?: () => ChatMarkdownStream
         return <CodeBlock code={codeText} language={lang || undefined} className="my-3 last:mb-0" />;
       }
 
-      return <span className="rounded-sm bg-gray-50/60 px-1">{children}</span>;
+      return <span className="rounded-sm bg-foreground/12 font-mono px-px">{children}</span>;
     },
     hr() {
       return null;
@@ -100,7 +97,11 @@ export function createChatMarkdownComponents(getState?: () => ChatMarkdownStream
       if (type !== "checkbox") return <input type={type} checked={checked} readOnly />;
       return (
         <span className="nonla-md-task-check pointer-events-none inline-flex h-(--chat-body-leading) items-center">
-          <Checkbox checked={Boolean(checked)} tabIndex={-1} />
+          <Checkbox
+            checked={Boolean(checked)}
+            tabIndex={-1}
+            className="data-[state=checked]:border-white data-[state=checked]:bg-white data-[state=checked]:text-(--nonla-bg) data-[state=indeterminate]:border-white data-[state=indeterminate]:bg-white data-[state=indeterminate]:text-(--nonla-bg)"
+          />
         </span>
       );
     },

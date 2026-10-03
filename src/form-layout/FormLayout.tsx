@@ -53,7 +53,7 @@ function FormItem({
       )}
     >
       {label != null && label !== false ? (
-        <div className={cn("text-sm text-foreground", layout === "horizontal" && "pt-1.5 shrink-0")}>
+        <div className={cn("text-sm font-medium text-foreground", layout === "horizontal" && "pt-1.5 shrink-0")}>
           {label}
           {required ? <span className="ml-1 text-destructive">*</span> : null}
         </div>

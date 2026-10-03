@@ -60,7 +60,7 @@ export function Segmented<V extends string | number = string | number>({ options
     <div
       ref={rootRef}
       className={cn(
-        "relative inline-flex w-fit max-w-full shrink-0 items-center gap-0.5 rounded-lg border border-solid border-glass-border bg-glass-bar p-0.5 shadow-[inset_0_1px_0_var(--glass-highlight)] backdrop-blur-xl",
+        "relative inline-flex w-fit max-w-full shrink-0 items-center gap-0.5 rounded-lg border border-solid border-border bg-muted p-0.5",
         block && "flex w-full",
         className,
       )}
@@ -71,7 +71,7 @@ export function Segmented<V extends string | number = string | number>({ options
       {thumb ? (
         <span
           aria-hidden
-          className="nonla-segmented-thumb pointer-events-none absolute border border-solid border-glass-border bg-glass shadow-[inset_0_1px_0_var(--glass-highlight),0_1px_3px_color-mix(in_srgb,black_10%,transparent)]"
+          className="nonla-segmented-thumb pointer-events-none absolute border border-solid border-border bg-card"
           style={{
             width: thumb.width,
             height: thumb.height,

@@ -278,7 +278,7 @@ const DatePickerRoot = forwardRef<HTMLButtonElement, DatePickerProps>(function D
             ) : null
           }
         >
-          <span className={cn(!selected && "text-quaternary-foreground")}>{selected ? label : placeholder}</span>
+          <span className={cn(!selected && "text-placeholder")}>{selected ? label : placeholder}</span>
         </TriggerChrome>
       </PopoverPrimitive.Trigger>
       <PopoverPrimitive.Portal container={portal}>
@@ -418,9 +418,9 @@ const RangePicker = forwardRef<HTMLButtonElement, RangePickerProps>(function Ran
           }
         >
           <span className="inline-flex min-w-0 items-center gap-1.5">
-            <span className={cn("truncate", !selected?.from && "text-quaternary-foreground")}>{selected?.from ? startLabel : placeholders[0]}</span>
+            <span className={cn("truncate", !selected?.from && "text-placeholder")}>{selected?.from ? startLabel : placeholders[0]}</span>
             <span className="shrink-0 text-muted-foreground">{separator}</span>
-            <span className={cn("truncate", !rangeComplete && "text-quaternary-foreground")}>{rangeComplete ? endLabel : placeholders[1]}</span>
+            <span className={cn("truncate", !rangeComplete && "text-placeholder")}>{rangeComplete ? endLabel : placeholders[1]}</span>
           </span>
         </TriggerChrome>
       </PopoverPrimitive.Trigger>

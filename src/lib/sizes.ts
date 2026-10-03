@@ -94,14 +94,17 @@ export function controlStatusClass(status?: "error" | "warning"): string {
 export const controlFieldTransition = "transition-[background-color,border-color] duration-[var(--nonla-dur-fast,150ms)] ease-[var(--nonla-ease-out,cubic-bezier(0.16,1,0.3,1))] motion-reduce:transition-none";
 
 /**
- * Outlined field. Border is `--input` (ink on page bg), not glass.
- * Glass border is white frost — it disappears on white.
+ * Outlined field. Resting stroke is `--input` (Cursor `--border-secondary`, ink at 12%).
+ * Fill stays transparent so the stroke sits on the card, same as the settings inputs.
  */
-export const controlFieldSurface =
-  "border border-solid border-input bg-glass-bar text-foreground shadow-[inset_0_1px_0_var(--glass-highlight)] backdrop-blur-xl";
+export const controlFieldSurface = "border border-solid border-input bg-transparent text-foreground";
 
-/** Focus / open border — brand (Button primary), keep fields outlined. */
-export const controlFieldFocusBorder = "focus:border-brand focus-within:border-brand data-[state=open]:border-brand aria-expanded:border-brand";
+/**
+ * Focus fill is Cursor `--bg-tertiary` (ink at 8%).
+ * Keyboard focus / open menu also strengthens the stroke to `--border-primary` (ink at 20%).
+ */
+export const controlFieldFocusBorder =
+  "focus:bg-input-fill focus-within:bg-input-fill data-[state=open]:bg-input-fill aria-expanded:bg-input-fill focus-visible:border-input-focus has-[:focus-visible]:border-input-focus data-[state=open]:border-input-focus aria-expanded:border-input-focus";
 
 /** Shared field chrome (Input / Select / DatePicker). */
 export function controlFieldStyle(size: ControlSize | undefined): CSSProperties {

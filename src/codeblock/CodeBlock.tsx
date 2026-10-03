@@ -44,7 +44,7 @@ export function CodeBlock({ code, language, title, lineNumbers = false, wordWrap
 
   return (
     <CodeBlockContext.Provider value={{ code }}>
-      <div className={cn("nonla-codeblock relative flex min-w-0 w-full flex-col overflow-clip rounded-lg border border-border bg-glass-bar text-sm text-foreground backdrop-blur-lg", className)} data-language={language} {...props}>
+      <div className={cn("nonla-codeblock relative flex min-w-0 w-full flex-col overflow-clip rounded-xl border border-border bg-card text-sm text-foreground", className)} data-language={language} {...props}>
         <div className="flex h-8 items-center justify-between gap-2 pl-3 pr-1 text-xs text-muted-foreground">
           <div className="flex min-w-0 items-center gap-2">
             {label ? <span className="truncate font-medium">{label}</span> : null}
@@ -54,7 +54,7 @@ export function CodeBlock({ code, language, title, lineNumbers = false, wordWrap
 
         <OverlayScroll
           autoHeight
-          className={cn("nonla-codeblock-body nonla-codeblock-well min-w-0 bg-card font-mono text-[13px] leading-5 max-h-96", !children && "mx-0.5 mb-0.5 w-[calc(100%-4px)] rounded-lg")}
+          className="nonla-codeblock-body nonla-codeblock-well min-w-0 bg-card font-mono text-[13px] leading-5 max-h-96"
           innerClassName={wordWrap ? undefined : "overflow-x-auto"}
         >
           <pre className={cn("nonla-codeblock-pre m-0 whitespace-pre break-normal", lineNumbers && "nonla-codeblock-lines", wordWrap && "whitespace-pre-wrap wrap-break-word")}>

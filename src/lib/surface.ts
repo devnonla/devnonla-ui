@@ -1,4 +1,4 @@
-/** Frosted panel — window, modal, popover, menu, drawer, toast. */
+/** Solid panel — window, modal, popover, menu, drawer, toast. */
 export const glassSurfaceClass = "nonla-glass";
 
 /** Floating overlay chrome (Popover / Dropdown / Select / pickers / Tooltip). */

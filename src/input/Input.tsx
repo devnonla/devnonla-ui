@@ -15,10 +15,10 @@ export type InputProps = Omit<InputHTMLAttributes<HTMLInputElement>, "size" | "p
   onPressEnter?: (e: KeyboardEvent<HTMLInputElement>) => void;
 };
 
-const fieldBase = cn("w-full", controlFieldSurface, "placeholder:text-quaternary-foreground focus-visible:outline-none disabled:cursor-not-allowed disabled:opacity-45", controlFieldFocusBorder);
+const fieldBase = cn("w-full", controlFieldSurface, "placeholder:text-placeholder focus-visible:outline-none disabled:cursor-not-allowed disabled:opacity-45", controlFieldFocusBorder);
 
 function variantClass(variant: InputProps["variant"]) {
-  if (variant === "borderless") return "border-transparent bg-transparent hover:bg-transparent shadow-none focus:border-transparent";
+  if (variant === "borderless") return "border-transparent bg-transparent hover:bg-transparent shadow-none focus:border-transparent focus:bg-transparent focus-within:bg-transparent";
   if (variant === "filled") return "border-transparent bg-muted focus:border-transparent focus:bg-[var(--control-bg-hover)]";
   return "";
 }
@@ -275,7 +275,7 @@ const InputNumber = forwardRef<HTMLInputElement, InputNumberProps>(function Inpu
         }}
         onKeyDown={handleKeyDown}
         className={cn(
-          "min-w-0 flex-1 border-0 bg-transparent text-foreground placeholder:text-quaternary-foreground outline-none",
+          "min-w-0 flex-1 border-0 bg-transparent text-foreground placeholder:text-placeholder outline-none",
           "disabled:cursor-not-allowed",
           // Kill native number chrome if type ever switches
           "[appearance:textfield] [&::-webkit-inner-spin-button]:appearance-none [&::-webkit-outer-spin-button]:appearance-none",

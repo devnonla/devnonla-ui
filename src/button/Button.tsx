@@ -73,7 +73,7 @@ const GroupSizeContext = createContext<ButtonSize | undefined>(undefined);
 function tokenAppearance(color: "default" | "primary" | "danger" | "link", variant: ButtonVariant, ghost: boolean): string {
   const g = ghost && variant !== "text" && variant !== "link";
   if (color === "primary") {
-    if (variant === "solid" && !g) return "border-transparent bg-brand text-[var(--nonla-solid-fg)] hover:bg-[color-mix(in_oklab,var(--brand),white_14%)] active:bg-[color-mix(in_oklab,var(--brand),black_10%)]";
+    if (variant === "solid" && !g) return "border-transparent bg-brand text-[var(--nonla-solid-fg)] hover:bg-[color-mix(in_oklab,var(--brand),var(--background)_14%)] active:bg-[color-mix(in_oklab,var(--brand),black_18%)]";
     if (variant === "filled") return "bg-brand/15 text-brand-700 border-transparent hover:bg-brand/25";
     if (variant === "text") return "bg-transparent text-brand border-transparent hover:bg-brand/10";
     if (variant === "link") return "text-brand border-transparent hover:text-brand-700";
@@ -89,7 +89,7 @@ function tokenAppearance(color: "default" | "primary" | "danger" | "link", varia
   if (color === "link" || variant === "link") return "text-link border-transparent hover:text-link/80";
   if (variant === "filled") return "bg-muted text-foreground border-transparent hover:bg-muted/80";
   if (variant === "text") return "bg-transparent text-foreground border-transparent hover:bg-ink-hover hover:text-foreground";
-  if (variant === "dashed") return "bg-transparent text-foreground border-dashed border-glass-border hover:bg-glass-bar backdrop-blur-xl";
+  if (variant === "dashed") return "bg-transparent text-foreground border-dashed border-border hover:bg-ink-hover";
   return "nonla-btn-glass text-foreground";
 }
 

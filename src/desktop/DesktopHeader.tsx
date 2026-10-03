@@ -76,7 +76,7 @@ export function DesktopHeader({ left, right, className }: DesktopHeaderProps) {
   return (
     <header
       className={cn(
-        "nonla-header-layer fixed inset-x-0 top-0 flex h-desktop-bar items-center justify-between gap-3 border-0 bg-glass-bar px-3 backdrop-blur-lg",
+        "nonla-header-layer fixed inset-x-0 top-0 flex h-desktop-bar items-center justify-between gap-3 border-0 bg-background px-3",
         className,
       )}
     >

@@ -1,4 +1,6 @@
-@import "highlight.js/styles/github.css";
+@import "highlight.js/styles/github-dark-dimmed.css";
+@import "@fontsource-variable/inter/index.css";
+@import "@fontsource-variable/inter/wght-italic.css";
 
 /**
  * NonlaUI theme — single source of color.
@@ -8,79 +10,87 @@
  *   Map   — derived (brand-50…800, radius-sm/lg, z-popup). Do not set unless exception.
  *   Alias — `--background`, `--brand`, `--destructive` (shadcn + Nonla names).
  *
- * Light-only defaults. `.dark` is not an alias of this sheet.
+ * Dark defaults, measured from cursor.com/dashboard (chrome / editor / base).
+ * Brand is the CTA hue (`#f18d00`). `.light` is not an alias of this sheet.
  * Override `--nonla-*` knobs in the consuming app (CSS or `<App theme>`).
  * Components read only these tokens — never edit Button/Tag/… to retheme.
  */
 
 :root,
 .nonla-ui {
-  color-scheme: light;
+  color-scheme: dark;
 
   /* ── Knobs / Seed (override these) ──────────────────────────────────── */
-  /* Neutrals measured from Discord light (Vietnix DEV #website). */
-  --nonla-bg: #f3f3f4;
-  --nonla-fg: #2e2e34;
-  /* Text rank: default / subtle / muted / placeholder. */
-  --nonla-fg-muted: #595a63;
-  --nonla-fg-tertiary: #6c6d76;
-  --nonla-fg-quaternary: #84858d;
+  /* chrome #141414, editor #181818, base #f0f0f0. Text ranks follow Cursor's mix. */
+  --nonla-bg: #141414;
+  --nonla-fg: #f0f0f0;
+  --nonla-fg-muted: color-mix(in oklab, var(--nonla-fg) 74%, var(--nonla-bg));
+  --nonla-fg-tertiary: color-mix(in oklab, var(--nonla-fg) 60%, var(--nonla-bg));
+  --nonla-fg-quaternary: color-mix(in oklab, var(--nonla-fg) 36%, var(--nonla-bg));
+  /* CTA hue. Button primary, checks, and switches follow this knob. */
   --nonla-brand: #f18d00;
-  /* Label on brand fills (Button primary, Tag solid, Checkbox). Override via `colors.solidFg`. */
+  /* Label on brand fills (Button primary, Tag solid, Checkbox). */
   --nonla-solid-fg: #ffffff;
   --nonla-danger: #ef4444;
-  --nonla-success: #1f9d55;
-  --nonla-warn: #f59e0b;
-  --nonla-link: var(--nonla-brand);
+  --nonla-success: #3fa266;
+  --nonla-warn: #f1b467;
+  /* Cursor "Learn more" — the only chromatic link. */
+  --nonla-link: #81a1c1;
   --nonla-radius: 8px;
   --nonla-height: 32px;
   --nonla-height-sm: 24px;
   --nonla-height-lg: 40px;
 
   --nonla-ink: var(--nonla-fg);
-  --nonla-surface: #ffffff;
+  /* Page #141414, sidebar and cards #181818. Borders are ink hairlines, same as the dashboard. */
+  --nonla-sidebar: #181818;
+  --nonla-surface: #181818;
   --nonla-elevated: var(--nonla-surface);
-  --nonla-chip: #e6e6e8;
-  --nonla-chip-hover: #ebeced;
-  --nonla-border: #e2e2e4;
-  --nonla-input: #d5d5d9;
+  --nonla-chip: color-mix(in oklab, var(--nonla-fg) 6%, var(--nonla-surface));
+  --nonla-chip-hover: color-mix(in oklab, var(--nonla-fg) 10%, var(--nonla-surface));
+  /* border-tertiary 8%. Inputs use border-secondary 12%. */
+  --nonla-border: color-mix(in oklab, var(--nonla-fg) 8%, transparent);
+  /* Card ring and table rules — border-quaternary, lighter than --nonla-border. */
+  --nonla-hairline: color-mix(in oklab, var(--nonla-fg) 4%, transparent);
+  --nonla-input: color-mix(in oklab, var(--nonla-fg) 12%, transparent);
   --nonla-composer: var(--nonla-surface);
-  --nonla-chat-bg: #fbfbfb;
-  /* Opaque header fill. Alpha `fg/4` picks up whatever sits behind the glass. */
+  --nonla-chat-bg: var(--nonla-bg);
+  /* Opaque header fill. */
   --nonla-table-head: color-mix(in srgb, var(--nonla-fg) 4%, var(--nonla-bg));
 
-  /* Neutral frost — blur shows whatever sits behind, no page-tint */
-  --nonla-meadow: #4f7a32;
-  --nonla-glass: color-mix(in srgb, white 58%, transparent);
-  --nonla-glass-bar: color-mix(in srgb, white 28%, transparent);
-  --nonla-glass-menu: color-mix(in srgb, white 48%, transparent);
-  --nonla-glass-border: color-mix(in srgb, white 62%, transparent);
-  --nonla-glass-highlight: color-mix(in srgb, white 70%, transparent);
-  /* Discord interactive wash: hsl(240 4% 60.784%) at hover / active alpha. */
-  --nonla-ink-hover: hsl(240 4% 60.784% / 0.122);
-  --nonla-ink-active: hsl(240 4% 60.784% / 0.161);
-  --nonla-ink-line: #e2e2e4;
+  /* Solid fills. Glass names stay as aliases so older class names keep working. */
+  --nonla-meadow: #141414;
+  --nonla-glass: var(--nonla-surface);
+  --nonla-glass-bar: var(--nonla-bg);
+  --nonla-glass-menu: var(--nonla-surface);
+  --nonla-glass-border: var(--nonla-border);
+  --nonla-glass-highlight: transparent;
+  --nonla-ink-hover: color-mix(in oklab, var(--nonla-fg) 6%, transparent);
+  --nonla-ink-active: color-mix(in oklab, var(--nonla-fg) 10%, transparent);
+  --nonla-ink-line: var(--nonla-border);
   --nonla-desktop-bar-height: 42px;
+  /* Desktop window title bar. Body stays on --nonla-bg. */
+  --nonla-window-header: #323233;
   --nonla-z-base: 0;
   --nonla-z-desktop: 20;
   --nonla-z-window: 30;
   --nonla-z-header: 40;
   --nonla-z-popup-base: 1000;
 
-  /* Preset accents — Button color="blue" / Tag color="purple" / … */
-  --nonla-blue: #1677ff;
-  --nonla-purple: #722ed1;
-  --nonla-cyan: #13c2c2;
-  --nonla-green: #0ac864;
-  --nonla-magenta: #eb2f96;
-  --nonla-pink: #eb2f96;
-  --nonla-red: #ef4444;
-  --nonla-orange: #fa8c16;
-  --nonla-yellow: #fadb14;
-  --nonla-volcano: #fa541c;
-  --nonla-geekblue: #2f54eb;
-  --nonla-lime: #a0d911;
-  --nonla-gold: #faad14;
+  /* Preset accents — Cursor dark seeds. Only used when a control asks for color="blue" / … */
+  --nonla-blue: #7bafe9;
+  --nonla-purple: #9386f2;
+  --nonla-cyan: #81a1c1;
+  --nonla-green: #3fa266;
+  --nonla-magenta: #b48ead;
+  --nonla-pink: #b48ead;
+  --nonla-red: #fc6b83;
+  --nonla-orange: #d08770;
+  --nonla-yellow: #f1b467;
+  --nonla-volcano: #fc6b83;
+  --nonla-geekblue: #7bafe9;
+  --nonla-lime: #70b489;
+  --nonla-gold: #f1b467;
 
   /* ── Map + Alias (do not set unless you need a one-off exception) ───── */
   --nonla-radius-sm: max(0px, calc(var(--nonla-radius) - 2px));
@@ -92,6 +102,7 @@
   --radius: var(--nonla-radius);
   --background: var(--nonla-bg);
   --foreground: var(--nonla-fg);
+  --sidebar: var(--nonla-sidebar);
   --card: var(--nonla-surface);
   --card-foreground: var(--nonla-fg);
   --popover: var(--nonla-elevated);
@@ -106,21 +117,22 @@
   --accent: color-mix(in oklab, var(--nonla-brand) 14%, transparent);
   --accent-foreground: var(--brand-700);
   --destructive: var(--nonla-danger);
-  --destructive-foreground: var(--nonla-surface);
+  --destructive-foreground: #f0f0f0;
   --border: var(--nonla-border);
+  --hairline: var(--nonla-hairline);
   --input: var(--nonla-input);
   --ring: color-mix(in oklab, var(--nonla-brand) 55%, transparent);
 
-  /* Brand scale — 500 is the knob. Tints → white, shades → black. */
-  --brand-50: color-mix(in oklab, var(--nonla-brand) 5%, white);
-  --brand-100: color-mix(in oklab, var(--nonla-brand) 12%, white);
-  --brand-200: color-mix(in oklab, var(--nonla-brand) 24%, white);
-  --brand-300: color-mix(in oklab, var(--nonla-brand) 42%, white);
-  --brand-400: color-mix(in oklab, var(--nonla-brand) 68%, white);
+  /* Brand scale — 500 is the knob. Tints sink into the surface; shades stay with the ink. */
+  --brand-50: color-mix(in oklab, var(--nonla-brand) 8%, var(--nonla-surface));
+  --brand-100: color-mix(in oklab, var(--nonla-brand) 14%, var(--nonla-surface));
+  --brand-200: color-mix(in oklab, var(--nonla-brand) 24%, var(--nonla-surface));
+  --brand-300: color-mix(in oklab, var(--nonla-brand) 40%, var(--nonla-surface));
+  --brand-400: color-mix(in oklab, var(--nonla-brand) 64%, var(--nonla-surface));
   --brand-500: var(--nonla-brand);
-  --brand-600: color-mix(in oklab, var(--nonla-brand) 82%, black);
-  --brand-700: color-mix(in oklab, var(--nonla-brand) 64%, black);
-  --brand-800: color-mix(in oklab, var(--nonla-brand) 48%, black);
+  --brand-600: color-mix(in oklab, var(--nonla-brand) 82%, var(--nonla-fg));
+  --brand-700: color-mix(in oklab, var(--nonla-brand) 64%, var(--nonla-fg));
+  --brand-800: color-mix(in oklab, var(--nonla-brand) 48%, var(--nonla-fg));
   --brand: var(--brand-500);
   --brand-text: var(--brand-700);
   --solid-fg: var(--nonla-solid-fg);
@@ -129,13 +141,16 @@
   --warn: var(--nonla-warn);
   --tertiary-foreground: var(--nonla-fg-tertiary);
   --quaternary-foreground: var(--nonla-fg-quaternary);
+  /* Empty-field hint. Fainter than quaternary so it doesn't read as typed text. */
+  --nonla-placeholder: color-mix(in srgb, var(--nonla-fg) 42%, transparent);
+  --placeholder: var(--nonla-placeholder);
   --border-subtle: color-mix(in srgb, var(--nonla-border) 65%, transparent);
   --control-bg: var(--nonla-chip);
   --control-bg-hover: var(--nonla-chip-hover);
-  --elevated-shadow: 0 16px 48px color-mix(in srgb, var(--nonla-fg) 10%, transparent), 0 0 0 1px color-mix(in srgb, var(--nonla-fg) 6%, transparent);
-  --popper-shadow: 0 16px 48px color-mix(in srgb, var(--nonla-fg) 10%, transparent), 0 0 0 1px color-mix(in srgb, var(--nonla-fg) 6%, transparent);
+  --elevated-shadow: 0 16px 48px rgb(0 0 0 / 45%), 0 0 0 1px color-mix(in srgb, var(--nonla-fg) 8%, transparent);
+  --popper-shadow: 0 16px 48px rgb(0 0 0 / 45%), 0 0 0 1px color-mix(in srgb, var(--nonla-fg) 8%, transparent);
   --popper-border: var(--nonla-border);
-  --mask: color-mix(in srgb, var(--nonla-fg) 28%, transparent);
+  --mask: rgb(0 0 0 / 56%);
   --meadow: var(--nonla-meadow);
   --glass: var(--nonla-glass);
   --glass-bar: var(--nonla-glass-bar);
@@ -153,13 +168,9 @@
   --nonla-dur: 200ms;
   --nonla-dur-slow: 300ms;
 
-  /* Chat type — one scale for full-page chat and side panels */
+  /* Chat type — body and headings share one size. */
   --chat-body-size: 14px;
-  --chat-body-leading: 20px;
-  --chat-h1-size: 16px;
-  --chat-h2-size: 16px;
-  --chat-h3-size: 14px;
-  --chat-h4-size: 14px;
+  --chat-body-leading: 22px;
   --chat-p-mb: 12px;
   --chat-h-mt: 16px;
   --chat-h-mb: 8px;
@@ -171,10 +182,14 @@
   --nonla-scrollbar-thumb-hover: var(--nonla-fg-quaternary);
 
   color: var(--foreground);
+  /* macOS default is subpixel AA, which makes Inter look heavier. */
+  -webkit-font-smoothing: antialiased;
+  -moz-osx-font-smoothing: grayscale;
 }
 
 /* Tailwind v4 — scan this package + expose semantic color utilities. */
 @source "./**/*.tsx";
+@source "./**/*.ts";
 
 @theme inline {
   --radius: var(--nonla-radius);
@@ -190,6 +205,7 @@
 
   --color-background: var(--background);
   --color-foreground: var(--foreground);
+  --color-sidebar: var(--sidebar);
   --color-card: var(--card);
   --color-card-foreground: var(--card-foreground);
   --color-popover: var(--popover);
@@ -205,9 +221,14 @@
   --color-destructive: var(--destructive);
   --color-destructive-foreground: var(--destructive-foreground);
   --color-border: var(--border);
+  --color-hairline: var(--hairline);
   --color-border-subtle: var(--border-subtle);
   --default-border-color: var(--border);
   --color-input: var(--input);
+  /* Cursor settings field, keyboard focus — `--border-primary`, ink at 20%. */
+  --color-input-focus: color-mix(in oklab, var(--foreground) 20%, transparent);
+  /* Cursor settings field focus fill — `--bg-tertiary`, ink at 8%. */
+  --color-input-fill: color-mix(in oklab, var(--foreground) 8%, transparent);
   --color-ring: var(--ring);
   --color-brand: var(--brand);
   --color-brand-50: var(--brand-50);
@@ -226,6 +247,7 @@
   --color-warn: var(--warn);
   --color-tertiary-foreground: var(--tertiary-foreground);
   --color-quaternary-foreground: var(--quaternary-foreground);
+  --color-placeholder: var(--placeholder);
   --color-meadow: var(--meadow);
   --color-glass: var(--glass);
   --color-glass-bar: var(--glass-bar);
@@ -242,8 +264,8 @@
   --shadow-card: none;
   --shadow-whisper: none;
   --shadow-button-outline: 0 0 0 1px var(--border);
-  --shadow-drop: 0 2px 8px color-mix(in oklab, var(--nonla-fg) 10%, transparent);
-  --shadow-panel: 0 0 0 1px var(--border), 0 4px 16px color-mix(in oklab, var(--nonla-fg) 10%, transparent);
+  --shadow-drop: 0 2px 8px rgb(0 0 0 / 40%);
+  --shadow-panel: 0 0 0 1px var(--border), 0 4px 16px rgb(0 0 0 / 40%);
 
   --spacing-control-xs: 24px;
   --spacing-control-sm: 24px;
@@ -256,8 +278,7 @@
   --spacing-field-nav: 32px;
   --spacing-desktop-bar: var(--nonla-desktop-bar-height);
 
-  /* --font-sans: -apple-system, BlinkMacSystemFont, "Segoe UI", system-ui, sans-serif; */
-  --font-sans: "ui-sans-serif", -apple-system, "system-ui", Segoe UI Variable Display, Segoe UI, Helvetica, Apple Color Emoji, Arial, "sans-serif", Segoe UI Emoji, Segoe UI Symbol;
+  --font-sans: "Inter Variable", sans-serif;
   --font-family-sans: var(--font-sans);
   --default-font-family: var(--font-sans);
 
@@ -306,9 +327,9 @@
   background-image: linear-gradient(
     90deg,
     var(--tertiary-foreground) 0%,
-    var(--foreground) 40%,
-    color-mix(in oklab, var(--foreground) 25%, white) 50%,
-    var(--foreground) 60%,
+    var(--tertiary-foreground) 32%,
+    var(--foreground) 50%,
+    var(--tertiary-foreground) 68%,
     var(--tertiary-foreground) 100%
   );
   background-size: 220% 100%;
@@ -620,52 +641,47 @@
   }
 }
 
-/* Frosted overlay — one hairline + lift. No stacked black/white rings. */
+/* Solid card. Same fill as Cursor's settings cards. */
 .nonla-glass {
-  border: 1px solid var(--glass-border);
-  background: var(--glass);
+  border: 1px solid var(--border);
+  background: var(--card);
   color: var(--foreground);
-  box-shadow: 0 10px 28px color-mix(in srgb, black 12%, transparent);
-  -webkit-backdrop-filter: blur(24px) saturate(160%);
-  backdrop-filter: blur(24px) saturate(160%);
+  box-shadow: 0 16px 48px rgb(0 0 0 / 45%);
 }
 
-/* Composer sits on light glass; the white hairline disappears. Use the input stroke. */
+/* Composer sits on the page, so the card fill disappears. Lift it the same step as the user bubble. */
 .nonla-chat-input {
   border-color: var(--nonla-input);
+  background: color-mix(in oklab, var(--foreground) 10%, var(--card));
 }
 
-/* Desktop window — cream wash + less saturate so meadow doesn't tint the panel. */
+/* Desktop window — solid page fill, no frost. Title bar is a step lighter. */
 .nonla-window-glass {
-  border: 0;
-  box-shadow: inset 0 0 0 1px var(--glass-border), 0 10px 28px color-mix(in srgb, black 12%, transparent);
-  background: color-mix(in srgb, var(--nonla-bg) 81%, transparent);
-  -webkit-backdrop-filter: blur(40px) saturate(108%);
-  backdrop-filter: blur(40px) saturate(108%);
+  border: 1px solid var(--border);
+  box-shadow: 0 16px 48px rgb(0 0 0 / 45%);
+  background: var(--background);
+}
+.nonla-window-header {
+  background: var(--nonla-window-header);
 }
 
 .nonla-btn-glass {
-  border-color: var(--glass-border);
-  background: var(--glass);
-  box-shadow: inset 0 1px 0 var(--glass-highlight);
-  -webkit-backdrop-filter: blur(24px);
-  backdrop-filter: blur(24px);
+  border-color: var(--border);
+  background: transparent;
+  box-shadow: none;
   transition: box-shadow var(--nonla-dur-fast) var(--nonla-ease-out), transform var(--nonla-dur-fast) var(--nonla-ease-out);
 }
 .nonla-btn-glass:hover:not(:disabled):not([aria-disabled]) {
-  box-shadow: inset 0 1px 0 var(--glass-highlight), inset 0 0 0 999px var(--ink-hover);
+  box-shadow: inset 0 0 0 999px var(--ink-hover);
 }
 .nonla-btn-glass:active:not(:disabled):not([aria-disabled]) {
   transform: scale(0.98);
-  box-shadow: inset 0 1px 0 var(--glass-highlight), inset 0 0 0 999px var(--ink-active);
+  box-shadow: inset 0 0 0 999px var(--ink-active);
 }
 
-/* Nested glass chip — hover is frost only; selected tints with brand */
 .nonla-glass-chip {
-  background: var(--glass-bar);
-  border-color: var(--glass-border);
-  -webkit-backdrop-filter: blur(24px);
-  backdrop-filter: blur(24px);
+  background: var(--nonla-chip);
+  border-color: var(--border);
 }
 /* Menu item hover — pure ink tint; panel's warm frost shows through, no milky gray */
 .nonla-menu-item[data-highlighted] {
@@ -673,11 +689,35 @@
   border-color: var(--glass-border);
 }
 .nonla-glass-chip-on {
-  background: var(--glass-bar);
-  border-color: color-mix(in oklab, var(--brand) 38%, var(--glass-border));
-  box-shadow: inset 0 0 0 999px color-mix(in oklab, var(--brand) 18%, transparent);
-  -webkit-backdrop-filter: blur(24px);
-  backdrop-filter: blur(24px);
+  background: var(--nonla-chip-hover);
+  border-color: var(--border);
+  box-shadow: none;
+}
+/* Select options: hover and the chosen row stay borderless.
+   Hover sits one step under the chosen row (chip 6% vs chip-hover 10%). */
+.nonla-select-options .nonla-menu-item[data-highlighted] {
+  background: var(--nonla-chip);
+  border-color: transparent;
+}
+.nonla-select-options .nonla-glass-chip-on {
+  border-color: transparent;
+}
+/* Sidebar row — glass first, a whisper of brand. Same on hover and selected. */
+.nonla-sidebar-item {
+  box-sizing: border-box;
+  height: var(--nonla-height);
+  border-radius: var(--nonla-radius);
+  border: 0;
+  background: transparent;
+  transition:
+    background-color var(--nonla-dur-fast) var(--nonla-ease-out),
+    box-shadow var(--nonla-dur-fast) var(--nonla-ease-out);
+}
+.nonla-sidebar-item:hover:not(:disabled):not([aria-disabled]),
+.nonla-sidebar-item[aria-current="true"],
+.nonla-sidebar-item[aria-current="page"] {
+  background: var(--ink-hover);
+  box-shadow: none;
 }
 /* Segmented sliding thumb — glass pill glides between items */
 .nonla-segmented-thumb {
@@ -884,14 +924,6 @@
 }
 .nonla-popper[data-state="closed"] {
   animation: nonla-pop-out 100ms var(--nonla-ease-in);
-}
-
-.nonla-chat-tool-result-ok {
-  background-image: linear-gradient(
-    165deg,
-    color-mix(in oklab, var(--success) 14%, var(--card)) 0%,
-    color-mix(in oklab, var(--success) 5%, var(--card)) 100%
-  );
 }
 
 .nonla-codeblock-pre code,
