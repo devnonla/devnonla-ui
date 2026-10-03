@@ -11,10 +11,12 @@ import { type InlineEdit, type MarkdownBlock, type MarkdownDoc, readFence, readI
 
 const documentClass = cn(
   "min-w-0 text-[15px] leading-7 text-foreground",
-  "[&_h1]:my-0 [&_h1]:text-[1.75rem] [&_h1]:leading-tight [&_h1]:font-semibold",
-  "[&_h2]:my-0 [&_h2]:text-[1.35rem] [&_h2]:leading-tight [&_h2]:font-semibold",
-  "[&_h3]:my-0 [&_h3]:text-[1.15rem] [&_h3]:leading-snug [&_h3]:font-semibold",
-  "[&_:is(h4,h5,h6)]:my-0 [&_:is(h4,h5,h6)]:text-base [&_:is(h4,h5,h6)]:font-semibold",
+  "[&_h1]:my-0 [&_h1]:text-[32px] [&_h1]:leading-tight [&_h1]:font-bold [&_h1]:tracking-tight",
+  "[&_h2]:my-0 [&_h2]:text-[24px] [&_h2]:leading-tight [&_h2]:font-bold [&_h2]:tracking-tight",
+  "[&_h3]:my-0 [&_h3]:text-[20px] [&_h3]:leading-snug [&_h3]:font-semibold",
+  "[&_h4]:my-0 [&_h4]:text-[18px] [&_h4]:leading-snug [&_h4]:font-semibold",
+  "[&_h5]:my-0 [&_h5]:text-[16px] [&_h5]:leading-snug [&_h5]:font-semibold",
+  "[&_h6]:my-0 [&_h6]:text-[15px] [&_h6]:leading-snug [&_h6]:font-semibold",
   "[&_p]:my-0",
   "[&_ul]:my-1 [&_ul]:list-disc [&_ul]:pl-6",
   "[&_ol]:my-1 [&_ol]:list-decimal [&_ol]:pl-6",
@@ -55,11 +57,7 @@ const previewComponents: Components = {
     if (type !== "checkbox") return <input type={type} checked={checked} readOnly />;
     return (
       <span className="nonla-md-task-check pointer-events-none inline-flex h-7 items-center">
-        <Checkbox
-          checked={Boolean(checked)}
-          tabIndex={-1}
-          className="data-[state=checked]:border-white data-[state=checked]:bg-white data-[state=checked]:text-(--nonla-bg) data-[state=indeterminate]:border-white data-[state=indeterminate]:bg-white data-[state=indeterminate]:text-(--nonla-bg)"
-        />
+          <Checkbox checked={Boolean(checked)} tabIndex={-1} />
       </span>
     );
   },
@@ -73,10 +71,12 @@ function MermaidView({ code }: { code: string }) {
 }
 
 function headingClass(level: number): string {
-  if (level === 1) return "text-[1.75rem] font-semibold leading-tight";
-  if (level === 2) return "text-[1.35rem] font-semibold leading-tight";
-  if (level === 3) return "text-[1.15rem] font-semibold leading-snug";
-  return "text-base font-semibold leading-snug";
+  if (level === 1) return "text-[32px] font-bold leading-tight tracking-tight";
+  if (level === 2) return "text-[24px] font-bold leading-tight tracking-tight";
+  if (level === 3) return "text-[20px] font-semibold leading-snug";
+  if (level === 4) return "text-[18px] font-semibold leading-snug";
+  if (level === 5) return "text-[16px] font-semibold leading-snug";
+  return "text-[15px] font-semibold leading-snug";
 }
 
 function BlockEditor({ value, mono, className, caret = "end", onChange, onBlur, onEnter }: { value: string; mono?: boolean; className?: string; caret?: "start" | "end"; onChange: (value: string) => void; onBlur: () => void; onEnter?: (before: string, after: string) => void }) {
@@ -220,11 +220,7 @@ function ListItem({ view, children }: { view: Extract<InlineEdit, { kind: "list"
     <div className="flex items-start gap-1.5" style={level > 0 ? { marginLeft: `${level * 1.25}rem` } : undefined}>
       {view.task ? (
         <span className="pointer-events-none inline-flex h-7 w-5 shrink-0 items-center justify-center">
-          <Checkbox
-            checked={view.checked}
-            tabIndex={-1}
-            className="data-[state=checked]:border-white data-[state=checked]:bg-white data-[state=checked]:text-(--nonla-bg) data-[state=indeterminate]:border-white data-[state=indeterminate]:bg-white data-[state=indeterminate]:text-(--nonla-bg)"
-          />
+          <Checkbox checked={view.checked} tabIndex={-1} />
         </span>
       ) : view.ordered ? (
         <span className="w-6 shrink-0 text-right text-[15px] leading-7 tabular-nums">{ordinal}.</span>
@@ -242,10 +238,21 @@ function isListBlock(block: MarkdownBlock): boolean {
   return block.kind === "text" && readInlineEdit(block.body).kind === "list";
 }
 
+function headingGap(level: number): string {
+  if (level <= 2) return "mt-6";
+  if (level === 3) return "mt-5";
+  if (level === 4) return "mt-4";
+  return "mt-3";
+}
+
 function spaceBefore(block: MarkdownBlock, prev?: MarkdownBlock): string {
   if (!prev) return "";
   if (isListBlock(block) && isListBlock(prev)) return "mt-0.5";
-  if (block.kind === "text" && readInlineEdit(block.body).kind === "heading") return "mt-6";
+  if (block.kind === "text") {
+    const view = readInlineEdit(block.body);
+    if (view.kind === "heading") return headingGap(view.level);
+  }
+  if (prev.kind === "text" && readInlineEdit(prev.body).kind === "heading") return "mt-2";
   return "mt-3";
 }
 
@@ -288,23 +295,36 @@ export function MarkdownPreview({ doc, editingIndex, readOnly, placeholder = "Wr
             ) : (
               <BlockEditor value={block.body} mono={block.kind === "code"} caret={caret} onChange={onChangeBody} onBlur={onBlurBlock} />
             );
+          const gap = spaceBefore(block, doc.blocks[index - 1]);
+          if (locked) {
+            return (
+              <div
+                // biome-ignore lint/suspicious/noArrayIndexKey: block position is the edit identity
+                key={`${index}:${block.kind}`}
+                data-md-block={block.kind}
+                className={cn("outline-none", gap)}
+              >
+                <BlockBody block={block} />
+              </div>
+            );
+          }
           return (
             <div
               // biome-ignore lint/suspicious/noArrayIndexKey: block position is the edit identity
               key={`${index}:${block.kind}`}
               role="button"
               data-md-block={block.kind}
-              tabIndex={locked ? undefined : 0}
-              className={cn("outline-none", !locked && "cursor-text", spaceBefore(block, doc.blocks[index - 1]))}
+              tabIndex={0}
+              className={cn("cursor-text outline-none", gap)}
               onMouseDown={(event) => onEditMouseDown(index, event)}
               onClick={(event) => {
-                if (locked || editing || interactiveTarget(event.target)) return;
+                if (editing || interactiveTarget(event.target)) return;
                 const selection = window.getSelection();
                 if (selection && selection.toString().length > 0) return;
                 onStartEdit(index);
               }}
               onKeyDown={(event) => {
-                if (locked || editing || event.key !== "Enter") return;
+                if (editing || event.key !== "Enter") return;
                 event.preventDefault();
                 onStartEdit(index);
               }}

@@ -62,6 +62,7 @@ function useControllable<T>(value: T | undefined, defaultValue: T, onChange?: (v
  * Preview renders the document. Click a heading, list item, or paragraph to edit that text in place.
  * Mermaid fences render as diagrams and stay view only.
  * Edit is the full-file text buffer. Diff compares `original` and `value` like Monaco.
+ * `readOnly` locks editing and hides the mode switcher, so preview can show a finished document.
  */
 export function MarkdownEditor({
   value: valueProp,
@@ -229,46 +230,52 @@ export function MarkdownEditor({
 
   const doc = live?.doc ?? parseMarkdownDoc(valueRef.current);
   const model = useMemo(() => (mode === "diff" && original !== undefined ? diffMarkdown(original, value) : null), [mode, original, value]);
+  const showModes = !readOnly;
+  const showHeader = Boolean(title) || showModes || model !== null;
 
   return (
     <div role="region" className={cn("nonla-markdown-editor flex h-full min-h-96 flex-col overflow-hidden rounded-xl border border-border bg-card text-foreground", className)} style={style} aria-label={typeof title === "string" ? title : "Markdown editor"}>
-      <div className="flex h-10 shrink-0 items-center justify-between gap-3 border-b border-border px-2">
-        <div className="min-w-0 truncate px-1 text-sm font-medium">{title}</div>
-        <div className="flex shrink-0 items-center gap-2">
-          {model ? (
-            <span className="font-mono text-xs">
-              {model.added === 0 && model.removed === 0 ? (
-                <span className="text-muted-foreground">No changes</span>
-              ) : (
-                <>
-                  <span className="text-success">+{model.added}</span> <span className="text-destructive">−{model.removed}</span>
-                </>
-              )}
-            </span>
-          ) : null}
-          {mode === "diff" && original !== undefined ? (
-            <Segmented
-              size="small"
-              value={layout}
-              onChange={setLayout}
-              options={[
-                { label: "Inline", value: "inline" },
-                { label: "Split", value: "side-by-side" },
-              ]}
-            />
-          ) : null}
-          <Segmented
-            size="small"
-            value={mode}
-            onChange={changeMode}
-            options={[
-              { label: "Preview", value: "preview", icon: <SolarIcon name="eye-linear" size={14} /> },
-              { label: "Edit", value: "edit", icon: <SolarIcon name="pen-linear" size={14} /> },
-              { label: "Diff", value: "diff", icon: <SolarIcon name="transfer-horizontal-linear" size={14} />, disabled: original === undefined },
-            ]}
-          />
+      {showHeader ? (
+        <div className="flex h-10 shrink-0 items-center justify-between gap-3 border-b border-border px-2">
+          <div className="min-w-0 truncate px-1 text-sm font-medium">{title}</div>
+          <div className="flex shrink-0 items-center gap-2">
+            {model ? (
+              <span className="font-mono text-xs">
+                {model.added === 0 && model.removed === 0 ? (
+                  <span className="text-muted-foreground">No changes</span>
+                ) : (
+                  <>
+                    <span className="text-success">+{model.added}</span> <span className="text-destructive">−{model.removed}</span>
+                  </>
+                )}
+              </span>
+            ) : null}
+            {mode === "diff" && original !== undefined ? (
+              <Segmented
+                size="small"
+                value={layout}
+                onChange={setLayout}
+                options={[
+                  { label: "Inline", value: "inline" },
+                  { label: "Split", value: "side-by-side" },
+                ]}
+              />
+            ) : null}
+            {showModes ? (
+              <Segmented
+                size="small"
+                value={mode}
+                onChange={changeMode}
+                options={[
+                  { label: "Preview", value: "preview", icon: <SolarIcon name="eye-linear" size={14} /> },
+                  { label: "Edit", value: "edit", icon: <SolarIcon name="pen-linear" size={14} /> },
+                  { label: "Diff", value: "diff", icon: <SolarIcon name="transfer-horizontal-linear" size={14} />, disabled: original === undefined },
+                ]}
+              />
+            ) : null}
+          </div>
         </div>
-      </div>
+      ) : null}
       <div className="min-h-0 flex-1">
         {mode === "edit" ? <MarkdownSource value={value} onChange={emit} readOnly={readOnly} placeholder={placeholder} /> : null}
         {mode === "preview" ? (
