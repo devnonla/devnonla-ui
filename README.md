@@ -194,7 +194,7 @@ Primitives (`ChatWelcome`, `ChatUserMessage`, `ChatAgentMessage`, `ChatThinking`
 
 # Markdown
 
-`MarkdownEditor` edits markdown in preview, source, or diff. Pass `original` to enable the diff view. `diffLayout` is side by side by default.
+`MarkdownEditor` edits markdown in preview, source, or diff. Pass `original` to enable the diff view. `diffLayout` is side by side by default. `readOnly` shows a finished document and hides the mode switcher.
 
 ```tsx
 import { MarkdownEditor } from "devnonla-ui";

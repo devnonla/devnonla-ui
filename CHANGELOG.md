@@ -5,6 +5,14 @@ All notable changes to this project will be documented in this file.
 The format is based on [Keep a Changelog](https://keepachangelog.com/en/1.1.0/),
 and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0.html).
 
+## [0.9.1] - 2026-10-03
+
+### Changed
+
+- `MarkdownEditor` with `readOnly` hides the mode switcher. With no `title`, the header bar is hidden too, so preview can show a finished document.
+- Preview headings use a blog scale: H1 32px and H2 24px are bold; H3–H6 step down to 20, 18, 16, and 15px. Space above each level is tighter, and the paragraph under a heading sits closer to it.
+- Task checkboxes in the preview use the brand fill, so the mark stays visible on a light page.
+
 ## [0.9.0] - 2026-10-03
 
 ### Added
@@ -224,6 +232,7 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 - Replace class `nonla-chat-shimmer` with `Shimmer` or `.nonla-shimmer`.
 - `resolveToolUI(toolName, extras?)` — second argument is optional; extra UIs are checked first.
 
+[0.9.1]: https://github.com/devnonla/devnonla-ui/compare/v0.9.0...v0.9.1
 [0.9.0]: https://github.com/devnonla/devnonla-ui/compare/v0.8.0...v0.9.0
 [0.8.0]: https://github.com/devnonla/devnonla-ui/compare/v0.7.1...v0.8.0
 [0.7.1]: https://github.com/devnonla/devnonla-ui/compare/v0.7.0...v0.7.1
