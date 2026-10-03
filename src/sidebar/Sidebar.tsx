@@ -1,5 +1,6 @@
 import { type MouseEvent, type ReactNode, useMemo, useState } from "react";
 import { SolarIcon } from "../icon/SolarIcon";
+import { solarIconName } from "../icon/solar";
 import { SearchInput } from "../input/SearchInput";
 import { cn } from "../lib/cn";
 import { OverlayScroll } from "../scroll/OverlayScroll";
@@ -7,7 +8,7 @@ import { OverlayScroll } from "../scroll/OverlayScroll";
 export type SidebarItemType = {
   key?: string;
   label?: ReactNode;
-  /** Solar icon name (`settings-linear`), a legacy Fluent Color id (`settings-24`), or a node. */
+  /** Solar icon name (`settings`), a legacy Fluent Color id (`settings-24`), or a node. String icons render as bold-duotone. */
   icon?: ReactNode;
   disabled?: boolean;
   type?: "item" | "group" | "divider";
@@ -75,7 +76,7 @@ function filterItems(items: SidebarItemType[], q: string): SidebarItemType[] {
 
 function ItemIcon({ icon }: { icon?: ReactNode }) {
   if (icon == null || icon === false) return null;
-  if (typeof icon === "string") return <SolarIcon name={icon} size={16} />;
+  if (typeof icon === "string") return <SolarIcon name={solarIconName(icon, "bold-duotone")} size={16} />;
   return <span className="inline-flex size-4 shrink-0 items-center justify-center [&_img]:size-4 [&_svg]:size-4">{icon}</span>;
 }
 
@@ -99,7 +100,7 @@ function SidebarList({
           return (
             <div key={key} className="mb-4">
               {item.label != null && item.label !== "" ? (
-                <div className={cn("px-2.5 pb-1.5 pt-2 text-xs font-medium uppercase tracking-wider text-quaternary-foreground", item.className)}>
+                <div className={cn("px-2.5 pb-1.5 pt-2 text-[11px] font-bold uppercase tracking-wider text-quaternary-foreground", item.className)}>
                   {item.label}
                 </div>
               ) : null}
