@@ -1,4 +1,5 @@
 import type { ReactNode } from "react";
+import { Card } from "../card/Card";
 import { cn } from "../lib/cn";
 
 const LOGO_CONE = "M768 68 C752 68 640 145 439 300 C338 377 250 449 194 500 C172 519 150 540 134 560 C122 576 109 591 103 600 C99 613 100 628 101 640 A666 108 0 0 1 1433 640 C1434 628 1435 613 1431 600 C1425 591 1412 576 1400 560 C1384 540 1362 519 1340 500 C1284 449 1196 377 1095 300 C894 145 782 68 768 68Z";
@@ -38,10 +39,12 @@ export type EmptyProps = {
 
 export function Empty({ description = "No data", children, className }: EmptyProps) {
   return (
-    <div role="status" className={cn("flex min-w-0 flex-col items-center justify-center gap-3 px-6 py-10 text-center", className)}>
-      <LogoMark />
-      {description != null ? <p className="m-0 max-w-sm text-sm text-muted-foreground">{description}</p> : null}
-      {children ? <div className="mt-2 flex flex-col items-center gap-2">{children}</div> : null}
-    </div>
+    <Card className="w-full">
+      <div role="status" className={cn("flex min-w-0 flex-col items-center justify-center gap-3 px-6 py-10 text-center", className)}>
+        <LogoMark />
+        {description != null ? <p className="m-0 max-w-sm text-sm text-muted-foreground">{description}</p> : null}
+        {children ? <div className="mt-2 flex flex-col items-center gap-2">{children}</div> : null}
+      </div>
+    </Card>
   );
 }

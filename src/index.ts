@@ -17,6 +17,8 @@ export type { AlertProps, AlertType } from "./alert/Alert";
 export { Alert } from "./alert/Alert";
 export type { CalendarProps } from "./calendar/Calendar";
 export { Calendar } from "./calendar/Calendar";
+export type { CardFooterProps, CardItemProps, CardProps } from "./card/Card";
+export { Card } from "./card/Card";
 export type {
   AgentChatboxProps,
   AgentHistoryMessage,
