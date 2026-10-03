@@ -5,6 +5,8 @@ export const DEFAULT_TOOL_ICON = `${ICON_PREFIX}:${DEFAULT_ICON_NAME}`;
 
 const STYLE_SUFFIXES = ["bold-duotone", "line-duotone", "linear", "outline", "broken", "bold"] as const;
 
+export type SolarIconStyle = (typeof STYLE_SUFFIXES)[number];
+
 /** Fluent Color ids that do not share a Solar stem. Values are full Solar icon ids. */
 const LEGACY_NAMES: Record<string, string> = {
   alert: "bell-linear",
@@ -67,6 +69,14 @@ function hasStyle(name: string) {
   return STYLE_SUFFIXES.some((style) => name.endsWith(`-${style}`));
 }
 
+function stripStyle(name: string) {
+  for (const style of STYLE_SUFFIXES) {
+    const suffix = `-${style}`;
+    if (name.endsWith(suffix)) return name.slice(0, -suffix.length);
+  }
+  return name;
+}
+
 function bareName(value: string) {
   let name = value.trim();
   if (name.startsWith(`${ICON_PREFIX}:`)) name = name.slice(ICON_PREFIX.length + 1);
@@ -74,12 +84,13 @@ function bareName(value: string) {
   return name;
 }
 
-/** Solar icon id. Accepts `solar:…`, a styled id, or a legacy Fluent Color id such as `settings-24`. */
-export function solarIconName(value: string): string {
+/** Solar icon id. Accepts `solar:…`, a styled id, or a legacy Fluent Color id such as `settings-24`. Pass `style` to force a weight such as `bold-duotone`. */
+export function solarIconName(value: string, style?: SolarIconStyle): string {
   const name = bareName(value);
-  if (hasStyle(name)) return name;
   const stem = name.replace(/-24$/, "");
-  return LEGACY_NAMES[stem] ?? LEGACY_NAMES[name] ?? `${stem}-${DEFAULT_ICON_STYLE}`;
+  const resolved = hasStyle(name) ? name : (LEGACY_NAMES[stem] ?? LEGACY_NAMES[name] ?? `${stem}-${DEFAULT_ICON_STYLE}`);
+  if (!style || resolved.endsWith(`-${style}`)) return resolved;
+  return `${stripStyle(resolved)}-${style}`;
 }
 
 export function solarIconRef(name: string): string {
