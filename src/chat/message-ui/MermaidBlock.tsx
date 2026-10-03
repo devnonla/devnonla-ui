@@ -1,9 +1,28 @@
-import { useCallback, useEffect, useId, useRef, useState } from "react";
+import { useCallback, useEffect, useId, useRef, useState, useSyncExternalStore } from "react";
 import { Button } from "../../button/Button";
 import { CodeBlock } from "../../codeblock/CodeBlock";
 import { SolarIcon } from "../../icon/SolarIcon";
 import { cn } from "../../lib/cn";
+import { getColorMode, subscribeColorMode } from "../../theme";
 import { sanitizeMermaid } from "./sanitizeMermaid";
+
+/** Official Mermaid palettes: `default` is light, `dark` is dark. */
+function useMermaidTheme(): "default" | "dark" {
+  const mode = useSyncExternalStore(subscribeColorMode, getColorMode, () => "dark" as const);
+  return mode === "light" ? "default" : "dark";
+}
+
+/** Mermaid keeps one global theme. Render one diagram at a time so a cancelled pass cannot overwrite it. */
+let mermaidQueue: Promise<unknown> = Promise.resolve();
+
+function enqueueMermaid<T>(task: () => Promise<T>): Promise<T> {
+  const run = mermaidQueue.then(task, task);
+  mermaidQueue = run.then(
+    () => undefined,
+    () => undefined,
+  );
+  return run;
+}
 
 export type MermaidBlockProps = {
   children: string;
@@ -12,6 +31,7 @@ export type MermaidBlockProps = {
 
 export function MermaidBlock({ children, className }: MermaidBlockProps) {
   const id = useId().replace(/:/g, "_");
+  const theme = useMermaidTheme();
   const containerRef = useRef<HTMLDivElement>(null);
   const dialogRef = useRef<HTMLDialogElement>(null);
   const fullscreenRef = useRef<HTMLDivElement>(null);
@@ -27,46 +47,52 @@ export function MermaidBlock({ children, className }: MermaidBlockProps) {
 
     const render = async () => {
       const { default: mermaid } = await import("mermaid");
-      mermaid.initialize({
-        startOnLoad: false,
-        theme: "dark",
+      if (cancelled) return;
+
+      await enqueueMermaid(async () => {
+        if (cancelled) return;
+        mermaid.initialize({
+          startOnLoad: false,
+          theme,
+        });
+
+        const raw = children.trim();
+        const renderId = `mermaid-${id}-${theme}`;
+
+        try {
+          document.getElementById(`d${renderId}`)?.remove();
+          const { svg } = await mermaid.render(renderId, raw);
+          if (!cancelled) {
+            setSvgContent(svg);
+            setError(null);
+          }
+          return;
+        } catch {
+          document.getElementById(`d${renderId}`)?.remove();
+        }
+
+        if (cancelled) return;
+        const sanitized = sanitizeMermaid(raw);
+        try {
+          const sanitizedId = `${renderId}-s`;
+          document.getElementById(sanitizedId)?.remove();
+          document.getElementById(`d${sanitizedId}`)?.remove();
+          const { svg } = await mermaid.render(sanitizedId, sanitized);
+          if (!cancelled) {
+            setSvgContent(svg);
+            setError(null);
+          }
+        } catch (err) {
+          if (!cancelled) setError(String(err));
+        }
       });
-
-      const raw = children.trim();
-      const renderId = `mermaid-${id}`;
-
-      try {
-        document.getElementById(`d${renderId}`)?.remove();
-        const { svg } = await mermaid.render(renderId, raw);
-        if (!cancelled) {
-          setSvgContent(svg);
-          setError(null);
-        }
-        return;
-      } catch {
-        document.getElementById(`d${renderId}`)?.remove();
-      }
-
-      const sanitized = sanitizeMermaid(raw);
-      try {
-        const sanitizedId = `${renderId}-s`;
-        document.getElementById(sanitizedId)?.remove();
-        document.getElementById(`d${sanitizedId}`)?.remove();
-        const { svg } = await mermaid.render(sanitizedId, sanitized);
-        if (!cancelled) {
-          setSvgContent(svg);
-          setError(null);
-        }
-      } catch (err) {
-        if (!cancelled) setError(String(err));
-      }
     };
 
     void render();
     return () => {
       cancelled = true;
     };
-  }, [children, id]);
+  }, [children, id, theme]);
 
   useEffect(() => {
     if (containerRef.current && svgContent) containerRef.current.innerHTML = svgContent;
