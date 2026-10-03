@@ -1,6 +1,6 @@
-import { createContext, useContext, useMemo } from "react";
+import { createContext, useContext, useMemo, useSyncExternalStore } from "react";
 import type { CanonicalSize } from "../lib/sizes";
-import { getDesignToken, type NonlaTokenSnapshot } from "../theme";
+import { getColorMode, getDesignToken, type NonlaTokenSnapshot, subscribeColorMode } from "../theme";
 
 export type NonlaAppConfig = {
   getPopupContainer?: () => HTMLElement;
@@ -24,9 +24,11 @@ export function usePopupContainer(override?: () => HTMLElement) {
 /** Computed seed knobs under the current App theme (`useToken`). */
 export function useToken(): { token: NonlaTokenSnapshot } {
   const { themeRev } = useAppConfig();
+  const mode = useSyncExternalStore(subscribeColorMode, getColorMode, () => "dark" as const);
   const token = useMemo(() => {
     void themeRev;
+    void mode;
     return getDesignToken();
-  }, [themeRev]);
+  }, [themeRev, mode]);
   return { token };
 }

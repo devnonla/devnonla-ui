@@ -6,6 +6,7 @@
  * Consumers retheme without touching components:
  *   1. CSS:  `:root { --nonla-brand: #3b82f6; }`
  *   2. JS:   `<App theme={{ colors: { brand: "#3b82f6" } }} />` or `applyNonlaTheme({ brand: "#3b82f6" })`
+ * Color mode is `light` | `dark` on `<html>` (`setColorMode`, `<ThemeToggle>`). Dark is the default.
  */
 
 export const NONLA_THEME_KEYS = {
@@ -150,4 +151,73 @@ export function applyNonlaTheme(theme: NonlaThemeConfig, target: HTMLElement = d
       else target.style.removeProperty(prop);
     }
   };
+}
+
+export type NonlaColorMode = "light" | "dark";
+
+/** `localStorage` key written by `setColorMode`. */
+export const NONLA_COLOR_MODE_KEY = "nonla-color-mode";
+
+const modeListeners = new Set<() => void>();
+let colorMode: NonlaColorMode = "dark";
+let colorModeReady = false;
+
+export function getColorMode(): NonlaColorMode {
+  return colorMode;
+}
+
+export function subscribeColorMode(listener: () => void) {
+  modeListeners.add(listener);
+  return () => {
+    modeListeners.delete(listener);
+  };
+}
+
+function notifyColorMode() {
+  for (const listener of modeListeners) listener();
+}
+
+function readStoredColorMode(): NonlaColorMode | null {
+  if (typeof localStorage === "undefined") return null;
+  try {
+    const value = localStorage.getItem(NONLA_COLOR_MODE_KEY);
+    return value === "light" || value === "dark" ? value : null;
+  } catch {
+    return null;
+  }
+}
+
+/** Set `light` or `dark` on `target` (default `<html>`) so portals inherit the palette. */
+export function applyColorMode(next: NonlaColorMode, target: HTMLElement = document.documentElement) {
+  colorMode = next;
+  target.classList.toggle("light", next === "light");
+  target.classList.toggle("dark", next === "dark");
+  target.style.colorScheme = next;
+  notifyColorMode();
+}
+
+/** Switch mode and remember it. */
+export function setColorMode(next: NonlaColorMode, target?: HTMLElement) {
+  if (typeof document === "undefined") {
+    colorMode = next;
+    notifyColorMode();
+    return;
+  }
+  applyColorMode(next, target);
+  colorModeReady = true;
+  try {
+    localStorage.setItem(NONLA_COLOR_MODE_KEY, next);
+  } catch {
+    /* private mode */
+  }
+}
+
+/** Apply the saved mode once. Falls back to dark. */
+export function initColorMode(target?: HTMLElement): NonlaColorMode {
+  if (typeof document === "undefined") return colorMode;
+  if (colorModeReady) return colorMode;
+  colorModeReady = true;
+  const fromClass = document.documentElement.classList.contains("light") ? "light" : document.documentElement.classList.contains("dark") ? "dark" : null;
+  applyColorMode(readStoredColorMode() ?? fromClass ?? "dark", target);
+  return colorMode;
 }

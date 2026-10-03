@@ -3,7 +3,7 @@ import { type ReactNode, useLayoutEffect, useMemo, useState } from "react";
 import { type ControlSize, ControlSizeContext, normalizeSize } from "../lib/sizes";
 import { MessageHolder, message } from "../message/message";
 import { ConfirmHolder, Modal } from "../modal/Modal";
-import { applyNonlaTheme, type NonlaThemeConfig } from "../theme";
+import { applyNonlaTheme, initColorMode, type NonlaThemeConfig } from "../theme";
 import { AppContext, type NonlaAppConfig, useAppConfig, usePopupContainer, useToken } from "./context";
 
 export type { NonlaAppConfig };
@@ -26,6 +26,10 @@ export function App({ children, getPopupContainer, componentSize, theme }: AppPr
     () => ({ getPopupContainer, componentSize: size, themeRev }),
     [getPopupContainer, size, themeRev],
   );
+
+  useLayoutEffect(() => {
+    initColorMode();
+  }, []);
 
   useLayoutEffect(() => {
     if (!theme) return;

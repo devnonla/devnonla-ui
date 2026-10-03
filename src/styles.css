@@ -11,12 +11,14 @@
  *   Alias — `--background`, `--brand`, `--destructive` (shadcn + Nonla names).
  *
  * Dark defaults, measured from cursor.com/dashboard (chrome / editor / base).
- * Brand is the CTA hue (`#f18d00`). `.light` is not an alias of this sheet.
+ * Brand is the CTA hue (`#f18d00`). `.light` is the daylight palette.
+ * Put `class="light"` or `class="dark"` on `<html>` (or call `setColorMode`).
  * Override `--nonla-*` knobs in the consuming app (CSS or `<App theme>`).
  * Components read only these tokens — never edit Button/Tag/… to retheme.
  */
 
 :root,
+.dark,
 .nonla-ui {
   color-scheme: dark;
 
@@ -149,6 +151,7 @@
   --control-bg-hover: var(--nonla-chip-hover);
   --elevated-shadow: 0 16px 48px rgb(0 0 0 / 45%), 0 0 0 1px color-mix(in srgb, var(--nonla-fg) 8%, transparent);
   --popper-shadow: 0 16px 48px rgb(0 0 0 / 45%), 0 0 0 1px color-mix(in srgb, var(--nonla-fg) 8%, transparent);
+  --nonla-shadow: 0 16px 48px rgb(0 0 0 / 45%);
   --popper-border: var(--nonla-border);
   --mask: rgb(0 0 0 / 56%);
   --meadow: var(--nonla-meadow);
@@ -185,6 +188,49 @@
   /* macOS default is subpixel AA, which makes Inter look heavier. */
   -webkit-font-smoothing: antialiased;
   -moz-osx-font-smoothing: grayscale;
+}
+
+/*
+ * Daylight. Page is a step off white so white cards lift the way #181818 lifts off #141414.
+ * Beats `.nonla-ui` re-declaring the dark seeds. `.dark` inside `.light` stays on the block above.
+ */
+.light:not(.dark),
+.light .nonla-ui:not(.dark) {
+  color-scheme: light;
+
+  --nonla-bg: #f3f3f3;
+  --nonla-fg: #141414;
+  --nonla-danger: #dc3b3b;
+  --nonla-success: #2f7d4a;
+  --nonla-warn: #a16207;
+  --nonla-link: #3b6d99;
+
+  --nonla-sidebar: #ffffff;
+  --nonla-surface: #ffffff;
+  --nonla-meadow: #f3f3f3;
+  --nonla-window-header: #e8e8e8;
+
+  /* Darker than the night pastels so solid chips stay readable on white. */
+  --nonla-blue: #3b7fc4;
+  --nonla-purple: #6d5bd0;
+  --nonla-cyan: #3d6a8c;
+  --nonla-green: #2f7d4a;
+  --nonla-magenta: #9a5f8a;
+  --nonla-pink: #9a5f8a;
+  --nonla-red: #e23b57;
+  --nonla-orange: #c2613f;
+  --nonla-yellow: #a16207;
+  --nonla-volcano: #e23b57;
+  --nonla-geekblue: #3b7fc4;
+  --nonla-lime: #3d8f5c;
+  --nonla-gold: #a16207;
+
+  --elevated-shadow: 0 12px 32px rgb(0 0 0 / 12%), 0 0 0 1px color-mix(in srgb, var(--nonla-fg) 8%, transparent);
+  --popper-shadow: 0 12px 32px rgb(0 0 0 / 12%), 0 0 0 1px color-mix(in srgb, var(--nonla-fg) 8%, transparent);
+  --mask: rgb(0 0 0 / 40%);
+  --nonla-shadow: 0 12px 32px rgb(0 0 0 / 12%);
+  --shadow-drop: 0 2px 8px rgb(0 0 0 / 12%);
+  --shadow-panel: 0 0 0 1px var(--border), 0 4px 16px rgb(0 0 0 / 10%);
 }
 
 /* Tailwind v4 — scan this package + expose semantic color utilities. */
@@ -448,6 +494,15 @@
   background: var(--brand);
 }
 
+/* Ink gray — follows foreground, not the brand hue, in both color modes. */
+.nonla-spin-matrix.is-neutral .nonla-spin-matrix-cell {
+  background: color-mix(in oklab, var(--foreground) 16%, transparent);
+}
+
+.nonla-spin-matrix.is-neutral .nonla-spin-matrix-cell.is-on {
+  background: var(--muted-foreground);
+}
+
 @media (prefers-reduced-motion: reduce) {
   .nonla-spin-matrix-cell {
     transition: none;
@@ -646,7 +701,7 @@
   border: 1px solid var(--border);
   background: var(--card);
   color: var(--foreground);
-  box-shadow: 0 16px 48px rgb(0 0 0 / 45%);
+  box-shadow: var(--nonla-shadow);
 }
 
 /* Composer sits on the page, so the card fill disappears. Lift it the same step as the user bubble. */
@@ -658,7 +713,7 @@
 /* Desktop window — solid page fill, no frost. Title bar is a step lighter. */
 .nonla-window-glass {
   border: 1px solid var(--border);
-  box-shadow: 0 16px 48px rgb(0 0 0 / 45%);
+  box-shadow: var(--nonla-shadow);
   background: var(--background);
 }
 .nonla-window-header {
@@ -1025,4 +1080,72 @@
     var(--destructive) calc(50% - 1px) calc(50% + 1px),
     transparent calc(50% + 1px)
   );
+}
+
+/* GitHub light syntax. The imported sheet is github-dark-dimmed; these beat it under `.light`. */
+.light .hljs-doctag,
+.light .hljs-keyword,
+.light .hljs-meta .hljs-keyword,
+.light .hljs-template-tag,
+.light .hljs-template-variable,
+.light .hljs-type,
+.light .hljs-variable.language_ {
+  color: #d73a49;
+}
+.light .hljs-title,
+.light .hljs-title.class_,
+.light .hljs-title.class_.inherited__,
+.light .hljs-title.function_ {
+  color: #6f42c1;
+}
+.light .hljs-attr,
+.light .hljs-attribute,
+.light .hljs-literal,
+.light .hljs-meta,
+.light .hljs-number,
+.light .hljs-operator,
+.light .hljs-variable,
+.light .hljs-selector-attr,
+.light .hljs-selector-class,
+.light .hljs-selector-id {
+  color: #005cc5;
+}
+.light .hljs-regexp,
+.light .hljs-string,
+.light .hljs-meta .hljs-string {
+  color: #032f62;
+}
+.light .hljs-built_in,
+.light .hljs-symbol {
+  color: #e36209;
+}
+.light .hljs-comment,
+.light .hljs-code,
+.light .hljs-formula {
+  color: #6a737d;
+}
+.light .hljs-name,
+.light .hljs-quote,
+.light .hljs-selector-tag,
+.light .hljs-selector-pseudo {
+  color: #22863a;
+}
+.light .hljs-subst,
+.light .hljs-emphasis,
+.light .hljs-strong {
+  color: #24292e;
+}
+.light .hljs-section {
+  color: #005cc5;
+}
+.light .hljs-bullet {
+  color: #735c0f;
+}
+.light .hljs-addition {
+  color: #22863a;
+  background-color: #f0fff4;
+}
+.light .hljs-deletion {
+  color: #b31d28;
+  background-color: #ffeef0;
 }
