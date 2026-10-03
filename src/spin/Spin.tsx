@@ -3,6 +3,8 @@ import { cn } from "../lib/cn";
 import { type ControlSize, getSizeTokens, normalizeSize, useControlSize } from "../lib/sizes";
 
 export type SpinVariant = "default" | "agent";
+/** `brand` follows `--nonla-brand`. `neutral` is ink gray and ignores the brand hue. */
+export type SpinColor = "brand" | "neutral";
 
 export type SpinProps = {
   spinning?: boolean;
@@ -10,6 +12,8 @@ export type SpinProps = {
   size?: ControlSize;
   /** Visual style — `agent` is the 3×3 snake for AI run states. */
   variant?: SpinVariant;
+  /** Indicator hue. `neutral` stays gray in light and dark. */
+  color?: SpinColor;
   /** Replace the built-in indicator entirely. */
   indicator?: ReactNode;
   children?: ReactNode;
@@ -20,11 +24,11 @@ function dimFor(size: ControlSize | undefined) {
   return Math.round(getSizeTokens(size).icon * 1.25);
 }
 
-function DefaultSpinner({ size }: { size: ControlSize | undefined }) {
+function DefaultSpinner({ size, color }: { size: ControlSize | undefined; color: SpinColor }) {
   const dim = dimFor(size);
   return (
     <span
-      className="inline-block rounded-full border-2 border-current/25 border-t-current animate-spin text-brand"
+      className={cn("inline-block rounded-full border-2 border-current/25 border-t-current animate-spin", color === "neutral" ? "text-muted-foreground" : "text-brand")}
       style={{ width: dim, height: dim }}
       aria-hidden
     />
@@ -84,7 +88,7 @@ function matrixMetrics(size: ControlSize | undefined): { cell: number; gap: numb
 }
 
 /** 3×3 fixed dots — 3 adjacent lit cells crawl randomly (snake). */
-function MatrixSnake({ size, tickMs = 240 }: { size: ControlSize | undefined; tickMs?: number }) {
+function MatrixSnake({ size, color, tickMs = 240 }: { size: ControlSize | undefined; color: SpinColor; tickMs?: number }) {
   const { cell, gap } = matrixMetrics(size);
   const dim = cell * 3 + gap * 2;
   const [snake, setSnake] = useState<Snake>(() => randomSnake());
@@ -101,7 +105,7 @@ function MatrixSnake({ size, tickMs = 240 }: { size: ControlSize | undefined; ti
 
   return (
     <span
-      className="nonla-spin-matrix inline-grid"
+      className={cn("nonla-spin-matrix inline-grid", color === "neutral" && "is-neutral")}
       style={{
         width: dim,
         height: dim,
@@ -118,30 +122,32 @@ function MatrixSnake({ size, tickMs = 240 }: { size: ControlSize | undefined; ti
   );
 }
 
-function Spinner({ size, variant }: { size: ControlSize | undefined; variant: SpinVariant }) {
-  if (variant === "agent") return <MatrixSnake size={size} />;
-  return <DefaultSpinner size={size} />;
+function Spinner({ size, variant, color }: { size: ControlSize | undefined; variant: SpinVariant; color: SpinColor }) {
+  if (variant === "agent") return <MatrixSnake size={size} color={color} />;
+  return <DefaultSpinner size={size} color={color} />;
 }
 
 function Indicator({
   size,
   variant,
+  color,
   indicator,
 }: {
   size: ControlSize | undefined;
   variant: SpinVariant;
+  color: SpinColor;
   indicator?: ReactNode;
 }) {
   if (indicator != null) return <>{indicator}</>;
-  return <Spinner size={size} variant={variant} />;
+  return <Spinner size={size} variant={variant} color={color} />;
 }
 
-export function Spin({ spinning = true, tip, size, variant = "default", indicator, children, className }: SpinProps) {
+export function Spin({ spinning = true, tip, size, variant = "default", color = "brand", indicator, children, className }: SpinProps) {
   const resolvedSize = useControlSize(size);
   if (children == null) {
     return (
       <div className={cn("inline-flex flex-col items-center gap-2", className)} role={spinning ? "status" : undefined} aria-live={spinning ? "polite" : undefined}>
-        {spinning ? <Indicator size={resolvedSize} variant={variant} indicator={indicator} /> : null}
+        {spinning ? <Indicator size={resolvedSize} variant={variant} color={color} indicator={indicator} /> : null}
         {tip ? <span className="text-xs text-muted-foreground">{tip}</span> : null}
       </div>
     );
@@ -151,7 +157,7 @@ export function Spin({ spinning = true, tip, size, variant = "default", indicato
       {children}
       {spinning ? (
         <div className="absolute inset-0 z-10 flex flex-col items-center justify-center gap-2 bg-background/50" role="status" aria-live="polite">
-          <Indicator size={resolvedSize} variant={variant} indicator={indicator} />
+          <Indicator size={resolvedSize} variant={variant} color={color} indicator={indicator} />
           {tip ? <span className="text-xs text-muted-foreground">{tip}</span> : null}
         </div>
       ) : null}
