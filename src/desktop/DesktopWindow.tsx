@@ -38,7 +38,7 @@ function isEditableTarget(target: EventTarget | null) {
 }
 
 function hasOpenDialog() {
-  return Boolean(document.querySelector('[role="dialog"][data-state="open"], .nonla-modal-content'));
+  return Boolean(document.querySelector('dialog[open], [role="dialog"][data-state="open"], .nonla-modal-content'));
 }
 
 function originFromActiveIcon(overlay: HTMLElement, frame: HTMLElement) {
@@ -55,7 +55,7 @@ function originFromActiveIcon(overlay: HTMLElement, frame: HTMLElement) {
 function compactSize(view: Size): Size {
   return {
     w: Math.min(window.innerWidth * 0.8, view.w),
-    h: Math.max(0, view.h - 80),
+    h: Math.max(0, view.h - 40),
   };
 }
 
@@ -256,6 +256,29 @@ function TrafficLight({
   );
 }
 
+function WindowTraffic({
+  expanded,
+  floating,
+  onClose,
+  onToggleExpand,
+}: {
+  expanded: boolean;
+  floating?: boolean;
+  onClose: () => void;
+  onToggleExpand: () => void;
+}) {
+  return (
+    <div className={cn("group/traffic flex shrink-0 items-center gap-2", floating && "absolute top-3 left-3 z-20")}>
+      <TrafficLight label="Close window" tone="close" onClick={onClose} shortcut="Esc">
+        <GlyphClose />
+      </TrafficLight>
+      <TrafficLight label={expanded ? "Restore window" : "Expand window"} tone="expand" onClick={onToggleExpand} shortcut="Shift + ↑">
+        <GlyphExpand restore={expanded} />
+      </TrafficLight>
+    </div>
+  );
+}
+
 type WindowHeaderSlot = {
   left: HTMLElement | null;
   right: HTMLElement | null;
@@ -284,6 +307,8 @@ export type DesktopWindowProps = {
   title?: ReactNode;
   left?: ReactNode;
   right?: ReactNode;
+  /** Title bar. `false` hides it so children fill the frame; close and expand stay pinned over the top-left. */
+  header?: boolean;
   expanded: boolean;
   onClose: () => void;
   onToggleExpand: () => void;
@@ -299,6 +324,7 @@ export function DesktopWindow({
   title,
   left,
   right,
+  header = true,
   expanded,
   onClose,
   onToggleExpand,
@@ -579,34 +605,29 @@ export function DesktopWindow({
           data-expanded={expanded || undefined}
           className={cn("absolute flex flex-col rounded-xl pointer-events-auto transform-gpu", glassSurfaceClass, "nonla-window-glass", leaving && "pointer-events-none")}
         >
-          <div className="flex min-h-0 flex-1 flex-col overflow-hidden rounded-xl">
-            <header
-              onPointerDown={startDrag}
-              className="flex h-8 shrink-0 cursor-default items-center gap-4 border-0 border-b border-solid border-ink-line px-3 select-none touch-none"
-            >
-              <div className="group/traffic flex shrink-0 items-center gap-2">
-                <TrafficLight label="Close window" tone="close" onClick={requestClose} shortcut="Esc">
-                  <GlyphClose />
-                </TrafficLight>
-                <TrafficLight label={expanded ? "Restore window" : "Expand window"} tone="expand" onClick={onToggleExpand} shortcut="Shift + ↑">
-                  <GlyphExpand restore={expanded} />
-                </TrafficLight>
-              </div>
-              <div className="flex min-w-0 flex-1 items-center">
-                <div className="flex min-w-0 items-center">
-                  {left}
-                  <div ref={setLeftSlot} className="contents" />
+          <div className="relative flex min-h-0 flex-1 flex-col overflow-hidden rounded-xl">
+            {header ? (
+              <header
+                onPointerDown={startDrag}
+                className="nonla-window-header flex h-9 shrink-0 cursor-default items-center gap-4 border-0 px-3 select-none touch-none"
+              >
+                <WindowTraffic expanded={expanded} onClose={requestClose} onToggleExpand={onToggleExpand} />
+                <div className="flex min-w-0 flex-1 items-center">
+                  <div className="flex min-w-0 items-center">
+                    {left}
+                    <div ref={setLeftSlot} className="contents" />
+                  </div>
+                  {/* biome-ignore lint/a11y/noStaticElementInteractions: middle strip double-clicks to expand */}
+                  <div onDoubleClick={onTitleBarDoubleClick} className="flex min-w-8 flex-1 items-center self-stretch px-2">
+                    {typeof title === "string" ? <span className="min-w-0 truncate text-xs font-semibold leading-none text-foreground/90">{title}</span> : title}
+                  </div>
+                  <div className="flex shrink-0 items-center">
+                    {right}
+                    <div ref={setRightSlot} className="contents" />
+                  </div>
                 </div>
-                {/* biome-ignore lint/a11y/noStaticElementInteractions: middle strip double-clicks to expand */}
-                <div onDoubleClick={onTitleBarDoubleClick} className="flex min-w-8 flex-1 items-center self-stretch px-2">
-                  {typeof title === "string" ? <span className="min-w-0 truncate text-xs font-semibold leading-none text-foreground/90">{title}</span> : title}
-                </div>
-                <div className="flex shrink-0 items-center">
-                  {right}
-                  <div ref={setRightSlot} className="contents" />
-                </div>
-              </div>
-            </header>
+              </header>
+            ) : null}
 
             <div className="min-h-0 flex-1 overflow-hidden">
               {scroll ? (
@@ -617,6 +638,7 @@ export function DesktopWindow({
                 children
               )}
             </div>
+            {header ? null : <WindowTraffic floating expanded={expanded} onClose={requestClose} onToggleExpand={onToggleExpand} />}
           </div>
 
           {!leaving
