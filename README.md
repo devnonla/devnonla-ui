@@ -55,6 +55,8 @@ Aliases: `xs` → small, `middle` / `medium` → default.
 
 All color lives in **`--nonla-*` knobs** (`src/styles.css`). Components never hardcode palette hex.
 
+Dark is the default (`:root` and `.dark`). `.light` is the daylight palette. `<App>` calls `initColorMode()` once and restores `localStorage` key `nonla-color-mode`, falling back to dark. Switch with `setColorMode("light" | "dark")` or `<ThemeToggle>`. To start in daylight before paint, put `class="light"` on `<html>`.
+
 **Other apps** — import the CSS, then override knobs. Do not fork Button/Tag/….
 
 ```css
@@ -97,6 +99,21 @@ Those map into shadcn-standard tokens (`--background`, `--destructive`, …) plu
 <App componentSize="large" getPopupContainer={() => document.getElementById("app")!}>
   …
 </App>
+```
+
+# Card
+
+Titled settings surface. `Card.Item` is a label row; `align="center"` for a short row, `split` so a field fills the trailing half. `Card.Footer` sits under the rows. `caption` is the note under the frame.
+
+```tsx
+import { Card, Switch } from "devnonla-ui";
+
+<Card title="General" caption="Applies to this workspace.">
+  <Card.Item label="Notifications" align="center">
+    <Switch />
+  </Card.Item>
+  <Card.Footer>Saved</Card.Footer>
+</Card>
 ```
 
 # Desktop
@@ -174,6 +191,16 @@ Stream events:
 `text-delta` | `thinking-delta` | `tool-call` | `tool-result` | `done` | `error`
 
 Primitives (`ChatWelcome`, `ChatUserMessage`, `ChatAgentMessage`, `ChatThinking`, `ChatToolCall`, `ChatInput`, `ChatError`, `ChatMarkdown`) stay exported for custom layouts.
+
+# Markdown
+
+`MarkdownEditor` edits markdown in preview, source, or diff. Pass `original` to enable the diff view. `diffLayout` is side by side by default.
+
+```tsx
+import { MarkdownEditor } from "devnonla-ui";
+
+<MarkdownEditor value={text} original={previous} onChange={setText} />
+```
 
 # Icons
 

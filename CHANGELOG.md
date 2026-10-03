@@ -5,6 +5,34 @@ All notable changes to this project will be documented in this file.
 The format is based on [Keep a Changelog](https://keepachangelog.com/en/1.1.0/),
 and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0.html).
 
+## [0.9.0] - 2026-10-03
+
+### Added
+
+- Light and dark color mode. Dark is the default. `setColorMode`, `initColorMode`, `getColorMode`, and `ThemeToggle` remember the choice (`nonla-color-mode`). Put `class="light"` on `<html>` to start in daylight.
+- `Card`, `Card.Item`, and `Card.Footer` for a titled settings surface.
+- `MarkdownEditor` with preview, edit, and diff (`original`, `diffLayout`).
+- `SolarIcon` and `solarIconName`. Pass a style such as `bold-duotone` to force a weight. Legacy Fluent names (`FluentIcon`, `fluentIconName`, `settings-24`) still resolve.
+- `Checkbox` and `Switch` `color`: `brand` | `success` | `white`.
+- `Spin` `color`: `brand` | `neutral`.
+- `DesktopWindow` `header={false}` hides the title bar and keeps close and expand over the top-left.
+- Searchable `Select` filters options from the trigger.
+- `Table` pagination footer includes a page-size menu (`showSizeChanger` stays on unless set to `false`).
+
+### Changed
+
+- Default palette is a dark solid surface. `:root` and `.dark` share it. `.light` is the daylight palette (page `#f3f3f3`, white cards). Shadows follow `--nonla-shadow`. Code uses GitHub Dark Dimmed, with a light syntax theme under `.light`.
+- Outlined fields are transparent. Focus fills with an ink wash and strengthens the stroke.
+- `Table` is bordered by default and uses a hairline frame.
+- Sidebar string icons render as Solar bold-duotone. Group labels are 11px and bold.
+- `MermaidBlock` follows the active color mode.
+
+### Upgrade notes
+
+- Apps that want the previous daylight page need `class="light"` on `<html>`, or `setColorMode("light")`.
+- `Table` without `bordered={false}` now draws a frame. The footer shows a page-size control unless `pagination.showSizeChanger` is `false`.
+- Icon glyphs are Solar. Import names from 0.8.0 still work.
+
 ## [0.8.0] - 2026-09-25
 
 ### Changed
@@ -196,6 +224,7 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 - Replace class `nonla-chat-shimmer` with `Shimmer` or `.nonla-shimmer`.
 - `resolveToolUI(toolName, extras?)` — second argument is optional; extra UIs are checked first.
 
+[0.9.0]: https://github.com/devnonla/devnonla-ui/compare/v0.8.0...v0.9.0
 [0.8.0]: https://github.com/devnonla/devnonla-ui/compare/v0.7.1...v0.8.0
 [0.7.1]: https://github.com/devnonla/devnonla-ui/compare/v0.7.0...v0.7.1
 [0.7.0]: https://github.com/devnonla/devnonla-ui/compare/v0.6.0...v0.7.0
