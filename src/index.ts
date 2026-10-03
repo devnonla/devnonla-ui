@@ -139,19 +139,25 @@ export {
 export type { FormLayoutItemProps, FormLayoutProps } from "./form-layout/FormLayout";
 /** Layout-only Form + Form.Item for labeled fields. */
 export { Form } from "./form-layout/FormLayout";
-export { FluentIcon } from "./icon/FluentIcon";
+export { FluentIcon, SolarIcon } from "./icon/SolarIcon";
 export {
   DEFAULT_ICON_NAME,
   DEFAULT_TOOL_ICON,
-  ensureFluentIcons,
-  fluentIconName,
-  fluentIconRef,
-  getFluentImgSrc,
+  ensureSolarIcons,
+  ensureSolarIcons as ensureFluentIcons,
   getIconNames,
+  getSolarImgSrc,
+  getSolarImgSrc as getFluentImgSrc,
+  getSolarSvg,
   ICON_PREFIX,
-  isFluentIcon,
+  isSolarIcon,
+  isSolarIcon as isFluentIcon,
   isSvgIcon,
-} from "./icon/fluent";
+  solarIconName,
+  solarIconName as fluentIconName,
+  solarIconRef,
+  solarIconRef as fluentIconRef,
+} from "./icon/solar";
 export { cn } from "./lib/cn";
 export type { PopperPlacement } from "./lib/placement";
 export { placementToRadix } from "./lib/placement";

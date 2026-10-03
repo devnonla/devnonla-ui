@@ -1,7 +1,7 @@
-import { Download, Maximize2, Minimize2 } from "lucide-react";
 import { useCallback, useEffect, useId, useRef, useState } from "react";
 import { Button } from "../../button/Button";
 import { CodeBlock } from "../../codeblock/CodeBlock";
+import { SolarIcon } from "../../icon/SolarIcon";
 import { cn } from "../../lib/cn";
 import { sanitizeMermaid } from "./sanitizeMermaid";
 
@@ -29,7 +29,7 @@ export function MermaidBlock({ children, className }: MermaidBlockProps) {
       const { default: mermaid } = await import("mermaid");
       mermaid.initialize({
         startOnLoad: false,
-        theme: "default",
+        theme: "dark",
       });
 
       const raw = children.trim();
@@ -104,7 +104,6 @@ export function MermaidBlock({ children, className }: MermaidBlockProps) {
 
   const closeFullscreen = () => {
     dialogRef.current?.close();
-    resetView();
   };
 
   const handleWheel = useCallback((e: React.WheelEvent) => {
@@ -166,7 +165,7 @@ export function MermaidBlock({ children, className }: MermaidBlockProps) {
     <>
       <div className={cn("my-3 last:mb-0 group relative rounded-xl border border-border overflow-hidden bg-card", className)}>
         <div className="absolute top-2 right-2 z-10 flex items-center gap-1 opacity-0 group-hover:opacity-100 transition-opacity">
-          <Button size="small" icon={<Maximize2 aria-hidden />} title="Fullscreen" aria-label="Fullscreen" onClick={openFullscreen} />
+          <Button size="small" icon={<SolarIcon name="maximize-linear" size={12} />} title="Fullscreen" aria-label="Fullscreen" onClick={openFullscreen} />
         </div>
         <div ref={containerRef} className="flex justify-center p-6 overflow-x-auto [&_svg]:max-w-full" />
       </div>
@@ -174,13 +173,17 @@ export function MermaidBlock({ children, className }: MermaidBlockProps) {
       <dialog
         ref={dialogRef}
         className="m-0 p-0 w-screen h-screen max-w-none max-h-none backdrop:bg-black/40 open:flex open:flex-col bg-card"
+        onClose={resetView}
         onKeyDown={(e) => {
-          if (e.key === "Escape") closeFullscreen();
+          if (e.key !== "Escape") return;
+          e.preventDefault();
+          e.stopPropagation();
+          closeFullscreen();
         }}
       >
         <div className="fixed top-5 right-5 z-50 flex items-center gap-1.5">
-          <Button size="small" icon={<Download aria-hidden />} title="Download SVG" aria-label="Download SVG" onClick={downloadSvg} disabled={!svgContent} />
-          <Button size="small" icon={<Minimize2 aria-hidden />} title="Exit fullscreen" onClick={closeFullscreen}>
+          <Button size="small" icon={<SolarIcon name="download-linear" size={12} />} title="Download SVG" aria-label="Download SVG" onClick={downloadSvg} disabled={!svgContent} />
+          <Button size="small" icon={<SolarIcon name="minimize-linear" size={12} />} title="Exit fullscreen" onClick={closeFullscreen}>
             Exit
           </Button>
         </div>

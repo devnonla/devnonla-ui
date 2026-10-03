@@ -1,5 +1,5 @@
-import { ArrowUp, Eraser, Square } from "lucide-react";
 import { type KeyboardEvent as ReactKeyboardEvent, type ReactNode, useEffect, useLayoutEffect, useRef, useState } from "react";
+import { SolarIcon } from "../../icon/SolarIcon";
 import { cn } from "../../lib/cn";
 
 export type ChatInputProps = {
@@ -137,14 +137,14 @@ export function ChatInput({ generating = false, placeholder = "Message…", disa
         className={cn(
           "w-full resize-none appearance-none border-0 bg-transparent shadow-none outline-none focus:outline-none px-2.5 pt-1 pb-2.5",
           "text-(length:--chat-composer-size) leading-(--chat-composer-leading) font-normal",
-          disabled ? "text-muted-foreground cursor-not-allowed placeholder:text-quaternary-foreground" : "text-foreground placeholder:text-muted-foreground/60",
+          disabled ? "text-muted-foreground cursor-not-allowed placeholder:text-placeholder" : "text-foreground placeholder:text-placeholder",
         )}
       />
 
       <div className="flex items-center gap-1.5 pb-2 px-2">
         {onClear ? (
           <button type="button" onClick={onClear} title="Clear chat" aria-label="Clear chat" className="inline-flex size-6 shrink-0 items-center justify-center rounded-lg border-0 bg-transparent cursor-pointer hover:bg-ink-hover">
-            <Eraser size={14} strokeWidth={1.5} aria-hidden />
+            <SolarIcon name="eraser-linear" size={14} />
           </button>
         ) : null}
         {toolbar}
@@ -152,7 +152,7 @@ export function ChatInput({ generating = false, placeholder = "Message…", disa
 
         {generating ? (
           <button type="button" onClick={onCancel} title="Stop" className="w-6 h-6 rounded-full bg-brand text-(--nonla-solid-fg) flex items-center justify-center shrink-0 cursor-pointer hover:bg-brand/90 active:scale-95 transition-all duration-100 border-0">
-            <Square size={12} fill="currentColor" strokeWidth={0} aria-hidden />
+            <SolarIcon name="stop-bold" size={12} />
             <span className="sr-only">Stop</span>
           </button>
         ) : (
@@ -163,7 +163,7 @@ export function ChatInput({ generating = false, placeholder = "Message…", disa
             title="Send (Enter)"
             className={cn("w-6 h-6 rounded-full flex items-center justify-center shrink-0 transition-all duration-100 border-0", canSend ? "bg-foreground text-background cursor-pointer" : "bg-border text-muted-foreground cursor-not-allowed opacity-50")}
           >
-            <ArrowUp size={14} strokeWidth={2.5} aria-hidden />
+            <SolarIcon name="arrow-up-linear" size={14} />
             <span className="sr-only">Send</span>
           </button>
         )}

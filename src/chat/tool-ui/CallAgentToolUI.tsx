@@ -1,5 +1,5 @@
 import { type ReactNode, useEffect, useRef, useState } from "react";
-import { FluentIcon } from "../../icon/FluentIcon";
+import { SolarIcon } from "../../icon/SolarIcon";
 import { cn } from "../../lib/cn";
 import { Shimmer } from "../../shimmer/Shimmer";
 import { Spin } from "../../spin/Spin";
@@ -126,7 +126,7 @@ export function CallAgentToolUI({ msg, assistantLabel = "Assistant", assistantCo
             {calling ? (
               <Spin variant="agent" size="small" className="shrink-0" />
             ) : (
-              <FluentIcon name="chat-multiple-24" size={13} className="shrink-0 text-muted-foreground" />
+              <SolarIcon name="dialog-2-linear" size={13} className="shrink-0 text-muted-foreground" />
             )}
             <Shimmer active={calling} className="min-w-0 flex-1 truncate text-[14px] font-medium text-foreground">Calling {calleeName}</Shimmer>
             {bgRunning ? <span className="text-[14px] tabular-nums text-muted-foreground">{formatBgElapsed(timestampMs(msg.timestamp), now)}</span> : null}
@@ -138,7 +138,7 @@ export function CallAgentToolUI({ msg, assistantLabel = "Assistant", assistantCo
             <div className="flex flex-col gap-3 px-3 py-3">
               {composing || hasRequest ? (
                 <AgentTurn name={assistantLabel} align="end">
-                  <div className="rounded-2xl rounded-tr-sm border border-brand/40 bg-[color-mix(in_oklab,var(--brand)_14%,var(--card))] px-3 py-2 text-left">
+                  <div className="rounded-2xl rounded-tr-sm border border-solid border-(--nonla-input) bg-well-strong px-3 py-2 text-left">
                     {composing ? <TypingDots /> : <p className="m-0 text-[14px] leading-[1.55] whitespace-pre-wrap text-foreground">{requestMessage}</p>}
                   </div>
                 </AgentTurn>

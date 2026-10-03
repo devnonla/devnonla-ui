@@ -1,5 +1,5 @@
-import { ChevronDown, Square } from "lucide-react";
 import { type ReactNode, useEffect, useLayoutEffect, useRef, useState } from "react";
+import { SolarIcon } from "../../icon/SolarIcon";
 import { cn } from "../../lib/cn";
 import { Modal } from "../../modal/Modal";
 import { Popconfirm } from "../../popconfirm/Popconfirm";
@@ -56,7 +56,7 @@ function TaskRow({
       </button>
       <Popconfirm title={`Stop ${formatToolName(task.toolName)}?`} okText="Stop" okType="danger" onConfirm={onCancel} getPopupContainer={() => document.body}>
         <button type="button" disabled={cancelling} title="Stop" aria-label={`Stop ${formatToolName(task.toolName)}`} className="inline-flex size-5 shrink-0 items-center justify-center rounded cursor-pointer text-destructive transition-colors hover:bg-destructive/10 disabled:opacity-40">
-          <Square size={10} fill="currentColor" strokeWidth={0} aria-hidden />
+          <SolarIcon name="stop-bold" size={10} />
         </button>
       </Popconfirm>
     </div>
@@ -120,7 +120,7 @@ export function BackgroundTasksBar({ children, tasks = [], cancellingIds, onCanc
           <div className="absolute inset-x-6 bottom-[calc(100%)] z-20 overflow-hidden rounded-t-lg border-x border-t border-border">
             <div className={cn("flex h-7.5 items-center gap-1 px-1", open && "border-b border-border-subtle")}>
               <button type="button" onClick={() => setOpen((v) => !v)} className="flex min-w-0 flex-1 cursor-pointer font-medium items-center gap-1 rounded-md px-1.5 py-1 text-[13px] text-muted-foreground/90 transition-colors hover:text-foreground" aria-expanded={open} aria-label={label}>
-                <ChevronDown size={13} className={cn("shrink-0 transition-transform duration-150", !open && "-rotate-90")} aria-hidden />
+                <SolarIcon name="alt-arrow-down-linear" size={13} className={cn("shrink-0 transition-transform duration-150", !open && "-rotate-90")} />
                 <span className="truncate">{label}</span>
               </button>
             </div>

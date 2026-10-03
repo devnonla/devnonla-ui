@@ -1,4 +1,4 @@
-import { FluentIcon } from "../../icon/FluentIcon";
+import { SolarIcon } from "../../icon/SolarIcon";
 import { cn } from "../../lib/cn";
 import { Shimmer } from "../../shimmer/Shimmer";
 import { parseJsonObject } from "../common/utils";
@@ -37,7 +37,7 @@ export function WebFetchToolUI({ msg, assistantLabel = "Assistant", assistantCol
 
   const header = (
     <>
-      <FluentIcon name="globe-24" size={13} className="shrink-0 text-muted-foreground" />
+      <SolarIcon name="globe-linear" size={13} className="shrink-0 text-muted-foreground" />
       <Shimmer active={running} className="min-w-0 truncate font-medium text-muted-foreground">
         {verb} <span className="font-normal text-tertiary-foreground">{url}</span>
       </Shimmer>

@@ -1,5 +1,5 @@
-import { ChevronLeft, ChevronRight, ChevronsLeft, ChevronsRight } from "lucide-react";
 import { type ComponentType, type CSSProperties, cloneElement, isValidElement, type KeyboardEvent, type ReactElement, type ReactNode, useEffect, useState } from "react";
+import { SolarIcon } from "../icon/SolarIcon";
 import { cn } from "../lib/cn";
 import { type CanonicalSize, type ControlSize, controlFieldFocusBorder, controlFieldSurface, controlFieldTransition, controlHeightVar, controlRadiusVar, getSizeTokens, useControlSize } from "../lib/sizes";
 import { Select, type SelectProps } from "../select/Select";
@@ -44,7 +44,8 @@ export type PaginationProps = {
   showQuickJumper?: boolean | { goButton?: ReactNode };
   showSizeChanger?: boolean | SelectProps;
   showTitle?: boolean;
-  showTotal?: (total: number, range: [number, number]) => ReactNode;
+  /** `false` hides the total. A function renders it. */
+  showTotal?: false | ((total: number, range: [number, number]) => ReactNode);
   simple?: boolean | { readOnly?: boolean };
   size?: ControlSize;
   totalBoundaryShowSizeChanger?: number;
@@ -136,7 +137,7 @@ function JumpInner({ dir, icon }: { dir: "prev" | "next"; icon: number }) {
     <span className="relative inline-flex size-full items-center justify-center">
       <span className="leading-none group-hover:opacity-0 group-focus-visible:opacity-0">…</span>
       <span className="absolute inset-0 flex items-center justify-center opacity-0 group-hover:opacity-100 group-focus-visible:opacity-100">
-        {dir === "prev" ? <ChevronsLeft size={icon} strokeWidth={2} /> : <ChevronsRight size={icon} strokeWidth={2} />}
+        {dir === "prev" ? <SolarIcon name="double-alt-arrow-left-linear" size={icon} /> : <SolarIcon name="double-alt-arrow-right-linear" size={icon} />}
       </span>
     </span>
   );
@@ -184,7 +185,7 @@ function MiniField({
         }
       }}
       className={cn(
-        "text-center tabular-nums text-foreground placeholder:text-quaternary-foreground",
+        "text-center tabular-nums text-foreground placeholder:text-placeholder",
         controlFieldSurface,
         controlFieldTransition,
         controlFieldFocusBorder,
@@ -368,8 +369,8 @@ export function Pagination(props: PaginationProps) {
 
   const sizeOptions = toSizes(pageSizeOptions);
 
-  const prevInner = wrap(page - 1, "prev", <ChevronLeft size={icon} strokeWidth={2} />);
-  const nextInner = wrap(page + 1, "next", <ChevronRight size={icon} strokeWidth={2} />);
+  const prevInner = wrap(page - 1, "prev", <SolarIcon name="alt-arrow-left-linear" size={icon} />);
+  const nextInner = wrap(page + 1, "next", <SolarIcon name="alt-arrow-right-linear" size={icon} />);
 
   const pager = isSimple ? (
     <>
@@ -561,7 +562,7 @@ function JumperField({
         }
       }}
       className={cn(
-        "text-center tabular-nums text-foreground placeholder:text-quaternary-foreground",
+        "text-center tabular-nums text-foreground placeholder:text-placeholder",
         controlFieldSurface,
         controlFieldTransition,
         controlFieldFocusBorder,

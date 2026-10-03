@@ -1,4 +1,4 @@
-import { FluentIcon } from "../../icon/FluentIcon";
+import { SolarIcon } from "../../icon/SolarIcon";
 import { Shimmer } from "../../shimmer/Shimmer";
 import { parseJsonObject } from "../common/utils";
 import { ToolUiBadge } from "./ToolUiBadge";
@@ -40,7 +40,7 @@ export function GetCurrentTimeToolUI({ msg, assistantLabel = "Assistant", assist
       <ToolUiBadge show={showAvatar} label={assistantLabel} color={assistantColor} />
       <div className="px-4 pb-1">
         <div className="flex items-center gap-2 py-1">
-          <FluentIcon name="clock-24" size={13} className="shrink-0 text-muted-foreground" />
+          <SolarIcon name="clock-circle-linear" size={13} className="shrink-0 text-muted-foreground" />
           <Shimmer active={running} className="truncate text-[14px] font-medium tabular-nums text-muted-foreground">{hasError ? "Failed to get time" : running ? "Getting time…" : label}</Shimmer>
           <ToolUiTrailing failed={hasError} />
         </div>

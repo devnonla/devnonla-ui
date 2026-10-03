@@ -1,5 +1,5 @@
 import { type MouseEvent, type ReactNode, useMemo, useState } from "react";
-import { FluentIcon } from "../icon/FluentIcon";
+import { SolarIcon } from "../icon/SolarIcon";
 import { SearchInput } from "../input/SearchInput";
 import { cn } from "../lib/cn";
 import { OverlayScroll } from "../scroll/OverlayScroll";
@@ -7,7 +7,7 @@ import { OverlayScroll } from "../scroll/OverlayScroll";
 export type SidebarItemType = {
   key?: string;
   label?: ReactNode;
-  /** Fluent icon name, or a node. */
+  /** Solar icon name (`settings-linear`), a legacy Fluent Color id (`settings-24`), or a node. */
   icon?: ReactNode;
   disabled?: boolean;
   type?: "item" | "group" | "divider";
@@ -75,7 +75,7 @@ function filterItems(items: SidebarItemType[], q: string): SidebarItemType[] {
 
 function ItemIcon({ icon }: { icon?: ReactNode }) {
   if (icon == null || icon === false) return null;
-  if (typeof icon === "string") return <FluentIcon name={icon} size={16} />;
+  if (typeof icon === "string") return <SolarIcon name={icon} size={16} />;
   return <span className="inline-flex size-4 shrink-0 items-center justify-center [&_img]:size-4 [&_svg]:size-4">{icon}</span>;
 }
 
@@ -99,11 +99,11 @@ function SidebarList({
           return (
             <div key={key} className="mb-4">
               {item.label != null && item.label !== "" ? (
-                <div className={cn("px-2 pb-1.5 pt-2 text-[11px] font-medium uppercase tracking-wider text-quaternary-foreground", item.className)}>
+                <div className={cn("px-2.5 pb-1.5 pt-2 text-xs font-medium uppercase tracking-wider text-quaternary-foreground", item.className)}>
                   {item.label}
                 </div>
               ) : null}
-              <div className="flex flex-col gap-0.5">
+              <div className="flex flex-col gap-1">
                 <SidebarList items={item.children ?? []} selected={selected} onSelect={onSelect} />
               </div>
             </div>
@@ -112,9 +112,9 @@ function SidebarList({
 
         const active = selected != null && key === selected;
         const className = cn(
-          "flex w-full items-center gap-2 rounded-md border-0 px-2 py-1.5 text-left text-sm no-underline",
+          "nonla-sidebar-item flex w-full items-center gap-2.5 px-2.5 text-left text-base no-underline",
           item.disabled ? "pointer-events-none cursor-not-allowed opacity-40" : "cursor-pointer",
-          active ? "bg-ink-active font-medium text-foreground" : "bg-transparent text-foreground/80 hover:bg-ink-hover hover:text-foreground",
+          active ? "font-medium text-foreground" : "text-foreground/80 hover:text-foreground",
           item.className,
         );
 
@@ -122,7 +122,7 @@ function SidebarList({
           <>
             <ItemIcon icon={item.icon} />
             <span className="min-w-0 flex-1 truncate">{item.label}</span>
-            {item.extra != null ? <span className="shrink-0 text-xs tabular-nums text-muted-foreground">{item.extra}</span> : null}
+            {item.extra != null ? <span className="shrink-0 text-sm tabular-nums text-muted-foreground">{item.extra}</span> : null}
           </>
         );
 

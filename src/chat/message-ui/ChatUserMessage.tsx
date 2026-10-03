@@ -1,5 +1,5 @@
-import { ChevronDown } from "lucide-react";
 import { useEffect, useRef, useState } from "react";
+import { SolarIcon } from "../../icon/SolarIcon";
 import { cn } from "../../lib/cn";
 
 const MAX_HEIGHT = 150;
@@ -30,7 +30,7 @@ export function ChatUserMessage({ content, className }: ChatUserMessageProps) {
     <div
       className={cn(
         "nonla-chat-user relative isolate mt-6 mb-3 mx-4 overflow-hidden rounded-xl px-3 py-1.5",
-        "border border-solid border-brand-200 bg-brand-100",
+        "border border-solid border-(--nonla-input) bg-well-strong",
         className,
       )}
     >
@@ -55,7 +55,7 @@ export function ChatUserMessage({ content, className }: ChatUserMessageProps) {
           }}
           className="flex w-full cursor-pointer items-center justify-center border-0 bg-transparent pt-1 text-muted-foreground hover:text-foreground"
         >
-          <ChevronDown size={12} className={cn("transition-transform duration-200", isExpanded && "rotate-180")} aria-hidden />
+          <SolarIcon name="alt-arrow-down-linear" size={12} className={cn("transition-transform duration-200", isExpanded && "rotate-180")} />
         </button>
       ) : null}
     </div>

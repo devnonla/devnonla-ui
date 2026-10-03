@@ -1,8 +1,8 @@
-import { Pencil } from "lucide-react";
 import { type CSSProperties, cloneElement, isValidElement, type KeyboardEvent, type ReactElement, type ReactNode, type Ref, useEffect, useLayoutEffect, useRef, useState } from "react";
 import { createPortal } from "react-dom";
 import { usePopupContainer } from "../app/context";
 import { Button } from "../button/Button";
+import { SolarIcon } from "../icon/SolarIcon";
 import { cn } from "../lib/cn";
 import { type CanonicalSize, type ControlSize, controlHeightVar, controlRadiusVar, getSizeTokens, useControlSize } from "../lib/sizes";
 import { message } from "../message/message";
@@ -12,7 +12,7 @@ const FIELD_INSET: Record<CanonicalSize, string> = { small: "-4px", default: "-6
 const MULTILINE_MIN: Record<CanonicalSize, number> = { small: 56, default: 72, large: 96 };
 const GLASS_BORDER = 1;
 
-const fieldClass = (saving: boolean) => cn("relative z-1 m-0 w-full border-0 bg-transparent text-foreground placeholder:text-muted-foreground/50 focus:outline-none", saving && "opacity-60");
+const fieldClass = (saving: boolean) => cn("relative z-1 m-0 w-full border-0 bg-transparent text-foreground placeholder:text-placeholder focus:outline-none", saving && "opacity-60");
 
 type Lock = {
   top: number;
@@ -227,7 +227,7 @@ function EditButton({ label, size, onClick }: { label: string; size: CanonicalSi
       className="inline-flex shrink-0 items-center justify-center rounded text-muted-foreground opacity-0 transition-opacity hover:bg-muted hover:text-foreground group-hover/edit:opacity-100 focus-visible:opacity-100"
       style={{ width: box, height: box }}
     >
-      <Pencil size={tok.icon} />
+      <SolarIcon name="pen-linear" size={tok.icon} />
     </button>
   );
 }

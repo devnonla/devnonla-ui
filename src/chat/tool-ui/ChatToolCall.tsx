@@ -1,5 +1,5 @@
 import { type ReactNode, useState } from "react";
-import { FluentIcon } from "../../icon/FluentIcon";
+import { SolarIcon } from "../../icon/SolarIcon";
 import { cn } from "../../lib/cn";
 import { Shimmer } from "../../shimmer/Shimmer";
 import { formatToolName, hasMeaningfulInput, prettyJson } from "../common/utils";
@@ -28,7 +28,7 @@ export function ChatToolCall({ toolName = "Tool", label, toolInput, toolOutput, 
   const [open, setOpen] = useState(defaultOpen);
   const displayLabel = label ?? formatToolName(toolName);
 
-  const identityIcon = icon ?? <FluentIcon name="code-block-24" size={13} className="shrink-0" />;
+  const identityIcon = icon ?? <SolarIcon name="code-square-linear" size={13} className="shrink-0" />;
 
   const header = (
     <>
@@ -52,7 +52,7 @@ export function ChatToolCall({ toolName = "Tool", label, toolInput, toolOutput, 
         )}
 
         {open && expandable ? (
-          <div className="mt-1.5 mb-1 overflow-hidden rounded-lg font-mono text-[13px]">
+          <div className="mt-1.5 mb-1 overflow-hidden rounded-lg border border-border bg-card font-mono text-[13px]">
             {hasInput ? <pre className="m-0 max-h-27.5 overflow-y-auto bg-well px-3 py-1.5 break-all whitespace-pre-wrap font-normal leading-[1.65] text-muted-foreground">{prettyJson(toolInput)}</pre> : null}
             {running ? (
               <div className="bg-well-strong px-3 py-1.5 text-muted-foreground">
@@ -60,7 +60,7 @@ export function ChatToolCall({ toolName = "Tool", label, toolInput, toolOutput, 
               </div>
             ) : null}
             {!isPending ? (
-              <pre className={cn("m-0 max-h-75 overflow-y-auto px-3 py-1.5 break-all whitespace-pre-wrap font-normal leading-[1.65] text-muted-foreground", hasError ? "bg-destructive/6" : "nonla-chat-tool-result-ok")}>
+              <pre className={cn("m-0 max-h-75 overflow-y-auto bg-well-strong px-3 py-1.5 break-all whitespace-pre-wrap font-normal leading-[1.65] text-muted-foreground", hasError && "bg-destructive/6")}>
                 {hasOutput ? prettyJson(toolOutput) : typeof toolError === "string" ? toolError : "Tool execution failed"}
               </pre>
             ) : null}

@@ -1,5 +1,5 @@
-import { Check, Copy } from "lucide-react";
 import { type ComponentProps, useEffect, useState } from "react";
+import { SolarIcon } from "../icon/SolarIcon";
 import { cn } from "../lib/cn";
 import { type ControlSize, getSizeTokens, useControlSize } from "../lib/sizes";
 
@@ -44,7 +44,7 @@ export function ButtonCopy({ text, getText, label = "Copy", className, onClick, 
         }
       }}
     >
-      {copied ? <Check size={icon} aria-hidden /> : <Copy size={icon} aria-hidden />}
+      {copied ? <SolarIcon name="check-linear" size={icon} /> : <SolarIcon name="copy-linear" size={icon} />}
     </button>
   );
 }

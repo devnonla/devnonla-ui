@@ -1,5 +1,5 @@
 import type { ButtonHTMLAttributes, ReactNode } from "react";
-import { FluentIcon } from "../icon/FluentIcon";
+import { SolarIcon } from "../icon/SolarIcon";
 import { cn } from "../lib/cn";
 import type { PopperPlacement } from "../lib/placement";
 import { Popover } from "../popover/Popover";
@@ -48,7 +48,7 @@ export function MenuTrigger({ active, open, className, children, ...rest }: Menu
       {...rest}
     >
       <span className="min-w-0 truncate leading-5">{children}</span>
-      <FluentIcon name="arrow-square-down-24" size={12} className={cn("shrink-0 transition-transform duration-150", open && "rotate-180")} />
+      <SolarIcon name="alt-arrow-down-linear" size={12} className={cn("shrink-0 transition-transform duration-150", open && "rotate-180")} />
     </button>
   );
 }
@@ -75,7 +75,7 @@ export function MenuItem({ icon, label, extra, selected, action, onClick, classN
           selected ? "font-medium text-foreground" : "font-normal text-foreground",
         )}
       >
-        {icon ? <span className="inline-flex size-4 shrink-0 items-center justify-center [&_img]:size-4">{icon}</span> : null}
+        {icon ? <span className="inline-flex size-4 shrink-0 items-center justify-center [&_img]:size-4 [&_svg]:size-4">{icon}</span> : null}
         <span className="min-w-0 flex-1 truncate">{label}</span>
         {extra != null ? <span className={cn("shrink-0 text-xs tabular-nums text-muted-foreground", action && "group-hover:invisible")}>{extra}</span> : null}
       </button>

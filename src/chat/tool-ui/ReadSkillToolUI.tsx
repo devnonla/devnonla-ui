@@ -1,4 +1,4 @@
-import { FluentIcon } from "../../icon/FluentIcon";
+import { SolarIcon } from "../../icon/SolarIcon";
 import { cn } from "../../lib/cn";
 import { Shimmer } from "../../shimmer/Shimmer";
 import { parseJsonObject } from "../common/utils";
@@ -55,7 +55,7 @@ export function ReadSkillToolUI({ msg, assistantLabel = "Assistant", assistantCo
       <ToolUiBadge show={showAvatar} label={assistantLabel} color={assistantColor} />
       <details className="group/readskill px-4 pb-2" style={{ overflowAnchor: "none" }}>
         <summary className="flex cursor-pointer list-none items-center gap-2 py-0.5 text-[14px] leading-5.5 select-none [&::-webkit-details-marker]:hidden">
-          <FluentIcon name={reference ? "document-text-24" : "book-24"} size={13} className="shrink-0 text-muted-foreground" />
+          <SolarIcon name={reference ? "document-text-linear" : "book-linear"} size={13} className="shrink-0 text-muted-foreground" />
           <Shimmer active={running} className="min-w-0 truncate font-medium text-muted-foreground">
             {verb}
             {targetLabel ? <span className="font-normal text-tertiary-foreground"> {targetLabel}</span> : null}
