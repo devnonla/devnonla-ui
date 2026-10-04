@@ -217,3 +217,5 @@ export type { TimePickerProps, TimeValue } from "./timepicker/TimePicker";
 export { TimePicker } from "./timepicker/TimePicker";
 export type { TooltipPlacement, TooltipProps } from "./tooltip/Tooltip";
 export { Tooltip } from "./tooltip/Tooltip";
+export type { TitleLevel, TypographyLinkProps, TypographyParagraphProps, TypographyProps, TypographyTextProps, TypographyTitleProps, TypographyType } from "./typography/Typography";
+export { Link, Paragraph, Text, Title, Typography } from "./typography/Typography";
