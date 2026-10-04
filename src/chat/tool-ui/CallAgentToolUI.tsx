@@ -156,7 +156,7 @@ export function CallAgentToolUI({ msg, assistantLabel = "Assistant", assistantCo
                       <p className="m-0 text-[14px] leading-[1.55] text-destructive">{parsed?.error ?? "Agent call failed"}</p>
                     ) : parsed ? (
                       <ExpandableBody>
-                        <ChatMarkdown content={parsed.response ?? "(no response)"} className="[&_p]:m-0 [&_p]:mb-0 [&_p+p]:mt-2" />
+                        <ChatMarkdown content={parsed.response ?? "(no response)"} />
                       </ExpandableBody>
                     ) : (
                       <ExpandableBody>

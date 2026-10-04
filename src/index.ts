@@ -39,13 +39,11 @@ export type {
   ChatErrorProps,
   ChatInputProps,
   ChatMarkdownProps,
-  ChatMarkdownStreamState,
   ChatThinkingProps,
   ChatToolCallProps,
   ChatToolMessage,
   ChatUserMessageProps,
   ChatWelcomeProps,
-  MermaidBlockProps,
   ToolUIProps,
 } from "./chat";
 export {
@@ -65,16 +63,11 @@ export {
   ChatToolCall,
   ChatUserMessage,
   ChatWelcome,
-  chatBodyClass,
-  chatMarkdownClass,
-  chatMarkdownComponents,
-  createChatMarkdownComponents,
   formatBgElapsed,
   formatToolName,
   GetCurrentTimeToolUI,
   isCallAgentToolName,
   isToolRunning,
-  MermaidBlock,
   matchesToolHook,
   matchesToolName,
   matchesToolUIName,
@@ -166,6 +159,10 @@ export { CONTROL_SIZES, controlHeightVar, controlRadiusVar, controlStatusClass, 
 export { glassOverlayClass, glassSurfaceClass, meadowSurfaceClass } from "./lib/surface";
 export type { MarkdownDiffLayout, MarkdownEditorMode, MarkdownEditorProps } from "./markdown-editor/MarkdownEditor";
 export { MarkdownEditor } from "./markdown-editor/MarkdownEditor";
+export type { MarkdownViewerProps } from "./markdown-editor/MarkdownViewer";
+export { MarkdownViewer } from "./markdown-editor/MarkdownViewer";
+export type { MermaidBlockProps } from "./markdown-editor/MermaidBlock";
+export { MermaidBlock } from "./markdown-editor/MermaidBlock";
 export type { MenuItemProps, MenuRootProps, MenuTriggerProps } from "./menu/Menu";
 export { Menu, MenuAction, MenuDivider, MenuItem, MenuTrigger } from "./menu/Menu";
 export type { MessageConfig, MessageType } from "./message/message";

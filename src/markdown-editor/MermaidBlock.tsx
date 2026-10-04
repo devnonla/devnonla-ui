@@ -1,9 +1,9 @@
 import { useCallback, useEffect, useId, useRef, useState, useSyncExternalStore } from "react";
-import { Button } from "../../button/Button";
-import { CodeBlock } from "../../codeblock/CodeBlock";
-import { SolarIcon } from "../../icon/SolarIcon";
-import { cn } from "../../lib/cn";
-import { getColorMode, subscribeColorMode } from "../../theme";
+import { Button } from "../button/Button";
+import { CodeBlock } from "../codeblock/CodeBlock";
+import { SolarIcon } from "../icon/SolarIcon";
+import { cn } from "../lib/cn";
+import { getColorMode, subscribeColorMode } from "../theme";
 import { sanitizeMermaid } from "./sanitizeMermaid";
 
 /** Official Mermaid palettes: `default` is light, `dark` is dark. */
@@ -198,7 +198,7 @@ export function MermaidBlock({ children, className }: MermaidBlockProps) {
 
       <dialog
         ref={dialogRef}
-        className="m-0 p-0 w-screen h-screen max-w-none max-h-none backdrop:bg-black/40 open:flex open:flex-col bg-card"
+        className="inset-2.5 m-0 h-auto w-auto max-h-none max-w-none overflow-hidden rounded-xl border border-foreground/25 bg-card p-0 shadow-xl backdrop:bg-black/40 open:flex open:flex-col"
         onClose={resetView}
         onKeyDown={(e) => {
           if (e.key !== "Escape") return;
@@ -207,14 +207,14 @@ export function MermaidBlock({ children, className }: MermaidBlockProps) {
           closeFullscreen();
         }}
       >
-        <div className="fixed top-5 right-5 z-50 flex items-center gap-1.5">
+        <div className="absolute top-5 right-5 z-50 flex items-center gap-1.5">
           <Button size="small" icon={<SolarIcon name="download-linear" size={12} />} title="Download SVG" aria-label="Download SVG" onClick={downloadSvg} disabled={!svgContent} />
           <Button size="small" icon={<SolarIcon name="minimize-linear" size={12} />} title="Exit fullscreen" onClick={closeFullscreen}>
             Exit
           </Button>
         </div>
 
-        <div className="fixed bottom-5 left-1/2 -translate-x-1/2 z-50 flex items-center gap-2 px-3 py-1.5 rounded-full border border-border text-xs text-muted-foreground shadow-md select-none bg-card">
+        <div className="absolute bottom-5 left-1/2 z-50 flex -translate-x-1/2 items-center gap-2 rounded-full border border-border bg-card px-3 py-1.5 text-xs text-muted-foreground shadow-md select-none">
           <span>{Math.round(zoom * 100)}%</span>
           {!isDefaultView ? (
             <Button type="text" size="small" onClick={resetView}>

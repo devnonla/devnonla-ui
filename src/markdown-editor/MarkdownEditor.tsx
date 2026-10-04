@@ -62,7 +62,8 @@ function useControllable<T>(value: T | undefined, defaultValue: T, onChange?: (v
  * Preview renders the document. Click a heading, list item, or paragraph to edit that text in place.
  * Mermaid fences render as diagrams and stay view only.
  * Edit is the full-file text buffer. Diff compares `original` and `value` like Monaco.
- * `readOnly` locks editing and hides the mode switcher, so preview can show a finished document.
+ * `readOnly` locks editing and hides the mode switcher.
+ * A finished document with no editor chrome uses `MarkdownViewer`.
  */
 export function MarkdownEditor({
   value: valueProp,

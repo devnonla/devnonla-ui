@@ -14,16 +14,12 @@ export type ChatAgentMessageProps = {
 };
 
 export function ChatAgentMessage({ content, children, thinking, thinkingDuration, thinkingStreaming, className }: ChatAgentMessageProps) {
-  const body = children ?? (content ? <p className="m-0 whitespace-pre-wrap wrap-break-word">{content}</p> : null);
+  const body = children ?? (content ? <p className="m-0 whitespace-pre-wrap wrap-break-word text-(length:--chat-body-size) leading-(--chat-body-leading) text-(--nonla-ink)">{content}</p> : null);
 
   return (
     <div className={cn("nonla-chat-agent mt-1", className)}>
       {thinking ? <ChatThinking thinking={thinking} duration={thinkingDuration ?? 0} streaming={thinkingStreaming} /> : null}
-      {body ? (
-        <div className="min-w-0 px-4 pb-0.5">
-          <div className="nonla-chat-body text-(length:--chat-body-size) leading-(--chat-body-leading) text-(--nonla-ink)">{body}</div>
-        </div>
-      ) : null}
+      {body ? <div className="min-w-0 px-4 pb-0.5">{body}</div> : null}
     </div>
   );
 }

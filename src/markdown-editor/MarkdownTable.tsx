@@ -1,5 +1,5 @@
 import { type ReactNode, useCallback, useRef } from "react";
-import { ButtonCopy } from "../../button/ButtonCopy";
+import { ButtonCopy } from "../button/ButtonCopy";
 
 function escapeCell(text: string): string {
   return text.replace(/\|/g, "\\|").replace(/\n+/g, "").trim();
@@ -20,7 +20,7 @@ function tableToMarkdown(table: HTMLTableElement): string {
   return [`| ${header.join(" | ")} |`, `| ${separator.join(" | ")} |`, ...body.map((row) => `| ${row.join(" | ")} |`)].join("\n");
 }
 
-export function ChatMarkdownTable({ children }: { children: ReactNode }) {
+export function MarkdownTable({ children }: { children: ReactNode }) {
   const tableRef = useRef<HTMLTableElement>(null);
 
   const getText = useCallback(() => {
