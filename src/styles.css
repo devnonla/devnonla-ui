@@ -361,29 +361,28 @@
 
 @keyframes nonla-shimmer {
   0% {
-    background-position: 100% 0;
+    background-position: 100% center;
   }
   100% {
-    background-position: -100% 0;
+    background-position: 0% center;
   }
 }
 
 .nonla-shimmer {
   display: inline-block;
-  background-image: linear-gradient(
-    90deg,
-    var(--tertiary-foreground) 0%,
-    var(--tertiary-foreground) 32%,
-    var(--foreground) 50%,
-    var(--tertiary-foreground) 68%,
-    var(--tertiary-foreground) 100%
-  );
-  background-size: 220% 100%;
+  width: fit-content;
+  max-width: 100%;
+  /* Stable muted glyphs, with a narrow highlight that travels across the letters. */
+  background-image:
+    linear-gradient(90deg, transparent calc(50% - 1em), var(--foreground) 50%, transparent calc(50% + 1em)),
+    linear-gradient(var(--tertiary-foreground), var(--tertiary-foreground));
+  background-size: 250% 100%, auto;
+  background-repeat: no-repeat;
   background-clip: text;
   -webkit-background-clip: text;
   -webkit-text-fill-color: transparent;
   color: transparent;
-  animation: nonla-shimmer 1.6s ease-in-out infinite;
+  animation: nonla-shimmer 1.8s linear infinite;
 }
 
 @media (prefers-reduced-motion: reduce) {
