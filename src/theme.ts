@@ -7,6 +7,7 @@
  *   1. CSS:  `:root { --nonla-brand: #3b82f6; }`
  *   2. JS:   `<App theme={{ colors: { brand: "#3b82f6" } }} />` or `applyNonlaTheme({ brand: "#3b82f6" })`
  * Color mode is `light` | `dark` on `<html>` (`setColorMode`, `<ThemeToggle>`). Dark is the default.
+ * `<ThemeSwitcher>` also stores `system`, which follows the OS and still paints `light` or `dark`.
  */
 
 export const NONLA_THEME_KEYS = {
@@ -155,15 +156,27 @@ export function applyNonlaTheme(theme: NonlaThemeConfig, target: HTMLElement = d
 
 export type NonlaColorMode = "light" | "dark";
 
-/** `localStorage` key written by `setColorMode`. */
+/** Stored choice. `system` follows the OS and still applies `light` or `dark` on `<html>`. */
+export type NonlaColorPreference = NonlaColorMode | "system";
+
+/** `localStorage` key written by `setColorMode` / `setColorPreference`. */
 export const NONLA_COLOR_MODE_KEY = "nonla-color-mode";
 
+const COLOR_SCHEME_QUERY = "(prefers-color-scheme: dark)";
+
 const modeListeners = new Set<() => void>();
+const preferenceListeners = new Set<() => void>();
 let colorMode: NonlaColorMode = "dark";
+let colorPreference: NonlaColorPreference = "dark";
 let colorModeReady = false;
+let schemeQuery: MediaQueryList | null = null;
 
 export function getColorMode(): NonlaColorMode {
   return colorMode;
+}
+
+export function getColorPreference(): NonlaColorPreference {
+  return colorPreference;
 }
 
 export function subscribeColorMode(listener: () => void) {
@@ -173,17 +186,66 @@ export function subscribeColorMode(listener: () => void) {
   };
 }
 
+export function subscribeColorPreference(listener: () => void) {
+  preferenceListeners.add(listener);
+  return () => {
+    preferenceListeners.delete(listener);
+  };
+}
+
 function notifyColorMode() {
   for (const listener of modeListeners) listener();
 }
 
-function readStoredColorMode(): NonlaColorMode | null {
+function notifyColorPreference() {
+  for (const listener of preferenceListeners) listener();
+}
+
+function isColorPreference(value: string | null): value is NonlaColorPreference {
+  return value === "light" || value === "dark" || value === "system";
+}
+
+function readStoredPreference(): NonlaColorPreference | null {
   if (typeof localStorage === "undefined") return null;
   try {
     const value = localStorage.getItem(NONLA_COLOR_MODE_KEY);
-    return value === "light" || value === "dark" ? value : null;
+    return isColorPreference(value) ? value : null;
   } catch {
     return null;
+  }
+}
+
+function systemColorMode(): NonlaColorMode {
+  if (typeof window === "undefined" || typeof window.matchMedia !== "function") return "dark";
+  return window.matchMedia(COLOR_SCHEME_QUERY).matches ? "dark" : "light";
+}
+
+function resolvedMode(next: NonlaColorPreference): NonlaColorMode {
+  return next === "system" ? systemColorMode() : next;
+}
+
+function onSchemeChange() {
+  if (colorPreference !== "system") return;
+  const next = systemColorMode();
+  if (typeof document === "undefined") {
+    colorMode = next;
+    notifyColorMode();
+    return;
+  }
+  applyColorMode(next);
+}
+
+function watchSystemScheme() {
+  if (typeof window === "undefined" || typeof window.matchMedia !== "function" || schemeQuery) return;
+  schemeQuery = window.matchMedia(COLOR_SCHEME_QUERY);
+  schemeQuery.addEventListener("change", onSchemeChange);
+}
+
+function rememberPreference(next: NonlaColorPreference) {
+  try {
+    localStorage.setItem(NONLA_COLOR_MODE_KEY, next);
+  } catch {
+    /* private mode */
   }
 }
 
@@ -196,28 +258,38 @@ export function applyColorMode(next: NonlaColorMode, target: HTMLElement = docum
   notifyColorMode();
 }
 
-/** Switch mode and remember it. */
-export function setColorMode(next: NonlaColorMode, target?: HTMLElement) {
+/** Switch the stored choice. `system` follows the OS and still paints `light` or `dark`. */
+export function setColorPreference(next: NonlaColorPreference, target?: HTMLElement) {
+  colorPreference = next;
+  if (next === "system") watchSystemScheme();
+  const resolved = resolvedMode(next);
   if (typeof document === "undefined") {
-    colorMode = next;
+    colorMode = resolved;
     notifyColorMode();
+    notifyColorPreference();
     return;
   }
-  applyColorMode(next, target);
+  applyColorMode(resolved, target);
   colorModeReady = true;
-  try {
-    localStorage.setItem(NONLA_COLOR_MODE_KEY, next);
-  } catch {
-    /* private mode */
-  }
+  rememberPreference(next);
+  notifyColorPreference();
 }
 
-/** Apply the saved mode once. Falls back to dark. */
+/** Switch mode and remember it. */
+export function setColorMode(next: NonlaColorMode, target?: HTMLElement) {
+  setColorPreference(next, target);
+}
+
+/** Apply the saved mode once. Falls back to dark. A stored `system` choice follows the OS. */
 export function initColorMode(target?: HTMLElement): NonlaColorMode {
   if (typeof document === "undefined") return colorMode;
   if (colorModeReady) return colorMode;
   colorModeReady = true;
   const fromClass = document.documentElement.classList.contains("light") ? "light" : document.documentElement.classList.contains("dark") ? "dark" : null;
-  applyColorMode(readStoredColorMode() ?? fromClass ?? "dark", target);
+  const next = readStoredPreference() ?? fromClass ?? "dark";
+  colorPreference = next;
+  if (next === "system") watchSystemScheme();
+  applyColorMode(resolvedMode(next), target);
+  notifyColorPreference();
   return colorMode;
 }

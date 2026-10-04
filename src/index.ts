@@ -207,8 +207,10 @@ export type {
 export { Table } from "./table/Table";
 export type { TagProps, TagVariant } from "./tag/Tag";
 export { Tag } from "./tag/Tag";
-export type { NonlaColorMode, NonlaThemeColorName, NonlaThemeColors, NonlaThemeConfig, NonlaThemeKnob, NonlaThemeKnobName, NonlaTokenSnapshot } from "./theme";
-export { applyNonlaTheme, getColorMode, getDesignToken, initColorMode, NONLA_COLOR_MODE_KEY, NONLA_THEME_KEYS, NONLA_THEME_KNOBS, setColorMode } from "./theme";
+export type { NonlaColorMode, NonlaColorPreference, NonlaThemeColorName, NonlaThemeColors, NonlaThemeConfig, NonlaThemeKnob, NonlaThemeKnobName, NonlaTokenSnapshot } from "./theme";
+export { applyNonlaTheme, getColorMode, getColorPreference, getDesignToken, initColorMode, NONLA_COLOR_MODE_KEY, NONLA_THEME_KEYS, NONLA_THEME_KNOBS, setColorMode, setColorPreference } from "./theme";
+export type { ThemeSwitcherProps } from "./theme-switcher/ThemeSwitcher";
+export { ThemeSwitcher, useColorPreference } from "./theme-switcher/ThemeSwitcher";
 export type { ThemeToggleProps } from "./theme-toggle/ThemeToggle";
 export { ThemeToggle, useColorMode } from "./theme-toggle/ThemeToggle";
 export type { TimePickerProps, TimeValue } from "./timepicker/TimePicker";
