@@ -55,7 +55,7 @@ Aliases: `xs` → small, `middle` / `medium` → default.
 
 All color lives in **`--nonla-*` knobs** (`src/styles.css`). Components never hardcode palette hex.
 
-Dark is the default (`:root` and `.dark`). `.light` is the daylight palette. `<App>` calls `initColorMode()` once and restores `localStorage` key `nonla-color-mode`, falling back to dark. Switch with `setColorMode("light" | "dark")` or `<ThemeToggle>`. To start in daylight before paint, put `class="light"` on `<html>`.
+Dark is the default (`:root` and `.dark`). `.light` is the daylight palette. `<App>` calls `initColorMode()` once and restores `localStorage` key `nonla-color-mode`, falling back to dark. Switch with `setColorMode("light" | "dark")` or `<ThemeToggle>`. `setColorPreference("light" | "dark" | "system")` and `<ThemeSwitcher>` also store `system`, which follows the OS and still paints `light` or `dark`. To start in daylight before paint, put `class="light"` on `<html>`.
 
 **Other apps** — import the CSS, then override knobs. Do not fork Button/Tag/….
 
@@ -203,6 +203,31 @@ import { MarkdownEditor, MarkdownViewer } from "devnonla-ui";
 
 <MarkdownViewer value={article} />
 <MarkdownEditor value={text} original={previous} onChange={setText} />
+```
+
+# Typography
+
+`Text`, `Title`, `Paragraph`, and `Link` share one decoration set: `type` (`secondary` | `success` | `warning` | `danger`), `disabled`, `mark`, `code`, `keyboard`, `underline`, `delete`, `strong`, and `italic`. `Title` `level` is 1–5. `Typography` groups the same pieces.
+
+```tsx
+import { Link, Paragraph, Text, Title } from "devnonla-ui";
+
+<Title level={2}>Agents</Title>
+<Paragraph>Run them on your machine.</Paragraph>
+<Text type="secondary">Updated today</Text>
+<Link href="https://nonlaagents.com">nonlaagents.com</Link>
+```
+
+# Logo
+
+`Logo` is the mark and the wordmark “Nonla Agents”. `variant` is `icon`, `text`, or `full` (default). `face` is `pixel` (default) or `jakarta`. `size` is the icon height in px (default 32). `color` recolors the mark and the wordmark; the eyes and the smile stay.
+
+```tsx
+import { Logo } from "devnonla-ui";
+
+<Logo />
+<Logo variant="icon" size={24} />
+<Logo face="jakarta" color="#181818" />
 ```
 
 # Icons

@@ -5,6 +5,24 @@ All notable changes to this project will be documented in this file.
 The format is based on [Keep a Changelog](https://keepachangelog.com/en/1.1.0/),
 and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0.html).
 
+## [0.10.0] - 2026-10-05
+
+### Added
+
+- `Logo` with `variant` (`icon` | `text` | `full`) and `face` (`pixel` | `jakarta`). `size` sets the icon height. `color` recolors the mark and the wordmark; the eyes and the smile stay.
+- `Typography`, `Text`, `Title`, `Paragraph`, and `Link`. Titles use levels 1–5. Decorations include `type`, `disabled`, `mark`, `code`, `keyboard`, `underline`, `delete`, `strong`, and `italic`.
+- `MarkdownViewer` renders markdown for reading: headings, lists, tables, code, and mermaid. Agent replies use the same view.
+- `ThemeSwitcher`, `setColorPreference`, and `getColorPreference`. The stored choice is `light`, `dark`, or `system`. `system` follows the OS and still paints `light` or `dark` on `<html>`, under the same `nonla-color-mode` key.
+
+### Changed
+
+- `.nonla-shimmer` keeps the glyphs muted and sweeps a narrow highlight across the letters.
+
+### Upgrade notes
+
+- `chatBodyClass`, `chatMarkdownClass`, `chatMarkdownComponents`, `createChatMarkdownComponents`, and `ChatMarkdownStreamState` are no longer exported. Use `ChatMarkdown` or `MarkdownViewer`. `MermaidBlock` stays exported.
+- `setColorMode("light" | "dark")` still works. A stored `system` value in `nonla-color-mode` is now valid.
+
 ## [0.9.1] - 2026-10-03
 
 ### Changed
@@ -232,6 +250,7 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 - Replace class `nonla-chat-shimmer` with `Shimmer` or `.nonla-shimmer`.
 - `resolveToolUI(toolName, extras?)` — second argument is optional; extra UIs are checked first.
 
+[0.10.0]: https://github.com/devnonla/devnonla-ui/compare/v0.9.1...v0.10.0
 [0.9.1]: https://github.com/devnonla/devnonla-ui/compare/v0.9.0...v0.9.1
 [0.9.0]: https://github.com/devnonla/devnonla-ui/compare/v0.8.0...v0.9.0
 [0.8.0]: https://github.com/devnonla/devnonla-ui/compare/v0.7.1...v0.8.0
