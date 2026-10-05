@@ -157,6 +157,8 @@ export { placementToRadix } from "./lib/placement";
 export type { CanonicalSize, ControlSize, ControlSizeTokens } from "./lib/sizes";
 export { CONTROL_SIZES, controlHeightVar, controlRadiusVar, controlStatusClass, getSizeTokens, normalizeSize, useControlSize } from "./lib/sizes";
 export { glassOverlayClass, glassSurfaceClass, meadowSurfaceClass } from "./lib/surface";
+export type { LogoFace, LogoProps, LogoVariant } from "./logo/Logo";
+export { Logo } from "./logo/Logo";
 export type { MarkdownDiffLayout, MarkdownEditorMode, MarkdownEditorProps } from "./markdown-editor/MarkdownEditor";
 export { MarkdownEditor } from "./markdown-editor/MarkdownEditor";
 export type { MarkdownViewerProps } from "./markdown-editor/MarkdownViewer";
