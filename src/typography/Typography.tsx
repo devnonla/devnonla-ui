@@ -43,7 +43,7 @@ const TITLE_CLASS: Record<TitleLevel, string> = {
   5: "text-[16px] leading-[24px] font-semibold",
 };
 
-const TITLE_SPACE = "nonla-typo mt-0 mb-[0.5em] [.nonla-typo+&]:mt-[1.2em]";
+const TITLE_SPACE = "nonla-typo m-0";
 
 function decorationLine(underline?: boolean, deleted?: boolean) {
   if (underline && deleted) return "underline line-through";
@@ -58,7 +58,7 @@ function wrapDecorations(children: ReactNode, props: Decorations) {
     node = <mark className="rounded-sm bg-[color-mix(in_oklab,var(--nonla-yellow)_40%,transparent)] px-0.5 text-inherit">{node}</mark>;
   }
   if (props.code) {
-    node = <code className="rounded-sm bg-secondary px-1 py-px font-mono text-[0.9em]">{node}</code>;
+    node = <code className="rounded-sm bg-secondary px-1 py-px font-mono text-[0.9em] shadow-button-outline">{node}</code>;
   }
   if (props.keyboard) {
     node = <kbd className="inline-block rounded-md border border-b-2 border-border bg-muted px-1.5 font-mono text-[0.85em] leading-5">{node}</kbd>;
