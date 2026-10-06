@@ -98,9 +98,9 @@ function SidebarList({
         }
         if (isGroup(item)) {
           return (
-            <div key={key} className="mb-4">
+            <div key={key} className="mb-5 last:mb-0">
               {item.label != null && item.label !== "" ? (
-                <div className={cn("px-2.5 pb-1.5 pt-2 text-[11px] font-bold uppercase tracking-wider text-quaternary-foreground", item.className)}>
+                <div className={cn("px-3 pb-2 pt-3 text-[11px] font-bold uppercase tracking-wider text-quaternary-foreground", item.className)}>
                   {item.label}
                 </div>
               ) : null}
@@ -113,9 +113,9 @@ function SidebarList({
 
         const active = selected != null && key === selected;
         const className = cn(
-          "nonla-sidebar-item flex w-full items-center gap-2.5 px-2.5 text-left text-base no-underline",
+          "nonla-sidebar-item flex w-full items-center gap-3 px-3 text-left text-[13px] font-normal no-underline",
           item.disabled ? "pointer-events-none cursor-not-allowed opacity-40" : "cursor-pointer",
-          active ? "font-medium text-foreground" : "text-foreground/80 hover:text-foreground",
+          active ? "text-foreground" : "text-foreground/80 hover:text-foreground",
           item.className,
         );
 
@@ -184,13 +184,13 @@ export function Sidebar({
     <div className={cn("flex h-full min-h-0 flex-col", className)}>
       {header}
       {searchable ? (
-        <div className={cn("shrink-0 px-3 pb-2", header ? "pt-1" : "pt-3")}>
+        <div className={cn("shrink-0 px-3 pb-3", header ? "pt-1" : "pt-3")}>
           <SearchInput size="small" wait={0} placeholder={searchPlaceholder} onChange={setQuery} />
         </div>
       ) : null}
-      <OverlayScroll className="min-h-0 flex-1" innerClassName={cn("px-2 pb-6", !searchable && !header && "pt-2")}>
+      <OverlayScroll className="min-h-0 flex-1" innerClassName={cn("px-3 pb-6", !searchable && !header && "pt-3")}>
         <nav aria-label={ariaLabel}>
-          {visible.length === 0 ? <p className="px-2 py-4 text-sm text-muted-foreground">{emptyText}</p> : <SidebarList items={visible} selected={selected} onSelect={handleSelect} />}
+          {visible.length === 0 ? <p className="px-3 py-4 text-sm text-muted-foreground">{emptyText}</p> : <SidebarList items={visible} selected={selected} onSelect={handleSelect} />}
         </nav>
       </OverlayScroll>
       {footer}
