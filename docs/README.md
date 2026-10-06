@@ -6,7 +6,9 @@ Docs for `devnonla-ui`. `/` opens Introduction. Each page is a markdown file und
 cd docs && bun run dev
 ```
 
-http://localhost:5174/
+http://localhost:5176/
+
+Published: https://devnonla.github.io/devnonla-ui/
 
 | Path | Page |
 | --- | --- |

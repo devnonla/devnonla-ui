@@ -2,8 +2,11 @@ import tailwindcss from "@tailwindcss/vite";
 import react from "@vitejs/plugin-react";
 import { defineConfig } from "vite";
 
+const pagesBase = process.env.GITHUB_PAGES === "true" ? "/devnonla-ui/" : "/";
+
 export default defineConfig({
   root: import.meta.dirname,
+  base: pagesBase,
   plugins: [tailwindcss(), react()],
   resolve: {
     alias: [

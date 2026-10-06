@@ -51,9 +51,11 @@ function AppRoutes() {
 const rootEl = document.getElementById("root");
 if (!rootEl) throw new Error("Root element not found");
 
+const basename = import.meta.env.BASE_URL.replace(/\/$/, "");
+
 createRoot(rootEl).render(
   <App>
-    <BrowserRouter>
+    <BrowserRouter basename={basename}>
       <AppRoutes />
     </BrowserRouter>
   </App>,

@@ -131,22 +131,29 @@ export function resolveLegacyPath(raw: string): string | null {
   return LEGACY_ALIASES[key] ?? null;
 }
 
+function withBase(path: string): string {
+  const base = import.meta.env.BASE_URL.replace(/\/$/, "");
+  return `${base}${path.startsWith("/") ? path : `/${path}`}`;
+}
+
 /** One-time rewrite of HashRouter bookmarks before BrowserRouter mounts. */
 export function migrateLegacyLocation() {
   const { pathname, search, hash } = window.location;
+  const base = import.meta.env.BASE_URL.replace(/\/$/, "");
+  const appPathname = base && (pathname === base || pathname.startsWith(`${base}/`)) ? pathname.slice(base.length) || "/" : pathname;
   const hashPath = hash.replace(/^#\/?/, "").replace(/\/+$/, "");
   if (hashPath) {
     const next = resolveLegacyPath(hashPath);
-    window.history.replaceState(null, "", `${next ?? "/introduction"}${search}`);
+    window.history.replaceState(null, "", `${withBase(next ?? "/introduction")}${search}`);
     return;
   }
-  const stripped = pathname.replace(/^\//, "").replace(/\/+$/, "");
+  const stripped = appPathname.replace(/^\//, "").replace(/\/+$/, "");
   if (!stripped) return;
   if (stripped === "docs" || stripped.startsWith("docs/")) {
     const rest = stripped.replace(/^docs\/?/, "");
-    window.history.replaceState(null, "", `${rest ? `/${rest}` : "/introduction"}${search}`);
+    window.history.replaceState(null, "", `${withBase(rest ? `/${rest}` : "/introduction")}${search}`);
     return;
   }
   const next = resolveLegacyPath(stripped);
-  if (next) window.history.replaceState(null, "", `${next}${search}`);
+  if (next) window.history.replaceState(null, "", `${withBase(next)}${search}`);
 }
