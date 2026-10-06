@@ -4,7 +4,7 @@ import type { ControlSize } from "../lib/sizes";
 import { controlHeightVar, controlRadiusVar, getSizeTokens, useControlSize } from "../lib/sizes";
 
 export type ButtonType = "default" | "primary" | "dashed" | "link" | "text";
-export type ButtonVariant = "outlined" | "dashed" | "solid" | "filled" | "text" | "link";
+export type ButtonVariant = "outlined" | "dashed" | "solid" | "filled" | "text" | "link" | "nostyle";
 export type ButtonShape = "default" | "circle" | "round" | "square";
 export type ButtonHtmlType = "submit" | "button" | "reset";
 export type ButtonSize = ControlSize;
@@ -56,6 +56,7 @@ function isButtonType(value: unknown): value is ButtonType {
 }
 
 function resolveTone(type: ButtonType | undefined, color: ButtonColor | undefined, variant: ButtonVariant | undefined, danger: boolean): [ButtonColor, ButtonVariant] {
+  if (variant === "nostyle") return ["default", "nostyle"];
   if (color && variant) return [danger ? "danger" : color, variant];
   if (type || danger) {
     const pair = TYPE_MAP[isButtonType(type) ? type : "default"];
@@ -71,6 +72,7 @@ const TWO_CN = /^[\u4e00-\u9fa5]{2}$/;
 const GroupSizeContext = createContext<ButtonSize | undefined>(undefined);
 
 function tokenAppearance(color: "default" | "primary" | "danger" | "link", variant: ButtonVariant, ghost: boolean): string {
+  if (variant === "nostyle") return "";
   const g = ghost && variant !== "text" && variant !== "link";
   if (color === "primary") {
     if (variant === "solid" && !g) return "border-transparent bg-brand text-[var(--nonla-solid-fg)] hover:bg-[color-mix(in_oklab,var(--brand),var(--background)_14%)] active:bg-[color-mix(in_oklab,var(--brand),black_18%)]";
@@ -94,6 +96,7 @@ function tokenAppearance(color: "default" | "primary" | "danger" | "link", varia
 }
 
 function presetAppearance(variant: ButtonVariant, ghost: boolean): string {
+  if (variant === "nostyle") return "";
   const g = ghost && variant !== "text" && variant !== "link";
   if (variant === "solid" && !g) return "bg-(--nonla-btn) text-[var(--nonla-solid-fg)] border-transparent hover:brightness-110";
   if (variant === "filled") return "bg-(--nonla-btn)/15 text-(--nonla-btn) border-transparent hover:bg-(--nonla-btn)/25";
@@ -196,22 +199,24 @@ const ButtonInner = forwardRef<HTMLButtonElement | HTMLAnchorElement, ButtonProp
 
   const iconNode = innerLoading ? typeof loading === "object" && loading.icon ? loading.icon : <LoadingDot size={tok.icon} /> : icon;
   const showIcon = Boolean(iconNode);
+  const bare = mergedVariant === "nostyle";
   const radius = shape === "circle" || shape === "round" ? 9999 : shape === "square" ? 4 : controlRadiusVar(size);
-  const appearance = preset ? presetAppearance(mergedVariant, ghost) : tokenAppearance(mergedColor as "default" | "primary" | "danger" | "link", mergedVariant, ghost);
-  const bordered = mergedVariant !== "text" && mergedVariant !== "link";
+  const appearance = bare ? "" : preset ? presetAppearance(mergedVariant, ghost) : tokenAppearance(mergedColor as "default" | "primary" | "danger" | "link", mergedVariant, ghost);
+  const bordered = !bare && mergedVariant !== "text" && mergedVariant !== "link";
 
   const padText = tok.paddingInline;
   const paddingLeft = iconOnly ? 0 : showIcon && placement === "start" ? tok.paddingInlineIconStart : padText;
   const paddingRight = iconOnly ? 0 : showIcon && placement === "end" ? tok.paddingInlineIconEnd : padText;
 
   const rootClass = cn(
-    "inline-flex items-center justify-center gap-2 font-normal whitespace-nowrap select-none cursor-pointer border border-solid transition-colors duration-150",
-    "focus-visible:outline-none",
-    "disabled:cursor-not-allowed disabled:opacity-45",
-    bordered ? "border" : "border-transparent",
+    bare
+      ? "inline-flex items-center justify-center gap-2 cursor-pointer border-0 bg-transparent px-0 py-0 text-inherit rounded-none disabled:cursor-not-allowed"
+      : "inline-flex items-center justify-center gap-2 font-normal whitespace-nowrap select-none cursor-pointer border border-solid transition-colors duration-150 focus-visible:outline-none disabled:cursor-not-allowed disabled:opacity-45",
+    !bare && (bordered ? "border" : "border-transparent"),
     appearance,
     block && "flex w-full",
-    innerLoading && "pointer-events-none opacity-80",
+    innerLoading && "pointer-events-none",
+    !bare && innerLoading && "opacity-80",
     placement === "end" && "flex-row-reverse",
     prefixCls,
     className,
@@ -220,18 +225,20 @@ const ButtonInner = forwardRef<HTMLButtonElement | HTMLAnchorElement, ButtonProp
   );
 
   const boxH = controlHeightVar(size);
-  const mergedStyle: CSSProperties = {
-    height: boxH,
-    width: iconOnly ? boxH : undefined,
-    fontSize: tok.fontSize,
-    lineHeight: `${tok.lineHeight}px`,
-    paddingLeft,
-    paddingRight,
-    borderRadius: radius,
-    ...(preset ? ({ "--nonla-btn": `var(--nonla-${mergedColor})` } as CSSProperties) : null),
-    ...styles?.root,
-    ...style,
-  };
+  const mergedStyle: CSSProperties = bare
+    ? { ...styles?.root, ...style }
+    : {
+        height: boxH,
+        width: iconOnly ? boxH : undefined,
+        fontSize: tok.fontSize,
+        lineHeight: `${tok.lineHeight}px`,
+        paddingLeft,
+        paddingRight,
+        borderRadius: radius,
+        ...(preset ? ({ "--nonla-btn": `var(--nonla-${mergedColor})` } as CSSProperties) : null),
+        ...styles?.root,
+        ...style,
+      };
 
   const handleClick = (e: MouseEvent<HTMLButtonElement | HTMLAnchorElement>) => {
     if (innerLoading || disabled) {
@@ -244,7 +251,7 @@ const ButtonInner = forwardRef<HTMLButtonElement | HTMLAnchorElement, ButtonProp
   const inner = (
     <>
       {showIcon ? (
-        <span className={cn("relative z-10 inline-flex shrink-0 items-center justify-center [&_svg]:size-full", classNames?.icon)} style={{ width: tok.icon, height: tok.icon, ...styles?.icon }}>
+        <span className={cn("relative z-10 inline-flex shrink-0 items-center justify-center", !bare && "[&_svg]:size-full", classNames?.icon)} style={bare ? styles?.icon : { width: tok.icon, height: tok.icon, ...styles?.icon }}>
           {iconNode}
         </span>
       ) : null}
