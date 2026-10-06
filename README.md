@@ -205,6 +205,32 @@ import { MarkdownEditor, MarkdownViewer } from "devnonla-ui";
 <MarkdownEditor value={text} original={previous} onChange={setText} />
 ```
 
+## Live React in markdown
+
+A `live-react` fence exports a default component and renders it above its source. It is off unless you opt in.
+
+- **Markdown from users or agents:** pass `sandboxSrc`. The fence runs in an iframe with `sandbox="allow-scripts"` and no `allow-same-origin`, so it cannot reach the page's cookies, storage, or DOM. `sandboxSrc` is a page you host on its own origin that calls `mountReactCodeRunner`; its `modules` are the only imports markdown gets.
+- **Markdown you wrote:** pass `trustedModules`. The fence runs in your page with full access. Never use it for content someone else can write.
+
+```tsx
+// sandbox page
+import * as ui from "devnonla-ui";
+import { mountReactCodeRunner } from "devnonla-ui";
+
+mountReactCodeRunner(document.getElementById("root")!, { "devnonla-ui": ui });
+
+// app
+<MarkdownViewer value={article} sandboxSrc="https://sandbox.example.com/runner.html" />
+```
+
+Outside markdown, use the pieces directly. `ReactCodeSandbox` takes `code` and `src` and renders the same framed result with a Code tab. `ReactCode` is the in-page version for source you wrote. `ReactCodeFrame` is the header and tab box, if you want to wrap your own result.
+
+```tsx
+<ReactCodeSandbox code={source} src="https://sandbox.example.com/runner.html" />
+```
+
+Serve the runner page with `Content-Security-Policy: connect-src 'none'` and `Access-Control-Allow-Origin: *` on its assets, since a sandboxed frame loads them cross-origin.
+
 # Typography
 
 `Text`, `Title`, `Paragraph`, and `Link` share one decoration set: `type` (`secondary` | `success` | `warning` | `danger`), `disabled`, `mark`, `code`, `keyboard`, `underline`, `delete`, `strong`, and `italic`. `Title` `level` is 1–5. `Typography` groups the same pieces.

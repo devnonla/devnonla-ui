@@ -5,6 +5,15 @@ All notable changes to this project will be documented in this file.
 The format is based on [Keep a Changelog](https://keepachangelog.com/en/1.1.0/),
 and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0.html).
 
+## [Unreleased]
+
+### Added
+
+- `MarkdownViewer` runs `live-react` fences. Use `sandboxSrc` for markdown written by users or agents: the fence runs in an iframe with `sandbox="allow-scripts"`, so it cannot read the page's cookies, storage, or DOM. The frame is removed if it does not start, errors, or does not render in time. Use `trustedModules` only for markdown you wrote. It runs in the page itself.
+- `mountReactCodeRunner` is the runner side of the sandbox. Call it from the page `sandboxSrc` points to. `ReactCodeSandbox`, `ReactCode`, and `ReactCodeFrame` are exported for direct use outside markdown.
+- `live-react` results show a `Sandbox` or `Live` header. `showHeader={false}` on `MarkdownViewer`, `ReactCode`, or `ReactCodeSandbox` shows the result inline instead. The header has a `Preview` / `Code` tab for the source. `showCode={false}` removes the Code tab.
+- A `live-react` fence runs only once its closing line is written, so a streaming reply never runs half a block.
+
 ## [0.10.0] - 2026-10-05
 
 ### Added
