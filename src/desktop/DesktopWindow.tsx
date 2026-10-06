@@ -4,7 +4,7 @@ import { cn } from "../lib/cn";
 import { glassSurfaceClass } from "../lib/surface";
 import { OverlayScroll, type OverlayScrollVisibility } from "../scroll/OverlayScroll";
 
-type Phase = "open" | "leaving";
+type Phase = "enter" | "open" | "leaving";
 type Size = { w: number; h: number };
 type Point = { x: number; y: number };
 type Rect = { x: number; y: number; w: number; h: number };
@@ -41,11 +41,11 @@ function hasOpenDialog() {
   return Boolean(document.querySelector('dialog[open], [role="dialog"][data-state="open"], .nonla-modal-content'));
 }
 
-function originFromActiveIcon(overlay: HTMLElement, frame: HTMLElement) {
-  const source = document.querySelector('[aria-current="true"]');
-  if (!(source instanceof HTMLElement)) return "50% 50%";
+function zoomOrigin(overlay: HTMLElement, frame: HTMLElement, source: HTMLElement | null) {
+  const from = source ?? document.querySelector('[aria-current="true"]');
+  if (!(from instanceof HTMLElement)) return "50% 50%";
 
-  const icon = source.getBoundingClientRect();
+  const icon = from.getBoundingClientRect();
   const overlayBox = overlay.getBoundingClientRect();
   const x = icon.left + icon.width / 2 - overlayBox.left - frame.offsetLeft;
   const y = icon.top + icon.height / 2 - overlayBox.top - frame.offsetTop;
@@ -317,6 +317,10 @@ export type DesktopWindowProps = {
   scrollbar?: OverlayScrollVisibility;
   /** Last collapsed position and size. Default `"default"`. Pass a unique key per window, or `false` to disable. */
   persistKey?: string | false;
+  /** Zoom from this element on open, and back to it on close. Falls back to the active desktop icon. */
+  origin?: { current: HTMLElement | null };
+  /** Animated close. Call this instead of unmounting so the window shrinks back to `origin`. */
+  closeRef?: { current: (() => void) | null };
   children: ReactNode;
 };
 
@@ -331,6 +335,8 @@ export function DesktopWindow({
   scroll = true,
   scrollbar = "hover",
   persistKey = "default",
+  origin,
+  closeRef,
   children,
 }: DesktopWindowProps) {
   const overlayRef = useRef<HTMLDivElement>(null);
@@ -351,7 +357,7 @@ export function DesktopWindow({
     startY: number;
     orig: Rect;
   } | null>(null);
-  const [phase, setPhase] = useState<Phase>("open");
+  const [phase, setPhase] = useState<Phase>(() => (prefersReducedMotion() ? "open" : "enter"));
   const [view, setView] = useState<Size>(initialView);
   const [offset, setOffset] = useState(() => restoreGeometry(persistKey, initialView()).offset);
   const [size, setSize] = useState<Size | null>(() => restoreGeometry(persistKey, initialView()).size);
@@ -371,13 +377,30 @@ export function DesktopWindow({
   viewRef.current = view;
   offsetRef.current = offset;
 
-  useLayoutEffect(() => {
+  const applyOrigin = () => {
     const overlay = overlayRef.current;
     const frame = frameRef.current;
-    if (overlay && frame) {
-      frame.style.transformOrigin = originFromActiveIcon(overlay, frame);
-    }
+    if (!overlay || !frame) return;
+    frame.style.transformOrigin = zoomOrigin(overlay, frame, origin?.current ?? null);
+  };
+
+  useLayoutEffect(() => {
+    applyOrigin();
   }, []);
+
+  useEffect(() => {
+    if (phase !== "enter") return;
+    const id = requestAnimationFrame(() => setPhase("open"));
+    return () => cancelAnimationFrame(id);
+  }, [phase]);
+
+  useLayoutEffect(() => {
+    if (!closeRef) return;
+    closeRef.current = () => requestCloseRef.current();
+    return () => {
+      closeRef.current = null;
+    };
+  });
 
   const requestClose = () => {
     if (closedRef.current || phase === "leaving") return;
@@ -386,6 +409,7 @@ export function DesktopWindow({
       onClose();
       return;
     }
+    applyOrigin();
     setPhase("leaving");
   };
   requestCloseRef.current = requestClose;
@@ -571,13 +595,13 @@ export function DesktopWindow({
     onToggleExpand();
   };
 
-  const visible = phase === "open";
+  const shown = phase === "open";
   const leaving = phase === "leaving";
   const rect = expanded ? { x: 0, y: 0, w: view.w, h: view.h } : collapsedRect(view, offset, size);
   const reduce = prefersReducedMotion();
   const duration = reduce ? "150ms" : "300ms";
-  const geom = !dragging && !resizing && !leaving && !reduce ? `top ${duration} ${EASE}, left ${duration} ${EASE}, width ${duration} ${EASE}, height ${duration} ${EASE}` : "";
-  const fade = leaving && !reduce ? `opacity ${duration} ${EASE}, transform ${duration} ${EASE}` : "";
+  const geom = phase === "open" && !dragging && !resizing && !reduce ? `top ${duration} ${EASE}, left ${duration} ${EASE}, width ${duration} ${EASE}, height ${duration} ${EASE}` : "";
+  const zoom = !dragging && !resizing && !reduce ? `opacity ${duration} ${EASE}, transform ${duration} ${EASE}` : "";
 
   return (
     <WindowHeaderSlotContext.Provider value={headerChrome}>
@@ -598,12 +622,12 @@ export function DesktopWindow({
             left: rect.x,
             width: rect.w,
             height: rect.h,
-            opacity: visible ? 1 : 0,
-            transform: visible ? "scale(1)" : "scale(0.18)",
-            transition: [geom, fade].filter(Boolean).join(", ") || undefined,
+            opacity: shown ? 1 : 0,
+            transform: shown ? "scale(1)" : "scale(0.18)",
+            transition: [geom, zoom].filter(Boolean).join(", ") || undefined,
           }}
           data-expanded={expanded || undefined}
-          className={cn("absolute flex flex-col rounded-xl pointer-events-auto transform-gpu", glassSurfaceClass, "nonla-window-glass", leaving && "pointer-events-none")}
+          className={cn("absolute flex flex-col rounded-xl pointer-events-auto transform-gpu", glassSurfaceClass, "nonla-window-glass", phase !== "open" && "pointer-events-none")}
         >
           <div className="relative flex min-h-0 flex-1 flex-col overflow-hidden rounded-xl">
             {header ? (
