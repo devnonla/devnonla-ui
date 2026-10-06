@@ -17,6 +17,7 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 
 ### Changed
 
+- `Logo` wordmark is K2D regular, drawn as SVG outlines. The `face` prop and the pixel wordmark are gone.
 - `ChatWelcome` shows `AgentAvatar` as the default avatar, in place of the initial in a circle. A custom `avatar` still replaces it.
 
 ### Fixed
@@ -25,6 +26,7 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 
 ### Upgrade notes
 
+- Remove `face` from `Logo`. The wordmark is an SVG, not a live font.
 - New dependency: `sucrase` (installed with `devnonla-ui`). Nothing to change if you don't use `live-react`.
 - `live-react` is off unless you pass `sandboxSrc` or `trustedModules`. Without either, the fence renders as a normal code block. Use `trustedModules` only for markdown you wrote.
 

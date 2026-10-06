@@ -1,0 +1,11 @@
+@import "tailwindcss";
+@import "@nonla-agents/ui/styles.css";
+@source "../src";
+@source "./**/*.tsx";
+@source "./**/*.md";
+
+html,
+body,
+#root {
+  height: 100%;
+}

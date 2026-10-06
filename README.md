@@ -246,14 +246,14 @@ import { Link, Paragraph, Text, Title } from "devnonla-ui";
 
 # Logo
 
-`Logo` is the mark and the wordmark “Nonla Agents”. `variant` is `icon`, `text`, or `full` (default). `face` is `pixel` (default) or `jakarta`. `size` is the icon height in px (default 32). `color` recolors the mark and the wordmark; the eyes and the smile stay.
+`Logo` is the mark and the wordmark “Nonla Agents”. The wordmark is K2D regular, drawn as SVG outlines. `variant` is `icon`, `text`, or `full` (default). `size` is the icon height in px (default 32). `color` recolors the mark and the wordmark; the eyes and the smile stay.
 
 ```tsx
 import { Logo } from "devnonla-ui";
 
 <Logo />
 <Logo variant="icon" size={24} />
-<Logo face="jakarta" color="#181818" />
+<Logo color="#181818" />
 ```
 
 # Icons

@@ -29,7 +29,8 @@
     "src"
   ],
   "scripts": {
-    "typecheck": "tsc --noEmit"
+    "typecheck": "tsc --noEmit",
+    "docs": "bun --cwd docs run dev"
   },
   "peerDependencies": {
     "react": ">=19",

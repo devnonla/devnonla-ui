@@ -1,0 +1,13 @@
+@import "./index.css";
+
+/* The frame reports its content height, so the root must not fill the frame. */
+html,
+body,
+#root {
+  height: auto;
+  background: var(--background);
+}
+
+body {
+  margin: 0;
+}

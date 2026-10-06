@@ -1,0 +1,33 @@
+import tailwindcss from "@tailwindcss/vite";
+import react from "@vitejs/plugin-react";
+import { defineConfig } from "vite";
+
+export default defineConfig({
+  root: import.meta.dirname,
+  plugins: [tailwindcss(), react()],
+  resolve: {
+    alias: [
+      {
+        find: /^@nonla-agents\/ui$/,
+        replacement: `${import.meta.dirname}/../src/index.ts`,
+      },
+      {
+        find: "@nonla-agents/ui/styles.css",
+        replacement: `${import.meta.dirname}/../src/styles.css`,
+      },
+      {
+        find: "@iconify-json/solar",
+        replacement: `${import.meta.dirname}/../node_modules/@iconify-json/solar`,
+      },
+    ],
+  },
+  server: {
+    port: 5176,
+    open: false,
+    // The live-react sandbox frame has an opaque ("null") origin and loads modules cross-origin.
+    cors: { origin: [/^https?:\/\/(localhost|127\.0\.0\.1)(:\d+)?$/, "null"] },
+    fs: {
+      allow: [import.meta.dirname, `${import.meta.dirname}/..`],
+    },
+  },
+});
