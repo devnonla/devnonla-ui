@@ -1,4 +1,5 @@
 import type { ReactNode } from "react";
+import { AgentAvatar } from "../../avatar/AgentAvatar";
 import { Button } from "../../button/Button";
 import { cn } from "../../lib/cn";
 
@@ -16,12 +17,7 @@ export type ChatWelcomeProps = {
 const DEFAULT_STARTERS = ["What can you help me with?", "Brainstorm a few ideas with me", "Walk me through how you work"] as const;
 
 function DefaultAvatar({ name }: { name: string }) {
-  const initial = (name.trim()[0] ?? "?").toUpperCase();
-  return (
-    <div className="flex size-16 items-center justify-center rounded-full bg-brand/20 text-xl font-semibold text-brand-700" aria-hidden>
-      {initial}
-    </div>
-  );
+  return <AgentAvatar size={72} label={name} />;
 }
 
 export function ChatWelcome({ name, description, avatar, starters = [...DEFAULT_STARTERS], onStarter, disabled, className }: ChatWelcomeProps) {
@@ -29,23 +25,7 @@ export function ChatWelcome({ name, description, avatar, starters = [...DEFAULT_
 
   return (
     <div className={cn("nonla-chat-welcome flex flex-col items-center justify-center min-h-full w-full px-6 py-10 text-center", className)}>
-      <div className="relative mb-5">
-        <div
-          aria-hidden
-          className="pointer-events-none absolute left-1/2 top-1/2 size-28 -translate-x-1/2 -translate-y-1/2 rounded-full"
-          style={{
-            background: "radial-gradient(circle, color-mix(in oklab, var(--brand) 28%, transparent) 0%, transparent 70%)",
-          }}
-        />
-        <div
-          className="relative rounded-full p-0.5"
-          style={{
-            background: "linear-gradient(145deg, color-mix(in oklab, var(--brand-600) 55%, transparent), transparent 60%)",
-          }}
-        >
-          <div className="rounded-full bg-popover p-0.5">{avatar ?? <DefaultAvatar name={name} />}</div>
-        </div>
-      </div>
+      <div className="mb-5">{avatar ?? <DefaultAvatar name={name} />}</div>
 
       <h2 className="m-0 text-[22px] font-semibold tracking-tight text-foreground leading-snug">Hi, I&apos;m {name}</h2>
 
