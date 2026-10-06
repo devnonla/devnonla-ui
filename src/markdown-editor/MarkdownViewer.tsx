@@ -11,13 +11,13 @@ import { ReactCode } from "./ReactCode";
 import { ReactCodeSandbox } from "./ReactCodeSandbox";
 
 const documentClass = cn(
-  "min-w-0 wrap-anywhere text-[15px] leading-7 text-foreground",
+  "min-w-0 wrap-anywhere text-[14px] leading-[22px] text-foreground",
   "[&_h1]:my-0 [&_h1]:text-[32px] [&_h1]:leading-tight [&_h1]:font-bold [&_h1]:tracking-tight",
   "[&_h2]:my-0 [&_h2]:text-[24px] [&_h2]:leading-tight [&_h2]:font-bold [&_h2]:tracking-tight",
   "[&_h3]:my-0 [&_h3]:text-[20px] [&_h3]:leading-snug [&_h3]:font-semibold",
   "[&_h4]:my-0 [&_h4]:text-[18px] [&_h4]:leading-snug [&_h4]:font-semibold",
   "[&_h5]:my-0 [&_h5]:text-[16px] [&_h5]:leading-snug [&_h5]:font-semibold",
-  "[&_h6]:my-0 [&_h6]:text-[15px] [&_h6]:leading-snug [&_h6]:font-semibold",
+  "[&_h6]:my-0 [&_h6]:text-[14px] [&_h6]:leading-snug [&_h6]:font-semibold",
   "[&_p]:my-0",
   "[&_ul]:my-1 [&_ul]:list-disc [&_ul]:pl-6",
   "[&_ol]:my-1 [&_ol]:list-decimal [&_ol]:pl-6",
@@ -39,7 +39,7 @@ const previewComponents: Components = {
     const codeText = String(children).replace(/\n$/, "");
     const isBlock = codeText.includes("\n") || !!match;
     if (!isBlock) {
-      return <code className="rounded-sm bg-secondary px-1 py-0.5 font-mono text-[0.9em]">{children}</code>;
+      return <code className="rounded-sm bg-secondary px-1 py-0.5 font-mono text-[0.9em] shadow-button-outline">{children}</code>;
     }
     if (lang.toLowerCase() === "mermaid") return <MermaidView code={codeText} />;
     return <CodeBlock code={codeText} language={lang || undefined} className="my-2" />;
@@ -57,7 +57,7 @@ const previewComponents: Components = {
   input({ type, checked }) {
     if (type !== "checkbox") return <input type={type} checked={checked} readOnly />;
     return (
-      <span className="nonla-md-task-check pointer-events-none inline-flex h-7 items-center">
+      <span className="nonla-md-task-check pointer-events-none inline-flex h-[22px] items-center">
         <Checkbox checked={Boolean(checked)} tabIndex={-1} />
       </span>
     );
@@ -77,7 +77,7 @@ export function headingClass(level: number): string {
   if (level === 3) return "text-[20px] font-semibold leading-snug";
   if (level === 4) return "text-[18px] font-semibold leading-snug";
   if (level === 5) return "text-[16px] font-semibold leading-snug";
-  return "text-[15px] font-semibold leading-snug";
+  return "text-[14px] font-semibold leading-snug";
 }
 
 type MdNode = {
@@ -139,13 +139,13 @@ export function ListItem({ view, children }: { view: Extract<InlineEdit, { kind:
   return (
     <div className="flex items-start gap-1.5" style={level > 0 ? { marginLeft: `${level * 1.25}rem` } : undefined}>
       {view.task ? (
-        <span className="pointer-events-none inline-flex h-7 w-5 shrink-0 items-center justify-center">
+        <span className="pointer-events-none inline-flex h-[22px] w-5 shrink-0 items-center justify-center">
           <Checkbox checked={view.checked} tabIndex={-1} />
         </span>
       ) : view.ordered ? (
-        <span className="w-6 shrink-0 text-right text-[15px] leading-7 tabular-nums">{ordinal}.</span>
+        <span className="w-6 shrink-0 text-right text-[14px] leading-[22px] tabular-nums">{ordinal}.</span>
       ) : (
-        <span className="flex h-7 w-5 shrink-0 items-center justify-center" aria-hidden>
+        <span className="flex h-[22px] w-5 shrink-0 items-center justify-center" aria-hidden>
           <span className="size-1.5 rounded-full bg-current" />
         </span>
       )}

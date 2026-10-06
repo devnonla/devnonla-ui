@@ -57,7 +57,7 @@ function BlockEditor({ value, mono, className, caret = "end", onChange, onBlur, 
         });
       }}
       className={cn(
-        "block w-full resize-none overflow-hidden border-0 bg-transparent p-0 text-[15px] leading-7 text-foreground shadow-none outline-none ring-0 placeholder:text-placeholder focus:outline-none focus:ring-0",
+        "block w-full resize-none overflow-hidden border-0 bg-transparent p-0 text-[14px] leading-[22px] text-foreground shadow-none outline-none ring-0 placeholder:text-placeholder focus:outline-none focus:ring-0",
         mono && "font-mono text-[13px] leading-5",
         className,
       )}
