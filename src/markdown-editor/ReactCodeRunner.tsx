@@ -35,12 +35,14 @@ export function mountReactCodeRunner(root: HTMLElement, modules: Record<string, 
   const reactRoot = createRoot(root);
   const report: Report = (message) => window.parent.postMessage({ source: REACT_CODE_SOURCE, ...message }, "*");
 
+  let waitingForRun = true;
   const onMessage = (event: MessageEvent) => {
     if (event.source !== window.parent) return;
     const msg = readHostMessage(event.data);
     if (!msg) return;
     applyColorMode(msg.mode);
     if (msg.type === "mode") return;
+    waitingForRun = false;
     try {
       const Demo = compileReactCode(msg.code, modules);
       flushSync(() =>
@@ -64,8 +66,15 @@ export function mountReactCodeRunner(root: HTMLElement, modules: Record<string, 
 
   window.addEventListener("message", onMessage);
   report({ type: "ready" });
+  // Host effect may miss the first ping (React Strict Mode remounts the listener).
+  const readyBeat = window.setInterval(() => {
+    if (waitingForRun) report({ type: "ready" });
+    else window.clearInterval(readyBeat);
+  }, 250);
 
   return () => {
+    waitingForRun = false;
+    window.clearInterval(readyBeat);
     window.removeEventListener("message", onMessage);
     observer.disconnect();
     reactRoot.unmount();
