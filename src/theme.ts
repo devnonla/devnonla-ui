@@ -206,8 +206,8 @@ function isColorPreference(value: string | null): value is NonlaColorPreference 
 }
 
 function readStoredPreference(): NonlaColorPreference | null {
-  if (typeof localStorage === "undefined") return null;
   try {
+    // Sandboxed iframes throw on the property access itself, before getItem.
     const value = localStorage.getItem(NONLA_COLOR_MODE_KEY);
     return isColorPreference(value) ? value : null;
   } catch {

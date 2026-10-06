@@ -20,16 +20,14 @@ export type AppProps = {
 
 /** Root host for NonlaUI — ConfigProvider + message/modal holders. Mount once near app root. */
 export function App({ children, getPopupContainer, componentSize, theme }: AppProps) {
+  // Before children paint, so a sandbox iframe can open on the saved mode instead of flashing the default.
+  initColorMode();
   const [themeRev, setThemeRev] = useState(0);
   const size = componentSize ? normalizeSize(componentSize) : undefined;
   const value = useMemo<NonlaAppConfig>(
     () => ({ getPopupContainer, componentSize: size, themeRev }),
     [getPopupContainer, size, themeRev],
   );
-
-  useLayoutEffect(() => {
-    initColorMode();
-  }, []);
 
   useLayoutEffect(() => {
     if (!theme) return;
