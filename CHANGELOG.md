@@ -5,14 +5,28 @@ All notable changes to this project will be documented in this file.
 The format is based on [Keep a Changelog](https://keepachangelog.com/en/1.1.0/),
 and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0.html).
 
-## [Unreleased]
+## [0.11.0] - 2026-10-06
 
 ### Added
 
+- `AgentAvatar`: a small animated character made of a shape and two eyes. `config` sets `shape` and `color` (options in `AGENT_AVATAR_PARTS`). `size` is in px. `motion` is `still` or `idle`; `idle` looks around and blinks. `look` turns the face to a fixed direction.
 - `MarkdownViewer` runs `live-react` fences. Use `sandboxSrc` for markdown written by users or agents: the fence runs in an iframe with `sandbox="allow-scripts"`, so it cannot read the page's cookies, storage, or DOM. The frame is removed if it does not start, errors, or does not render in time. Use `trustedModules` only for markdown you wrote. It runs in the page itself.
 - `mountReactCodeRunner` is the runner side of the sandbox. Call it from the page `sandboxSrc` points to. `ReactCodeSandbox`, `ReactCode`, and `ReactCodeFrame` are exported for direct use outside markdown.
 - `live-react` results show a `Sandbox` or `Live` header. `showHeader={false}` on `MarkdownViewer`, `ReactCode`, or `ReactCodeSandbox` shows the result inline instead. The header has a `Preview` / `Code` tab for the source. `showCode={false}` removes the Code tab.
 - A `live-react` fence runs only once its closing line is written, so a streaming reply never runs half a block.
+
+### Changed
+
+- `ChatWelcome` shows `AgentAvatar` as the default avatar, in place of the initial in a circle. A custom `avatar` still replaces it.
+
+### Fixed
+
+- Markdown tables cap cell width at 360px and wrap long text inside the cell, so one long line no longer stretches the table.
+
+### Upgrade notes
+
+- New dependency: `sucrase` (installed with `devnonla-ui`). Nothing to change if you don't use `live-react`.
+- `live-react` is off unless you pass `sandboxSrc` or `trustedModules`. Without either, the fence renders as a normal code block. Use `trustedModules` only for markdown you wrote.
 
 ## [0.10.0] - 2026-10-05
 
@@ -259,6 +273,7 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 - Replace class `nonla-chat-shimmer` with `Shimmer` or `.nonla-shimmer`.
 - `resolveToolUI(toolName, extras?)` — second argument is optional; extra UIs are checked first.
 
+[0.11.0]: https://github.com/devnonla/devnonla-ui/compare/v0.10.0...v0.11.0
 [0.10.0]: https://github.com/devnonla/devnonla-ui/compare/v0.9.1...v0.10.0
 [0.9.1]: https://github.com/devnonla/devnonla-ui/compare/v0.9.0...v0.9.1
 [0.9.0]: https://github.com/devnonla/devnonla-ui/compare/v0.8.0...v0.9.0
