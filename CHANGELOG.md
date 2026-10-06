@@ -5,6 +5,32 @@ All notable changes to this project will be documented in this file.
 The format is based on [Keep a Changelog](https://keepachangelog.com/en/1.1.0/),
 and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0.html).
 
+## [0.12.0] - 2026-10-06
+
+### Added
+
+- `Button` `variant="nostyle"` drops the border, fill, padding, height, and icon box so you can style the control yourself.
+- `DesktopWindow` `origin` is an element ref. The window zooms from that element on open and back to it on close. Without it, the zoom uses the active desktop icon.
+- `DesktopWindow` `closeRef` receives a close function. Call it instead of unmounting so the window can shrink back to `origin`.
+
+### Changed
+
+- `Logo` wordmark is K2D regular, drawn as SVG outlines. The `face` prop and the pixel wordmark are gone. `LogoFace` is no longer exported.
+- `DesktopWindow` opens with a short zoom. Reduced motion skips it.
+- `MarkdownViewer` and the markdown preview body are 14px with 22px line height. H6 is 14px. Inline code has a hairline outline, and task rows match the line height.
+- `Title` no longer adds space above and below. Spacing is up to the parent. Inline `code` on `Text` and `Title` has a hairline outline.
+- Sidebar items are 13px with more padding. Group labels sit a little farther apart.
+
+### Fixed
+
+- Color mode is applied before the first paint, so a sandbox iframe opens on the saved mode.
+- Reading the stored color preference no longer throws inside a sandboxed iframe.
+- A `live-react` sandbox keeps the frame after a slow start. The runner URL includes `?mode=light|dark`, a missed `ready` message is retried, and a timeout no longer replaces a preview that already painted.
+
+### Upgrade notes
+
+- Remove `face` from `Logo`. Drop the `LogoFace` import. The wordmark is an SVG, not a live font.
+
 ## [0.11.0] - 2026-10-06
 
 ### Added
@@ -17,7 +43,6 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 
 ### Changed
 
-- `Logo` wordmark is K2D regular, drawn as SVG outlines. The `face` prop and the pixel wordmark are gone.
 - `ChatWelcome` shows `AgentAvatar` as the default avatar, in place of the initial in a circle. A custom `avatar` still replaces it.
 
 ### Fixed
@@ -26,7 +51,6 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 
 ### Upgrade notes
 
-- Remove `face` from `Logo`. The wordmark is an SVG, not a live font.
 - New dependency: `sucrase` (installed with `devnonla-ui`). Nothing to change if you don't use `live-react`.
 - `live-react` is off unless you pass `sandboxSrc` or `trustedModules`. Without either, the fence renders as a normal code block. Use `trustedModules` only for markdown you wrote.
 
@@ -275,6 +299,7 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 - Replace class `nonla-chat-shimmer` with `Shimmer` or `.nonla-shimmer`.
 - `resolveToolUI(toolName, extras?)` — second argument is optional; extra UIs are checked first.
 
+[0.12.0]: https://github.com/devnonla/devnonla-ui/compare/v0.11.0...v0.12.0
 [0.11.0]: https://github.com/devnonla/devnonla-ui/compare/v0.10.0...v0.11.0
 [0.10.0]: https://github.com/devnonla/devnonla-ui/compare/v0.9.1...v0.10.0
 [0.9.1]: https://github.com/devnonla/devnonla-ui/compare/v0.9.0...v0.9.1

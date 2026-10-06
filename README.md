@@ -132,7 +132,7 @@ import { DesktopStage, DesktopHeader, MeadowDesktop, DesktopWindow, MeadowShell,
 </DesktopStage>
 ```
 
-`MeadowShell` is the login/setup backdrop. `DesktopWindow` chrome is inline: traffic lights, `left`, a flex middle (title — double-click to expand), then `right`. A child can fill the same slots with `WindowHeader`. Last collapsed position and size are restored on reopen (`persistKey`, or `false` to disable). Resize handles stay when expanded; dragging an edge leaves expand and keeps the new size. `Menu` is the glass picker (trigger + items + hover action) used by AgentsMenu. Wallpaper defaults to the bundled meadow; pass `src` on `MeadowWallpaper` to swap.
+`MeadowShell` is the login/setup backdrop. `DesktopWindow` chrome is inline: traffic lights, `left`, a flex middle (title — double-click to expand), then `right`. A child can fill the same slots with `WindowHeader`. The window zooms open; `origin` is the element it zooms from, and `closeRef` receives a close function to call instead of unmounting so it can shrink back. Last collapsed position and size are restored on reopen (`persistKey`, or `false` to disable). Resize handles stay when expanded; dragging an edge leaves expand and keeps the new size. `Menu` is the glass picker (trigger + items + hover action) used by AgentsMenu. Wallpaper defaults to the bundled meadow; pass `src` on `MeadowWallpaper` to swap.
 
 # Sidebar
 
