@@ -2,6 +2,8 @@
 
 React controls for Nonla Agents.
 
+Docs: https://devnonla.github.io/devnonla-ui/
+
 ```bash
 bun add devnonla-ui
 ```
