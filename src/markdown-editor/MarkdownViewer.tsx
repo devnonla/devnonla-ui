@@ -7,6 +7,8 @@ import { cn } from "../lib/cn";
 import { type InlineEdit, type MarkdownBlock, parseMarkdownDoc, readFence, readInlineEdit } from "./blocks";
 import { MarkdownTable } from "./MarkdownTable";
 import { MermaidBlock } from "./MermaidBlock";
+import { ReactCode } from "./ReactCode";
+import { ReactCodeSandbox } from "./ReactCodeSandbox";
 
 const documentClass = cn(
   "min-w-0 wrap-anywhere text-[15px] leading-7 text-foreground",
@@ -181,7 +183,14 @@ function fenceClosed(body: string): boolean {
   return /^(?:`{3,}|~{3,})$/.test(last);
 }
 
-export function BlockBody({ block, streaming }: { block: MarkdownBlock; streaming?: boolean }): ReactNode {
+type LiveReactOptions = {
+  trustedModules?: Record<string, unknown>;
+  sandboxSrc?: string;
+  showHeader?: boolean;
+  showCode?: boolean;
+};
+
+export function BlockBody({ block, streaming, trustedModules, sandboxSrc, showHeader, showCode }: { block: MarkdownBlock; streaming?: boolean } & LiveReactOptions): ReactNode {
   if (block.kind === "mermaid") {
     const fence = readFence(block.body);
     const code = fence?.code ?? block.body;
@@ -191,6 +200,11 @@ export function BlockBody({ block, streaming }: { block: MarkdownBlock; streamin
   if (block.kind === "code") {
     const fence = readFence(block.body);
     if (!fence) return <CodeBlock code={block.body} className="my-0" />;
+    // An unclosed fence is still being written, so it never runs.
+    if (fence.lang === "live-react" && fenceClosed(block.body)) {
+      if (sandboxSrc) return <ReactCodeSandbox key={fence.code} code={fence.code} src={sandboxSrc} showHeader={showHeader} showCode={showCode} />;
+      if (trustedModules) return <ReactCode code={fence.code} trustedModules={trustedModules} showHeader={showHeader} showCode={showCode} />;
+    }
     return <CodeBlock code={fence.code} language={fence.lang || undefined} className="my-0" />;
   }
   const view = readInlineEdit(block.body);
@@ -210,10 +224,25 @@ export type MarkdownViewerProps = {
   streaming?: boolean;
   placeholder?: string;
   className?: string;
+  /**
+   * Runs ```live-react fences in a sandboxed iframe. Use this for markdown written by
+   * users or agents. Points at a page that calls `mountReactCodeRunner`, on its own origin.
+   * Wins over `trustedModules` when both are set.
+   */
+  sandboxSrc?: string;
+  /**
+   * Runs ```live-react fences in this page, with its cookies, storage, and network.
+   * Only for markdown you wrote. `react` is provided. Other imports must be listed here.
+   */
+  trustedModules?: Record<string, unknown>;
+  /** Header on `live-react` results (`Sandbox` or `Live`). `false` shows the result inline. Default `true`. */
+  showHeader?: boolean;
+  /** Code tab in the header of `live-react` results. Needs `showHeader`. Default `true`. */
+  showCode?: boolean;
 };
 
 /** Read-only markdown. Same blocks as the editor preview, without editing. */
-export function MarkdownViewer({ value = "", streaming = false, placeholder, className }: MarkdownViewerProps) {
+export function MarkdownViewer({ value = "", streaming = false, sandboxSrc, trustedModules, showHeader = true, showCode = true, placeholder, className }: MarkdownViewerProps) {
   const doc = useMemo(() => parseMarkdownDoc(value), [value]);
   if (doc.blocks.length === 0) {
     return placeholder ? <p className={cn("m-0 text-sm text-placeholder", className)}>{placeholder}</p> : null;
@@ -227,7 +256,7 @@ export function MarkdownViewer({ value = "", streaming = false, placeholder, cla
           data-md-block={block.kind}
           className={cn("outline-none", spaceBefore(block, doc.blocks[index - 1]))}
         >
-          <BlockBody block={block} streaming={streaming} />
+          <BlockBody block={block} streaming={streaming} trustedModules={trustedModules} sandboxSrc={sandboxSrc} showHeader={showHeader} showCode={showCode} />
         </div>
       ))}
     </div>
