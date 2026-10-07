@@ -5,6 +5,40 @@ All notable changes to this project will be documented in this file.
 The format is based on [Keep a Changelog](https://keepachangelog.com/en/1.1.0/),
 and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0.html).
 
+## [0.13.0] - 2026-10-07
+
+### Added
+
+- `Tabs`. Each item has `key`, `label`, `children`, `disabled`, and an optional Solar `icon`. Control the selection with `activeKey`, `defaultActiveKey`, and `onChange`. The underline slides to the active tab. When the bar overflows, it scrolls, with fades and chevrons at the edges.
+- `AgentAvatar` `config.eyeColor`: `"black"` or `"white"`. Omit it and the pupils stay black, or white when the face is dark.
+- `MarkdownViewer` `variant`: `"docs"` (default) or `"chat"`. `MarkdownVariant` is exported. Agent replies use `"chat"`.
+- `Typography.Title` level `6`.
+- Markdown tokens `--md-ink`, `--md-heading`, and `--md-inline-bg`, plus `--nonla-card-shadow`. Inline code uses `.nonla-inline-code`.
+
+### Changed
+
+- The UI font is the system stack. `styles.css` no longer loads Inter Variable.
+- Dark ink is `#ffffff`. Borders, hairlines, and input strokes are lighter. The window title bar is `#242424`.
+- Light page is `#ffffff`, text is `#2c2c2b`, and the sidebar is `#f7f5f2`. A card on white is a ring only. The chat composer has no drop shadow, and the user bubble uses the sidebar fill.
+- `MarkdownViewer` on `"docs"` is body 16/24. H1 and H2 are 30/40. Task checks use the body ink.
+- `Typography` uses that same scale. Headings use `--md-heading`. Body, paragraphs, and links use `--md-ink`.
+- `ChatAgentMessage` `content` is markdown (`variant="chat"`), not preformatted plain text. `children` still replaces `content`. `ChatMarkdown` uses the same variant.
+- Sidebar items are 14px. Group labels are semibold.
+- `ReactCode` no longer defaults to a "Live" title and play icon. With no title and no icon, the source opens from a code button under the preview. `ReactCodeSandbox` still defaults to a Sandbox header.
+- Docs are at https://devnonla.github.io/devnonla-ui/. The README is the install snippet and that link.
+
+### Fixed
+
+- An empty `AgentPanel` or `AgentChatbox` no longer adds extra space under the welcome.
+
+### Upgrade notes
+
+- Remove `<App theme>` and `applyNonlaTheme`. Set `--nonla-*` in your CSS. `NonlaThemeConfig`, `NonlaThemeColors`, and `NonlaThemeColorName` are no longer exported.
+- These preset knobs are gone: `--nonla-blue`, `--nonla-purple`, `--nonla-cyan`, `--nonla-green`, `--nonla-magenta`, `--nonla-pink`, `--nonla-red`, `--nonla-orange`, `--nonla-yellow`, `--nonla-volcano`, `--nonla-geekblue`, `--nonla-lime`, `--nonla-gold`. Named `Tag` colors still work. They no longer read those variables.
+- `ChatAgentMessage` `content` is parsed as markdown. Pass `children` when the body must stay literal text.
+- `ReactCode` callers who want the old header should pass `title="Live"` and an icon.
+- To keep the previous ink or page color, set `--nonla-fg` and `--nonla-bg`. Dark ink was `#f0f0f0`. The light page was `#f3f3f3`. A custom `--font-sans` still overrides the system stack.
+
 ## [0.12.0] - 2026-10-06
 
 ### Added
@@ -299,6 +333,7 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 - Replace class `nonla-chat-shimmer` with `Shimmer` or `.nonla-shimmer`.
 - `resolveToolUI(toolName, extras?)` — second argument is optional; extra UIs are checked first.
 
+[0.13.0]: https://github.com/devnonla/devnonla-ui/compare/v0.12.0...v0.13.0
 [0.12.0]: https://github.com/devnonla/devnonla-ui/compare/v0.11.0...v0.12.0
 [0.11.0]: https://github.com/devnonla/devnonla-ui/compare/v0.10.0...v0.11.0
 [0.10.0]: https://github.com/devnonla/devnonla-ui/compare/v0.9.1...v0.10.0

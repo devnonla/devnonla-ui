@@ -21,7 +21,7 @@ const taskCheckClass =
 const documentClass = cn(
   "min-w-0 wrap-anywhere text-(length:--md-body-size,16px) leading-(--md-body-leading,24px) text-(--md-ink)",
   "[&_:is(h1,h2,h3,h4,h5,h6)]:text-(--md-heading)",
-  "[&_:is(h1,h2)]:mt-(--md-h2-mt,24px) [&_:is(h1,h2)]:mb-(--md-h2-mb,1px) [&_:is(h1,h2)]:pt-(--md-h2-py,3px) [&_:is(h1,h2)]:pb-(--md-h2-py,3px) [&_:is(h1,h2)]:text-(length:--md-h2-size,30px) [&_:is(h1,h2)]:leading-(--md-h2-leading,40px) [&_:is(h1,h2)]:font-(--md-h2-weight,600) [&_:is(h1,h2)]:tracking-normal",
+  "[&_:is(h1,h2)]:mt-(--md-h2-mt,24px) [&_h1]:mb-(--md-h1-mb,12px) [&_h2]:mb-(--md-h2-mb,1px) [&_:is(h1,h2)]:pt-(--md-h2-py,3px) [&_:is(h1,h2)]:pb-(--md-h2-py,3px) [&_:is(h1,h2)]:text-(length:--md-h2-size,30px) [&_:is(h1,h2)]:leading-(--md-h2-leading,40px) [&_:is(h1,h2)]:font-(--md-h2-weight,600) [&_:is(h1,h2)]:tracking-normal",
   "[&_h3]:mt-(--md-h3-mt,22px) [&_h3]:mb-(--md-h3-mb,1px) [&_h3]:text-(length:--md-h3-size,24px) [&_h3]:leading-(--md-h3-leading,32px) [&_h3]:font-(--md-h3-weight,700)",
   "[&_h4]:mt-(--md-h4-mt,16px) [&_h4]:mb-(--md-h4-mb,1px) [&_h4]:text-(length:--md-h4-size,20px) [&_h4]:leading-(--md-h4-leading,26px) [&_h4]:font-(--md-h4-weight,700)",
   "[&_h5]:mt-(--md-h5-mt,0px) [&_h5]:mb-(--md-h5-mb,0px) [&_h5]:text-(length:--md-h5-size,16px) [&_h5]:leading-(--md-h5-leading,1.375) [&_h5]:font-(--md-h5-weight,700)",

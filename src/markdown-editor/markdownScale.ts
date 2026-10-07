@@ -16,7 +16,7 @@ const MARKDOWN_PRESETS = {
     "--md-h1-leading": "1.25",
     "--md-h1-weight": "800",
     "--md-h1-mt": "0px",
-    "--md-h1-mb": "1px",
+    "--md-h1-mb": "12px",
     "--md-h1-py": "3px",
     "--md-h2-size": "30px",
     "--md-h2-leading": "40px",
@@ -126,8 +126,8 @@ export function markdownVariantStyle(variant: MarkdownVariant = "docs"): CSSProp
  * The large page title is `pageTitleClass`, used by Typography only.
  */
 export function headingClass(level: number): string {
-  const step = level <= 1 ? 2 : level;
-  if (step === 2) return "text-(--md-heading) mt-(--md-h2-mt,24px) mb-(--md-h2-mb,1px) pt-(--md-h2-py,3px) pb-(--md-h2-py,3px) text-(length:--md-h2-size,30px) leading-(--md-h2-leading,40px) font-(--md-h2-weight,600)";
+  if (level <= 1) return "text-(--md-heading) mt-(--md-h2-mt,24px) mb-(--md-h1-mb,12px) pt-(--md-h2-py,3px) pb-(--md-h2-py,3px) text-(length:--md-h2-size,30px) leading-(--md-h2-leading,40px) font-(--md-h2-weight,600)";
+  if (level === 2) return "text-(--md-heading) mt-(--md-h2-mt,24px) mb-(--md-h2-mb,1px) pt-(--md-h2-py,3px) pb-(--md-h2-py,3px) text-(length:--md-h2-size,30px) leading-(--md-h2-leading,40px) font-(--md-h2-weight,600)";
   if (level === 3) return "text-(--md-heading) mt-(--md-h3-mt,22px) mb-(--md-h3-mb,1px) text-(length:--md-h3-size,24px) leading-(--md-h3-leading,32px) font-(--md-h3-weight,700)";
   if (level === 4) return "text-(--md-heading) mt-(--md-h4-mt,16px) mb-(--md-h4-mb,1px) text-(length:--md-h4-size,20px) leading-(--md-h4-leading,26px) font-(--md-h4-weight,700)";
   if (level === 5) return "text-(--md-heading) mt-(--md-h5-mt,0px) mb-(--md-h5-mb,0px) text-(length:--md-h5-size,16px) leading-(--md-h5-leading,1.375) font-(--md-h5-weight,700)";
