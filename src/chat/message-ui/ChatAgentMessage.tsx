@@ -1,11 +1,13 @@
 import type { ReactNode } from "react";
 import { cn } from "../../lib/cn";
+import { ChatMarkdown } from "./ChatMarkdown";
 import { ChatThinking } from "./ChatThinking";
 
 export type ChatAgentMessageProps = {
-  /** Plain text fallback when `children` is omitted. */
+  /** Markdown body. Rendered with `MarkdownViewer` `variant="chat"`. */
   content?: string;
-  /** Prefer passing rendered markdown / rich content as children. */
+  streaming?: boolean;
+  /** Extra row content. Replaces `content` when set. */
   children?: ReactNode;
   thinking?: string;
   thinkingDuration?: number;
@@ -13,8 +15,8 @@ export type ChatAgentMessageProps = {
   className?: string;
 };
 
-export function ChatAgentMessage({ content, children, thinking, thinkingDuration, thinkingStreaming, className }: ChatAgentMessageProps) {
-  const body = children ?? (content ? <p className="m-0 whitespace-pre-wrap wrap-break-word text-(length:--chat-body-size) leading-(--chat-body-leading) text-(--nonla-ink)">{content}</p> : null);
+export function ChatAgentMessage({ content, streaming = false, children, thinking, thinkingDuration, thinkingStreaming, className }: ChatAgentMessageProps) {
+  const body = children ?? (content ? <ChatMarkdown content={content} streaming={streaming} /> : null);
 
   return (
     <div className={cn("nonla-chat-agent mt-1", className)}>

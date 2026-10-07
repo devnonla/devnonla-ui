@@ -1,9 +1,10 @@
-import { type AnchorHTMLAttributes, createElement, type HTMLAttributes, type ReactNode } from "react";
+import { type AnchorHTMLAttributes, type CSSProperties, createElement, type HTMLAttributes, type ReactNode } from "react";
 import { cn } from "../lib/cn";
+import { headingClass, markdownBodyClass, markdownParagraphClass, markdownVariantStyle, pageTitleClass } from "../markdown-editor/markdownScale";
 
 export type TypographyType = "secondary" | "success" | "warning" | "danger";
 
-export type TitleLevel = 1 | 2 | 3 | 4 | 5;
+export type TitleLevel = 1 | 2 | 3 | 4 | 5 | 6;
 
 type Decorations = {
   type?: TypographyType;
@@ -17,12 +18,18 @@ type Decorations = {
   italic?: boolean;
 };
 
-const TYPE_CLASS: Record<TypographyType, string> = {
-  secondary: "text-muted-foreground",
-  success: "text-success",
-  warning: "text-warn",
-  danger: "text-destructive",
-};
+/** Same ink as MarkdownViewer. Status tones sit on top of that. */
+const INK = {
+  title: "var(--md-heading)",
+  body: "var(--md-ink)",
+  secondary: "var(--nonla-fg-tertiary)",
+  quiet: "var(--nonla-fg-quaternary)",
+  success: "var(--nonla-success)",
+  warning: "var(--nonla-warn)",
+  danger: "var(--nonla-danger)",
+} as const;
+
+type InkRole = "title" | "body";
 
 const TITLE_TAG = {
   1: "h1",
@@ -30,20 +37,15 @@ const TITLE_TAG = {
   3: "h3",
   4: "h4",
   5: "h5",
+  6: "h6",
 } as const;
 
-/** Ant Design seed: body 14/22, headings 38/46, 30/38, 24/32, 20/28, 16/24. */
-const BODY = "text-[14px] leading-[22px]";
+/** Same scale as MarkdownViewer `docs`. Body 16/24. Inline code reads `--md-inline-size` (14px). */
+const BODY = markdownBodyClass;
 
-const TITLE_CLASS: Record<TitleLevel, string> = {
-  1: "text-[38px] leading-[46px] font-bold",
-  2: "text-[30px] leading-[38px] font-bold",
-  3: "text-[24px] leading-[32px] font-semibold",
-  4: "text-[20px] leading-[28px] font-semibold",
-  5: "text-[16px] leading-[24px] font-semibold",
-};
+const INLINE_CODE = "nonla-inline-code";
 
-const TITLE_SPACE = "nonla-typo m-0";
+const TITLE_SPACE = "nonla-typo";
 
 function decorationLine(underline?: boolean, deleted?: boolean) {
   if (underline && deleted) return "underline line-through";
@@ -55,10 +57,10 @@ function decorationLine(underline?: boolean, deleted?: boolean) {
 function wrapDecorations(children: ReactNode, props: Decorations) {
   let node = children;
   if (props.mark) {
-    node = <mark className="rounded-sm bg-[color-mix(in_oklab,var(--nonla-yellow)_40%,transparent)] px-0.5 text-inherit">{node}</mark>;
+    node = <mark className="rounded-sm bg-[color-mix(in_oklab,var(--nonla-warn)_40%,transparent)] px-0.5 text-inherit">{node}</mark>;
   }
   if (props.code) {
-    node = <code className="rounded-sm bg-secondary px-1 py-px font-mono text-[0.9em] shadow-button-outline">{node}</code>;
+    node = <code className={INLINE_CODE}>{node}</code>;
   }
   if (props.keyboard) {
     node = <kbd className="inline-block rounded-md border border-b-2 border-border bg-muted px-1.5 font-mono text-[0.85em] leading-5">{node}</kbd>;
@@ -66,16 +68,24 @@ function wrapDecorations(children: ReactNode, props: Decorations) {
   return node;
 }
 
-function toneClass({ type, disabled }: Decorations) {
-  if (disabled) return "cursor-not-allowed text-quaternary-foreground";
-  return type ? TYPE_CLASS[type] : undefined;
+function rankColor(role: InkRole, props: Decorations): string | undefined {
+  if (props.disabled) return INK.quiet;
+  if (props.type === "secondary") return INK.secondary;
+  if (props.type === "success") return INK.success;
+  if (props.type === "warning") return INK.warning;
+  if (props.type === "danger") return INK.danger;
+  if (role === "title") return INK.title;
+  if (role === "body") return INK.body;
+  return undefined;
 }
 
-function decorated(props: Decorations, children: ReactNode, base: string, className?: string, style?: HTMLAttributes<HTMLElement>["style"]) {
+function decorated(props: Decorations, children: ReactNode, base: string, className?: string, style?: HTMLAttributes<HTMLElement>["style"], role: InkRole = "body") {
   const line = decorationLine(props.underline, props.delete);
+  const color = rankColor(role, props);
+  const scale: CSSProperties = { ...markdownVariantStyle("docs"), ...(color ? { color } : null), ...(line ? { textDecorationLine: line } : null), ...style };
   return {
-    className: cn(base, toneClass(props), props.strong && "font-semibold", props.italic && "italic", props.underline && "underline-offset-[3px]", className),
-    style: line ? { textDecorationLine: line, ...style } : style,
+    className: cn(base, props.disabled && "cursor-not-allowed", props.strong && "font-(--md-strong-weight,600)", props.italic && "italic", props.underline && "underline-offset-[3px]", className),
+    style: scale,
     children: wrapDecorations(children, props),
     "aria-disabled": props.disabled || undefined,
   };
@@ -99,7 +109,7 @@ export type TypographyTextProps = Omit<HTMLAttributes<HTMLSpanElement>, "color">
 
 export function Text({ className, style, children, ...props }: TypographyTextProps) {
   const { decorations, rest } = splitDecorations(props);
-  return <span {...rest} {...decorated(decorations, children, cn(BODY, "text-foreground"), className, style)} />;
+  return <span {...rest} {...decorated(decorations, children, BODY, className, style, "body")} />;
 }
 
 export type TypographyTitleProps = Omit<HTMLAttributes<HTMLHeadingElement>, "color"> & Decorations & {
@@ -109,14 +119,14 @@ export type TypographyTitleProps = Omit<HTMLAttributes<HTMLHeadingElement>, "col
 
 export function Title({ level = 1, className, style, children, ...props }: TypographyTitleProps) {
   const { decorations, rest } = splitDecorations(props);
-  return createElement(TITLE_TAG[level], { ...rest, ...decorated(decorations, children, cn(TITLE_SPACE, "text-foreground", TITLE_CLASS[level]), className, style) });
+  return createElement(TITLE_TAG[level], { ...rest, ...decorated(decorations, children, cn(TITLE_SPACE, level === 1 ? pageTitleClass : headingClass(level)), className, style, "title") });
 }
 
 export type TypographyParagraphProps = Omit<HTMLAttributes<HTMLParagraphElement>, "color"> & Decorations & { children?: ReactNode };
 
 export function Paragraph({ className, style, children, ...props }: TypographyParagraphProps) {
   const { decorations, rest } = splitDecorations(props);
-  return <p {...rest} {...decorated(decorations, children, "nonla-typo m-0 text-[15px] leading-7 text-foreground [p.nonla-typo+&]:mt-3", className, style)} />;
+  return <p {...rest} {...decorated(decorations, children, markdownParagraphClass, className, style, "body")} />;
 }
 
 export type TypographyLinkProps = Omit<AnchorHTMLAttributes<HTMLAnchorElement>, "color"> & Decorations & { children?: ReactNode };
@@ -126,14 +136,10 @@ export function Link({ href, target, rel, className, style, children, onClick, .
   const view = decorated(
     decorations,
     children,
-    cn(
-      "cursor-pointer underline-offset-[3px]",
-      BODY,
-      decorations.type || decorations.disabled ? undefined : "text-brand hover:text-brand-700",
-      decorations.disabled || decorations.underline ? undefined : "hover:underline",
-    ),
+    cn("cursor-pointer underline-offset-[3px]", BODY, decorations.disabled || decorations.underline ? undefined : "hover:underline"),
     className,
     style,
+    "body",
   );
 
   return (

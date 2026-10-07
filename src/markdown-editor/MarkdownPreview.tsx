@@ -2,7 +2,7 @@ import { type MouseEvent, useLayoutEffect, useRef } from "react";
 import { cn } from "../lib/cn";
 import { OverlayScroll } from "../scroll/OverlayScroll";
 import { type MarkdownDoc, readInlineEdit, writeInlineEdit } from "./blocks";
-import { BlockBody, headingClass, ListItem, spaceBefore } from "./MarkdownViewer";
+import { BlockBody, headingClass, ListItem, markdownVariantStyle, spaceBefore } from "./MarkdownViewer";
 
 function BlockEditor({ value, mono, className, caret = "end", onChange, onBlur, onEnter }: { value: string; mono?: boolean; className?: string; caret?: "start" | "end"; onChange: (value: string) => void; onBlur: () => void; onEnter?: (before: string, after: string) => void }) {
   const ref = useRef<HTMLTextAreaElement>(null);
@@ -57,7 +57,7 @@ function BlockEditor({ value, mono, className, caret = "end", onChange, onBlur, 
         });
       }}
       className={cn(
-        "block w-full resize-none overflow-hidden border-0 bg-transparent p-0 text-[14px] leading-[22px] text-foreground shadow-none outline-none ring-0 placeholder:text-placeholder focus:outline-none focus:ring-0",
+        "block w-full resize-none overflow-hidden border-0 bg-transparent p-0 text-(length:--md-body-size,16px) leading-(--md-body-leading,24px) text-(--md-ink) shadow-none outline-none ring-0 placeholder:text-placeholder focus:outline-none focus:ring-0",
         mono && "font-mono text-[13px] leading-5",
         className,
       )}
@@ -88,7 +88,7 @@ export type MarkdownPreviewProps = {
 export function MarkdownPreview({ doc, editingIndex, readOnly, placeholder = "Write markdown…", onStartEdit, onEditMouseDown, onChangeBody, onBlurBlock, onEnterList, caret = "end", onAppend }: MarkdownPreviewProps) {
   return (
     <OverlayScroll className="h-full bg-card">
-      <div className="mx-auto flex w-full max-w-3xl flex-col px-8 py-6">
+      <div className="mx-auto flex w-full max-w-3xl flex-col px-8 py-6" style={markdownVariantStyle("docs")}>
         {doc.blocks.map((block, index) => {
           const editing = editingIndex === index;
           const locked = block.kind === "mermaid" || readOnly;

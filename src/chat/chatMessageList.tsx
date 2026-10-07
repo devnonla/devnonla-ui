@@ -5,7 +5,6 @@ import type { AgentMessage } from "./common/types";
 import { formatToolName } from "./common/utils";
 import { ChatAgentMessage } from "./message-ui/ChatAgentMessage";
 import { ChatError } from "./message-ui/ChatError";
-import { ChatMarkdown } from "./message-ui/ChatMarkdown";
 import { ChatThinking } from "./message-ui/ChatThinking";
 import { ChatUserMessage } from "./message-ui/ChatUserMessage";
 import { BackgroundTaskToolUI } from "./tool-ui/BackgroundTaskToolUI";
@@ -78,9 +77,7 @@ export function MessageRow({ msg, generating, toolUis }: { msg: AgentMessage; ge
   const thinking = msg.meta?.thinking;
   const thinkingDuration = msg.meta?.thinkingDuration;
   return (
-    <ChatAgentMessage thinking={thinking} thinkingDuration={thinkingDuration ?? 0} thinkingStreaming={thinking != null && thinkingDuration == null}>
-      {msg.content ? <ChatMarkdown content={msg.content} streaming={!!msg.streaming} /> : null}
-    </ChatAgentMessage>
+    <ChatAgentMessage content={msg.content} streaming={!!msg.streaming} thinking={thinking} thinkingDuration={thinkingDuration ?? 0} thinkingStreaming={thinking != null && thinkingDuration == null} />
   );
 }
 

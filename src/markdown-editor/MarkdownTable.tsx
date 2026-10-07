@@ -29,13 +29,13 @@ export function MarkdownTable({ children }: { children: ReactNode }) {
   }, []);
 
   return (
-    <div className="relative my-4 max-w-full overflow-hidden rounded-xl border border-border bg-card group">
+    <div className="relative my-(--md-table-my,16px) max-w-full overflow-hidden rounded-xl border border-border bg-card group">
       <ButtonCopy getText={getText} label="Copy as Markdown" className="absolute top-1 right-1 z-10 opacity-0 group-hover:opacity-100" />
 
       <div className="overflow-x-auto">
         <table
           ref={tableRef}
-          className="w-max min-w-full border-separate border-spacing-0 text-[14px] [&_th]:max-w-[360px] [&_td]:max-w-[360px] [&_th]:whitespace-normal [&_td]:whitespace-normal [&_th]:wrap-normal [&_td]:wrap-normal [&_th]:bg-(--nonla-table-head) [&_th]:text-foreground [&_th]:font-semibold [&_th]:px-2.5 [&_th]:py-1.5 [&_th]:text-left [&_th]:align-top [&_th]:border-r [&_th]:border-b [&_th]:border-border [&_th:last-child]:border-r-0 [&_td]:px-2.5 [&_td]:py-1.5 [&_td]:align-top [&_td]:text-foreground [&_td]:bg-card [&_td]:border-r [&_td]:border-b [&_td]:border-border [&_td:last-child]:border-r-0 [&_tbody_tr:last-child_td]:border-b-0"
+          className="w-max min-w-full border-separate border-spacing-0 text-(length:--md-table-size,15px) [&_th]:max-w-[360px] [&_td]:max-w-[360px] [&_th]:whitespace-normal [&_td]:whitespace-normal [&_th]:wrap-normal [&_td]:wrap-normal [&_th]:bg-(--nonla-table-head) [&_th]:font-semibold [&_th]:px-2.5 [&_th]:py-1.5 [&_th]:text-left [&_th]:align-top [&_th]:border-r [&_th]:border-b [&_th]:border-border [&_th:last-child]:border-r-0 [&_td]:px-2.5 [&_td]:py-1.5 [&_td]:align-top [&_td]:bg-card [&_td]:border-r [&_td]:border-b [&_td]:border-border [&_td:last-child]:border-r-0 [&_tbody_tr:last-child_td]:border-b-0"
         >
           {children}
         </table>

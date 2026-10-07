@@ -189,7 +189,7 @@ export function MermaidBlock({ children, className }: MermaidBlockProps) {
 
   return (
     <>
-      <div className={cn("my-3 last:mb-0 group relative rounded-xl border border-border overflow-hidden bg-card", className)}>
+      <div className={cn("my-3 last:mb-0 group relative overflow-hidden rounded-xl bg-card", className)}>
         <div className="absolute top-2 right-2 z-10 flex items-center gap-1 opacity-0 group-hover:opacity-100 transition-opacity">
           <Button size="small" icon={<SolarIcon name="maximize-linear" size={12} />} title="Fullscreen" aria-label="Fullscreen" onClick={openFullscreen} />
         </div>

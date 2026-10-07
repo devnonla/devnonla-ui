@@ -7,29 +7,39 @@ import { cn } from "../lib/cn";
 import { type InlineEdit, type MarkdownBlock, parseMarkdownDoc, readFence, readInlineEdit } from "./blocks";
 import { MarkdownTable } from "./MarkdownTable";
 import { MermaidBlock } from "./MermaidBlock";
+import { headingClass, type MarkdownVariant, markdownVariantStyle } from "./markdownScale";
 import { ReactCode } from "./ReactCode";
 import { ReactCodeSandbox } from "./ReactCodeSandbox";
 
+export type { MarkdownVariant };
+export { headingClass, markdownVariantStyle };
+
+/** Task checks use the body ink, so a checked box sits with the text instead of the brand fill. */
+const taskCheckClass =
+  "data-[state=checked]:border-(--md-ink)! data-[state=checked]:bg-(--md-ink)! data-[state=checked]:text-background! data-[state=indeterminate]:border-(--md-ink)! data-[state=indeterminate]:bg-(--md-ink)! data-[state=indeterminate]:text-background!";
+
 const documentClass = cn(
-  "min-w-0 wrap-anywhere text-[14px] leading-[22px] text-foreground",
-  "[&_h1]:my-0 [&_h1]:text-[32px] [&_h1]:leading-tight [&_h1]:font-bold [&_h1]:tracking-tight",
-  "[&_h2]:my-0 [&_h2]:text-[24px] [&_h2]:leading-tight [&_h2]:font-bold [&_h2]:tracking-tight",
-  "[&_h3]:my-0 [&_h3]:text-[20px] [&_h3]:leading-snug [&_h3]:font-semibold",
-  "[&_h4]:my-0 [&_h4]:text-[18px] [&_h4]:leading-snug [&_h4]:font-semibold",
-  "[&_h5]:my-0 [&_h5]:text-[16px] [&_h5]:leading-snug [&_h5]:font-semibold",
-  "[&_h6]:my-0 [&_h6]:text-[14px] [&_h6]:leading-snug [&_h6]:font-semibold",
-  "[&_p]:my-0",
-  "[&_ul]:my-1 [&_ul]:list-disc [&_ul]:pl-6",
-  "[&_ol]:my-1 [&_ol]:list-decimal [&_ol]:pl-6",
+  "min-w-0 wrap-anywhere text-(length:--md-body-size,16px) leading-(--md-body-leading,24px) text-(--md-ink)",
+  "[&_:is(h1,h2,h3,h4,h5,h6)]:text-(--md-heading)",
+  "[&_:is(h1,h2)]:mt-(--md-h2-mt,24px) [&_:is(h1,h2)]:mb-(--md-h2-mb,1px) [&_:is(h1,h2)]:pt-(--md-h2-py,3px) [&_:is(h1,h2)]:pb-(--md-h2-py,3px) [&_:is(h1,h2)]:text-(length:--md-h2-size,30px) [&_:is(h1,h2)]:leading-(--md-h2-leading,40px) [&_:is(h1,h2)]:font-(--md-h2-weight,600) [&_:is(h1,h2)]:tracking-normal",
+  "[&_h3]:mt-(--md-h3-mt,22px) [&_h3]:mb-(--md-h3-mb,1px) [&_h3]:text-(length:--md-h3-size,24px) [&_h3]:leading-(--md-h3-leading,32px) [&_h3]:font-(--md-h3-weight,700)",
+  "[&_h4]:mt-(--md-h4-mt,16px) [&_h4]:mb-(--md-h4-mb,1px) [&_h4]:text-(length:--md-h4-size,20px) [&_h4]:leading-(--md-h4-leading,26px) [&_h4]:font-(--md-h4-weight,700)",
+  "[&_h5]:mt-(--md-h5-mt,0px) [&_h5]:mb-(--md-h5-mb,0px) [&_h5]:text-(length:--md-h5-size,16px) [&_h5]:leading-(--md-h5-leading,1.375) [&_h5]:font-(--md-h5-weight,700)",
+  "[&_h6]:mt-(--md-h6-mt,0px) [&_h6]:mb-(--md-h6-mb,0px) [&_h6]:text-(length:--md-h6-size,14px) [&_h6]:leading-(--md-h6-leading,1.375) [&_h6]:font-(--md-h6-weight,700)",
+  "[&_p]:my-(--md-p-my,1px) [&_p]:py-(--md-p-py,4px) [&_p]:leading-(--md-p-leading,1.5)",
+  "[&_ul]:my-(--md-list-my,8px) [&_ul]:list-disc [&_ul]:pl-(--md-ul-pl,4px)",
+  "[&_ol]:my-(--md-list-my,8px) [&_ol]:list-decimal [&_ol]:pl-(--md-ol-pl,4px)",
+  "[&_li>ul]:mt-1 [&_li>ol]:mt-1 [&_li>ol]:pl-(--md-nest,1.25rem)",
+  "[&_th_ul]:my-0 [&_td_ul]:my-0 [&_th_ol]:my-0 [&_td_ol]:my-0 [&_th_li]:mt-0 [&_td_li]:mt-0 [&_th_li>ul]:mt-0.5 [&_td_li>ul]:mt-0.5 [&_th_li>ol]:mt-0.5 [&_td_li>ol]:mt-0.5 [&_th_li>p]:my-0 [&_td_li>p]:my-0",
   "[&_ul.contains-task-list]:list-none",
-  "[&_li]:my-0.5",
+  "[&_li]:mt-(--md-li-mt,4px) [&_li]:leading-[1.5]",
   "[&_li.task-list-item]:relative",
   "[&_li.task-list-item>.nonla-md-task-check]:absolute [&_li.task-list-item>.nonla-md-task-check]:top-1 [&_li.task-list-item>.nonla-md-task-check]:-left-5",
-  "[&_blockquote]:my-1 [&_blockquote]:border-l-2 [&_blockquote]:border-border [&_blockquote]:pl-3 [&_blockquote]:text-muted-foreground",
+  "[&_blockquote]:my-(--md-quote-my,4px) [&_blockquote]:border-l-2 [&_blockquote]:border-border [&_blockquote]:pl-3 [&_blockquote]:text-muted-foreground",
   "[&_a]:text-link [&_a]:underline-offset-[3px] hover:[&_a]:underline",
-  "[&_hr]:my-2 [&_hr]:border-border",
-  "[&_strong]:font-semibold",
-  "[&_img]:my-1 [&_img]:max-w-full [&_img]:rounded-lg",
+  "[&_hr]:my-(--md-rule-my,8px) [&_hr]:border-border",
+  "[&_strong]:font-(--md-strong-weight,600)",
+  "[&_img]:my-(--md-img-my,4px) [&_img]:max-w-full [&_img]:rounded-lg",
 );
 
 const previewComponents: Components = {
@@ -39,10 +49,10 @@ const previewComponents: Components = {
     const codeText = String(children).replace(/\n$/, "");
     const isBlock = codeText.includes("\n") || !!match;
     if (!isBlock) {
-      return <code className="rounded-sm bg-secondary px-1 py-0.5 font-mono text-[0.9em] shadow-button-outline">{children}</code>;
+      return <code className="nonla-inline-code">{children}</code>;
     }
     if (lang.toLowerCase() === "mermaid") return <MermaidView code={codeText} />;
-    return <CodeBlock code={codeText} language={lang || undefined} className="my-2" />;
+    return <CodeBlock code={codeText} language={lang || undefined} className="my-(--md-code-my,8px)" />;
   },
   table({ children }) {
     return <MarkdownTable>{children}</MarkdownTable>;
@@ -57,8 +67,8 @@ const previewComponents: Components = {
   input({ type, checked }) {
     if (type !== "checkbox") return <input type={type} checked={checked} readOnly />;
     return (
-      <span className="nonla-md-task-check pointer-events-none inline-flex h-[22px] items-center">
-        <Checkbox checked={Boolean(checked)} tabIndex={-1} />
+        <span className="nonla-md-task-check pointer-events-none inline-flex h-(--md-body-leading,24px) items-center">
+        <Checkbox checked={Boolean(checked)} tabIndex={-1} className={taskCheckClass} />
       </span>
     );
   },
@@ -69,15 +79,6 @@ function MermaidView({ code }: { code: string }) {
     return <div className="rounded-xl border border-dashed border-border px-4 py-6 text-center text-xs text-muted-foreground">Empty diagram</div>;
   }
   return <MermaidBlock className="my-0">{code}</MermaidBlock>;
-}
-
-export function headingClass(level: number): string {
-  if (level === 1) return "text-[32px] font-bold leading-tight tracking-tight";
-  if (level === 2) return "text-[24px] font-bold leading-tight tracking-tight";
-  if (level === 3) return "text-[20px] font-semibold leading-snug";
-  if (level === 4) return "text-[18px] font-semibold leading-snug";
-  if (level === 5) return "text-[16px] font-semibold leading-snug";
-  return "text-[14px] font-semibold leading-snug";
 }
 
 type MdNode = {
@@ -136,20 +137,23 @@ function RichText({ source }: { source: string }) {
 export function ListItem({ view, children }: { view: Extract<InlineEdit, { kind: "list" }>; children: ReactNode }) {
   const level = Math.floor(view.indent.length / 2);
   const ordinal = Number(/^(\d+)/.exec(view.marker)?.[1] ?? "1");
+  const marker = "w-6 shrink-0 pt-0.5 text-(length:--md-body-size,16px) leading-(--md-p-leading,1.5)";
   return (
-    <div className="flex items-start gap-1.5" style={level > 0 ? { marginLeft: `${level * 1.25}rem` } : undefined}>
+    <div className="flex items-start gap-1.5 pl-(--md-item-pl,4px)" style={level > 0 ? { marginLeft: `calc(${level} * var(--md-nest, 1.25rem))` } : undefined}>
       {view.task ? (
-        <span className="pointer-events-none inline-flex h-[22px] w-5 shrink-0 items-center justify-center">
-          <Checkbox checked={view.checked} tabIndex={-1} />
+        <span className={cn(marker, "pointer-events-none inline-flex justify-center")}>
+          <span className="mt-[calc((1lh-1rem)/2)] inline-flex">
+            <Checkbox checked={view.checked} tabIndex={-1} className={taskCheckClass} />
+          </span>
         </span>
       ) : view.ordered ? (
-        <span className="w-6 shrink-0 text-right text-[14px] leading-[22px] tabular-nums">{ordinal}.</span>
+        <span className={cn(marker, "text-right tabular-nums")}>{ordinal}.</span>
       ) : (
-        <span className="flex h-[22px] w-5 shrink-0 items-center justify-center" aria-hidden>
-          <span className="size-1.5 rounded-full bg-current" />
+        <span className={cn(marker, "flex justify-center")} aria-hidden>
+          <span className="mt-[calc((1lh-0.375rem)/2)] size-1.5 rounded-full bg-current" />
         </span>
       )}
-      <div className="min-w-0 flex-1">{children}</div>
+      <div className="min-w-0 flex-1 [&_p]:my-0! [&_p]:py-0.5!">{children}</div>
     </div>
   );
 }
@@ -158,22 +162,14 @@ function isListBlock(block: MarkdownBlock): boolean {
   return block.kind === "text" && readInlineEdit(block.body).kind === "list";
 }
 
-function headingGap(level: number): string {
-  if (level <= 2) return "mt-6";
-  if (level === 3) return "mt-5";
-  if (level === 4) return "mt-4";
-  return "mt-3";
-}
-
-export function spaceBefore(block: MarkdownBlock, prev?: MarkdownBlock): string {
+export function spaceBefore(block: MarkdownBlock, prev?: MarkdownBlock, variant: MarkdownVariant = "docs"): string {
+  const chat = variant === "chat";
   if (!prev) return "";
-  if (isListBlock(block) && isListBlock(prev)) return "mt-0.5";
-  if (block.kind === "text") {
-    const view = readInlineEdit(block.body);
-    if (view.kind === "heading") return headingGap(view.level);
-  }
-  if (prev.kind === "text" && readInlineEdit(prev.body).kind === "heading") return "mt-2";
-  return "mt-3";
+  if (isListBlock(block) && isListBlock(prev)) return chat ? "mt-px" : "mt-0.5";
+  if (prev.kind === "text" && readInlineEdit(prev.body).kind === "heading") return "[&_p]:mt-0! [&_p]:pt-0.5!";
+  if (isListBlock(block) && prev.kind === "text") return chat ? "mt-0.5" : "mt-1";
+  if (block.kind === "text" && prev.kind === "text") return "";
+  return chat ? "mt-2" : "mt-3";
 }
 
 function fenceClosed(body: string): boolean {
@@ -235,26 +231,28 @@ export type MarkdownViewerProps = {
    * Only for markdown you wrote. `react` is provided. Other imports must be listed here.
    */
   trustedModules?: Record<string, unknown>;
-  /** Header on `live-react` results (`Sandbox` or `Live`). `false` shows the result inline. Default `true`. */
+  /** Frame around `live-react` results. `false` shows the result inline. Default `true`. */
   showHeader?: boolean;
-  /** Code tab in the header of `live-react` results. Needs `showHeader`. Default `true`. */
+  /** Switch that opens the source of a `live-react` preview. Needs `showHeader`. Default `true`. */
   showCode?: boolean;
+  /** `docs` is the article scale. `chat` tightens size and spacing for a thread. Default `docs`. */
+  variant?: MarkdownVariant;
 };
 
 /** Read-only markdown. Same blocks as the editor preview, without editing. */
-export function MarkdownViewer({ value = "", streaming = false, sandboxSrc, trustedModules, showHeader = true, showCode = true, placeholder, className }: MarkdownViewerProps) {
+export function MarkdownViewer({ value = "", streaming = false, sandboxSrc, trustedModules, showHeader = true, showCode = true, placeholder, className, variant = "docs" }: MarkdownViewerProps) {
   const doc = useMemo(() => parseMarkdownDoc(value), [value]);
   if (doc.blocks.length === 0) {
     return placeholder ? <p className={cn("m-0 text-sm text-placeholder", className)}>{placeholder}</p> : null;
   }
   return (
-    <div className={cn("nonla-markdown-viewer flex min-w-0 flex-col text-foreground", className)}>
+    <div data-variant={variant} className={cn("nonla-markdown-viewer flex min-w-0 flex-col text-(--md-ink)", variant === "chat" && "[&>[data-md-block]:first-child_:is(h1,h2,h3,h4,h5,h6)]:mt-0", className)} style={markdownVariantStyle(variant)}>
       {doc.blocks.map((block, index) => (
         <div
           // biome-ignore lint/suspicious/noArrayIndexKey: block position is the document identity
           key={`${index}:${block.kind}`}
           data-md-block={block.kind}
-          className={cn("outline-none", spaceBefore(block, doc.blocks[index - 1]))}
+          className={cn("outline-none", spaceBefore(block, doc.blocks[index - 1], variant))}
         >
           <BlockBody block={block} streaming={streaming} trustedModules={trustedModules} sandboxSrc={sandboxSrc} showHeader={showHeader} showCode={showCode} />
         </div>

@@ -5,7 +5,7 @@ export type ChatMarkdownProps = {
   streaming?: boolean;
 };
 
-/** Agent markdown. Uses MarkdownViewer as-is, with no extra prose styles. */
+/** Agent markdown. `MarkdownViewer` on the `chat` scale. */
 export function ChatMarkdown({ content, streaming = false }: ChatMarkdownProps) {
-  return <MarkdownViewer value={content} streaming={streaming} />;
+  return <MarkdownViewer value={content} streaming={streaming} variant="chat" />;
 }
