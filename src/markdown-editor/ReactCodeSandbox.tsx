@@ -30,7 +30,7 @@ export type ReactCodeSandboxProps = {
   src: string;
   /** Header above the result. Default `true`. */
   showHeader?: boolean;
-  /** Code tab in the header. Needs `showHeader`. Default `true`. */
+  /** Preview / Code switch in the header. Needs `showHeader`. Default `true`. */
   showCode?: boolean;
   /** Header text. Default `Sandbox`. */
   title?: ReactNode;

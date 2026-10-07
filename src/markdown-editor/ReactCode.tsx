@@ -1,5 +1,4 @@
 import { Component, type ReactNode, useMemo } from "react";
-import { SolarIcon } from "../icon/SolarIcon";
 import { ReactCodeFrame } from "./ReactCodeFrame";
 import { compileReactCode, type LiveComponent } from "./reactCompile";
 
@@ -8,13 +7,13 @@ export type ReactCodeProps = {
   code: string;
   /** Modules `import` can resolve. `react` is always available. */
   trustedModules: Record<string, unknown>;
-  /** Header above the result. Default `true`. */
+  /** Bordered frame around the preview. `false` shows the result inline. Default `true`. */
   showHeader?: boolean;
-  /** Code tab in the header. Needs `showHeader`. Default `true`. */
+  /** Switch that opens the source. Needs `showHeader`. Default `true`. */
   showCode?: boolean;
-  /** Header text. Default `Live`. */
+  /** Label above the preview. Omit for no label bar. */
   title?: ReactNode;
-  /** Header icon. `null` hides it. */
+  /** Icon before the title. */
   icon?: ReactNode;
   /** Classes for the outer box. */
   className?: string;
@@ -58,11 +57,11 @@ class RenderBoundary extends Component<{ children: ReactNode }, { error: string 
  *
  * Only for source you wrote. Markdown from users or agents must use `ReactCodeSandbox`.
  */
-export function ReactCode({ code, trustedModules, showHeader = true, showCode = true, title = "Live", icon, className }: ReactCodeProps) {
+export function ReactCode({ code, trustedModules, showHeader = true, showCode = true, title, icon, className }: ReactCodeProps) {
   return (
     <ReactCodeFrame
       title={title}
-      icon={icon === undefined ? <SolarIcon name="play-circle-linear" size={16} className="text-warn" /> : icon}
+      icon={icon}
       showHeader={showHeader}
       code={showCode ? code : undefined}
       className={className}

@@ -1,7 +1,9 @@
 import { type ReactNode, useState } from "react";
 import { CodeBlock } from "../codeblock/CodeBlock";
+import { SolarIcon } from "../icon/SolarIcon";
 import { cn } from "../lib/cn";
 import { Segmented } from "../segmented/Segmented";
+import { Tooltip } from "../tooltip/Tooltip";
 
 type Tab = "preview" | "code";
 
@@ -11,36 +13,60 @@ const TABS = [
 ] satisfies { label: string; value: Tab }[];
 
 export type ReactCodeFrameProps = {
-  /** Header text, such as `Sandbox`. */
-  title: ReactNode;
-  /** Icon before the title. `null` hides it. */
+  /** Label above the preview. Omit for no label bar. */
+  title?: ReactNode;
+  /** Icon before the title. */
   icon?: ReactNode;
-  /** `false` drops the header and the border, so the result sits inline with the text around it. */
+  /** `false` drops the frame, so the result sits inline with the text around it. */
   showHeader?: boolean;
-  /** Source for the Code tab. Omit to show the result only. The tab lives in the header, so no header means no tab. */
+  /** Source for the Code view. Omit to show the result only. The switch lives in the frame, so no frame means no code. */
   code?: string;
   className?: string;
   /** The rendered result. */
   children: ReactNode;
 };
 
-/** Header, result, and an optional Code tab around a rendered `live-react` block. */
+/** Preview, and a way to open the source. A title bar keeps that switch beside the label. */
 export function ReactCodeFrame({ title, icon, showHeader = true, code, className, children }: ReactCodeFrameProps) {
   const [tab, setTab] = useState<Tab>("preview");
+  const [open, setOpen] = useState(false);
   if (!showHeader) return <div className={cn("mb-2 w-full min-w-0", className)}>{children}</div>;
   const hasCode = code !== undefined;
+  const hasLabel = (title != null && title !== false) || icon != null;
+  const showingCode = hasLabel ? tab === "code" : open;
+  const codeLabel = open ? "Hide code" : "Show code";
   return (
     <div className={cn("mb-2 flex w-full min-w-0 flex-col overflow-clip rounded-xl border border-border text-foreground", className)}>
-      <div className="flex h-10 items-center justify-between gap-2 border-b border-border pr-2 pl-3 text-xs font-medium">
-        <div className="flex min-w-0 items-center gap-2">
-          {icon}
-          <span className="truncate">{title}</span>
+      {hasLabel ? (
+        <div className="flex h-10 items-center justify-between gap-2 border-b border-border pr-2 pl-3 text-xs font-medium">
+          <div className="flex min-w-0 items-center gap-2">
+            {icon}
+            {title != null && title !== false ? <span className="truncate">{title}</span> : null}
+          </div>
+          {hasCode ? <Segmented<Tab> size="small" options={TABS} value={tab} onChange={setTab} /> : null}
         </div>
-        {hasCode ? <Segmented<Tab> size="small" options={TABS} value={tab} onChange={setTab} /> : null}
-      </div>
-      {/* Stays mounted on the Code tab, so an iframe keeps its state. */}
-      <div className={cn("min-w-0 px-3 py-3", hasCode && tab === "code" && "hidden")}>{children}</div>
-      {hasCode && tab === "code" ? <CodeBlock code={code} language="tsx" className="my-0 rounded-none border-0" /> : null}
+      ) : null}
+      {/* Stays mounted on the Code view, so an iframe keeps its state. */}
+      <div className={cn("min-w-0 px-6 py-8", showingCode && "hidden")}>{children}</div>
+      {hasCode && !hasLabel ? (
+        <div className="flex h-10 items-center justify-end border-t border-border pr-1.5">
+          <Tooltip title={codeLabel}>
+            <button
+              type="button"
+              aria-expanded={open}
+              aria-label={codeLabel}
+              className={cn(
+                "inline-flex size-7 cursor-pointer items-center justify-center rounded-md transition-colors hover:bg-muted hover:text-foreground focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-ring",
+                open ? "bg-muted text-foreground" : "text-muted-foreground",
+              )}
+              onClick={() => setOpen((value) => !value)}
+            >
+              <SolarIcon name="code-square-linear" size={16} />
+            </button>
+          </Tooltip>
+        </div>
+      ) : null}
+      {hasCode && showingCode ? <CodeBlock code={code} language="tsx" className="my-0 rounded-none border-0" /> : null}
     </div>
   );
 }

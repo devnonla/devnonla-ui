@@ -5,12 +5,13 @@
     <meta name="viewport" content="width=device-width, initial-scale=1.0" />
     <!--
       Sandbox runner for live-react fences. The host embeds it with sandbox="allow-scripts".
+      That frame has an opaque origin, so 'self' does not match this file's host. Name the host.
       Production: send this as an HTTP header from its own origin, with connect-src 'none'.
       The ws entries below exist only so Vite HMR keeps working in dev.
     -->
     <meta
       http-equiv="Content-Security-Policy"
-      content="default-src 'none'; script-src 'self' 'unsafe-inline' 'unsafe-eval'; style-src 'self' 'unsafe-inline'; img-src 'self' data:; font-src 'self' data:; connect-src ws://localhost:* ws://127.0.0.1:* http://localhost:* http://127.0.0.1:*; form-action 'none'; base-uri 'none'; frame-src 'none'"
+      content="default-src 'none'; script-src 'unsafe-inline' 'unsafe-eval' http://localhost:* http://127.0.0.1:*; style-src 'unsafe-inline' http://localhost:* http://127.0.0.1:*; img-src data: http://localhost:* http://127.0.0.1:*; font-src data: http://localhost:* http://127.0.0.1:*; connect-src ws://localhost:* ws://127.0.0.1:* http://localhost:* http://127.0.0.1:*; form-action 'none'; base-uri 'none'; frame-src 'none'"
     />
     <title>Sandbox</title>
     <!-- Paint the canvas before the module CSS arrives, so a reload does not flash white. -->
@@ -27,7 +28,7 @@
       }
       html.light {
         color-scheme: light;
-        background: #f3f3f3;
+        background: #ffffff;
       }
     </style>
   </head>
