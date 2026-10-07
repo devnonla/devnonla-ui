@@ -1,9 +1,9 @@
 import * as TooltipPrimitive from "@radix-ui/react-tooltip";
-import { type ReactNode, useLayoutEffect, useMemo, useState } from "react";
+import { type ReactNode, useMemo } from "react";
 import { type ControlSize, ControlSizeContext, normalizeSize } from "../lib/sizes";
 import { MessageHolder, message } from "../message/message";
 import { ConfirmHolder, Modal } from "../modal/Modal";
-import { applyNonlaTheme, initColorMode, type NonlaThemeConfig } from "../theme";
+import { initColorMode } from "../theme";
 import { AppContext, type NonlaAppConfig, useAppConfig, usePopupContainer, useToken } from "./context";
 
 export type { NonlaAppConfig };
@@ -14,30 +14,14 @@ export type AppProps = {
   getPopupContainer?: () => HTMLElement;
   /** Default control size (`componentSize`). Per-control `size` still wins. */
   componentSize?: ControlSize;
-  /** Override `--nonla-*` knobs on `:root` (portals inherit). Prefer CSS in the host when possible. */
-  theme?: NonlaThemeConfig;
 };
 
 /** Root host for NonlaUI — ConfigProvider + message/modal holders. Mount once near app root. */
-export function App({ children, getPopupContainer, componentSize, theme }: AppProps) {
+export function App({ children, getPopupContainer, componentSize }: AppProps) {
   // Before children paint, so a sandbox iframe can open on the saved mode instead of flashing the default.
   initColorMode();
-  const [themeRev, setThemeRev] = useState(0);
   const size = componentSize ? normalizeSize(componentSize) : undefined;
-  const value = useMemo<NonlaAppConfig>(
-    () => ({ getPopupContainer, componentSize: size, themeRev }),
-    [getPopupContainer, size, themeRev],
-  );
-
-  useLayoutEffect(() => {
-    if (!theme) return;
-    const restore = applyNonlaTheme(theme);
-    setThemeRev((n) => n + 1);
-    return () => {
-      restore();
-      setThemeRev((n) => n + 1);
-    };
-  }, [theme]);
+  const value = useMemo<NonlaAppConfig>(() => ({ getPopupContainer, componentSize: size }), [getPopupContainer, size]);
 
   return (
     <AppContext.Provider value={value}>

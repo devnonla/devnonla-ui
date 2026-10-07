@@ -15,7 +15,7 @@ export type InputRef = HTMLInputElement;
 
 export type { AlertProps, AlertType } from "./alert/Alert";
 export { Alert } from "./alert/Alert";
-export type { AgentAvatarConfig, AgentAvatarLook, AgentAvatarMotion, AgentAvatarProps } from "./avatar/AgentAvatar";
+export type { AgentAvatarConfig, AgentAvatarEyeColor, AgentAvatarLook, AgentAvatarMotion, AgentAvatarProps } from "./avatar/AgentAvatar";
 export { AGENT_AVATAR_PARTS, AgentAvatar } from "./avatar/AgentAvatar";
 export type { CalendarProps } from "./calendar/Calendar";
 export { Calendar } from "./calendar/Calendar";
@@ -163,7 +163,7 @@ export type { LogoProps, LogoVariant } from "./logo/Logo";
 export { Logo } from "./logo/Logo";
 export type { MarkdownDiffLayout, MarkdownEditorMode, MarkdownEditorProps } from "./markdown-editor/MarkdownEditor";
 export { MarkdownEditor } from "./markdown-editor/MarkdownEditor";
-export type { MarkdownViewerProps } from "./markdown-editor/MarkdownViewer";
+export type { MarkdownVariant, MarkdownViewerProps } from "./markdown-editor/MarkdownViewer";
 export { MarkdownViewer } from "./markdown-editor/MarkdownViewer";
 export type { MermaidBlockProps } from "./markdown-editor/MermaidBlock";
 export { MermaidBlock } from "./markdown-editor/MermaidBlock";
@@ -213,10 +213,12 @@ export type {
   TableRowSelection,
 } from "./table/Table";
 export { Table } from "./table/Table";
+export type { TabsItem, TabsProps } from "./tabs/Tabs";
+export { Tabs } from "./tabs/Tabs";
 export type { TagProps, TagVariant } from "./tag/Tag";
 export { Tag } from "./tag/Tag";
-export type { NonlaColorMode, NonlaColorPreference, NonlaThemeColorName, NonlaThemeColors, NonlaThemeConfig, NonlaThemeKnob, NonlaThemeKnobName, NonlaTokenSnapshot } from "./theme";
-export { applyNonlaTheme, getColorMode, getColorPreference, getDesignToken, initColorMode, NONLA_COLOR_MODE_KEY, NONLA_THEME_KEYS, NONLA_THEME_KNOBS, setColorMode, setColorPreference } from "./theme";
+export type { NonlaColorMode, NonlaColorPreference, NonlaThemeKnob, NonlaThemeKnobName, NonlaTokenSnapshot } from "./theme";
+export { getColorMode, getColorPreference, getDesignToken, initColorMode, NONLA_COLOR_MODE_KEY, NONLA_THEME_KEYS, NONLA_THEME_KNOBS, setColorMode, setColorPreference } from "./theme";
 export type { ThemeSwitcherProps } from "./theme-switcher/ThemeSwitcher";
 export { ThemeSwitcher, useColorPreference } from "./theme-switcher/ThemeSwitcher";
 export type { ThemeToggleProps } from "./theme-toggle/ThemeToggle";

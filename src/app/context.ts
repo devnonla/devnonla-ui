@@ -5,11 +5,9 @@ import { getColorMode, getDesignToken, type NonlaTokenSnapshot, subscribeColorMo
 export type NonlaAppConfig = {
   getPopupContainer?: () => HTMLElement;
   componentSize?: CanonicalSize;
-  /** Bumps when `<App theme>` applies knobs — `useToken` re-reads CSS. */
-  themeRev: number;
 };
 
-export const AppContext = createContext<NonlaAppConfig>({ themeRev: 0 });
+export const AppContext = createContext<NonlaAppConfig>({});
 
 export function useAppConfig() {
   return useContext(AppContext);
@@ -21,14 +19,12 @@ export function usePopupContainer(override?: () => HTMLElement) {
   return () => (override ?? getPopupContainer)?.() ?? document.body;
 }
 
-/** Computed seed knobs under the current App theme (`useToken`). */
+/** Computed `--nonla-*` knobs (`useToken`). Re-reads when the color mode changes. */
 export function useToken(): { token: NonlaTokenSnapshot } {
-  const { themeRev } = useAppConfig();
   const mode = useSyncExternalStore(subscribeColorMode, getColorMode, () => "dark" as const);
   const token = useMemo(() => {
-    void themeRev;
     void mode;
     return getDesignToken();
-  }, [themeRev, mode]);
+  }, [mode]);
   return { token };
 }
