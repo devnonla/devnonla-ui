@@ -90,7 +90,7 @@ export function AgentChatbox({
   return (
     <div className={cn("nonla-agent-chatbox relative flex h-full min-h-0 flex-col overflow-hidden bg-transparent", className)}>
       <OverlayScroll visibility={scrollbar} scrollRef={scrollRef} onScroll={onScroll} className="flex-1 min-h-0 min-w-0" innerClassName={messages.length === 0 ? "flex flex-col" : undefined}>
-        <div data-chat-scroll-content className={`max-w-200 mx-auto min-w-0 w-full ${messages.length === 0 ? "flex flex-1 flex-col pb-16" : "pt-4 pb-20"}`}>
+        <div data-chat-scroll-content className={`max-w-200 mx-auto min-w-0 w-full ${messages.length === 0 ? "flex flex-1 flex-col" : "pt-4 pb-20"}`}>
           {messages.length === 0 ? (
             (emptyState ?? (
               <ChatWelcome name={welcomeName} description={description} avatar={avatar} starters={starters} onStarter={sendMessage} disabled={generating} />
