@@ -7,6 +7,9 @@ export type AgentAvatarMotion = "still" | "idle";
 /** Fixed facing. The head turns that way and the eyes follow. */
 export type AgentAvatarLook = "forward" | "left" | "right" | "up" | "down" | "up-left" | "up-right" | "down-left" | "down-right";
 
+/** Pupil color. Omitted picks black, or white when the face is dark. */
+export type AgentAvatarEyeColor = "black" | "white";
+
 export const AGENT_AVATAR_PARTS = {
   shape: ["circle", "square", "triangle", "diamond", "hex", "gem", "pill", "arch", "cloud", "blob", "drop", "shield"],
   color: ["#6E56F0", "#1C1C1C", "#F0B429", "#3DCFC0", "#F47820", "#3B82F6", "#F2549B", "#A56B3C"],
@@ -14,10 +17,11 @@ export const AGENT_AVATAR_PARTS = {
 
 type Part<K extends keyof typeof AGENT_AVATAR_PARTS> = (typeof AGENT_AVATAR_PARTS)[K][number];
 
-/** A character is one shape plus the two eyes. */
+/** A character is one shape, a color, and two eyes. */
 export type AgentAvatarConfig = {
   shape: Part<"shape">;
   color: string;
+  eyeColor?: AgentAvatarEyeColor;
 };
 
 export type AgentAvatarProps = {
@@ -51,6 +55,7 @@ function resolveConfig(config?: Partial<AgentAvatarConfig>): AgentAvatarConfig {
   return {
     shape: config?.shape ?? DEFAULT_CONFIG.shape,
     color: config?.color ?? DEFAULT_CONFIG.color,
+    eyeColor: config?.eyeColor,
   };
 }
 
@@ -69,6 +74,12 @@ function eyeInk(color: string) {
   const b = Number.parseInt(hex.slice(4, 6), 16);
   const luma = (0.2126 * r + 0.7152 * g + 0.0722 * b) / 255;
   return luma < 0.28 ? EYE_ON_DARK : EYE;
+}
+
+function eyeFill(color: string, eyeColor?: AgentAvatarEyeColor) {
+  if (eyeColor === "white") return EYE_ON_DARK;
+  if (eyeColor === "black") return EYE;
+  return eyeInk(color);
 }
 
 /** Head shift, then how much further the eyes travel, in viewBox units. */
@@ -112,21 +123,21 @@ function Eyes({ cx, cy, w = 5.2, h = 12 }: { cx: number; cy: number; w?: number;
   );
 }
 
-function Shape({ shape, color }: AgentAvatarConfig) {
+function Shape({ shape, color, eyeColor }: AgentAvatarConfig) {
   const paint = useContext(PaintContext);
   const shadow = useContext(ShadowContext);
   const soft = { fill: paint, stroke: paint, strokeLinejoin: "round" as const };
-  const face = (mark: ReactNode, eyes: ReactNode, shiftY = 0) => (
+  const face = (mark: ReactNode, pupils: ReactNode, shiftY = 0) => (
     <g transform={shiftY ? `translate(0 ${shiftY})` : undefined}>
       <g filter={shadow}>{mark}</g>
-      {eyes}
+      {pupils}
     </g>
   );
   const body: Record<AgentAvatarConfig["shape"], ReactNode> = {
     circle: face(<circle cx="32" cy="32" r="22" fill={paint} />, <Eyes cx={32} cy={30} />),
     square: face(<rect x="9" y="9" width="46" height="46" rx="16" fill={paint} />, <Eyes cx={32} cy={30} />),
     triangle: face(<path d="M32 16 L50 50 H14 Z" strokeWidth="14" {...soft} />, <Eyes cx={32} cy={38} />, -1),
-    diamond: face(<path d="M32 10 L54 32 L32 54 L10 32 Z" strokeWidth="16" {...soft} />, <Eyes cx={32} cy={30} />),
+    diamond: face(<path d="M32 14 L50 32 L32 50 L14 32 Z" strokeWidth="8" {...soft} />, <Eyes cx={32} cy={30} />),
     hex: face(<path d="M32 12 L49 22 L49 42 L32 52 L15 42 L15 22 Z" strokeWidth="8" {...soft} />, <Eyes cx={32} cy={30} />),
     gem: face(<path d="M22 12 H42 L52 22 V42 L42 52 H22 L12 42 V22 Z" strokeWidth="8" {...soft} />, <Eyes cx={32} cy={30} />),
     pill: face(<rect x="6" y="18" width="52" height="28" rx="14" fill={paint} />, <Eyes cx={32} cy={30} />),
@@ -152,7 +163,7 @@ function Shape({ shape, color }: AgentAvatarConfig) {
       -6,
     ),
   };
-  return <InkContext.Provider value={eyeInk(color)}>{body[shape]}</InkContext.Provider>;
+  return <InkContext.Provider value={eyeFill(color, eyeColor)}>{body[shape]}</InkContext.Provider>;
 }
 
 export function AgentAvatar({ config, size = 64, motion = "still", look = "forward", className, label = "Agent" }: AgentAvatarProps) {
