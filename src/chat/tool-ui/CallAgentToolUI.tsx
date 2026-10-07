@@ -138,7 +138,7 @@ export function CallAgentToolUI({ msg, assistantLabel = "Assistant", assistantCo
             <div className="flex flex-col gap-3 px-3 py-3">
               {composing || hasRequest ? (
                 <AgentTurn name={assistantLabel} align="end">
-                  <div className="rounded-2xl rounded-tr-sm border border-solid border-(--nonla-input) bg-well-strong px-3 py-2 text-left">
+                  <div className="nonla-chat-user rounded-2xl rounded-tr-sm border border-solid border-(--nonla-input) bg-well-strong px-3 py-2 text-left">
                     {composing ? <TypingDots /> : <p className="m-0 text-[14px] leading-[1.55] whitespace-pre-wrap text-foreground">{requestMessage}</p>}
                   </div>
                 </AgentTurn>

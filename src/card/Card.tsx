@@ -1,9 +1,6 @@
 import type { HTMLAttributes, ReactNode } from "react";
 import { cn } from "../lib/cn";
 
-/** Hairline used by the dashboard card ring and row rules (`--nonla-hairline`). */
-const HAIRLINE = "var(--nonla-hairline)";
-
 export type CardProps = HTMLAttributes<HTMLElement> & {
   /** Section label above the surface. */
   title?: ReactNode;
@@ -29,7 +26,7 @@ function CardRoot({ title, caption, className, children, ...rest }: CardProps) {
   return (
     <section className={cn("flex flex-col gap-[9px]", className)} {...rest}>
       {title != null && title !== "" ? <div className="px-2 text-sm leading-4 text-foreground">{title}</div> : null}
-      <div className="flex flex-col self-stretch rounded-xl bg-card" style={{ boxShadow: `0 0 0 1px ${HAIRLINE}` }}>
+      <div className="flex flex-col self-stretch rounded-xl bg-card" style={{ boxShadow: "var(--nonla-card-shadow)" }}>
         {children}
       </div>
       {caption != null && caption !== "" ? <div className="px-3 text-xs leading-4 text-tertiary-foreground">{caption}</div> : null}

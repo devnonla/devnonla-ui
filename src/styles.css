@@ -1,6 +1,4 @@
 @import "highlight.js/styles/github-dark-dimmed.css";
-@import "@fontsource-variable/inter/index.css";
-@import "@fontsource-variable/inter/wght-italic.css";
 
 /**
  * NonlaUI theme — single source of color.
@@ -23,9 +21,9 @@
   color-scheme: dark;
 
   /* ── Knobs / Seed (override these) ──────────────────────────────────── */
-  /* chrome #141414, editor #181818, base #f0f0f0. Text ranks follow Cursor's mix. */
+  /* Cursor dashboard chrome. Page #141414, sidebar and cards #181818. */
   --nonla-bg: #141414;
-  --nonla-fg: #f0f0f0;
+  --nonla-fg: #ffffff;
   --nonla-fg-muted: color-mix(in oklab, var(--nonla-fg) 74%, var(--nonla-bg));
   --nonla-fg-tertiary: color-mix(in oklab, var(--nonla-fg) 60%, var(--nonla-bg));
   --nonla-fg-quaternary: color-mix(in oklab, var(--nonla-fg) 36%, var(--nonla-bg));
@@ -38,23 +36,28 @@
   --nonla-warn: #f1b467;
   /* Cursor "Learn more" — the only chromatic link. */
   --nonla-link: #81a1c1;
+  /* Body sits a step under the page ink. Headings stay on --nonla-fg so they don't pick up a gray cast from the mix. */
+  --md-ink: color-mix(in oklab, var(--nonla-fg) 78%, var(--nonla-bg));
+  --md-heading: var(--nonla-fg);
+  /* Inline code chip. A light wash, not a solid stamp. */
+  --md-inline-bg: color-mix(in oklab, var(--nonla-fg) 6%, var(--nonla-surface));
   --nonla-radius: 8px;
   --nonla-height: 32px;
   --nonla-height-sm: 24px;
   --nonla-height-lg: 40px;
 
   --nonla-ink: var(--nonla-fg);
-  /* Page #141414, sidebar and cards #181818. Borders are ink hairlines, same as the dashboard. */
+  /* Page #141414. Sidebar and cards are the same step lighter, #181818. */
   --nonla-sidebar: #181818;
   --nonla-surface: #181818;
   --nonla-elevated: var(--nonla-surface);
   --nonla-chip: color-mix(in oklab, var(--nonla-fg) 6%, var(--nonla-surface));
   --nonla-chip-hover: color-mix(in oklab, var(--nonla-fg) 10%, var(--nonla-surface));
-  /* border-tertiary 8%. Inputs use border-secondary 12%. */
-  --nonla-border: color-mix(in oklab, var(--nonla-fg) 8%, transparent);
-  /* Card ring and table rules — border-quaternary, lighter than --nonla-border. */
-  --nonla-hairline: color-mix(in oklab, var(--nonla-fg) 4%, transparent);
-  --nonla-input: color-mix(in oklab, var(--nonla-fg) 12%, transparent);
+  /* Hairlines on #1e1e1e. A step under the old 8% / 12% so they don't read heavy. */
+  --nonla-border: color-mix(in oklab, var(--nonla-fg) 6%, transparent);
+  /* Card ring and table rules — lighter than --nonla-border. */
+  --nonla-hairline: color-mix(in oklab, var(--nonla-fg) 3%, transparent);
+  --nonla-input: color-mix(in oklab, var(--nonla-fg) 9%, transparent);
   --nonla-composer: var(--nonla-surface);
   --nonla-chat-bg: var(--nonla-bg);
   /* Opaque header fill. */
@@ -72,27 +75,12 @@
   --nonla-ink-line: var(--nonla-border);
   --nonla-desktop-bar-height: 42px;
   /* Desktop window title bar. Body stays on --nonla-bg. */
-  --nonla-window-header: #323233;
+  --nonla-window-header: #242424;
   --nonla-z-base: 0;
   --nonla-z-desktop: 20;
   --nonla-z-window: 30;
   --nonla-z-header: 40;
   --nonla-z-popup-base: 1000;
-
-  /* Preset accents — Cursor dark seeds. Only used when a control asks for color="blue" / … */
-  --nonla-blue: #7bafe9;
-  --nonla-purple: #9386f2;
-  --nonla-cyan: #81a1c1;
-  --nonla-green: #3fa266;
-  --nonla-magenta: #b48ead;
-  --nonla-pink: #b48ead;
-  --nonla-red: #fc6b83;
-  --nonla-orange: #d08770;
-  --nonla-yellow: #f1b467;
-  --nonla-volcano: #fc6b83;
-  --nonla-geekblue: #7bafe9;
-  --nonla-lime: #70b489;
-  --nonla-gold: #f1b467;
 
   /* ── Map + Alias (do not set unless you need a one-off exception) ───── */
   --nonla-radius-sm: max(0px, calc(var(--nonla-radius) - 2px));
@@ -152,6 +140,8 @@
   --elevated-shadow: 0 16px 48px rgb(0 0 0 / 45%), 0 0 0 1px color-mix(in srgb, var(--nonla-fg) 8%, transparent);
   --popper-shadow: 0 16px 48px rgb(0 0 0 / 45%), 0 0 0 1px color-mix(in srgb, var(--nonla-fg) 8%, transparent);
   --nonla-shadow: 0 16px 48px rgb(0 0 0 / 45%);
+  /* Short drop plus the ring. On a dark page the drop lifts the surface; the ring stays the edge. */
+  --nonla-card-shadow: 0 1px 2px rgb(0 0 0 / 32%), 0 0 0 1px var(--nonla-border);
   --popper-border: var(--nonla-border);
   --mask: rgb(0 0 0 / 56%);
   --meadow: var(--nonla-meadow);
@@ -173,7 +163,7 @@
 
   /* Chat type — body and headings share one size. */
   --chat-body-size: 14px;
-  --chat-body-leading: 22px;
+  --chat-body-leading: 24px;
   --chat-p-mb: 12px;
   --chat-h-mt: 16px;
   --chat-h-mb: 8px;
@@ -185,50 +175,47 @@
   --nonla-scrollbar-thumb-hover: var(--nonla-fg-quaternary);
 
   color: var(--foreground);
-  /* macOS default is subpixel AA, which makes Inter look heavier. */
-  -webkit-font-smoothing: antialiased;
-  -moz-osx-font-smoothing: grayscale;
+  font-weight: 400;
+  -webkit-font-smoothing: subpixel-antialiased;
+  -moz-osx-font-smoothing: auto;
 }
 
 /*
- * Daylight. Page is a step off white so white cards lift the way #181818 lifts off #141414.
+ * Daylight. Page is white. Sidebar sits a step off it.
  * Beats `.nonla-ui` re-declaring the dark seeds. `.dark` inside `.light` stays on the block above.
  */
 .light:not(.dark),
 .light .nonla-ui:not(.dark) {
   color-scheme: light;
 
-  --nonla-bg: #f3f3f3;
-  --nonla-fg: #141414;
+  --nonla-bg: #ffffff;
+  --nonla-fg: #2c2c2b;
+  --nonla-fg-muted: color-mix(in oklab, var(--nonla-fg) 74%, var(--nonla-bg));
+  --nonla-fg-tertiary: color-mix(in oklab, var(--nonla-fg) 60%, var(--nonla-bg));
+  --nonla-fg-quaternary: color-mix(in oklab, var(--nonla-fg) 36%, var(--nonla-bg));
   --nonla-danger: #dc3b3b;
   --nonla-success: #2f7d4a;
   --nonla-warn: #a16207;
   --nonla-link: #3b6d99;
+  --md-ink: #37352f;
+  --md-heading: var(--md-ink);
+  --md-inline-bg: color-mix(in oklab, var(--nonla-fg) 6%, var(--nonla-surface));
 
-  --nonla-sidebar: #ffffff;
+  /* Neutral on the brand hue (~63°). Chroma stays low so it reads gray, not cream. */
+  --nonla-sidebar: #f7f5f2;
   --nonla-surface: #ffffff;
-  --nonla-meadow: #f3f3f3;
+  --nonla-border: color-mix(in oklab, var(--nonla-fg) 8%, transparent);
+  --nonla-hairline: color-mix(in oklab, var(--nonla-fg) 4%, transparent);
+  --nonla-input: color-mix(in oklab, var(--nonla-fg) 12%, transparent);
+  --nonla-meadow: #ffffff;
   --nonla-window-header: #e8e8e8;
-
-  /* Darker than the night pastels so solid chips stay readable on white. */
-  --nonla-blue: #3b7fc4;
-  --nonla-purple: #6d5bd0;
-  --nonla-cyan: #3d6a8c;
-  --nonla-green: #2f7d4a;
-  --nonla-magenta: #9a5f8a;
-  --nonla-pink: #9a5f8a;
-  --nonla-red: #e23b57;
-  --nonla-orange: #c2613f;
-  --nonla-yellow: #a16207;
-  --nonla-volcano: #e23b57;
-  --nonla-geekblue: #3b7fc4;
-  --nonla-lime: #3d8f5c;
-  --nonla-gold: #a16207;
 
   --elevated-shadow: 0 12px 32px rgb(0 0 0 / 12%), 0 0 0 1px color-mix(in srgb, var(--nonla-fg) 8%, transparent);
   --popper-shadow: 0 12px 32px rgb(0 0 0 / 12%), 0 0 0 1px color-mix(in srgb, var(--nonla-fg) 8%, transparent);
   --mask: rgb(0 0 0 / 40%);
   --nonla-shadow: 0 12px 32px rgb(0 0 0 / 12%);
+  /* White card on a white page. A drop shadow smears the ring into a gray halo, so the edge is the ring alone. */
+  --nonla-card-shadow: 0 0 0 1px var(--nonla-border);
   --shadow-drop: 0 2px 8px rgb(0 0 0 / 12%);
   --shadow-panel: 0 0 0 1px var(--border), 0 4px 16px rgb(0 0 0 / 10%);
 }
@@ -324,9 +311,12 @@
   --spacing-field-nav: 32px;
   --spacing-desktop-bar: var(--nonla-desktop-bar-height);
 
-  --font-sans: "Inter Variable", sans-serif;
+  --font-sans: ui-sans-serif, -apple-system, system-ui, "Segoe UI Variable Display", "Segoe UI", Helvetica, "Apple Color Emoji", Arial, sans-serif, "Segoe UI Emoji", "Segoe UI Symbol";
   --font-family-sans: var(--font-sans);
   --default-font-family: var(--font-sans);
+  --font-mono: SFMono-Regular, Menlo, Consolas, "PT Mono", "Liberation Mono", Courier, monospace;
+  --font-family-mono: var(--font-mono);
+  --default-mono-font-family: var(--font-mono);
 
   --text-2xs: 11px;
   --text-2xs--line-height: 14px;
@@ -709,6 +699,21 @@
   background: color-mix(in oklab, var(--foreground) 10%, var(--card));
 }
 
+/* Daylight page is white. The lifted fill and the card shadow read as a gray smudge.
+   White fill, the field stroke, and no drop shadow. */
+.light:not(.dark) .nonla-chat-input,
+.light .nonla-ui:not(.dark) .nonla-chat-input {
+  background: var(--background);
+  box-shadow: none;
+}
+
+/* User bubble on a white page. The 10% well stamps a gray block; card white reads as no fill.
+   Match the sidebar, one warm step off the page. */
+.light:not(.dark) .nonla-chat-user,
+.light .nonla-ui:not(.dark) .nonla-chat-user {
+  background: var(--sidebar);
+}
+
 /* Desktop window — solid page fill, no frost. Title bar is a step lighter. */
 .nonla-window-glass {
   border: 1px solid var(--border);
@@ -782,6 +787,20 @@
     width 380ms cubic-bezier(0.3, 1.25, 0.5, 1),
     height 380ms cubic-bezier(0.3, 1.25, 0.5, 1);
 }
+/* Tabs underline — sits on the bar's hairline and glides with the active tab */
+.nonla-tabs-ink {
+  position: absolute;
+  bottom: 0;
+  left: 0;
+  z-index: 1;
+  height: 2px;
+  border-radius: 2px 2px 0 0;
+  background: var(--brand);
+  pointer-events: none;
+  transition:
+    transform 380ms cubic-bezier(0.3, 1.25, 0.5, 1),
+    width 380ms cubic-bezier(0.3, 1.25, 0.5, 1);
+}
 
 @media (prefers-reduced-motion: reduce) {
   .nonla-btn-glass {
@@ -790,7 +809,8 @@
   .nonla-btn-glass:active:not(:disabled):not([aria-disabled]) {
     transform: none;
   }
-  .nonla-segmented-thumb {
+  .nonla-segmented-thumb,
+  .nonla-tabs-ink {
     transition: none;
   }
 }
@@ -978,6 +998,20 @@
 }
 .nonla-popper[data-state="closed"] {
   animation: nonla-pop-out 100ms var(--nonla-ease-in);
+}
+
+/* Inline code. The wash hugs the glyphs and a token stays on one line, so a table of chips does not turn into broken gray bars. */
+.nonla-inline-code {
+  box-decoration-break: clone;
+  -webkit-box-decoration-break: clone;
+  border-radius: 4px;
+  background: var(--md-inline-bg);
+  padding: 0.12em 0.35em;
+  font-family: ui-monospace, SFMono-Regular, Menlo, Monaco, Consolas, monospace;
+  font-size: var(--md-inline-size, 14px);
+  line-height: 1;
+  white-space: nowrap;
+  vertical-align: baseline;
 }
 
 .nonla-codeblock-pre code,

@@ -45,7 +45,7 @@ export function CodeBlock({ code, language, title, lineNumbers = false, wordWrap
   return (
     <CodeBlockContext.Provider value={{ code }}>
       <div className={cn("nonla-codeblock relative flex min-w-0 w-full flex-col overflow-clip rounded-xl border border-border bg-card text-sm text-foreground", className)} data-language={language} {...props}>
-        <div className="flex h-8 items-center justify-between gap-2 pl-3 pr-1 text-xs text-muted-foreground">
+        <div className="nonla-codeblock-header flex h-8 items-center justify-between gap-2 pl-3 pr-1 text-xs text-muted-foreground">
           <div className="flex min-w-0 items-center gap-2">
             {label ? <span className="truncate font-medium">{label}</span> : null}
           </div>
