@@ -100,7 +100,7 @@ function SidebarList({
           return (
             <div key={key} className="mb-5 last:mb-0">
               {item.label != null && item.label !== "" ? (
-                <div className={cn("px-3 pb-2 pt-3 text-[11px] font-bold uppercase tracking-wider text-quaternary-foreground", item.className)}>
+                <div className={cn("px-3 pb-2 pt-3 text-[11px] font-semibold uppercase tracking-wider text-quaternary-foreground", item.className)}>
                   {item.label}
                 </div>
               ) : null}
@@ -113,7 +113,7 @@ function SidebarList({
 
         const active = selected != null && key === selected;
         const className = cn(
-          "nonla-sidebar-item flex w-full items-center gap-3 px-3 text-left text-[13px] font-normal no-underline",
+          "nonla-sidebar-item flex w-full items-center gap-3 px-3 text-left text-[14px] font-normal no-underline",
           item.disabled ? "pointer-events-none cursor-not-allowed opacity-40" : "cursor-pointer",
           active ? "text-foreground" : "text-foreground/80 hover:text-foreground",
           item.className,
