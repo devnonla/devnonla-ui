@@ -39,6 +39,7 @@ const COMPONENT_LEGACY: Record<string, string> = {
   spin: "spin",
   dropdown: "dropdown",
   pagination: "pagination",
+  tabs: "tabs",
 };
 
 const GROUPED_COMPONENT_LEGACY: Record<string, string> = {
@@ -77,6 +78,7 @@ const GROUPED_COMPONENT_LEGACY: Record<string, string> = {
   "feedback/spin": "spin",
   "navigation/dropdown": "dropdown",
   "navigation/pagination": "pagination",
+  "navigation/tabs": "tabs",
 };
 
 const GROUP_INDEX_LEGACY: Record<string, string> = {

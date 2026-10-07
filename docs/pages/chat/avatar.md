@@ -3,13 +3,13 @@ path: "/chat/avatar"
 title: "Avatar"
 group: "Chat"
 groupOrder: 2
-order: 4
+order: 11
 icon: "bot-24"
 ---
 
 # Agent avatar
 
-A flat shape and two eyes.
+Face on the welcome screen. Pass it as `avatar` on AgentPanel, AgentChatbox, or ChatWelcome. A flat shape and two eyes.
 
 ## Basic
 
@@ -96,7 +96,7 @@ export default function Demo() {
 
 ## Color
 
-Pick a shape, then a color. Both go in `config`.
+Pick a shape, a face color, and a pupil color. All three go in `config`.
 
 ```live-react
 import { useState } from "react";
@@ -119,16 +119,22 @@ const looks = [
   { label: "Bottom right", value: "down-right" },
 ];
 
+const eyeColors = [
+  { label: "Black", value: "black" },
+  { label: "White", value: "white" },
+];
+
 export default function Demo() {
   const [motion, setMotion] = useState("still");
   const [look, setLook] = useState("left");
-  const [config, setConfig] = useState({ shape: "drop", color: "#6E56F0" });
+  const [config, setConfig] = useState({ shape: "drop", color: "#6E56F0", eyeColor: "white" });
 
   return (
     <div className="flex w-full flex-col items-center gap-5">
       <AgentAvatar config={config} size={120} motion={motion} look={look} label="Configured agent" />
       <Segmented value={motion} onChange={setMotion} options={motions} size="small" />
       <Segmented value={look} onChange={setLook} options={looks} size="small" />
+      <Segmented value={config.eyeColor} onChange={(eyeColor) => setConfig((current) => ({ ...current, eyeColor }))} options={eyeColors} size="small" />
       <div className="mx-auto flex w-100 flex-wrap justify-center">
         {AGENT_AVATAR_PARTS.shape.map((shape) => (
           <button
@@ -139,7 +145,7 @@ export default function Demo() {
             onClick={() => setConfig((current) => ({ ...current, shape }))}
           >
             <span className="rounded-2xl" style={config.shape === shape ? { boxShadow: "0 0 0 2px var(--popover), 0 0 0 4px var(--foreground)" } : undefined}>
-              <AgentAvatar config={{ shape, color: config.color }} size={64} motion="still" look={look} label={shape} />
+              <AgentAvatar config={{ shape, color: config.color, eyeColor: config.eyeColor }} size={64} motion="still" look={look} label={shape} />
             </span>
             <span className="text-[15px] leading-7 text-muted-foreground capitalize">{shape}</span>
           </button>
@@ -186,12 +192,13 @@ export default function Demo() {
 
 ## API
 
-Pass shape and color together: `config={{ shape, color }}`.
+Pass shape, color, and eye color together: `config={{ shape, color, eyeColor }}`.
 
 | Property | Description | Type | Default |
 | --- | --- | --- | --- |
 | `config.shape` | Silhouette of the face. | `circle` \| `square` \| `triangle` \| `diamond` \| `hex` \| `gem` \| `pill` \| `arch` \| `cloud` \| `blob` \| `drop` \| `shield` | `circle` |
 | `config.color` | Face color, as a hex string. | `string` | `#6E56F0` |
+| `config.eyeColor` | Pupil color. Omitted uses black, or white when the face is dark. | `black` \| `white` | black, or white on a dark face |
 | `size` | Width and height, in pixels. | `number` | `64` |
 | `motion` | `still` holds the pose. `idle` looks around and blinks. | `still` \| `idle` | `still` |
 | `look` | Fixed facing. The head turns that way and the eyes follow. | `forward` \| `left` \| `right` \| `up` \| `down` \| `up-left` \| `up-right` \| `down-left` \| `down-right` | `forward` |

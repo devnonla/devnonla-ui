@@ -10,7 +10,7 @@ wide: true
 
 # AgentChatbox
 
-The app owns `send` / resume. The library owns the chat surface.
+Same screen as [AgentPanel](/chat/agent-panel). The app supplies `send`, and optionally `resume` and `onStop`. Use AgentPanel when a URL or fetch function is enough.
 
 ```live-react
 import { AgentChatbox } from "devnonla-ui";
@@ -30,7 +30,7 @@ function reply(text) {
 
 export default function Demo() {
   return (
-    <div className="h-[32rem] w-full overflow-hidden rounded-lg border border-border">
+    <div className="h-[32rem] w-full overflow-hidden">
       <AgentChatbox
         send={({ text }) => reply(text)}
         title="Nova"

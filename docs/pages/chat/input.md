@@ -3,13 +3,13 @@ path: "/chat/input"
 title: "Input"
 group: "Chat"
 groupOrder: 2
-order: 11
+order: 8
 icon: "drafts-24"
 ---
 
 # Input
 
-Composer with send / stop. `toolbar` sits left of the field.
+Composer at the bottom of AgentPanel and AgentChatbox. Import `ChatInput` when you build the thread yourself. `toolbar` sits left of the field.
 
 ```live-react
 import { useState } from "react";

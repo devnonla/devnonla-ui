@@ -10,7 +10,7 @@ wide: true
 
 # AgentPanel
 
-Full chat surface. `endpoint` is a URL or a function that returns a `Response`.
+Full chat. The library calls `endpoint` and reads the SSE stream. Use [AgentChatbox](/chat/agent-chatbox) when the app must own send, resume, and stop.
 
 ```live-react
 import { AgentPanel } from "devnonla-ui";
@@ -30,7 +30,7 @@ function endpoint() {
 
 export default function Demo() {
   return (
-    <div className="h-[32rem] w-full overflow-hidden rounded-lg border border-border">
+    <div className="h-[32rem] w-full overflow-hidden">
       <AgentPanel endpoint={endpoint} title="Nova" name="Nova" description="Helps with research, drafting, and tool-using workflows." placeholder="Message Nova" />
     </div>
   );

@@ -31,4 +31,4 @@ export function Root() {
 }
 ```
 
-Pass props only when a default is wrong. `componentSize` changes the shared size. `theme` overrides colors — see [Theming](/theming). `getPopupContainer` points floating UI at a specific element when the page itself is the wrong place.
+Pass props only when a default is wrong. `componentSize` changes the shared size. Colors come from `--nonla-*` — see [Theming](/theming). `getPopupContainer` points floating UI at a specific element when the page itself is the wrong place.

@@ -3,13 +3,13 @@ path: "/chat/welcome"
 title: "Welcome"
 group: "Chat"
 groupOrder: 2
-order: 5
+order: 4
 icon: "people-community-24"
 ---
 
 # Welcome
 
-Empty chat state with agent intro and starter prompts.
+Empty thread inside AgentPanel and AgentChatbox: name, description, starter prompts. Import `ChatWelcome` only for a custom layout.
 
 ```live-react
 import { ChatWelcome, message } from "devnonla-ui";

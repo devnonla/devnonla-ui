@@ -9,7 +9,7 @@ icon: "wrench-screwdriver-24"
 
 # Tool call
 
-Expandable tool card with input / output / running / error.
+Generic tool card: input, output, running, error. AgentPanel and AgentChatbox use `ChatToolCall` only when `toolUis` and the [builtin cards](/chat/builtin-tools) do not match `toolName`.
 
 ```live-react
 import { ChatToolCall } from "devnonla-ui";

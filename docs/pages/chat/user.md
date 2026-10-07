@@ -3,13 +3,13 @@ path: "/chat/user"
 title: "User message"
 group: "Chat"
 groupOrder: 2
-order: 6
+order: 5
 icon: "person-24"
 ---
 
 # User message
 
-User bubble with overflow expand / collapse.
+One user bubble. AgentPanel and AgentChatbox render `ChatUserMessage` for `role: "user"`. Long text expands and collapses.
 
 ```live-react
 import { ChatUserMessage } from "devnonla-ui";

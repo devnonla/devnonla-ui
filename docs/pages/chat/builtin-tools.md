@@ -10,7 +10,7 @@ className: "bg-chat"
 
 # Builtin tools
 
-Specialized UIs for Nonla built-ins. AgentPanel routes by `toolName` (`toolUis` first, then builtins).
+Specialized cards for Nonla built-ins. AgentPanel and AgentChatbox check your `toolUis` first, then these, then [ChatToolCall](/chat/tool).
 
 ```live-react
 import { GetCurrentTimeToolUI, WebFetchToolUI } from "devnonla-ui";
