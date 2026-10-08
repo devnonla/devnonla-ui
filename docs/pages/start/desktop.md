@@ -1,9 +1,9 @@
 ---
 path: "/desktop"
 title: "Desktop"
-group: "Get started"
-groupOrder: 1
-order: 5
+group: "Feedback"
+groupOrder: 7
+order: 3
 icon: "content-view-24"
 ---
 

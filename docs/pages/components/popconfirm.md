@@ -3,7 +3,7 @@ path: "/components/popconfirm"
 title: "Popconfirm"
 group: "Feedback"
 groupOrder: 7
-order: 4
+order: 5
 icon: "chat-bubbles-question-24"
 ---
 

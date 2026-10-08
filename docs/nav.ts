@@ -120,6 +120,7 @@ const CHAT_LEGACY: Record<string, string> = {
 /** Old hashes (`#/general/button`) and flat slugs (`#/button`) → current docs URLs. */
 export const LEGACY_ALIASES: Record<string, string> = {
   theme: "/theming",
+  app: "/installation",
   ...Object.fromEntries(Object.entries(COMPONENT_LEGACY).map(([from, slug]) => [from, `/components/${slug}`])),
   ...Object.fromEntries(Object.entries(GROUPED_COMPONENT_LEGACY).map(([from, slug]) => [from, `/components/${slug}`])),
   ...GROUP_INDEX_LEGACY,

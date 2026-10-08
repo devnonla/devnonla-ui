@@ -9,7 +9,7 @@ icon: "board-24"
 
 # Card
 
-Settings surface — section title, hairline rows, and a caption under the card.
+Settings surface — section title, faint borders between rows, and a caption under the card.
 
 ```live-react
 import { Button, Card, Tag } from "devnonla-ui";

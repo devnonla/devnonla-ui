@@ -5,7 +5,7 @@ group: "Chat"
 groupOrder: 2
 order: 10
 icon: "code-24"
-className: "bg-chat"
+className: "bg-background"
 ---
 
 # Builtin tools

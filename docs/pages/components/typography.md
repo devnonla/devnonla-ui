@@ -9,7 +9,7 @@ icon: "text-edit-style-24"
 
 # Typography
 
-Same scale as MarkdownViewer `docs`. Headings use `--md-heading`. Body, inline text, and links use `--md-ink`. `type="secondary"` uses `--nonla-fg-tertiary`. `disabled` uses `--nonla-fg-quaternary`.
+Same scale as MarkdownViewer `docs`. Body size is `--nonla-base-text-size` (16px, leading 1.5). Text uses `--nonla-text-main`. `type="secondary"` uses `--nonla-text-tertiary`. `disabled` uses `--nonla-text-quaternary`.
 
 ```live-react
 import { Typography } from "devnonla-ui";
@@ -46,8 +46,8 @@ Used by `Typography.Title`, `Typography.Paragraph`, `Typography.Text`, and `Typo
 
 | Property | Description | Type | Default |
 | --- | --- | --- | --- |
-| `type` | Text color tone. `secondary` is `--nonla-fg-tertiary`. | `secondary` \| `success` \| `warning` \| `danger` | `-` |
-| `disabled` | `--nonla-fg-quaternary`. On `Link`, drops `href` and blocks clicks. | `boolean` | `false` |
+| `type` | Text color tone. `secondary` is `--nonla-text-tertiary`. | `secondary` \| `success` \| `warning` \| `danger` | `-` |
+| `disabled` | `--nonla-text-quaternary`. On `Link`, drops `href` and blocks clicks. | `boolean` | `false` |
 | `mark` | Highlight with a mark. | `boolean` | `false` |
 | `code` | Wrap in inline code. | `boolean` | `false` |
 | `keyboard` | Wrap in a keyboard key. | `boolean` | `false` |

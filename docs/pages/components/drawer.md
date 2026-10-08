@@ -3,7 +3,7 @@ path: "/components/drawer"
 title: "Drawer"
 group: "Feedback"
 groupOrder: 7
-order: 3
+order: 4
 icon: "library-24"
 ---
 

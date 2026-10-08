@@ -5,126 +5,125 @@ group: "Get started"
 groupOrder: 1
 order: 3
 icon: "paint-brush-24"
+wide: true
 ---
 
 # Theming
 
-Dark is the default. `.light` overrides the knobs that change in daylight. `ThemeToggle` switches modes and remembers the choice.
+Font, body size, corner radius, and control height. Colors are on [Colors](/colors).
 
-Set `--nonla-*` in your CSS. Aliases (`--background`, `--card`, `--border`, `--brand`, `--foreground`, …) follow those knobs, so components stay in sync. The CTA is `--nonla-brand`, not `--primary` (that one is ink).
+**Config** is the font, `--nonla-base-text-size`, `--nonla-radius`, and the three control heights. Small and large radius follow the radius knob. Light does not change these. The `text-*` steps stay on Tailwind’s default scale.
 
-```css
-:root {
-  /* Page and text */
-  --nonla-bg: #141414;
-  --nonla-fg: #ffffff;
-  --nonla-fg-muted: color-mix(in oklab, var(--nonla-fg) 74%, var(--nonla-bg));
-  --nonla-fg-tertiary: color-mix(in oklab, var(--nonla-fg) 60%, var(--nonla-bg));
-  --nonla-fg-quaternary: color-mix(in oklab, var(--nonla-fg) 36%, var(--nonla-bg));
-  --nonla-ink: var(--nonla-fg);
-  --nonla-placeholder: color-mix(in srgb, var(--nonla-fg) 42%, transparent);
+```live-react
+import { useEffect, useState } from "react";
 
-  /* Brand and status */
-  --nonla-brand: #f18d00;
-  --nonla-solid-fg: #ffffff;
-  --nonla-danger: #ef4444;
-  --nonla-success: #3fa266;
-  --nonla-warn: #f1b467;
-  --nonla-link: #81a1c1;
+const GROUPS = [
+  {
+    title: "Font",
+    note: "Config is --nonla-font. Mono is for code.",
+    items: [
+      { token: "--nonla-font", alias: "font-sans", use: "UI text. Buttons, fields, markdown, and this page.", kind: "font", sample: "Nonla 0123", className: "font-sans" },
+      { token: "--font-mono", alias: "font-mono", use: "Code, token names, and line numbers.", kind: "font", sample: "const n = 8", className: "font-mono" },
+    ],
+  },
+  {
+    title: "Text",
+    note: "Config is --nonla-base-text-size. Typography and markdown docs use it as the body size.",
+    items: [
+      { token: "--nonla-base-text-size", alias: "", use: "Default body size. Leading is 1.5.", kind: "type", className: "text-(length:--nonla-base-text-size) leading-[calc(var(--nonla-base-text-size)*1.5)]" },
+    ],
+  },
+  {
+    title: "Radius",
+    note: "One knob. Tailwind rounded uses it. Small is 2px tighter. Large is 2px rounder.",
+    items: [
+      { token: "--nonla-radius-sm", alias: "rounded-sm", use: "Small controls. Tailwind rounded-sm.", kind: "radius", className: "rounded-sm" },
+      { token: "--nonla-radius", alias: "rounded", use: "The knob. Tailwind rounded.", kind: "radius", className: "rounded" },
+      { token: "--nonla-radius-lg", alias: "rounded-lg", use: "Large controls. Tailwind rounded-lg.", kind: "radius", className: "rounded-lg" },
+    ],
+  },
+  {
+    title: "Control height",
+    note: "Config. Light does not change these.",
+    items: [
+      { token: "--nonla-height-sm", alias: "", use: "Small button, input, and sidebar row.", kind: "height" },
+      { token: "--nonla-height", alias: "", use: "Default button and input.", kind: "height" },
+      { token: "--nonla-height-lg", alias: "", use: "Large button and input.", kind: "height" },
+    ],
+  },
+];
 
-  /* Surfaces */
-  --nonla-sidebar: #181818;
-  --nonla-surface: #181818;
-  --nonla-elevated: var(--nonla-surface);
-  --nonla-meadow: #141414;
-  --nonla-composer: var(--nonla-surface);
-  --nonla-chat-bg: var(--nonla-bg);
-  --nonla-window-header: #242424;
-  --nonla-table-head: color-mix(in srgb, var(--nonla-fg) 4%, var(--nonla-bg));
-  --nonla-chip: color-mix(in oklab, var(--nonla-fg) 6%, var(--nonla-surface));
-  --nonla-chip-hover: color-mix(in oklab, var(--nonla-fg) 10%, var(--nonla-surface));
-
-  /* Lines */
-  --nonla-border: color-mix(in oklab, var(--nonla-fg) 6%, transparent);
-  --nonla-hairline: color-mix(in oklab, var(--nonla-fg) 3%, transparent);
-  --nonla-input: color-mix(in oklab, var(--nonla-fg) 9%, transparent);
-  --nonla-ink-hover: color-mix(in oklab, var(--nonla-fg) 6%, transparent);
-  --nonla-ink-active: color-mix(in oklab, var(--nonla-fg) 10%, transparent);
-  --nonla-ink-line: var(--nonla-border);
-
-  /* Glass aliases — same fills as surface / page */
-  --nonla-glass: var(--nonla-surface);
-  --nonla-glass-bar: var(--nonla-bg);
-  --nonla-glass-menu: var(--nonla-surface);
-  --nonla-glass-border: var(--nonla-border);
-  --nonla-glass-highlight: transparent;
-
-  /* Metrics */
-  --nonla-radius: 8px;
-  --nonla-radius-sm: max(0px, calc(var(--nonla-radius) - 2px));
-  --nonla-radius-lg: calc(var(--nonla-radius) + 2px);
-  --nonla-height: 32px;
-  --nonla-height-sm: 24px;
-  --nonla-height-lg: 40px;
-  --nonla-desktop-bar-height: 42px;
-
-  /* Stacking */
-  --nonla-z-base: 0;
-  --nonla-z-desktop: 20;
-  --nonla-z-window: 30;
-  --nonla-z-header: 40;
-  --nonla-z-popup-base: 1000;
-  --nonla-z-drawer: var(--nonla-z-popup-base);
-  --nonla-z-modal: var(--nonla-z-popup-base);
-  --nonla-z-message: calc(var(--nonla-z-popup-base) + 10);
-  --nonla-z-popup: calc(var(--nonla-z-popup-base) + 50);
-
-  /* Motion */
-  --nonla-ease-out: cubic-bezier(0.16, 1, 0.3, 1);
-  --nonla-ease-in: cubic-bezier(0.4, 0, 1, 1);
-  --nonla-dur-fast: 150ms;
-  --nonla-dur: 200ms;
-  --nonla-dur-slow: 300ms;
-
-  /* Shadow and scrollbar */
-  --nonla-shadow: 0 16px 48px rgb(0 0 0 / 45%);
-  --nonla-scrollbar-size: 6px;
-  --nonla-scrollbar-thumb: color-mix(in oklab, var(--nonla-fg) 22%, var(--nonla-bg));
-  --nonla-scrollbar-thumb-hover: var(--nonla-fg-quaternary);
-
-  /* Chat type */
-  --chat-body-size: 14px;
-  --chat-body-leading: 24px;
-  --chat-p-mb: 12px;
-  --chat-h-mt: 16px;
-  --chat-h-mb: 8px;
-  --chat-composer-size: 14px;
-  --chat-composer-leading: 22px;
-  --chat-code-size: 12.5px;
+function firstFamily(stack) {
+  const name = stack.split(",")[0].trim().replace(/^["']|["']$/g, "");
+  return name || stack;
 }
-```
 
-Daylight only redefines the knobs that change. Everything else stays on the block above.
+function Row({ item, tick }) {
+  const [label, setLabel] = useState("");
 
-```css
-.light {
-  --nonla-bg: #ffffff;
-  --nonla-fg: #2c2c2b;
-  --nonla-fg-muted: color-mix(in oklab, var(--nonla-fg) 74%, var(--nonla-bg));
-  --nonla-fg-tertiary: color-mix(in oklab, var(--nonla-fg) 60%, var(--nonla-bg));
-  --nonla-fg-quaternary: color-mix(in oklab, var(--nonla-fg) 36%, var(--nonla-bg));
-  --nonla-danger: #dc3b3b;
-  --nonla-success: #2f7d4a;
-  --nonla-warn: #a16207;
-  --nonla-link: #3b6d99;
-  --nonla-sidebar: #f7f5f2;
-  --nonla-surface: #ffffff;
-  --nonla-meadow: #ffffff;
-  --nonla-window-header: #e8e8e8;
-  --nonla-border: color-mix(in oklab, var(--nonla-fg) 8%, transparent);
-  --nonla-hairline: color-mix(in oklab, var(--nonla-fg) 4%, transparent);
-  --nonla-input: color-mix(in oklab, var(--nonla-fg) 12%, transparent);
-  --nonla-shadow: 0 12px 32px rgb(0 0 0 / 12%);
+  useEffect(() => {
+    const node = document.getElementById("specimen-" + item.token);
+    if (!node) return;
+    const style = getComputedStyle(node);
+    if (item.kind === "font") setLabel(firstFamily(style.fontFamily));
+    else if (item.kind === "type") setLabel(style.fontSize + " / " + style.lineHeight);
+    else if (item.kind === "radius") setLabel(style.borderRadius);
+    else setLabel(style.height);
+  }, [tick, item]);
+
+  const specimen =
+    item.kind === "font" ? (
+      <div id={"specimen-" + item.token} className={"text-[15px] leading-6 text-foreground " + item.className}>
+        {item.sample}
+      </div>
+    ) : item.kind === "type" ? (
+      <div id={"specimen-" + item.token} className={"text-foreground " + item.className}>
+        Text
+      </div>
+    ) : item.kind === "radius" ? (
+      <div id={"specimen-" + item.token} className={"size-11 border border-border bg-muted " + (item.className ?? "")} style={item.className ? undefined : { borderRadius: "var(" + item.token + ")" }} />
+    ) : (
+      <div id={"specimen-" + item.token} className="w-16 border border-border bg-muted" style={{ height: "var(" + item.token + ")", borderRadius: "var(--nonla-radius)" }} />
+    );
+
+  return (
+    <div className="grid grid-cols-[7rem_minmax(0,1fr)] items-center gap-x-3 border-b border-border-secondary py-2.5 sm:grid-cols-[7rem_minmax(0,1fr)_auto]">
+      <div className="flex min-h-11 items-center">{specimen}</div>
+      <div className="min-w-0">
+        <div className="flex flex-wrap items-baseline gap-x-2">
+          <span className="font-mono text-[13px] text-foreground">{item.token}</span>
+          {item.alias ? <span className="font-mono text-[12px] text-tertiary-foreground">{item.alias}</span> : null}
+        </div>
+        <div className="text-[13px] leading-5 text-muted-foreground">{item.use}</div>
+      </div>
+      <div className="col-start-2 font-mono text-[12px] text-quaternary-foreground sm:col-start-3 sm:text-right">{label}</div>
+    </div>
+  );
+}
+
+export default function Demo() {
+  const [tick, setTick] = useState(0);
+
+  useEffect(() => {
+    const root = document.documentElement;
+    const watch = new MutationObserver(() => setTick((value) => value + 1));
+    watch.observe(root, { attributes: true, attributeFilter: ["class"] });
+    return () => watch.disconnect();
+  }, []);
+
+  return (
+    <div className="flex w-full min-w-0 flex-col gap-8 text-left">
+      {GROUPS.map((group) => (
+        <section key={group.title} className="flex flex-col">
+          <div className="text-base font-medium text-foreground">{group.title}</div>
+          <div className="mt-1 mb-2 text-[13px] text-muted-foreground">{group.note}</div>
+          {group.items.map((item) => (
+            <Row key={item.token} item={item} tick={tick} />
+          ))}
+        </section>
+      ))}
+    </div>
+  );
 }
 ```
 

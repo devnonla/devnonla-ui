@@ -3,7 +3,7 @@ path: "/components/spin"
 title: "Spin"
 group: "Feedback"
 groupOrder: 7
-order: 5
+order: 6
 icon: "arrow-sync-24"
 ---
 

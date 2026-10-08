@@ -144,7 +144,7 @@ export default function Demo() {
             className="flex w-20 shrink-0 cursor-pointer flex-col items-center gap-1 border-0 bg-transparent p-0 py-1.5 text-inherit"
             onClick={() => setConfig((current) => ({ ...current, shape }))}
           >
-            <span className="rounded-2xl" style={config.shape === shape ? { boxShadow: "0 0 0 2px var(--popover), 0 0 0 4px var(--foreground)" } : undefined}>
+            <span className="rounded-2xl" style={config.shape === shape ? { boxShadow: "0 0 0 2px var(--card), 0 0 0 4px var(--foreground)" } : undefined}>
               <AgentAvatar config={{ shape, color: config.color, eyeColor: config.eyeColor }} size={64} motion="still" look={look} label={shape} />
             </span>
             <span className="text-[15px] leading-7 text-muted-foreground capitalize">{shape}</span>
@@ -161,7 +161,7 @@ export default function Demo() {
             className="size-7 rounded-full border border-border"
             style={{
               background: color,
-              boxShadow: config.color === color ? "0 0 0 2px var(--popover), 0 0 0 4px var(--foreground)" : undefined,
+              boxShadow: config.color === color ? "0 0 0 2px var(--card), 0 0 0 4px var(--foreground)" : undefined,
             }}
             onClick={() => setConfig((current) => ({ ...current, color }))}
           />
