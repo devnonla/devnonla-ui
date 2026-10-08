@@ -1,5 +1,5 @@
 export type { AppProps, NonlaAppConfig } from "./app/App";
-export { App, useApp, useAppConfig, usePopupContainer, useToken } from "./app/App";
+export { App, useApp, useAppConfig, usePopupContainer } from "./app/App";
 export type { ButtonColor, ButtonGroupProps, ButtonProps, ButtonSize, ButtonType, ButtonVariant } from "./button/Button";
 export { Button } from "./button/Button";
 export type { ButtonCopyProps } from "./button/ButtonCopy";
@@ -217,8 +217,8 @@ export type { TabsItem, TabsProps } from "./tabs/Tabs";
 export { Tabs } from "./tabs/Tabs";
 export type { TagProps, TagVariant } from "./tag/Tag";
 export { Tag } from "./tag/Tag";
-export type { NonlaColorMode, NonlaColorPreference, NonlaThemeKnob, NonlaThemeKnobName, NonlaTokenSnapshot } from "./theme";
-export { getColorMode, getColorPreference, getDesignToken, initColorMode, NONLA_COLOR_MODE_KEY, NONLA_THEME_KEYS, NONLA_THEME_KNOBS, setColorMode, setColorPreference } from "./theme";
+export type { NonlaColorMode, NonlaColorPreference } from "./theme";
+export { getColorMode, getColorPreference, initColorMode, NONLA_COLOR_MODE_KEY, setColorMode, setColorPreference } from "./theme";
 export type { ThemeSwitcherProps } from "./theme-switcher/ThemeSwitcher";
 export { ThemeSwitcher, useColorPreference } from "./theme-switcher/ThemeSwitcher";
 export type { ThemeToggleProps } from "./theme-toggle/ThemeToggle";

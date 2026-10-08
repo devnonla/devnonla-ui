@@ -83,10 +83,10 @@ export function controlRadiusVar(size: ControlSize | undefined): string {
   return "var(--nonla-radius)";
 }
 
-/** Soft status border — keep the same color on focus so brand focus does not override. */
+/** Soft status border — keep the same color on focus so the ink focus stroke does not override. */
 export function controlStatusClass(status?: "error" | "warning"): string {
-  if (status === "error") return "border-[color-mix(in_oklab,var(--destructive)_55%,transparent)] focus:border-destructive focus-within:border-destructive data-[state=open]:border-destructive";
-  if (status === "warning") return "border-[color-mix(in_oklab,var(--warn)_55%,transparent)] focus:border-warn focus-within:border-warn data-[state=open]:border-warn";
+  if (status === "error") return "border-[color-mix(in_oklab,var(--destructive)_55%,transparent)] focus:border-destructive! focus-within:border-destructive! data-[state=open]:border-destructive!";
+  if (status === "warning") return "border-[color-mix(in_oklab,var(--warn)_55%,transparent)] focus:border-warn! focus-within:border-warn! data-[state=open]:border-warn!";
   return "";
 }
 
@@ -100,11 +100,11 @@ export const controlFieldTransition = "transition-[background-color,border-color
 export const controlFieldSurface = "border border-solid border-input bg-transparent text-foreground";
 
 /**
- * Focus fill is Cursor `--bg-tertiary` (ink at 8%).
- * Keyboard focus / open menu also strengthens the stroke to `--border-primary` (ink at 20%).
+ * Focus fill is the sidebar step. Focus stroke is `--nonla-input-focus`.
+ * Each theme sets those names to a concrete color. Any focus and an open menu use the stroke.
  */
 export const controlFieldFocusBorder =
-  "focus:bg-input-fill focus-within:bg-input-fill data-[state=open]:bg-input-fill aria-expanded:bg-input-fill focus-visible:border-input-focus has-[:focus-visible]:border-input-focus data-[state=open]:border-input-focus aria-expanded:border-input-focus";
+  "focus:bg-sidebar focus-within:bg-sidebar data-[state=open]:bg-sidebar aria-expanded:bg-sidebar focus:border-input-focus focus-within:border-input-focus focus-visible:border-input-focus has-[:focus-visible]:border-input-focus data-[state=open]:border-input-focus aria-expanded:border-input-focus";
 
 /** Shared field chrome (Input / Select / DatePicker). */
 export function controlFieldStyle(size: ControlSize | undefined): CSSProperties {

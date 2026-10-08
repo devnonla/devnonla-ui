@@ -4,10 +4,10 @@ import { type ControlSize, ControlSizeContext, normalizeSize } from "../lib/size
 import { MessageHolder, message } from "../message/message";
 import { ConfirmHolder, Modal } from "../modal/Modal";
 import { initColorMode } from "../theme";
-import { AppContext, type NonlaAppConfig, useAppConfig, usePopupContainer, useToken } from "./context";
+import { AppContext, type NonlaAppConfig, useAppConfig, usePopupContainer } from "./context";
 
 export type { NonlaAppConfig };
-export { useAppConfig, usePopupContainer, useToken };
+export { useAppConfig, usePopupContainer };
 
 export type AppProps = {
   children: ReactNode;

@@ -1,18 +1,15 @@
 @import "highlight.js/styles/github-dark-dimmed.css";
+@import "./avatar/avatar.css";
 
 /**
- * NonlaUI theme — single source of color.
+ * NonlaUI theme.
  *
- * Layers:
- *   Seed  — `--nonla-*` knobs in the first block. Consumer overrides these.
- *   Map   — derived (brand-50…800, radius-sm/lg, z-popup). Do not set unless exception.
- *   Alias — `--background`, `--brand`, `--destructive` (shadcn + Nonla names).
+ * Config is the first block in `:root` and `.light`. Set those.
+ * Derived (`--background`, `--nonla-fill`, `--brand-500`, borders) follows Config.
+ * `@theme` only maps tokens to Tailwind utilities (`bg-card`, `text-brand`).
  *
- * Dark defaults, measured from cursor.com/dashboard (chrome / editor / base).
- * Brand is the CTA hue (`#f18d00`). `.light` is the daylight palette.
- * Put `class="light"` or `class="dark"` on `<html>` (or call `setColorMode`).
- * Override `--nonla-*` knobs in the consuming app (CSS or `<App theme>`).
- * Components read only these tokens — never edit Button/Tag/… to retheme.
+ * Dark is the default. Put `class="light"` or `class="dark"` on `<html>`
+ * (or call `setColorMode`). Override Config in the consuming app's CSS.
  */
 
 :root,
@@ -20,98 +17,72 @@
 .nonla-ui {
   color-scheme: dark;
 
-  /* ── Knobs / Seed (override these) ──────────────────────────────────── */
-  /* Cursor dashboard chrome. Page #141414, sidebar and cards #181818. */
+  /* ── Config. Set these. `.light` repeats the same keys. ────────────── */
+  /* Page #141414. Sidebar sits with the page, #161616. Cards #181818. */
   --nonla-bg: #141414;
-  --nonla-fg: #ffffff;
-  --nonla-fg-muted: color-mix(in oklab, var(--nonla-fg) 74%, var(--nonla-bg));
-  --nonla-fg-tertiary: color-mix(in oklab, var(--nonla-fg) 60%, var(--nonla-bg));
-  --nonla-fg-quaternary: color-mix(in oklab, var(--nonla-fg) 36%, var(--nonla-bg));
-  /* CTA hue. Button primary, checks, and switches follow this knob. */
+  --nonla-text-main: #ffffff;
+  --nonla-text-secondary: color-mix(in oklab, var(--nonla-text-main) 74%, var(--nonla-bg));
+  --nonla-text-tertiary: color-mix(in oklab, var(--nonla-text-main) 60%, var(--nonla-bg));
+  --nonla-text-quaternary: color-mix(in oklab, var(--nonla-text-main) 36%, var(--nonla-bg));
+  --nonla-text-on-solid: #ffffff;
   --nonla-brand: #f18d00;
-  /* Label on brand fills (Button primary, Tag solid, Checkbox). */
-  --nonla-solid-fg: #ffffff;
   --nonla-danger: #ef4444;
   --nonla-success: #3fa266;
   --nonla-warn: #f1b467;
-  /* Cursor "Learn more" — the only chromatic link. */
   --nonla-link: #81a1c1;
-  /* Body sits a step under the page ink. Headings stay on --nonla-fg so they don't pick up a gray cast from the mix. */
-  --md-ink: color-mix(in oklab, var(--nonla-fg) 78%, var(--nonla-bg));
-  --md-heading: var(--nonla-fg);
-  /* Inline code chip. A light wash, not a solid stamp. */
-  --md-inline-bg: color-mix(in oklab, var(--nonla-fg) 6%, var(--nonla-surface));
+
+  --nonla-sidebar: #161616;
+  --nonla-surface: #181818;
+  --nonla-bar: #242424;
+  --nonla-border: color-mix(in oklab, var(--nonla-text-main) 6%, transparent);
+  --nonla-border-secondary: color-mix(in oklab, var(--nonla-text-main) 3%, transparent);
+  --nonla-input: rgba(255, 255, 235, 0.1);
+
+  --nonla-font: ui-sans-serif, -apple-system, system-ui, "Segoe UI Variable Display", "Segoe UI", Helvetica, "Apple Color Emoji", "Noto Sans Arabic", "Noto Sans Hebrew", Arial, sans-serif, "Segoe UI Emoji", "Segoe UI Symbol";
+  /* Body size for Typography and markdown docs. The text-* scale stays Tailwind’s default. */
+  --nonla-base-text-size: 16px;
   --nonla-radius: 8px;
   --nonla-height: 32px;
   --nonla-height-sm: 24px;
   --nonla-height-lg: 40px;
 
-  --nonla-ink: var(--nonla-fg);
-  /* Page #141414. Sidebar and cards are the same step lighter, #181818. */
-  --nonla-sidebar: #181818;
-  --nonla-surface: #181818;
-  --nonla-elevated: var(--nonla-surface);
-  --nonla-chip: color-mix(in oklab, var(--nonla-fg) 6%, var(--nonla-surface));
-  --nonla-chip-hover: color-mix(in oklab, var(--nonla-fg) 10%, var(--nonla-surface));
-  /* Hairlines on #1e1e1e. A step under the old 8% / 12% so they don't read heavy. */
-  --nonla-border: color-mix(in oklab, var(--nonla-fg) 6%, transparent);
-  /* Card ring and table rules — lighter than --nonla-border. */
-  --nonla-hairline: color-mix(in oklab, var(--nonla-fg) 3%, transparent);
-  --nonla-input: color-mix(in oklab, var(--nonla-fg) 9%, transparent);
-  --nonla-composer: var(--nonla-surface);
-  --nonla-chat-bg: var(--nonla-bg);
-  /* Opaque header fill. */
-  --nonla-table-head: color-mix(in srgb, var(--nonla-fg) 4%, var(--nonla-bg));
-
-  /* Solid fills. Glass names stay as aliases so older class names keep working. */
-  --nonla-meadow: #141414;
-  --nonla-glass: var(--nonla-surface);
-  --nonla-glass-bar: var(--nonla-bg);
-  --nonla-glass-menu: var(--nonla-surface);
-  --nonla-glass-border: var(--nonla-border);
-  --nonla-glass-highlight: transparent;
-  --nonla-ink-hover: color-mix(in oklab, var(--nonla-fg) 6%, transparent);
-  --nonla-ink-active: color-mix(in oklab, var(--nonla-fg) 10%, transparent);
-  --nonla-ink-line: var(--nonla-border);
-  --nonla-desktop-bar-height: 42px;
-  /* Desktop window title bar. Body stays on --nonla-bg. */
-  --nonla-window-header: #242424;
+  /* ── Derived. Leave these — they follow Config. ─────────────────────── */
+  /* One soft wash and one stronger wash. Chips, table headers, wells, and bubbles share them. */
+  --nonla-fill: color-mix(in oklab, var(--nonla-text-main) 6%, var(--nonla-surface));
+  --nonla-fill-strong: color-mix(in oklab, var(--nonla-text-main) 10%, var(--nonla-surface));
+  --nonla-input-focus: rgb(from var(--nonla-input) r g b / calc(alpha * 2));
+  /* Hover and pressed/selected. Sidebar, menus, selects, buttons, and the desktop header share these. */
+  --nonla-ink-hover: color-mix(in oklab, var(--nonla-text-main) 6%, transparent);
+  --nonla-ink-active: color-mix(in oklab, var(--nonla-text-main) 10%, transparent);
   --nonla-z-base: 0;
   --nonla-z-desktop: 20;
   --nonla-z-window: 30;
   --nonla-z-header: 40;
   --nonla-z-popup-base: 1000;
 
-  /* ── Map + Alias (do not set unless you need a one-off exception) ───── */
+  /* ── Aliases. Same rule: do not set. ────────────────────────────────── */
   --nonla-radius-sm: max(0px, calc(var(--nonla-radius) - 2px));
   --nonla-radius-lg: calc(var(--nonla-radius) + 2px);
   --nonla-z-drawer: var(--nonla-z-popup-base);
   --nonla-z-modal: var(--nonla-z-popup-base);
   --nonla-z-message: calc(var(--nonla-z-popup-base) + 10);
   --nonla-z-popup: calc(var(--nonla-z-popup-base) + 50);
+  /* Tailwind `rounded`, `rounded-sm`, and `rounded-lg` follow the knob. */
   --radius: var(--nonla-radius);
+  --radius-sm: var(--nonla-radius-sm);
+  --radius-lg: var(--nonla-radius-lg);
   --background: var(--nonla-bg);
-  --foreground: var(--nonla-fg);
+  --foreground: var(--nonla-text-main);
   --sidebar: var(--nonla-sidebar);
   --card: var(--nonla-surface);
-  --card-foreground: var(--nonla-fg);
-  --popover: var(--nonla-elevated);
-  --popover-foreground: var(--nonla-fg);
-  /* Nonla: --primary = ink (emphasis), not CTA — CTA is --brand */
-  --primary: var(--nonla-ink);
-  --primary-foreground: var(--nonla-bg);
-  --secondary: var(--nonla-chip);
-  --secondary-foreground: var(--nonla-fg);
-  --muted: var(--nonla-chip);
-  --muted-foreground: var(--nonla-fg-muted);
-  --accent: color-mix(in oklab, var(--nonla-brand) 14%, transparent);
-  --accent-foreground: var(--brand-700);
+  --bar: var(--nonla-bar);
+  --muted: var(--nonla-fill);
+  --muted-foreground: var(--nonla-text-secondary);
   --destructive: var(--nonla-danger);
-  --destructive-foreground: #f0f0f0;
   --border: var(--nonla-border);
-  --hairline: var(--nonla-hairline);
+  --border-secondary: var(--nonla-border-secondary);
   --input: var(--nonla-input);
-  --ring: color-mix(in oklab, var(--nonla-brand) 55%, transparent);
+  --input-focus: var(--nonla-input-focus);
 
   /* Brand scale — 500 is the knob. Tints sink into the surface; shades stay with the ink. */
   --brand-50: color-mix(in oklab, var(--nonla-brand) 8%, var(--nonla-surface));
@@ -120,39 +91,20 @@
   --brand-300: color-mix(in oklab, var(--nonla-brand) 40%, var(--nonla-surface));
   --brand-400: color-mix(in oklab, var(--nonla-brand) 64%, var(--nonla-surface));
   --brand-500: var(--nonla-brand);
-  --brand-600: color-mix(in oklab, var(--nonla-brand) 82%, var(--nonla-fg));
-  --brand-700: color-mix(in oklab, var(--nonla-brand) 64%, var(--nonla-fg));
-  --brand-800: color-mix(in oklab, var(--nonla-brand) 48%, var(--nonla-fg));
-  --brand: var(--brand-500);
-  --brand-text: var(--brand-700);
-  --solid-fg: var(--nonla-solid-fg);
+  --brand-600: color-mix(in oklab, var(--nonla-brand) 82%, var(--nonla-text-main));
+  --brand-700: color-mix(in oklab, var(--nonla-brand) 64%, var(--nonla-text-main));
+  --brand-800: color-mix(in oklab, var(--nonla-brand) 48%, var(--nonla-text-main));
+  --brand: var(--nonla-brand);
   --link: var(--nonla-link);
   --success: var(--nonla-success);
   --warn: var(--nonla-warn);
-  --tertiary-foreground: var(--nonla-fg-tertiary);
-  --quaternary-foreground: var(--nonla-fg-quaternary);
-  /* Empty-field hint. Fainter than quaternary so it doesn't read as typed text. */
-  --nonla-placeholder: color-mix(in srgb, var(--nonla-fg) 42%, transparent);
-  --placeholder: var(--nonla-placeholder);
-  --border-subtle: color-mix(in srgb, var(--nonla-border) 65%, transparent);
-  --control-bg: var(--nonla-chip);
-  --control-bg-hover: var(--nonla-chip-hover);
-  --elevated-shadow: 0 16px 48px rgb(0 0 0 / 45%), 0 0 0 1px color-mix(in srgb, var(--nonla-fg) 8%, transparent);
-  --popper-shadow: 0 16px 48px rgb(0 0 0 / 45%), 0 0 0 1px color-mix(in srgb, var(--nonla-fg) 8%, transparent);
+  --tertiary-foreground: var(--nonla-text-tertiary);
+  --quaternary-foreground: var(--nonla-text-quaternary);
+  /* Drop under a floating panel: menu, popover, desktop window. */
   --nonla-shadow: 0 16px 48px rgb(0 0 0 / 45%);
-  /* Short drop plus the ring. On a dark page the drop lifts the surface; the ring stays the edge. */
+  /* Card edge. Dark adds a short drop; the ring is the border. */
   --nonla-card-shadow: 0 1px 2px rgb(0 0 0 / 32%), 0 0 0 1px var(--nonla-border);
-  --popper-border: var(--nonla-border);
   --mask: rgb(0 0 0 / 56%);
-  --meadow: var(--nonla-meadow);
-  --glass: var(--nonla-glass);
-  --glass-bar: var(--nonla-glass-bar);
-  --glass-menu: var(--nonla-glass-menu);
-  --glass-border: var(--nonla-glass-border);
-  --glass-highlight: var(--nonla-glass-highlight);
-  --ink-hover: var(--nonla-ink-hover);
-  --ink-active: var(--nonla-ink-active);
-  --ink-line: var(--nonla-ink-line);
 
   /* Motion — shadcn-like ease-out-expo */
   --nonla-ease-out: cubic-bezier(0.16, 1, 0.3, 1);
@@ -161,75 +113,56 @@
   --nonla-dur: 200ms;
   --nonla-dur-slow: 300ms;
 
-  /* Chat type — body and headings share one size. */
-  --chat-body-size: 14px;
-  --chat-body-leading: 24px;
-  --chat-p-mb: 12px;
-  --chat-h-mt: 16px;
-  --chat-h-mb: 8px;
-  --chat-composer-size: 14px;
-  --chat-composer-leading: 22px;
-  --chat-code-size: 12.5px;
   --nonla-scrollbar-size: 6px;
-  --nonla-scrollbar-thumb: color-mix(in oklab, var(--nonla-fg) 22%, var(--nonla-bg));
-  --nonla-scrollbar-thumb-hover: var(--nonla-fg-quaternary);
+  --nonla-scrollbar-thumb: color-mix(in oklab, var(--nonla-text-main) 22%, var(--nonla-bg));
+  --nonla-scrollbar-thumb-hover: var(--nonla-text-quaternary);
 
   color: var(--foreground);
+  font-family: var(--nonla-font);
   font-weight: 400;
-  -webkit-font-smoothing: subpixel-antialiased;
-  -moz-osx-font-smoothing: auto;
 }
 
-/*
- * Daylight. Page is white. Sidebar sits a step off it.
- * Beats `.nonla-ui` re-declaring the dark seeds. `.dark` inside `.light` stays on the block above.
- */
+/* Same color keys as Config above. Brand and the label on it stay. */
 .light:not(.dark),
 .light .nonla-ui:not(.dark) {
   color-scheme: light;
 
-  --nonla-bg: #ffffff;
-  --nonla-fg: #2c2c2b;
-  --nonla-fg-muted: color-mix(in oklab, var(--nonla-fg) 74%, var(--nonla-bg));
-  --nonla-fg-tertiary: color-mix(in oklab, var(--nonla-fg) 60%, var(--nonla-bg));
-  --nonla-fg-quaternary: color-mix(in oklab, var(--nonla-fg) 36%, var(--nonla-bg));
+  /* Light grays are Tailwind neutral. Page and sidebar are neutral-50. */
+  --nonla-bg: #fafafa;
+  --nonla-text-main: #404040;
+  --nonla-text-secondary: #737373;
+  --nonla-text-tertiary: #a1a1a1;
+  --nonla-text-quaternary: #d4d4d4;
+  --nonla-text-on-solid: #ffffff;
+  --nonla-brand: #f18d00;
   --nonla-danger: #dc3b3b;
   --nonla-success: #2f7d4a;
   --nonla-warn: #a16207;
   --nonla-link: #3b6d99;
-  --md-ink: #37352f;
-  --md-heading: var(--md-ink);
-  --md-inline-bg: color-mix(in oklab, var(--nonla-fg) 6%, var(--nonla-surface));
 
-  /* Neutral on the brand hue (~63°). Chroma stays low so it reads gray, not cream. */
-  --nonla-sidebar: #f7f5f2;
+  --nonla-sidebar: #fafafa;
   --nonla-surface: #ffffff;
-  --nonla-border: color-mix(in oklab, var(--nonla-fg) 8%, transparent);
-  --nonla-hairline: color-mix(in oklab, var(--nonla-fg) 4%, transparent);
-  --nonla-input: color-mix(in oklab, var(--nonla-fg) 12%, transparent);
-  --nonla-meadow: #ffffff;
-  --nonla-window-header: #e8e8e8;
+  --nonla-bar: #e5e5e5;
+  --nonla-border: #e5e5e5;
+  --nonla-border-secondary: #f5f5f5;
+  --nonla-input: rgb(0 0 0 / 11%);
 
-  --elevated-shadow: 0 12px 32px rgb(0 0 0 / 12%), 0 0 0 1px color-mix(in srgb, var(--nonla-fg) 8%, transparent);
-  --popper-shadow: 0 12px 32px rgb(0 0 0 / 12%), 0 0 0 1px color-mix(in srgb, var(--nonla-fg) 8%, transparent);
   --mask: rgb(0 0 0 / 40%);
   --nonla-shadow: 0 12px 32px rgb(0 0 0 / 12%);
-  /* White card on a white page. A drop shadow smears the ring into a gray halo, so the edge is the ring alone. */
   --nonla-card-shadow: 0 0 0 1px var(--nonla-border);
-  --shadow-drop: 0 2px 8px rgb(0 0 0 / 12%);
-  --shadow-panel: 0 0 0 1px var(--border), 0 4px 16px rgb(0 0 0 / 10%);
 }
 
-/* Tailwind v4 — scan this package + expose semantic color utilities. */
+/* Tailwind utility names (`bg-card`, `text-brand`). Not config. */
 @source "./**/*.tsx";
 @source "./**/*.ts";
 
 @theme inline {
+  /* `rounded`, `rounded-sm`, and `rounded-lg` follow the knob. The other steps stay fixed. */
   --radius: var(--nonla-radius);
   --radius-xs: 2px;
-  --radius-sm: 4px;
+  --radius-sm: var(--nonla-radius-sm);
   --radius-md: 6px;
-  --radius-lg: 8px;
+  --radius-lg: var(--nonla-radius-lg);
   --radius-xl: 12px;
   --radius-2xl: 16px;
   --radius-3xl: 20px;
@@ -240,29 +173,15 @@
   --color-foreground: var(--foreground);
   --color-sidebar: var(--sidebar);
   --color-card: var(--card);
-  --color-card-foreground: var(--card-foreground);
-  --color-popover: var(--popover);
-  --color-popover-foreground: var(--popover-foreground);
-  --color-primary: var(--primary);
-  --color-primary-foreground: var(--primary-foreground);
-  --color-secondary: var(--secondary);
-  --color-secondary-foreground: var(--secondary-foreground);
+  --color-bar: var(--bar);
   --color-muted: var(--muted);
   --color-muted-foreground: var(--muted-foreground);
-  --color-accent: var(--accent);
-  --color-accent-foreground: var(--accent-foreground);
   --color-destructive: var(--destructive);
-  --color-destructive-foreground: var(--destructive-foreground);
   --color-border: var(--border);
-  --color-hairline: var(--hairline);
-  --color-border-subtle: var(--border-subtle);
+  --color-border-secondary: var(--border-secondary);
   --default-border-color: var(--border);
   --color-input: var(--input);
-  /* Cursor settings field, keyboard focus — `--border-primary`, ink at 20%. */
-  --color-input-focus: color-mix(in oklab, var(--foreground) 20%, transparent);
-  /* Cursor settings field focus fill — `--bg-tertiary`, ink at 8%. */
-  --color-input-fill: color-mix(in oklab, var(--foreground) 8%, transparent);
-  --color-ring: var(--ring);
+  --color-input-focus: var(--input-focus);
   --color-brand: var(--brand);
   --color-brand-50: var(--brand-50);
   --color-brand-100: var(--brand-100);
@@ -273,32 +192,14 @@
   --color-brand-600: var(--brand-600);
   --color-brand-700: var(--brand-700);
   --color-brand-800: var(--brand-800);
-  --color-brand-text: var(--brand-text);
-  --color-solid-fg: var(--solid-fg);
   --color-link: var(--link);
   --color-success: var(--success);
   --color-warn: var(--warn);
   --color-tertiary-foreground: var(--tertiary-foreground);
   --color-quaternary-foreground: var(--quaternary-foreground);
-  --color-placeholder: var(--placeholder);
-  --color-meadow: var(--meadow);
-  --color-glass: var(--glass);
-  --color-glass-bar: var(--glass-bar);
-  --color-glass-menu: var(--glass-menu);
-  --color-glass-border: var(--glass-border);
-  --color-glass-highlight: var(--glass-highlight);
-  --color-ink-hover: var(--ink-hover);
-  --color-ink-active: var(--ink-active);
-  --color-ink-line: var(--ink-line);
-  --color-chat: var(--nonla-chat-bg);
-  --color-well: color-mix(in oklab, var(--foreground) 5.5%, var(--card));
-  --color-well-strong: color-mix(in oklab, var(--foreground) 10%, var(--card));
-
-  --shadow-card: none;
-  --shadow-whisper: none;
-  --shadow-button-outline: 0 0 0 1px var(--border);
-  --shadow-drop: 0 2px 8px rgb(0 0 0 / 40%);
-  --shadow-panel: 0 0 0 1px var(--border), 0 4px 16px rgb(0 0 0 / 40%);
+  --color-ink-hover: var(--nonla-ink-hover);
+  --color-ink-active: var(--nonla-ink-active);
+  --color-muted-strong: var(--nonla-fill-strong);
 
   --spacing-control-xs: 24px;
   --spacing-control-sm: 24px;
@@ -309,31 +210,13 @@
   --spacing-field-md: 32px;
   --spacing-field-lg: 40px;
   --spacing-field-nav: 32px;
-  --spacing-desktop-bar: var(--nonla-desktop-bar-height);
 
-  --font-sans: ui-sans-serif, -apple-system, system-ui, "Segoe UI Variable Display", "Segoe UI", Helvetica, "Apple Color Emoji", Arial, sans-serif, "Segoe UI Emoji", "Segoe UI Symbol";
+  --font-sans: var(--nonla-font);
   --font-family-sans: var(--font-sans);
   --default-font-family: var(--font-sans);
-  --font-mono: SFMono-Regular, Menlo, Consolas, "PT Mono", "Liberation Mono", Courier, monospace;
+  --font-mono: Menlo, Monaco, "Courier New", monospace;
   --font-family-mono: var(--font-mono);
   --default-mono-font-family: var(--font-mono);
-
-  --text-2xs: 11px;
-  --text-2xs--line-height: 14px;
-  --text-xs: 12px;
-  --text-xs--line-height: 16px;
-  --text-sm: 13px;
-  --text-sm--line-height: 18px;
-  --text-md: 16px;
-  --text-md--line-height: 24px;
-  --text-base: 14px;
-  --text-base--line-height: 20px;
-  --text-lg: 18px;
-  --text-lg--line-height: 28px;
-  --text-xl: 24px;
-  --text-xl--line-height: 32px;
-  --text-2xl: 28px;
-  --text-2xl--line-height: 42px;
 
   --animate-fadeIn: fadeIn 0.28s ease-out both;
 }
@@ -346,6 +229,250 @@
   to {
     opacity: 1;
     transform: translateY(0);
+  }
+}
+
+/* Page scrollbar. */
+* {
+  scrollbar-width: thin;
+  scrollbar-color: var(--nonla-scrollbar-thumb) transparent;
+}
+::-webkit-scrollbar {
+  width: var(--nonla-scrollbar-size);
+  height: var(--nonla-scrollbar-size);
+}
+::-webkit-scrollbar-track {
+  background: transparent;
+}
+::-webkit-scrollbar-thumb {
+  background: var(--nonla-scrollbar-thumb);
+  border-radius: 99px;
+}
+::-webkit-scrollbar-thumb:hover {
+  background: var(--nonla-scrollbar-thumb-hover);
+}
+
+/* Motion used by Modal, Drawer, popups, toasts, Checkbox, and Avatar. */
+
+@keyframes nonla-overlay-in {
+  from {
+    opacity: 0;
+  }
+  to {
+    opacity: 1;
+  }
+}
+
+@keyframes nonla-overlay-out {
+  from {
+    opacity: 1;
+  }
+  to {
+    opacity: 0;
+  }
+}
+
+@keyframes nonla-modal-in {
+  from {
+    opacity: 0;
+    transform: translate(-50%, 0) scale(0.95);
+  }
+  to {
+    opacity: 1;
+    transform: translate(-50%, 0) scale(1);
+  }
+}
+
+@keyframes nonla-modal-out {
+  from {
+    opacity: 1;
+    transform: translate(-50%, 0) scale(1);
+  }
+  to {
+    opacity: 0;
+    transform: translate(-50%, 0) scale(0.95);
+  }
+}
+
+@keyframes nonla-modal-in-centered {
+  from {
+    opacity: 0;
+    transform: translate(-50%, -50%) scale(0.95);
+  }
+  to {
+    opacity: 1;
+    transform: translate(-50%, -50%) scale(1);
+  }
+}
+
+@keyframes nonla-modal-out-centered {
+  from {
+    opacity: 1;
+    transform: translate(-50%, -50%) scale(1);
+  }
+  to {
+    opacity: 0;
+    transform: translate(-50%, -50%) scale(0.95);
+  }
+}
+
+@keyframes nonla-drawer-in-right {
+  from {
+    transform: translateX(100%);
+  }
+  to {
+    transform: translateX(0);
+  }
+}
+
+@keyframes nonla-drawer-out-right {
+  from {
+    transform: translateX(0);
+  }
+  to {
+    transform: translateX(100%);
+  }
+}
+
+@keyframes nonla-drawer-in-left {
+  from {
+    transform: translateX(-100%);
+  }
+  to {
+    transform: translateX(0);
+  }
+}
+
+@keyframes nonla-drawer-out-left {
+  from {
+    transform: translateX(0);
+  }
+  to {
+    transform: translateX(-100%);
+  }
+}
+
+@keyframes nonla-drawer-in-bottom {
+  from {
+    transform: translateY(100%);
+  }
+  to {
+    transform: translateY(0);
+  }
+}
+
+@keyframes nonla-drawer-out-bottom {
+  from {
+    transform: translateY(0);
+  }
+  to {
+    transform: translateY(100%);
+  }
+}
+
+@keyframes nonla-drawer-in-top {
+  from {
+    transform: translateY(-100%);
+  }
+  to {
+    transform: translateY(0);
+  }
+}
+
+@keyframes nonla-drawer-out-top {
+  from {
+    transform: translateY(0);
+  }
+  to {
+    transform: translateY(-100%);
+  }
+}
+
+@keyframes nonla-pop-in-top {
+  from {
+    opacity: 0;
+    transform: translateY(6px) scale(0.96);
+  }
+  to {
+    opacity: 1;
+    transform: translateY(0) scale(1);
+  }
+}
+
+@keyframes nonla-pop-in-bottom {
+  from {
+    opacity: 0;
+    transform: translateY(-6px) scale(0.96);
+  }
+  to {
+    opacity: 1;
+    transform: translateY(0) scale(1);
+  }
+}
+
+@keyframes nonla-pop-in-left {
+  from {
+    opacity: 0;
+    transform: translateX(6px) scale(0.96);
+  }
+  to {
+    opacity: 1;
+    transform: translateX(0) scale(1);
+  }
+}
+
+@keyframes nonla-pop-in-right {
+  from {
+    opacity: 0;
+    transform: translateX(-6px) scale(0.96);
+  }
+  to {
+    opacity: 1;
+    transform: translateX(0) scale(1);
+  }
+}
+
+@keyframes nonla-pop-out {
+  from {
+    opacity: 1;
+    transform: scale(1);
+  }
+  to {
+    opacity: 0;
+    transform: scale(0.96);
+  }
+}
+
+@keyframes nonla-message-in {
+  from {
+    opacity: 0;
+    transform: translateY(-8px) scale(0.98);
+  }
+  to {
+    opacity: 1;
+    transform: translateY(0) scale(1);
+  }
+}
+
+@keyframes nonla-message-out {
+  from {
+    opacity: 1;
+    transform: translateY(0) scale(1);
+  }
+  to {
+    opacity: 0;
+    transform: translateY(-6px) scale(0.98);
+  }
+}
+
+@keyframes nonla-check-in {
+  from {
+    opacity: 0;
+    transform: scale(0.5);
+  }
+  to {
+    opacity: 1;
+    transform: scale(1);
   }
 }
 
@@ -386,634 +513,6 @@
   }
 }
 
-/* Toast host — top-center stack */
-.nonla-message-host {
-  position: fixed;
-  top: 16px;
-  left: 50%;
-  transform: translateX(-50%);
-  z-index: var(--nonla-z-message);
-  display: flex;
-  flex-direction: column;
-  align-items: center;
-  gap: 8px;
-  pointer-events: none;
-  max-width: min(420px, calc(100vw - 32px));
-}
-
-.nonla-message-item {
-  pointer-events: auto;
-  display: inline-flex;
-  align-items: center;
-  gap: 8px;
-  padding: 9px 12px;
-  border-radius: var(--radius);
-  font-size: 14px;
-  line-height: 1.5714;
-  animation: nonla-message-in var(--nonla-dur) var(--nonla-ease-out);
-  will-change: transform, opacity;
-}
-
-.nonla-message-item.is-leaving {
-  animation: nonla-message-out 150ms var(--nonla-ease-in) forwards;
-}
-
-.nonla-message-icon {
-  display: inline-flex;
-  flex-shrink: 0;
-  width: 16px;
-  height: 16px;
-  align-items: center;
-  justify-content: center;
-}
-
-.nonla-message-content {
-  min-width: 0;
-  word-break: break-word;
-}
-
-.nonla-message-spin {
-  animation: nonla-message-spin 0.8s linear infinite;
-}
-
-@keyframes nonla-message-in {
-  from {
-    opacity: 0;
-    transform: translateY(-8px) scale(0.98);
-  }
-  to {
-    opacity: 1;
-    transform: translateY(0) scale(1);
-  }
-}
-
-@keyframes nonla-message-out {
-  from {
-    opacity: 1;
-    transform: translateY(0) scale(1);
-  }
-  to {
-    opacity: 0;
-    transform: translateY(-6px) scale(0.98);
-  }
-}
-
-@keyframes nonla-message-spin {
-  to {
-    transform: rotate(360deg);
-  }
-}
-
-/* ── Spin: agent (3×3 random snake) ────────────────────────────────────── */
-.nonla-spin-matrix {
-  align-content: center;
-  justify-content: center;
-}
-
-.nonla-spin-matrix-cell {
-  display: block;
-  width: 100%;
-  height: 100%;
-  border-radius: 999px;
-  background: color-mix(in oklab, var(--brand) 10%, transparent);
-  transition: background 120ms linear;
-}
-
-.nonla-spin-matrix-cell.is-on {
-  background: var(--brand);
-}
-
-/* Ink gray — follows foreground, not the brand hue, in both color modes. */
-.nonla-spin-matrix.is-neutral .nonla-spin-matrix-cell {
-  background: color-mix(in oklab, var(--foreground) 16%, transparent);
-}
-
-.nonla-spin-matrix.is-neutral .nonla-spin-matrix-cell.is-on {
-  background: var(--muted-foreground);
-}
-
-@media (prefers-reduced-motion: reduce) {
-  .nonla-spin-matrix-cell {
-    transition: none;
-  }
-}
-
-@keyframes nonla-check-in {
-  from {
-    opacity: 0;
-    transform: scale(0.5);
-  }
-  to {
-    opacity: 1;
-    transform: scale(1);
-  }
-}
-
-@keyframes nonla-overlay-in {
-  from {
-    opacity: 0;
-  }
-  to {
-    opacity: 1;
-  }
-}
-@keyframes nonla-overlay-out {
-  from {
-    opacity: 1;
-  }
-  to {
-    opacity: 0;
-  }
-}
-
-/* shadcn-style zoom: fade + scale(0.95) ↔ 1 (no slide) */
-@keyframes nonla-modal-in {
-  from {
-    opacity: 0;
-    transform: translate(-50%, 0) scale(0.95);
-  }
-  to {
-    opacity: 1;
-    transform: translate(-50%, 0) scale(1);
-  }
-}
-@keyframes nonla-modal-out {
-  from {
-    opacity: 1;
-    transform: translate(-50%, 0) scale(1);
-  }
-  to {
-    opacity: 0;
-    transform: translate(-50%, 0) scale(0.95);
-  }
-}
-@keyframes nonla-modal-in-centered {
-  from {
-    opacity: 0;
-    transform: translate(-50%, -50%) scale(0.95);
-  }
-  to {
-    opacity: 1;
-    transform: translate(-50%, -50%) scale(1);
-  }
-}
-@keyframes nonla-modal-out-centered {
-  from {
-    opacity: 1;
-    transform: translate(-50%, -50%) scale(1);
-  }
-  to {
-    opacity: 0;
-    transform: translate(-50%, -50%) scale(0.95);
-  }
-}
-
-@keyframes nonla-drawer-in-right {
-  from {
-    transform: translateX(100%);
-  }
-  to {
-    transform: translateX(0);
-  }
-}
-@keyframes nonla-drawer-out-right {
-  from {
-    transform: translateX(0);
-  }
-  to {
-    transform: translateX(100%);
-  }
-}
-@keyframes nonla-drawer-in-left {
-  from {
-    transform: translateX(-100%);
-  }
-  to {
-    transform: translateX(0);
-  }
-}
-@keyframes nonla-drawer-out-left {
-  from {
-    transform: translateX(0);
-  }
-  to {
-    transform: translateX(-100%);
-  }
-}
-@keyframes nonla-drawer-in-bottom {
-  from {
-    transform: translateY(100%);
-  }
-  to {
-    transform: translateY(0);
-  }
-}
-@keyframes nonla-drawer-out-bottom {
-  from {
-    transform: translateY(0);
-  }
-  to {
-    transform: translateY(100%);
-  }
-}
-@keyframes nonla-drawer-in-top {
-  from {
-    transform: translateY(-100%);
-  }
-  to {
-    transform: translateY(0);
-  }
-}
-@keyframes nonla-drawer-out-top {
-  from {
-    transform: translateY(0);
-  }
-  to {
-    transform: translateY(-100%);
-  }
-}
-
-/* Direction-aware popper (Popover / Select / Dropdown / Tooltip) */
-@keyframes nonla-pop-in-top {
-  from {
-    opacity: 0;
-    transform: translateY(6px) scale(0.96);
-  }
-  to {
-    opacity: 1;
-    transform: translateY(0) scale(1);
-  }
-}
-@keyframes nonla-pop-in-bottom {
-  from {
-    opacity: 0;
-    transform: translateY(-6px) scale(0.96);
-  }
-  to {
-    opacity: 1;
-    transform: translateY(0) scale(1);
-  }
-}
-@keyframes nonla-pop-in-left {
-  from {
-    opacity: 0;
-    transform: translateX(6px) scale(0.96);
-  }
-  to {
-    opacity: 1;
-    transform: translateX(0) scale(1);
-  }
-}
-@keyframes nonla-pop-in-right {
-  from {
-    opacity: 0;
-    transform: translateX(-6px) scale(0.96);
-  }
-  to {
-    opacity: 1;
-    transform: translateX(0) scale(1);
-  }
-}
-@keyframes nonla-pop-out {
-  from {
-    opacity: 1;
-    transform: scale(1);
-  }
-  to {
-    opacity: 0;
-    transform: scale(0.96);
-  }
-}
-
-/* Solid card. Same fill as Cursor's settings cards. */
-.nonla-glass {
-  border: 1px solid var(--border);
-  background: var(--card);
-  color: var(--foreground);
-  box-shadow: var(--nonla-shadow);
-}
-
-/* Composer sits on the page, so the card fill disappears. Lift it the same step as the user bubble. */
-.nonla-chat-input {
-  border-color: var(--nonla-input);
-  background: color-mix(in oklab, var(--foreground) 10%, var(--card));
-}
-
-/* Daylight page is white. The lifted fill and the card shadow read as a gray smudge.
-   White fill, the field stroke, and no drop shadow. */
-.light:not(.dark) .nonla-chat-input,
-.light .nonla-ui:not(.dark) .nonla-chat-input {
-  background: var(--background);
-  box-shadow: none;
-}
-
-/* User bubble on a white page. The 10% well stamps a gray block; card white reads as no fill.
-   Match the sidebar, one warm step off the page. */
-.light:not(.dark) .nonla-chat-user,
-.light .nonla-ui:not(.dark) .nonla-chat-user {
-  background: var(--sidebar);
-}
-
-/* Desktop window — solid page fill, no frost. Title bar is a step lighter. */
-.nonla-window-glass {
-  border: 1px solid var(--border);
-  box-shadow: var(--nonla-shadow);
-  background: var(--background);
-}
-.nonla-window-header {
-  background: var(--nonla-window-header);
-}
-
-.nonla-btn-glass {
-  border-color: var(--border);
-  background: transparent;
-  box-shadow: none;
-  transition: box-shadow var(--nonla-dur-fast) var(--nonla-ease-out), transform var(--nonla-dur-fast) var(--nonla-ease-out);
-}
-.nonla-btn-glass:hover:not(:disabled):not([aria-disabled]) {
-  box-shadow: inset 0 0 0 999px var(--ink-hover);
-}
-.nonla-btn-glass:active:not(:disabled):not([aria-disabled]) {
-  transform: scale(0.98);
-  box-shadow: inset 0 0 0 999px var(--ink-active);
-}
-
-.nonla-glass-chip {
-  background: var(--nonla-chip);
-  border-color: var(--border);
-}
-/* Menu item hover — pure ink tint; panel's warm frost shows through, no milky gray */
-.nonla-menu-item[data-highlighted] {
-  background: var(--ink-hover);
-  border-color: var(--glass-border);
-}
-.nonla-glass-chip-on {
-  background: var(--nonla-chip-hover);
-  border-color: var(--border);
-  box-shadow: none;
-}
-/* Select options: hover and the chosen row stay borderless.
-   Hover sits one step under the chosen row (chip 6% vs chip-hover 10%). */
-.nonla-select-options .nonla-menu-item[data-highlighted] {
-  background: var(--nonla-chip);
-  border-color: transparent;
-}
-.nonla-select-options .nonla-glass-chip-on {
-  border-color: transparent;
-}
-/* Sidebar row — glass first, a whisper of brand. Same on hover and selected. */
-.nonla-sidebar-item {
-  box-sizing: border-box;
-  height: var(--nonla-height);
-  border-radius: var(--nonla-radius);
-  border: 0;
-  background: transparent;
-  transition:
-    background-color var(--nonla-dur-fast) var(--nonla-ease-out),
-    box-shadow var(--nonla-dur-fast) var(--nonla-ease-out);
-}
-.nonla-sidebar-item:hover:not(:disabled):not([aria-disabled]),
-.nonla-sidebar-item[aria-current="true"],
-.nonla-sidebar-item[aria-current="page"] {
-  background: var(--ink-hover);
-  box-shadow: none;
-}
-/* Segmented sliding thumb — glass pill glides between items */
-.nonla-segmented-thumb {
-  top: 0;
-  left: 0;
-  transition:
-    transform 380ms cubic-bezier(0.3, 1.25, 0.5, 1),
-    width 380ms cubic-bezier(0.3, 1.25, 0.5, 1),
-    height 380ms cubic-bezier(0.3, 1.25, 0.5, 1);
-}
-/* Tabs underline — sits on the bar's hairline and glides with the active tab */
-.nonla-tabs-ink {
-  position: absolute;
-  bottom: 0;
-  left: 0;
-  z-index: 1;
-  height: 2px;
-  border-radius: 2px 2px 0 0;
-  background: var(--brand);
-  pointer-events: none;
-  transition:
-    transform 380ms cubic-bezier(0.3, 1.25, 0.5, 1),
-    width 380ms cubic-bezier(0.3, 1.25, 0.5, 1);
-}
-
-@media (prefers-reduced-motion: reduce) {
-  .nonla-btn-glass {
-    transition: box-shadow var(--nonla-dur-fast) var(--nonla-ease-out);
-  }
-  .nonla-btn-glass:active:not(:disabled):not([aria-disabled]) {
-    transform: none;
-  }
-  .nonla-segmented-thumb,
-  .nonla-tabs-ink {
-    transition: none;
-  }
-}
-
-.nonla-overlay {
-  position: fixed;
-  inset: 0;
-  z-index: var(--nonla-z-drawer);
-  background: var(--mask);
-}
-.nonla-overlay[data-state="open"] {
-  animation: nonla-overlay-in var(--nonla-dur) var(--nonla-ease-out);
-}
-.nonla-overlay[data-state="closed"] {
-  animation: nonla-overlay-out var(--nonla-dur-fast) var(--nonla-ease-in);
-}
-
-.nonla-modal-overlay {
-  position: fixed;
-  inset: 0;
-  z-index: var(--nonla-z-modal);
-  background: var(--mask);
-}
-.nonla-modal-overlay[data-state="open"] {
-  animation: nonla-overlay-in var(--nonla-dur) var(--nonla-ease-out);
-}
-.nonla-modal-overlay[data-state="closed"] {
-  animation: nonla-overlay-out var(--nonla-dur-fast) var(--nonla-ease-in) forwards;
-  pointer-events: none;
-}
-
-.nonla-modal-content {
-  position: fixed;
-  left: 50%;
-  top: 60px;
-  z-index: calc(var(--nonla-z-modal) + 1);
-  transform: translate(-50%, 0);
-  display: flex;
-  flex-direction: column;
-  width: min(480px, calc(100vw - 32px));
-  max-height: calc(100vh - 88px);
-  overflow: hidden;
-  border-radius: calc(var(--radius) + 4px);
-  padding: 0;
-  outline: none;
-  will-change: transform, opacity;
-}
-.nonla-modal-content[data-state="open"] {
-  animation: nonla-modal-in var(--nonla-dur) var(--nonla-ease-out);
-}
-.nonla-modal-content[data-state="closed"] {
-  animation: nonla-modal-out var(--nonla-dur-fast) var(--nonla-ease-in) forwards;
-  pointer-events: none;
-}
-.nonla-modal-content[data-centered="true"] {
-  top: 50%;
-  transform: translate(-50%, -50%);
-  max-height: calc(100vh - 64px);
-}
-.nonla-modal-content[data-centered="true"][data-state="open"] {
-  animation: nonla-modal-in-centered var(--nonla-dur) var(--nonla-ease-out);
-}
-.nonla-modal-content[data-centered="true"][data-state="closed"] {
-  animation: nonla-modal-out-centered var(--nonla-dur-fast) var(--nonla-ease-in) forwards;
-  pointer-events: none;
-}
-
-.nonla-modal-header {
-  display: flex;
-  align-items: center;
-  justify-content: space-between;
-  gap: 12px;
-  flex-shrink: 0;
-  padding: 12px 16px;
-  background: transparent;
-}
-.nonla-modal-title {
-  margin: 0;
-  font-size: 15px;
-  font-weight: 600;
-  line-height: 1.4;
-  color: var(--foreground);
-}
-.nonla-modal-close {
-  display: inline-flex;
-  align-items: center;
-  justify-content: center;
-  width: 28px;
-  height: 28px;
-  margin: -4px -6px -4px 0;
-  border: 0;
-  border-radius: var(--radius);
-  background: transparent;
-  color: var(--muted-foreground);
-  font-size: 18px;
-  line-height: 1;
-  cursor: pointer;
-}
-.nonla-modal-close:hover {
-  color: var(--foreground);
-  background: var(--control-bg);
-}
-.nonla-modal-body {
-  flex: 1 1 auto;
-  overflow: auto;
-  padding: 16px 16px 24px;
-  font-size: 14px;
-  line-height: 1.5;
-  color: var(--foreground);
-  background: transparent;
-}
-.nonla-modal-footer {
-  display: flex;
-  align-items: center;
-  justify-content: flex-end;
-  gap: 8px;
-  flex-shrink: 0;
-  padding: 10px 16px;
-  background: transparent;
-}
-
-.nonla-drawer-panel {
-  will-change: transform;
-  z-index: calc(var(--nonla-z-drawer) + 1);
-}
-.nonla-drawer-panel[data-side="right"][data-state="open"] {
-  animation: nonla-drawer-in-right var(--nonla-dur-slow) var(--nonla-ease-out);
-}
-.nonla-drawer-panel[data-side="right"][data-state="closed"] {
-  animation: nonla-drawer-out-right var(--nonla-dur) var(--nonla-ease-in);
-}
-.nonla-drawer-panel[data-side="left"][data-state="open"] {
-  animation: nonla-drawer-in-left var(--nonla-dur-slow) var(--nonla-ease-out);
-}
-.nonla-drawer-panel[data-side="left"][data-state="closed"] {
-  animation: nonla-drawer-out-left var(--nonla-dur) var(--nonla-ease-in);
-}
-.nonla-drawer-panel[data-side="bottom"][data-state="open"] {
-  animation: nonla-drawer-in-bottom var(--nonla-dur-slow) var(--nonla-ease-out);
-}
-.nonla-drawer-panel[data-side="bottom"][data-state="closed"] {
-  animation: nonla-drawer-out-bottom var(--nonla-dur) var(--nonla-ease-in);
-}
-.nonla-drawer-panel[data-side="top"][data-state="open"] {
-  animation: nonla-drawer-in-top var(--nonla-dur-slow) var(--nonla-ease-out);
-}
-.nonla-drawer-panel[data-side="top"][data-state="closed"] {
-  animation: nonla-drawer-out-top var(--nonla-dur) var(--nonla-ease-in);
-}
-
-.nonla-popup-layer {
-  z-index: var(--nonla-z-popup, 1050);
-}
-
-.nonla-desktop-layer {
-  z-index: var(--nonla-z-desktop, 20);
-}
-
-.nonla-window-layer {
-  z-index: var(--nonla-z-window, 30);
-}
-
-.nonla-header-layer {
-  z-index: var(--nonla-z-header, 40);
-}
-
-.nonla-popper {
-  will-change: transform, opacity;
-  transform-origin: var(--radix-popover-content-transform-origin, var(--radix-dropdown-menu-content-transform-origin, var(--radix-select-content-transform-origin, var(--radix-tooltip-content-transform-origin, center))));
-}
-.nonla-popper[data-state="open"][data-side="top"] {
-  animation: nonla-pop-in-top var(--nonla-dur-fast) var(--nonla-ease-out);
-}
-.nonla-popper[data-state="open"][data-side="bottom"] {
-  animation: nonla-pop-in-bottom var(--nonla-dur-fast) var(--nonla-ease-out);
-}
-.nonla-popper[data-state="open"][data-side="left"] {
-  animation: nonla-pop-in-left var(--nonla-dur-fast) var(--nonla-ease-out);
-}
-.nonla-popper[data-state="open"][data-side="right"] {
-  animation: nonla-pop-in-right var(--nonla-dur-fast) var(--nonla-ease-out);
-}
-.nonla-popper[data-state="open"]:not([data-side]) {
-  animation: nonla-pop-in-bottom var(--nonla-dur-fast) var(--nonla-ease-out);
-}
-.nonla-popper[data-state="closed"] {
-  animation: nonla-pop-out 100ms var(--nonla-ease-in);
-}
-
-/* Inline code. The wash hugs the glyphs and a token stays on one line, so a table of chips does not turn into broken gray bars. */
-.nonla-inline-code {
-  box-decoration-break: clone;
-  -webkit-box-decoration-break: clone;
-  border-radius: 4px;
-  background: var(--md-inline-bg);
-  padding: 0.12em 0.35em;
-  font-family: ui-monospace, SFMono-Regular, Menlo, Monaco, Consolas, monospace;
-  font-size: var(--md-inline-size, 14px);
-  line-height: 1;
-  white-space: nowrap;
-  vertical-align: baseline;
-}
-
 .nonla-codeblock-pre code,
 .nonla-codeblock-pre .hljs {
   color: var(--foreground);
@@ -1046,73 +545,6 @@
   color: var(--quaternary-foreground);
   user-select: none;
   font-size: 11px;
-}
-
-.nonla-scroll-hidden {
-  scrollbar-width: none;
-  -ms-overflow-style: none;
-}
-.nonla-scroll-hidden::-webkit-scrollbar {
-  display: none;
-  width: 0;
-  height: 0;
-}
-
-* {
-  scrollbar-width: thin;
-  scrollbar-color: var(--nonla-scrollbar-thumb) transparent;
-}
-::-webkit-scrollbar {
-  width: var(--nonla-scrollbar-size);
-  height: var(--nonla-scrollbar-size);
-}
-::-webkit-scrollbar-track {
-  background: transparent;
-}
-::-webkit-scrollbar-thumb {
-  background: var(--nonla-scrollbar-thumb);
-  border-radius: 99px;
-}
-::-webkit-scrollbar-thumb:hover {
-  background: var(--nonla-scrollbar-thumb-hover);
-}
-
-.nonla-scroll-hover {
-  scrollbar-color: transparent transparent;
-}
-.nonla-scroll-hover:hover {
-  scrollbar-color: var(--nonla-scrollbar-thumb) transparent;
-}
-.nonla-scroll-hover::-webkit-scrollbar-thumb {
-  background: transparent;
-}
-.nonla-scroll-hover:hover::-webkit-scrollbar-thumb {
-  background: var(--nonla-scrollbar-thumb);
-}
-.nonla-scroll-hover:hover::-webkit-scrollbar-thumb:hover {
-  background: var(--nonla-scrollbar-thumb-hover);
-}
-
-.nonla-overlay-thumb {
-  background: var(--nonla-scrollbar-thumb);
-}
-.group\/scroll:hover .nonla-overlay-thumb {
-  background: var(--nonla-scrollbar-thumb-hover);
-}
-
-.nonla-color-checkered {
-  background-color: #fff;
-  background-image: conic-gradient(#d9d9d9 0.25turn, #fff 0.25turn 0.5turn, #d9d9d9 0.5turn 0.75turn, #fff 0.75turn);
-  background-size: 8px 8px;
-}
-
-.nonla-color-cleared {
-  background: linear-gradient(
-    to bottom left,
-    transparent calc(50% - 1px),
-    var(--destructive) calc(50% - 1px) calc(50% + 1px),
-    transparent calc(50% + 1px)
-  );
 }
 
 /* GitHub light syntax. The imported sheet is github-dark-dimmed; these beat it under `.light`. */
@@ -1181,112 +613,4 @@
 .light .hljs-deletion {
   color: #b31d28;
   background-color: #ffeef0;
-}
-
-/* ── Agent avatars — a quiet shift, not a bounce ──────────────────────── */
-.nonla-avatar {
-  display: inline-flex;
-  flex-shrink: 0;
-  line-height: 0;
-  vertical-align: middle;
-}
-
-.nonla-avatar-bob {
-  display: block;
-  width: 100%;
-  height: 100%;
-  transform: translate(var(--nonla-avatar-hx, 0), var(--nonla-avatar-hy, 0));
-}
-
-.nonla-avatar-gaze {
-  transform-box: view-box;
-  transform: translate(var(--nonla-avatar-ex, 0), var(--nonla-avatar-ey, 0));
-}
-
-.nonla-avatar-eyes {
-  transform-box: fill-box;
-  transform-origin: center;
-}
-
-.nonla-avatar[data-motion="idle"] .nonla-avatar-bob {
-  animation: nonla-avatar-wander 8.4s ease-in-out infinite;
-  animation-delay: var(--nonla-avatar-delay, 0s);
-}
-
-.nonla-avatar[data-motion="idle"] .nonla-avatar-gaze {
-  animation: nonla-avatar-glance 8.4s ease-in-out infinite;
-  animation-delay: var(--nonla-avatar-delay, 0s);
-}
-
-.nonla-avatar[data-motion="idle"] .nonla-avatar-eyes {
-  animation: nonla-avatar-blink 6.4s ease-in-out infinite;
-  animation-delay: var(--nonla-avatar-delay, 0s);
-}
-
-@keyframes nonla-avatar-wander {
-  0%,
-  14%,
-  100% {
-    transform: translate(var(--nonla-avatar-hx, 0), var(--nonla-avatar-hy, 0));
-  }
-  22%,
-  34% {
-    transform: translate(-5%, 1%);
-  }
-  42%,
-  54% {
-    transform: translate(0, -4%);
-  }
-  62%,
-  74% {
-    transform: translate(5%, 1%);
-  }
-  82%,
-  94% {
-    transform: translate(0, 4.4%);
-  }
-}
-
-@keyframes nonla-avatar-glance {
-  0%,
-  14%,
-  100% {
-    transform: translate(var(--nonla-avatar-ex, 0), var(--nonla-avatar-ey, 0));
-  }
-  22%,
-  34% {
-    transform: translate(-10%, 0.6%);
-  }
-  42%,
-  54% {
-    transform: translate(0, -6.9%);
-  }
-  62%,
-  74% {
-    transform: translate(10%, 0.6%);
-  }
-  82%,
-  94% {
-    transform: translate(0, 7.2%);
-  }
-}
-
-@keyframes nonla-avatar-blink {
-  0%,
-  46%,
-  52%,
-  100% {
-    transform: scaleY(1);
-  }
-  49% {
-    transform: scaleY(0.15);
-  }
-}
-
-@media (prefers-reduced-motion: reduce) {
-  .nonla-avatar[data-motion] .nonla-avatar-bob,
-  .nonla-avatar[data-motion] .nonla-avatar-gaze,
-  .nonla-avatar[data-motion] .nonla-avatar-eyes {
-    animation: none;
-  }
 }

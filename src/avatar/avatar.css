@@ -1,0 +1,107 @@
+@keyframes nonla-avatar-wander {
+  0%,
+  14%,
+  100% {
+    transform: translate(var(--nonla-avatar-hx, 0), var(--nonla-avatar-hy, 0));
+  }
+  22%,
+  34% {
+    transform: translate(-5%, 1%);
+  }
+  42%,
+  54% {
+    transform: translate(0, -4%);
+  }
+  62%,
+  74% {
+    transform: translate(5%, 1%);
+  }
+  82%,
+  94% {
+    transform: translate(0, 4.4%);
+  }
+}
+
+@keyframes nonla-avatar-glance {
+  0%,
+  14%,
+  100% {
+    transform: translate(var(--nonla-avatar-ex, 0), var(--nonla-avatar-ey, 0));
+  }
+  22%,
+  34% {
+    transform: translate(-10%, 0.6%);
+  }
+  42%,
+  54% {
+    transform: translate(0, -6.9%);
+  }
+  62%,
+  74% {
+    transform: translate(10%, 0.6%);
+  }
+  82%,
+  94% {
+    transform: translate(0, 7.2%);
+  }
+}
+
+@keyframes nonla-avatar-blink {
+  0%,
+  46%,
+  52%,
+  100% {
+    transform: scaleY(1);
+  }
+  49% {
+    transform: scaleY(0.15);
+  }
+}
+
+/* A quiet shift, not a bounce. */
+.nonla-avatar {
+  display: inline-flex;
+  flex-shrink: 0;
+  line-height: 0;
+  vertical-align: middle;
+}
+
+.nonla-avatar-bob {
+  display: block;
+  width: 100%;
+  height: 100%;
+  transform: translate(var(--nonla-avatar-hx, 0), var(--nonla-avatar-hy, 0));
+}
+
+.nonla-avatar-gaze {
+  transform-box: view-box;
+  transform: translate(var(--nonla-avatar-ex, 0), var(--nonla-avatar-ey, 0));
+}
+
+.nonla-avatar-eyes {
+  transform-box: fill-box;
+  transform-origin: center;
+}
+
+.nonla-avatar[data-motion="idle"] .nonla-avatar-bob {
+  animation: nonla-avatar-wander 8.4s ease-in-out infinite;
+  animation-delay: var(--nonla-avatar-delay, 0s);
+}
+
+.nonla-avatar[data-motion="idle"] .nonla-avatar-gaze {
+  animation: nonla-avatar-glance 8.4s ease-in-out infinite;
+  animation-delay: var(--nonla-avatar-delay, 0s);
+}
+
+.nonla-avatar[data-motion="idle"] .nonla-avatar-eyes {
+  animation: nonla-avatar-blink 6.4s ease-in-out infinite;
+  animation-delay: var(--nonla-avatar-delay, 0s);
+}
+
+@media (prefers-reduced-motion: reduce) {
+  .nonla-avatar[data-motion] .nonla-avatar-bob,
+  .nonla-avatar[data-motion] .nonla-avatar-gaze,
+  .nonla-avatar[data-motion] .nonla-avatar-eyes {
+    animation: none;
+  }
+}
