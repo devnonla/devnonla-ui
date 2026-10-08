@@ -176,7 +176,7 @@ export function MermaidBlock({ children, className }: MermaidBlockProps) {
 
   if (error) {
     return (
-      <div className={cn("my-3 rounded-lg bg-accent border border-destructive/30 p-4 text-xs text-destructive", className)}>
+      <div className={cn("my-3 rounded-lg bg-brand/14 border border-destructive/30 p-4 text-xs text-destructive", className)}>
         <p className="font-medium mb-1">Mermaid render error</p>
         <pre className="whitespace-pre-wrap text-[11px] opacity-70">{error}</pre>
       </div>

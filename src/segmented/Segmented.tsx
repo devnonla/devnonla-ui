@@ -71,7 +71,7 @@ export function Segmented<V extends string | number = string | number>({ options
       {thumb ? (
         <span
           aria-hidden
-          className="nonla-segmented-thumb pointer-events-none absolute border border-solid border-border bg-card"
+          className="nonla-segmented-thumb pointer-events-none absolute top-0 left-0 border border-solid border-border bg-card transition-[transform,width,height] duration-380 ease-[cubic-bezier(0.3,1.25,0.5,1)] motion-reduce:transition-none"
           style={{
             width: thumb.width,
             height: thumb.height,

@@ -15,11 +15,11 @@ export type InputProps = Omit<InputHTMLAttributes<HTMLInputElement>, "size" | "p
   onPressEnter?: (e: KeyboardEvent<HTMLInputElement>) => void;
 };
 
-const fieldBase = cn("w-full", controlFieldSurface, "placeholder:text-placeholder focus-visible:outline-none disabled:cursor-not-allowed disabled:opacity-45", controlFieldFocusBorder);
+const fieldBase = cn("w-full", controlFieldSurface, "placeholder:text-quaternary-foreground focus-visible:outline-none disabled:cursor-not-allowed disabled:opacity-45", controlFieldFocusBorder);
 
 function variantClass(variant: InputProps["variant"]) {
   if (variant === "borderless") return "border-transparent bg-transparent hover:bg-transparent shadow-none focus:border-transparent focus:bg-transparent focus-within:bg-transparent";
-  if (variant === "filled") return "border-transparent bg-muted focus:border-transparent focus:bg-[var(--control-bg-hover)]";
+  if (variant === "filled") return "border-transparent bg-muted focus:border-transparent focus:bg-muted-strong";
   return "";
 }
 
@@ -162,11 +162,14 @@ function roundTo(n: number, precision?: number) {
 
 function HandlerChevron({ dir, size }: { dir: "up" | "down"; size: number }) {
   return (
-    <svg width={size} height={size} viewBox="0 0 10 10" fill="none" aria-hidden className="opacity-70">
+    <svg width={size} height={size} viewBox="0 0 10 10" fill="none" aria-hidden>
       {dir === "up" ? <path d="M2.5 6.25L5 3.75L7.5 6.25" stroke="currentColor" strokeWidth="1.4" strokeLinecap="round" strokeLinejoin="round" /> : <path d="M2.5 3.75L5 6.25L7.5 3.75" stroke="currentColor" strokeWidth="1.4" strokeLinecap="round" strokeLinejoin="round" />}
     </svg>
   );
 }
+
+/** Stepper reveal and press. Same ease-out and duration as the field focus. */
+const handlerEase = "duration-[var(--nonla-dur-fast,150ms)] ease-[var(--nonla-ease-out,cubic-bezier(0.16,1,0.3,1))] motion-reduce:transition-none";
 
 const InputNumber = forwardRef<HTMLInputElement, InputNumberProps>(function InputNumber({ value, defaultValue, onChange, min, max, step = 1, controls = true, precision, parser, formatter, disabled, size, status, className, style, placeholder, onBlur, onFocus, onKeyDown, ...rest }, ref) {
   const controlled = value !== undefined;
@@ -275,7 +278,7 @@ const InputNumber = forwardRef<HTMLInputElement, InputNumberProps>(function Inpu
         }}
         onKeyDown={handleKeyDown}
         className={cn(
-          "min-w-0 flex-1 border-0 bg-transparent text-foreground placeholder:text-placeholder outline-none",
+          "min-w-0 flex-1 border-0 bg-transparent text-foreground placeholder:text-quaternary-foreground outline-none",
           "disabled:cursor-not-allowed",
           // Kill native number chrome if type ever switches
           "[appearance:textfield] [&::-webkit-inner-spin-button]:appearance-none [&::-webkit-outer-spin-button]:appearance-none",
@@ -291,7 +294,12 @@ const InputNumber = forwardRef<HTMLInputElement, InputNumberProps>(function Inpu
 
       {controls && !disabled ? (
         <div
-          className={cn("absolute top-0 right-0 bottom-0 flex flex-col overflow-hidden border-l border-border/80", "opacity-0 transition-opacity duration-150 group-hover:opacity-100 group-focus-within:opacity-100")}
+          className={cn(
+            "pointer-events-none absolute top-0 right-0 bottom-0 flex flex-col overflow-hidden border-l border-input opacity-0",
+            "transition-opacity",
+            handlerEase,
+            "group-hover:pointer-events-auto group-hover:opacity-100 group-focus-within:pointer-events-auto group-focus-within:opacity-100",
+          )}
           style={{ width: handlerW, borderTopRightRadius: `calc(${controlRadiusVar(size)} - 1px)`, borderBottomRightRadius: `calc(${controlRadiusVar(size)} - 1px)` }}
         >
           <button
@@ -299,7 +307,7 @@ const InputNumber = forwardRef<HTMLInputElement, InputNumberProps>(function Inpu
             tabIndex={-1}
             aria-label="Increase"
             disabled={atMax}
-            className={cn("flex flex-1 items-center justify-center text-muted-foreground", "hover:bg-ink-hover hover:text-foreground active:bg-ink-active", "disabled:opacity-30 disabled:pointer-events-none", "border-b border-border/60")}
+            className={cn("flex flex-1 items-center justify-center border-b border-input text-tertiary-foreground", "transition-colors", handlerEase, "hover:bg-ink-hover hover:text-foreground active:bg-ink-active active:duration-75", "disabled:pointer-events-none disabled:opacity-30")}
             onMouseDown={(e) => e.preventDefault()}
             onClick={() => stepBy(1)}
           >
@@ -310,7 +318,7 @@ const InputNumber = forwardRef<HTMLInputElement, InputNumberProps>(function Inpu
             tabIndex={-1}
             aria-label="Decrease"
             disabled={atMin}
-            className={cn("flex flex-1 items-center justify-center text-muted-foreground", "hover:bg-ink-hover hover:text-foreground active:bg-ink-active", "disabled:opacity-30 disabled:pointer-events-none")}
+            className={cn("flex flex-1 items-center justify-center text-tertiary-foreground", "transition-colors", handlerEase, "hover:bg-ink-hover hover:text-foreground active:bg-ink-active active:duration-75", "disabled:pointer-events-none disabled:opacity-30")}
             onMouseDown={(e) => e.preventDefault()}
             onClick={() => stepBy(-1)}
           >

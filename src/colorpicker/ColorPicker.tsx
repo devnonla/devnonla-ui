@@ -39,6 +39,11 @@ import {
 export type { ColorFormat, ColorType, HsbaColor };
 export { Color, DEFAULT_COLOR, parseColor };
 
+const CHECKERED =
+  "nonla-color-checkered bg-white [background-image:conic-gradient(#d9d9d9_0.25turn,#fff_0.25turn_0.5turn,#d9d9d9_0.5turn_0.75turn,#fff_0.75turn)] [background-size:8px_8px]";
+const CLEARED =
+  "nonla-color-cleared bg-[linear-gradient(to_bottom_left,transparent_calc(50%-1px),var(--destructive)_calc(50%-1px)_calc(50%+1px),transparent_calc(50%+1px))]";
+
 export type PresetColorType = {
   label: ReactNode;
   defaultOpen?: boolean;
@@ -383,10 +388,7 @@ function PresetGroup({
                 type="button"
                 title={color.toHexString()}
                 aria-label={color.toHexString()}
-                className={cn(
-                  "nonla-color-checkered size-5 cursor-pointer overflow-hidden rounded-sm border border-glass-border",
-                  active && "ring-2 ring-brand ring-offset-1 ring-offset-background",
-                )}
+                className={cn(CHECKERED, "size-5 cursor-pointer overflow-hidden rounded-sm border border-border", active && "ring-2 ring-brand ring-offset-1 ring-offset-background")}
                 onClick={() => onPick(color)}
               >
                 <span className="block size-full" style={{ backgroundColor: color.toRgbString() }} />
@@ -411,9 +413,9 @@ function ColorBlock({
   style?: CSSProperties;
 }) {
   return (
-    <span className={cn("nonla-color-checkered relative block overflow-hidden", className)} style={style}>
+    <span className={cn(CHECKERED, "relative block overflow-hidden", className)} style={style}>
       <span className="absolute inset-0" style={{ backgroundColor: cleared ? "transparent" : color.toRgbString() }} />
-      {cleared ? <span className="nonla-color-cleared absolute inset-0" /> : null}
+      {cleared ? <span className={cn(CLEARED, "absolute inset-0")} /> : null}
     </span>
   );
 }
@@ -557,7 +559,7 @@ export function ColorPicker({
           />
           {disabledAlpha ? null : (
             <div className="relative">
-              <span className="nonla-color-checkered pointer-events-none absolute inset-0 rounded-full" />
+              <span className={cn(CHECKERED, "pointer-events-none absolute inset-0 rounded-full")} />
               <Slider
                 ariaLabel="Alpha"
                 value={hsba.a}
@@ -701,7 +703,7 @@ export function ColorPicker({
           style={styles?.popup}
         >
           {rendered}
-          {showArrow ? <PopoverPrimitive.Arrow width={12} height={6} className="fill-glass drop-shadow-[0_1px_0_var(--glass-border)]" /> : null}
+          {showArrow ? <PopoverPrimitive.Arrow width={12} height={6} className="fill-card drop-shadow-[0_1px_0_var(--border)]" /> : null}
         </PopoverPrimitive.Content>
       </PopoverPrimitive.Portal>
     </PopoverPrimitive.Root>

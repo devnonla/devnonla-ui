@@ -2,7 +2,7 @@ import { cn } from "../lib/cn";
 import { glassOverlayClass } from "../lib/surface";
 
 export const menuItemClass =
-  "nonla-menu-item relative flex cursor-default select-none items-center gap-2 rounded-lg border border-solid border-transparent px-2.5 py-1 text-sm leading-5 outline-none data-[disabled]:opacity-40";
+  "nonla-menu-item relative flex cursor-default select-none items-center gap-2 rounded-lg border border-solid border-transparent px-2.5 py-1 text-sm leading-5 outline-none data-[disabled]:opacity-40 data-highlighted:border-border data-highlighted:bg-ink-hover";
 
 export const menuContentClass = cn(glassOverlayClass, "min-w-40 overflow-hidden p-1");
 

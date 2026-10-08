@@ -83,11 +83,15 @@ export function Drawer({
       }}
     >
       <Dialog.Portal container={portal}>
-        <Dialog.Overlay className="nonla-overlay" />
+        <Dialog.Overlay className="nonla-overlay fixed inset-0 z-(--nonla-z-drawer) bg-(--mask) data-[state=open]:animate-[nonla-overlay-in_var(--nonla-dur)_var(--nonla-ease-out)] data-[state=closed]:animate-[nonla-overlay-out_var(--nonla-dur-fast)_var(--nonla-ease-in)]" />
         <Dialog.Content
           data-side={placement}
           className={cn(
-            "nonla-drawer-panel fixed flex flex-col outline-none",
+            "nonla-drawer-panel fixed flex flex-col outline-none will-change-transform z-[calc(var(--nonla-z-drawer)+1)]",
+            "data-[side=right]:data-[state=open]:animate-[nonla-drawer-in-right_var(--nonla-dur-slow)_var(--nonla-ease-out)] data-[side=right]:data-[state=closed]:animate-[nonla-drawer-out-right_var(--nonla-dur)_var(--nonla-ease-in)]",
+            "data-[side=left]:data-[state=open]:animate-[nonla-drawer-in-left_var(--nonla-dur-slow)_var(--nonla-ease-out)] data-[side=left]:data-[state=closed]:animate-[nonla-drawer-out-left_var(--nonla-dur)_var(--nonla-ease-in)]",
+            "data-[side=bottom]:data-[state=open]:animate-[nonla-drawer-in-bottom_var(--nonla-dur-slow)_var(--nonla-ease-out)] data-[side=bottom]:data-[state=closed]:animate-[nonla-drawer-out-bottom_var(--nonla-dur)_var(--nonla-ease-in)]",
+            "data-[side=top]:data-[state=open]:animate-[nonla-drawer-in-top_var(--nonla-dur-slow)_var(--nonla-ease-out)] data-[side=top]:data-[state=closed]:animate-[nonla-drawer-out-top_var(--nonla-dur)_var(--nonla-ease-in)]",
             glassSurfaceClass,
             placement === "right" && "top-0 right-0 bottom-0 max-w-[100vw]",
             placement === "left" && "top-0 left-0 bottom-0 max-w-[100vw]",

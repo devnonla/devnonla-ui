@@ -63,7 +63,7 @@ export function MarkdownSource({ value, onChange, readOnly, placeholder = "Write
               setCursor(pos);
             });
           }}
-          className="relative z-10 block w-full resize-none overflow-hidden bg-transparent py-2 pr-4 font-mono text-[13px] leading-5 text-foreground outline-none placeholder:text-placeholder"
+          className="relative z-10 block w-full resize-none overflow-hidden bg-transparent py-2 pr-4 font-mono text-[13px] leading-5 text-foreground outline-none placeholder:text-quaternary-foreground"
           style={{ height: Math.max(lines.length, 1) * LINE + PAD * 2 }}
         />
       </div>

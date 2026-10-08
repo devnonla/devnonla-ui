@@ -17,9 +17,9 @@ export type CheckboxProps = Omit<ComponentPropsWithoutRef<typeof CheckboxPrimiti
 
 const CHECKED_FILL: Record<CheckboxColor, string> = {
   brand:
-    "data-[state=checked]:bg-brand data-[state=checked]:border-brand data-[state=checked]:text-(--nonla-solid-fg) data-[state=indeterminate]:bg-brand data-[state=indeterminate]:border-brand data-[state=indeterminate]:text-(--nonla-solid-fg)",
+    "data-[state=checked]:bg-brand data-[state=checked]:border-brand data-[state=checked]:text-(--nonla-text-on-solid) data-[state=indeterminate]:bg-brand data-[state=indeterminate]:border-brand data-[state=indeterminate]:text-(--nonla-text-on-solid)",
   success:
-    "data-[state=checked]:bg-success data-[state=checked]:border-success data-[state=checked]:text-(--nonla-solid-fg) data-[state=indeterminate]:bg-success data-[state=indeterminate]:border-success data-[state=indeterminate]:text-(--nonla-solid-fg)",
+    "data-[state=checked]:bg-success data-[state=checked]:border-success data-[state=checked]:text-(--nonla-text-on-solid) data-[state=indeterminate]:bg-success data-[state=indeterminate]:border-success data-[state=indeterminate]:text-(--nonla-text-on-solid)",
   white:
     "data-[state=checked]:bg-white data-[state=checked]:border-white data-[state=checked]:text-[#141414] data-[state=indeterminate]:bg-white data-[state=indeterminate]:border-white data-[state=indeterminate]:text-[#141414]",
 };

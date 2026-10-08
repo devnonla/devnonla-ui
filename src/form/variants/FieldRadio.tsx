@@ -27,7 +27,7 @@ export function FieldRadio({ field, choices }: Props) {
               />
               <span
                 aria-hidden
-                className="pointer-events-none size-4 rounded-full border border-solid border-input bg-(--control-bg) peer-checked:border-brand"
+                className="pointer-events-none size-4 rounded-full border border-solid border-input bg-muted peer-checked:border-brand"
               />
               <span aria-hidden className="pointer-events-none absolute inset-[3.5px] rounded-full bg-brand opacity-0 peer-checked:opacity-100" />
             </span>

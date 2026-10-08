@@ -1,5 +1,10 @@
 import { type CSSProperties, type ReactNode, useLayoutEffect, useState } from "react";
 import { createRoot, type Root } from "react-dom/client";
+import { cn } from "../lib/cn";
+import { glassSurfaceClass } from "../lib/surface";
+
+const messageHostClass =
+  "nonla-message-host pointer-events-none fixed top-4 left-1/2 z-(--nonla-z-message) flex max-w-[min(420px,calc(100vw-32px))] -translate-x-1/2 flex-col items-center gap-2";
 
 export type MessageType = "success" | "error" | "info" | "warning" | "loading";
 
@@ -50,7 +55,7 @@ function IconError() {
   return (
     <svg width="16" height="16" viewBox="0 0 16 16" fill="none" aria-hidden>
       <circle cx="8" cy="8" r="8" fill="var(--destructive)" />
-      <path d="M5.4 5.4L10.6 10.6M10.6 5.4L5.4 10.6" stroke="var(--destructive-foreground)" strokeWidth="1.6" strokeLinecap="round" />
+      <path d="M5.4 5.4L10.6 10.6M10.6 5.4L5.4 10.6" stroke="var(--nonla-text-on-solid)" strokeWidth="1.6" strokeLinecap="round" />
     </svg>
   );
 }
@@ -59,7 +64,7 @@ function IconInfo() {
   return (
     <svg width="16" height="16" viewBox="0 0 16 16" fill="none" aria-hidden>
       <circle cx="8" cy="8" r="8" fill="var(--link)" />
-      <path d="M8 7.1V11.2M8 4.8V5.5" stroke="var(--nonla-solid-fg)" strokeWidth="1.7" strokeLinecap="round" />
+      <path d="M8 7.1V11.2M8 4.8V5.5" stroke="var(--nonla-text-on-solid)" strokeWidth="1.7" strokeLinecap="round" />
     </svg>
   );
 }
@@ -75,7 +80,7 @@ function IconWarning() {
 
 function IconLoading() {
   return (
-    <svg width="16" height="16" viewBox="0 0 16 16" fill="none" aria-hidden className="nonla-message-spin">
+    <svg width="16" height="16" viewBox="0 0 16 16" fill="none" aria-hidden className="animate-[spin_0.8s_linear_infinite]">
       <circle cx="8" cy="8" r="6.25" stroke="color-mix(in oklab, var(--link) 30%, transparent)" strokeWidth="2" />
       <path d="M14.25 8A6.25 6.25 0 0 0 8 1.75" stroke="var(--link)" strokeWidth="2" strokeLinecap="round" />
     </svg>
@@ -103,14 +108,19 @@ function MessageList({ list }: { list: Active[] }) {
       {list.map((item) => (
         <div
           key={item.id}
-          className={["nonla-message-item", "nonla-glass", item.leaving ? "is-leaving" : "", item.className].filter(Boolean).join(" ")}
+          className={cn(
+            glassSurfaceClass,
+            "nonla-message-item pointer-events-auto inline-flex items-center gap-2 rounded-(--radius) px-3 py-[9px] text-sm leading-[1.5714] will-change-[transform,opacity] animate-[nonla-message-in_var(--nonla-dur)_var(--nonla-ease-out)]",
+            item.leaving && "animate-[nonla-message-out_150ms_var(--nonla-ease-in)_forwards]",
+            item.className,
+          )}
           data-type={item.type}
           role="status"
           style={item.style}
           onClick={item.onClick}
         >
-          <span className="nonla-message-icon">{item.icon ?? defaultIcon(item.type)}</span>
-          <span className="nonla-message-content">{item.content}</span>
+          <span className="inline-flex size-4 shrink-0 items-center justify-center">{item.icon ?? defaultIcon(item.type)}</span>
+          <span className="min-w-0 wrap-break-word">{item.content}</span>
         </div>
       ))}
     </>
@@ -131,7 +141,7 @@ function dropFallbackHost() {
 function ensureHost() {
   if (renderer || (hostEl && root)) return;
   hostEl = document.createElement("div");
-  hostEl.className = "nonla-message-host";
+  hostEl.className = messageHostClass;
   document.body.appendChild(hostEl);
   root = createRoot(hostEl);
 }
@@ -157,7 +167,7 @@ export function MessageHolder() {
     };
   }, []);
   return (
-    <div className="nonla-message-host" aria-live="polite" aria-relevant="additions">
+    <div className={messageHostClass} aria-live="polite" aria-relevant="additions">
       <MessageList list={list} />
     </div>
   );

@@ -75,14 +75,14 @@ function tokenAppearance(color: "default" | "primary" | "danger" | "link", varia
   if (variant === "nostyle") return "";
   const g = ghost && variant !== "text" && variant !== "link";
   if (color === "primary") {
-    if (variant === "solid" && !g) return "border-transparent bg-brand text-[var(--nonla-solid-fg)] hover:bg-[color-mix(in_oklab,var(--brand),var(--background)_14%)] active:bg-[color-mix(in_oklab,var(--brand),black_18%)]";
+    if (variant === "solid" && !g) return "border-transparent bg-brand text-[var(--nonla-text-on-solid)] hover:bg-[color-mix(in_oklab,var(--brand),var(--background)_14%)] active:bg-[color-mix(in_oklab,var(--brand),black_18%)]";
     if (variant === "filled") return "bg-brand/15 text-brand-700 border-transparent hover:bg-brand/25";
     if (variant === "text") return "bg-transparent text-brand border-transparent hover:bg-brand/10";
     if (variant === "link") return "text-brand border-transparent hover:text-brand-700";
     return "bg-transparent text-brand border-brand hover:bg-brand/10";
   }
   if (color === "danger") {
-    if (variant === "solid" && !g) return "border-transparent bg-destructive text-destructive-foreground hover:bg-destructive/90";
+    if (variant === "solid" && !g) return "border-transparent bg-destructive text-(--nonla-text-on-solid) hover:bg-destructive/90";
     if (variant === "filled") return "bg-destructive/15 text-destructive border-transparent hover:bg-destructive/25";
     if (variant === "text") return "bg-transparent text-destructive border-transparent hover:bg-destructive/10";
     if (variant === "link") return "text-destructive border-transparent hover:text-destructive/80";
@@ -92,13 +92,13 @@ function tokenAppearance(color: "default" | "primary" | "danger" | "link", varia
   if (variant === "filled") return "bg-muted text-foreground border-transparent hover:bg-muted/80";
   if (variant === "text") return "bg-transparent text-foreground border-transparent hover:bg-ink-hover hover:text-foreground";
   if (variant === "dashed") return "bg-transparent text-foreground border-dashed border-border hover:bg-ink-hover";
-  return "nonla-btn-glass text-foreground";
+  return "nonla-btn-glass border-border bg-transparent text-foreground shadow-none transition-[box-shadow,transform] duration-(--nonla-dur-fast) ease-(--nonla-ease-out) hover:not-disabled:not-aria-disabled:shadow-[inset_0_0_0_999px_var(--nonla-ink-hover)] active:not-disabled:not-aria-disabled:scale-[0.98] active:not-disabled:not-aria-disabled:shadow-[inset_0_0_0_999px_var(--nonla-ink-active)] motion-reduce:transition-[box-shadow] motion-reduce:active:transform-none";
 }
 
 function presetAppearance(variant: ButtonVariant, ghost: boolean): string {
   if (variant === "nostyle") return "";
   const g = ghost && variant !== "text" && variant !== "link";
-  if (variant === "solid" && !g) return "bg-(--nonla-btn) text-[var(--nonla-solid-fg)] border-transparent hover:brightness-110";
+  if (variant === "solid" && !g) return "bg-(--nonla-btn) text-[var(--nonla-text-on-solid)] border-transparent hover:brightness-110";
   if (variant === "filled") return "bg-(--nonla-btn)/15 text-(--nonla-btn) border-transparent hover:bg-(--nonla-btn)/25";
   if (variant === "link") return "text-(--nonla-btn) border-transparent hover:opacity-80";
   if (variant === "dashed") return "bg-transparent text-(--nonla-btn) border-dashed border-(--nonla-btn) hover:bg-(--nonla-btn)/10";

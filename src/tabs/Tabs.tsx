@@ -203,12 +203,12 @@ export function Tabs({ items, activeKey, defaultActiveKey, onChange, className, 
         <div aria-hidden className="pointer-events-none absolute inset-x-0 bottom-0 h-px bg-border" />
         <div
           ref={scrollerRef}
-          className="nonla-scroll-hidden relative overflow-x-auto overflow-y-hidden overscroll-x-contain"
+          className="relative overflow-x-auto overflow-y-hidden overscroll-x-contain [scrollbar-width:none] [-ms-overflow-style:none] [&::-webkit-scrollbar]:hidden [&::-webkit-scrollbar]:h-0 [&::-webkit-scrollbar]:w-0"
           style={mask ? { maskImage: mask, WebkitMaskImage: mask } : undefined}
           onScroll={updateOverflow}
         >
           <div ref={rowRef} role="tablist" aria-label={ariaLabel} aria-orientation="horizontal" className="relative flex w-max gap-3" onKeyDown={onKeyDown}>
-            {ink ? <span aria-hidden className="nonla-tabs-ink" style={{ width: ink.width, transform: `translateX(${ink.left}px)` }} /> : null}
+            {ink ? <span aria-hidden className="pointer-events-none absolute bottom-0 left-0 z-1 h-0.5 rounded-t-xs bg-brand transition-[transform,width] duration-380 ease-[cubic-bezier(0.3,1.25,0.5,1)] motion-reduce:transition-none" style={{ width: ink.width, transform: `translateX(${ink.left}px)` }} /> : null}
             {items.map((item) => {
               const selected = item.key === active;
               return (
@@ -227,7 +227,7 @@ export function Tabs({ items, activeKey, defaultActiveKey, onChange, className, 
                   disabled={item.disabled}
                   className={cn(
                     "relative z-10 inline-flex shrink-0 cursor-pointer items-center justify-center gap-1.5 whitespace-nowrap border-0 bg-transparent font-normal text-tertiary-foreground transition-colors select-none",
-                    "hover:text-foreground focus-visible:ring-ring focus-visible:ring-2 focus-visible:outline-none focus-visible:ring-inset",
+                    "hover:text-foreground focus-visible:ring-brand/55 focus-visible:ring-2 focus-visible:outline-none focus-visible:ring-inset",
                     "disabled:cursor-not-allowed disabled:opacity-40",
                     selected && "text-foreground",
                   )}

@@ -46,8 +46,8 @@ export function ReactCodeFrame({ title, icon, showHeader = true, code, className
           {hasCode ? <Segmented<Tab> size="small" options={TABS} value={tab} onChange={setTab} /> : null}
         </div>
       ) : null}
-      {/* Stays mounted on the Code view, so an iframe keeps its state. */}
-      <div className={cn("min-w-0 px-6 py-8", showingCode && "hidden")}>{children}</div>
+      {/* Stays mounted when the Code tab replaces it, so an iframe keeps its state. The code button keeps this and opens the source under it. */}
+      <div className={cn("min-w-0 px-6 py-8", hasLabel && showingCode && "hidden")}>{children}</div>
       {hasCode && !hasLabel ? (
         <div className="flex h-10 items-center justify-end border-t border-border pr-1.5">
           <Tooltip title={codeLabel}>
@@ -56,7 +56,7 @@ export function ReactCodeFrame({ title, icon, showHeader = true, code, className
               aria-expanded={open}
               aria-label={codeLabel}
               className={cn(
-                "inline-flex size-7 cursor-pointer items-center justify-center rounded-md transition-colors hover:bg-muted hover:text-foreground focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-ring",
+                "inline-flex size-7 cursor-pointer items-center justify-center rounded-md transition-colors hover:bg-muted hover:text-foreground focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-brand/55",
                 open ? "bg-muted text-foreground" : "text-muted-foreground",
               )}
               onClick={() => setOpen((value) => !value)}
@@ -66,7 +66,11 @@ export function ReactCodeFrame({ title, icon, showHeader = true, code, className
           </Tooltip>
         </div>
       ) : null}
-      {hasCode && showingCode ? <CodeBlock code={code} language="tsx" className="my-0 rounded-none border-0" /> : null}
+      {hasCode && showingCode ? (
+        <div className={cn(!hasLabel && "border-t border-border")}>
+          <CodeBlock code={code} language="tsx" className="my-0 rounded-none border-0" />
+        </div>
+      ) : null}
     </div>
   );
 }

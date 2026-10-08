@@ -106,7 +106,7 @@ export function Popover({
         >
           {title ? <div className="mb-2 text-sm font-medium">{title}</div> : null}
           {content}
-          {showArrow ? <PopoverPrimitive.Arrow width={12} height={6} className="fill-glass drop-shadow-[0_1px_0_var(--glass-border)]" /> : null}
+          {showArrow ? <PopoverPrimitive.Arrow width={12} height={6} className="fill-card drop-shadow-[0_1px_0_var(--border)]" /> : null}
         </PopoverPrimitive.Content>
       </PopoverPrimitive.Portal>
     </PopoverPrimitive.Root>

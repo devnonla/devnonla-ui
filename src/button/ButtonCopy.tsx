@@ -29,7 +29,7 @@ export function ButtonCopy({ text, getText, label = "Copy", className, onClick, 
       {...props}
       title={copied ? "Copied" : label}
       aria-label={copied ? "Copied" : label}
-      className={cn("inline-flex cursor-pointer shrink-0 items-center justify-center text-muted-foreground transition-colors duration-200 hover:text-foreground focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-ring", className)}
+      className={cn("inline-flex cursor-pointer shrink-0 items-center justify-center text-muted-foreground transition-colors duration-200 hover:text-foreground focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-brand/55", className)}
       style={{ width: box, height: box }}
       onClick={async (e) => {
         onClick?.(e);

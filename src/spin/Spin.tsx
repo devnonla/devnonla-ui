@@ -105,7 +105,7 @@ function MatrixSnake({ size, color, tickMs = 240 }: { size: ControlSize | undefi
 
   return (
     <span
-      className={cn("nonla-spin-matrix inline-grid", color === "neutral" && "is-neutral")}
+      className="inline-grid place-content-center"
       style={{
         width: dim,
         height: dim,
@@ -116,7 +116,19 @@ function MatrixSnake({ size, color, tickMs = 240 }: { size: ControlSize | undefi
       aria-hidden
     >
       {MATRIX_CELLS.map((cell) => (
-        <span key={cell} className={cn("nonla-spin-matrix-cell", lit.has(cell) && "is-on")} />
+        <span
+          key={cell}
+          className={cn(
+            "block size-full rounded-full transition-colors duration-120 ease-linear motion-reduce:transition-none",
+            color === "neutral"
+              ? lit.has(cell)
+                ? "bg-muted-foreground"
+                : "bg-[color-mix(in_oklab,var(--foreground)_16%,transparent)]"
+              : lit.has(cell)
+                ? "bg-brand"
+                : "bg-[color-mix(in_oklab,var(--brand)_10%,transparent)]",
+          )}
+        />
       ))}
     </span>
   );

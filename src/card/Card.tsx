@@ -43,7 +43,7 @@ function CardItem({ label, description, align = "start", split = false, classNam
       className={cn(
         "relative flex w-full gap-5 px-4 py-3",
         centered ? "items-center" : "items-start",
-        "before:pointer-events-none before:absolute before:top-0 before:right-4 before:left-4 before:h-px before:bg-hairline before:content-[''] first:before:hidden",
+        "before:pointer-events-none before:absolute before:top-0 before:right-4 before:left-4 before:h-px before:bg-border-secondary before:content-[''] first:before:hidden",
         className,
       )}
       {...rest}

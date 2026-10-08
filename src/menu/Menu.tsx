@@ -89,7 +89,7 @@ export function MenuAction({ className, ...rest }: ButtonHTMLAttributes<HTMLButt
 }
 
 export function MenuDivider({ className }: { className?: string }) {
-  return <div className={cn("mx-2.5 my-1 h-px bg-ink-line", className)} />;
+  return <div className={cn("mx-2.5 my-1 h-px bg-border", className)} />;
 }
 
 Menu.Trigger = MenuTrigger;

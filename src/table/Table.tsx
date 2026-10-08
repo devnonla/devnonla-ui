@@ -394,7 +394,7 @@ export function Table<T extends object = Record<string, unknown>>({ columns = []
     setThumbInset((prev) => (prev === next ? prev : next));
   }, [headSticky, showHeader, size, flexLayout]);
   /** Opaque fill so a sticky header does not show body text, and every header matches. */
-  const headBg: CSSProperties = { backgroundColor: "var(--nonla-table-head)" };
+  const headBg: CSSProperties = { backgroundColor: "var(--nonla-fill)" };
 
   const colStyle = (col: ColumnType<T>, key: string): CSSProperties => {
     const measured = flexLayout?.cols[key];
@@ -406,7 +406,7 @@ export function Table<T extends object = Record<string, unknown>>({ columns = []
     <div className={cn("relative w-full", className)}>
       {titleNode != null ? <div className="mb-3 text-sm font-medium text-foreground">{titleNode}</div> : null}
 
-      <div className={cn(bordered && "overflow-hidden rounded-xl border border-hairline")}>
+      <div className={cn(bordered && "overflow-hidden rounded-xl border border-border-secondary")}>
       <Spin spinning={Boolean(loading)}>
         <div ref={containerRef} data-slot="table-container" className={cn("relative w-full", flexLayout ? "overflow-x-hidden" : "overflow-x-auto")} style={scroll?.x != null ? { overflowX: "auto" } : undefined}>
           <TableBodyScroll y={scroll?.y} x={scroll?.x} scrollRef={scrollBodyRef} insetTop={thumbInset}>
@@ -421,10 +421,10 @@ export function Table<T extends object = Record<string, unknown>>({ columns = []
                 </colgroup>
               ) : null}
               {showHeader ? (
-                <thead data-slot="table-header" className={cn("[&_tr]:border-b [&_tr]:border-hairline", headSticky && "relative z-20")}>
-                  <tr data-slot="table-row" className="border-b border-hairline transition-colors hover:bg-transparent">
+                <thead data-slot="table-header" className={cn("[&_tr]:border-b [&_tr]:border-border-secondary", headSticky && "relative z-20")}>
+                  <tr data-slot="table-row" className="border-b border-border-secondary transition-colors hover:bg-transparent">
                     {rowSelection ? (
-                      <th data-slot="table-head" className={cn(sz.head, sz.check, "align-middle font-medium text-foreground", headSticky && "sticky top-0 z-10 border-b border-hairline", bordered && "border-b border-hairline")} style={{ ...(selectionColWidth != null ? { width: selectionColWidth } : undefined), ...headBg }}>
+                      <th data-slot="table-head" className={cn(sz.head, sz.check, "align-middle font-medium text-foreground", headSticky && "sticky top-0 z-10 border-b border-border-secondary", bordered && "border-b border-border-secondary")} style={{ ...(selectionColWidth != null ? { width: selectionColWidth } : undefined), ...headBg }}>
                         <div className="flex items-center justify-center">
                           {rowSelection.type === "radio" ? null : (
                             <Checkbox
@@ -449,7 +449,7 @@ export function Table<T extends object = Record<string, unknown>>({ columns = []
                         <th
                           key={key}
                           data-slot="table-head"
-                          className={cn(sz.head, "align-middle font-medium text-foreground", headSticky && "sticky top-0 z-10 border-b border-hairline", flexLayout && flexWeight(col) > 0 ? "min-w-0" : "whitespace-nowrap", alignClass(col.align), bordered && "border-b border-hairline", sortable && "cursor-pointer select-none", col.className, headerExtra?.className)}
+                          className={cn(sz.head, "align-middle font-medium text-foreground", headSticky && "sticky top-0 z-10 border-b border-border-secondary", flexLayout && flexWeight(col) > 0 ? "min-w-0" : "whitespace-nowrap", alignClass(col.align), bordered && "border-b border-border-secondary", sortable && "cursor-pointer select-none", col.className, headerExtra?.className)}
                           style={{
                             ...colStyle(col, key),
                             ...headBg,
@@ -470,7 +470,7 @@ export function Table<T extends object = Record<string, unknown>>({ columns = []
 
               <tbody data-slot="table-body" className={cn("[&_tr:last-child]:border-0", headSticky && "relative z-0")}>
                 {pageData.length === 0 ? (
-                  <tr data-slot="table-row" className="border-b border-hairline">
+                  <tr data-slot="table-row" className="border-b border-border-secondary">
                     <td data-slot="table-cell" colSpan={colCount} className={cn(sz.cell, "text-center align-middle")}>
                       {locale?.emptyText ?? <Empty description="No data" className="py-10" />}
                     </td>
@@ -489,7 +489,7 @@ export function Table<T extends object = Record<string, unknown>>({ columns = []
                         key={key}
                         data-slot="table-row"
                         data-state={selected ? "selected" : undefined}
-                        className={cn("border-b border-hairline transition-colors hover:bg-muted/50 data-[state=selected]:bg-muted", inSelectionMode && !rowDisabled && "cursor-pointer", rowProps?.className, extraClass)}
+                        className={cn("border-b border-border-secondary transition-colors hover:bg-muted/50 data-[state=selected]:bg-muted", inSelectionMode && !rowDisabled && "cursor-pointer", rowProps?.className, extraClass)}
                         style={rowProps?.style}
                         onClick={inSelectionMode ? undefined : rowProps?.onClick}
                         onClickCapture={
@@ -506,7 +506,7 @@ export function Table<T extends object = Record<string, unknown>>({ columns = []
                         }
                       >
                         {rowSelection ? (
-                          <td data-row-select data-slot="table-cell" className={cn(sz.cell, sz.check, "align-middle", headSticky && "border-b border-hairline")} style={selectionColWidth != null ? { width: selectionColWidth } : undefined} onClick={(e) => e.stopPropagation()}>
+                          <td data-row-select data-slot="table-cell" className={cn(sz.cell, sz.check, "align-middle", headSticky && "border-b border-border-secondary")} style={selectionColWidth != null ? { width: selectionColWidth } : undefined} onClick={(e) => e.stopPropagation()}>
                             <div className="flex items-center justify-center">
                               {rowSelection.type === "radio" ? (
                                 <input type="radio" name="nonla-table-row-select" checked={selected} disabled={rowSelection.getCheckboxProps?.(record)?.disabled} aria-label="Select row" className="size-3.5 accent-foreground" onChange={() => emitSelection([key])} />
@@ -531,7 +531,7 @@ export function Table<T extends object = Record<string, unknown>>({ columns = []
                             <td
                               key={getColumnKey(col, i)}
                               data-slot="table-cell"
-                              className={cn(sz.cell, "align-middle", headSticky && "border-b border-hairline", alignClass(col.align), flexLayout && flexWeight(col) > 0 ? (col.ellipsis ? "max-w-0 truncate" : "min-w-0 whitespace-normal wrap-break-word") : col.ellipsis ? "max-w-0 truncate" : "whitespace-nowrap", col.className)}
+                              className={cn(sz.cell, "align-middle", headSticky && "border-b border-border-secondary", alignClass(col.align), flexLayout && flexWeight(col) > 0 ? (col.ellipsis ? "max-w-0 truncate" : "min-w-0 whitespace-normal wrap-break-word") : col.ellipsis ? "max-w-0 truncate" : "whitespace-nowrap", col.className)}
                               style={colStyle(col, getColumnKey(col, i))}
                               title={col.ellipsis && (typeof content === "string" || typeof content === "number") ? String(content) : undefined}
                             >
@@ -546,7 +546,7 @@ export function Table<T extends object = Record<string, unknown>>({ columns = []
               </tbody>
 
               {footerNode != null ? (
-                <tfoot data-slot="table-footer" className="border-t border-hairline bg-muted/50 font-medium [&>tr]:last:border-b-0">
+                <tfoot data-slot="table-footer" className="border-t border-border-secondary bg-muted/50 font-medium [&>tr]:last:border-b-0">
                   <tr>
                     <td colSpan={colCount} className={cn(sz.cell, "align-middle text-muted-foreground")}>
                       {footerNode}
@@ -560,7 +560,7 @@ export function Table<T extends object = Record<string, unknown>>({ columns = []
       </Spin>
 
       {showPagination ? (
-        <div className={cn("flex flex-wrap items-center justify-between gap-3 px-3 py-2", bordered && "border-t border-hairline", pageConfig.className)}>
+        <div className={cn("flex flex-wrap items-center justify-between gap-3 px-3 py-2", bordered && "border-t border-border-secondary", pageConfig.className)}>
           <div className="flex items-center gap-3">
             {pageConfig.showSizeChanger !== false ? (
               <Select

@@ -22,7 +22,7 @@ function LogoMark() {
         <ellipse cx="607.5" cy="705" rx="44.5" ry="68" />
         <ellipse cx="921.5" cy="705" rx="44.5" ry="68" />
       </g>
-      <g fill="var(--nonla-solid-fg)">
+      <g fill="var(--nonla-text-on-solid)">
         <ellipse cx="618" cy="678" rx="13" ry="19" />
         <ellipse cx="932" cy="678" rx="13" ry="19" />
       </g>

@@ -5,6 +5,7 @@ import { Button } from "../button/Button";
 import { SolarIcon } from "../icon/SolarIcon";
 import { cn } from "../lib/cn";
 import { type CanonicalSize, type ControlSize, controlHeightVar, controlRadiusVar, getSizeTokens, useControlSize } from "../lib/sizes";
+import { glassSurfaceClass } from "../lib/surface";
 import { message } from "../message/message";
 
 const POPUP_PAD: Record<CanonicalSize, number> = { small: 12, default: 16, large: 20 };
@@ -12,7 +13,7 @@ const FIELD_INSET: Record<CanonicalSize, string> = { small: "-4px", default: "-6
 const MULTILINE_MIN: Record<CanonicalSize, number> = { small: 56, default: 72, large: 96 };
 const GLASS_BORDER = 1;
 
-const fieldClass = (saving: boolean) => cn("relative z-1 m-0 w-full border-0 bg-transparent text-foreground placeholder:text-placeholder focus:outline-none", saving && "opacity-60");
+const fieldClass = (saving: boolean) => cn("relative z-1 m-0 w-full border-0 bg-transparent text-foreground placeholder:text-quaternary-foreground focus:outline-none", saving && "opacity-60");
 
 type Lock = {
   top: number;
@@ -187,7 +188,7 @@ function EditorPopover({
 
   return createPortal(
     <div
-      className="nonla-popup-layer nonla-glass outline-none"
+      className={cn(glassSurfaceClass, "nonla-popup-layer outline-none")}
       style={{
         position: "fixed",
         zIndex: "var(--nonla-z-popup, 1050)",

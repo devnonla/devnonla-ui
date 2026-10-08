@@ -301,7 +301,7 @@ function SplitterRoot({
                   {draggerIcon ? (
                     <span
                       className={cn(
-                        "pointer-events-none absolute left-1/2 top-1/2 flex -translate-x-1/2 -translate-y-1/2 items-center justify-center rounded-sm bg-card text-muted-foreground shadow-button-outline",
+                        "pointer-events-none absolute left-1/2 top-1/2 flex -translate-x-1/2 -translate-y-1/2 items-center justify-center rounded-sm bg-card text-muted-foreground ring-1 ring-border",
                         isVertical ? "h-1.5 w-5" : "h-5 w-1.5",
                       )}
                     >

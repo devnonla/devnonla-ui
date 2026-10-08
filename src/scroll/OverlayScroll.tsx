@@ -146,7 +146,7 @@ export function OverlayScroll({ visibility = "hover", autoHeight = false, classN
 
   const thumbVisible = visibility === "always" || dragging || scrolling;
   const thumbClass = cn(
-    "nonla-overlay-thumb absolute z-20 rounded-full transition-opacity duration-150",
+    "absolute z-20 rounded-full bg-(--nonla-scrollbar-thumb) transition-opacity duration-150 group-hover/scroll:bg-(--nonla-scrollbar-thumb-hover)",
     visibility === "always" || dragging
       ? "pointer-events-auto opacity-100"
       : "pointer-events-none opacity-0 group-hover/scroll:pointer-events-auto group-hover/scroll:opacity-100 group-data-scrolling/scroll:pointer-events-auto group-data-scrolling/scroll:opacity-100",
@@ -157,7 +157,7 @@ export function OverlayScroll({ visibility = "hover", autoHeight = false, classN
       <div
         ref={setNode}
         onScroll={handleScroll}
-        className={cn("nonla-scroll-hidden overflow-y-auto overflow-x-hidden [overflow-anchor:none]", autoHeight ? "max-h-[inherit]" : "absolute inset-0", innerClassName)}
+        className={cn("overflow-y-auto overflow-x-hidden [overflow-anchor:none] [scrollbar-width:none] [-ms-overflow-style:none] [&::-webkit-scrollbar]:hidden [&::-webkit-scrollbar]:h-0 [&::-webkit-scrollbar]:w-0", autoHeight ? "max-h-[inherit]" : "absolute inset-0", innerClassName)}
       >
         {children}
       </div>

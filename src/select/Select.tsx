@@ -307,7 +307,7 @@ export const Select = forwardRef<HTMLButtonElement, SelectProps>(function Select
                 }}
                 onKeyDown={onSearchKey}
                 className={cn(
-                  "absolute inset-0 w-full border-0 bg-transparent p-0 font-[inherit] leading-[inherit] text-inherit outline-none placeholder:text-placeholder",
+                  "absolute inset-0 w-full border-0 bg-transparent p-0 font-[inherit] leading-[inherit] text-inherit outline-none placeholder:text-quaternary-foreground",
                   !open && "caret-transparent",
                 )}
               />
@@ -358,7 +358,7 @@ export const Select = forwardRef<HTMLButtonElement, SelectProps>(function Select
             style={controlFieldStyle(resolvedSize)}
             onKeyDown={onTriggerKey}
           >
-            <span className={cn("min-w-0 flex-1 truncate", displayEmpty && "text-placeholder")}>{display}</span>
+            <span className={cn("min-w-0 flex-1 truncate", displayEmpty && "text-quaternary-foreground")}>{display}</span>
             {showClear ? (
               <span
                 role="button"
@@ -426,9 +426,9 @@ export const Select = forwardRef<HTMLButtonElement, SelectProps>(function Select
                   data-highlighted={!opt.disabled && i === active && opt.value !== selected ? "" : undefined}
                   className={cn(
                     menuItemClass,
-                    "cursor-pointer",
+                    "cursor-pointer transition-[background-color] duration-20 ease-in motion-reduce:transition-none data-highlighted:border-transparent data-highlighted:bg-ink-hover",
                     opt.disabled && "pointer-events-none opacity-40",
-                    !opt.disabled && opt.value === selected && "nonla-glass-chip-on text-foreground",
+                    !opt.disabled && opt.value === selected && "border-transparent bg-ink-active text-foreground shadow-none",
                   )}
                   onMouseEnter={() => setActive(i)}
                   onMouseDown={(e) => e.preventDefault()}

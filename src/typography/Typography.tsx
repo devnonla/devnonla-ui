@@ -20,10 +20,10 @@ type Decorations = {
 
 /** Same ink as MarkdownViewer. Status tones sit on top of that. */
 const INK = {
-  title: "var(--md-heading)",
-  body: "var(--md-ink)",
-  secondary: "var(--nonla-fg-tertiary)",
-  quiet: "var(--nonla-fg-quaternary)",
+  title: "var(--nonla-text-main)",
+  body: "var(--nonla-text-main)",
+  secondary: "var(--nonla-text-tertiary)",
+  quiet: "var(--nonla-text-quaternary)",
   success: "var(--nonla-success)",
   warning: "var(--nonla-warn)",
   danger: "var(--nonla-danger)",
@@ -40,10 +40,10 @@ const TITLE_TAG = {
   6: "h6",
 } as const;
 
-/** Same scale as MarkdownViewer `docs`. Body 16/24. Inline code reads `--md-inline-size` (14px). */
+/** Same scale as MarkdownViewer `docs`. Body size is `--nonla-base-text-size`. Inline code reads `--md-inline-size` (14px). */
 const BODY = markdownBodyClass;
 
-const INLINE_CODE = "nonla-inline-code";
+const INLINE_CODE = "nonla-inline-code rounded-sm bg-muted px-[0.35em] py-[0.12em] align-baseline font-mono text-(length:--md-inline-size,14px) leading-none whitespace-nowrap [box-decoration-break:clone] [-webkit-box-decoration-break:clone]";
 
 const TITLE_SPACE = "nonla-typo";
 

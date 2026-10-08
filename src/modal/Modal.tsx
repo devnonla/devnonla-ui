@@ -17,6 +17,12 @@ import { glassSurfaceClass } from "../lib/surface";
 /** Matches `--nonla-dur-fast` exit animation; fallback if animationend is skipped. */
 const EXIT_MS = 200;
 
+const modalOverlayClass =
+  "nonla-modal-overlay fixed inset-0 z-(--nonla-z-modal) bg-(--mask) data-[state=open]:animate-[nonla-overlay-in_var(--nonla-dur)_var(--nonla-ease-out)] data-[state=closed]:pointer-events-none data-[state=closed]:animate-[nonla-overlay-out_var(--nonla-dur-fast)_var(--nonla-ease-in)_forwards]";
+
+const modalContentClass =
+  "nonla-modal-content fixed top-[60px] left-1/2 z-[calc(var(--nonla-z-modal)+1)] flex w-[min(480px,calc(100vw-32px))] max-h-[calc(100vh-88px)] flex-col overflow-hidden rounded-[calc(var(--radius)+4px)] p-0 outline-none will-change-[transform,opacity] [transform:translate(-50%,0)] data-[state=open]:animate-[nonla-modal-in_var(--nonla-dur)_var(--nonla-ease-out)] data-[state=closed]:pointer-events-none data-[state=closed]:animate-[nonla-modal-out_var(--nonla-dur-fast)_var(--nonla-ease-in)_forwards] data-[centered=true]:top-1/2 data-[centered=true]:max-h-[calc(100vh-64px)] data-[centered=true]:[transform:translate(-50%,-50%)] data-[centered=true]:data-[state=open]:animate-[nonla-modal-in-centered_var(--nonla-dur)_var(--nonla-ease-out)] data-[centered=true]:data-[state=closed]:animate-[nonla-modal-out-centered_var(--nonla-dur-fast)_var(--nonla-ease-in)_forwards]";
+
 export type ModalProps = {
   open?: boolean;
   visible?: boolean;
@@ -171,9 +177,9 @@ function ModalView({
     >
       {isOpen || present ? (
         <Dialog.Portal container={portal}>
-          <Dialog.Overlay className="nonla-modal-overlay" />
+          <Dialog.Overlay className={modalOverlayClass} />
           <Dialog.Content
-            className={cn("nonla-modal-content", glassSurfaceClass, className)}
+            className={cn(modalContentClass, glassSurfaceClass, className)}
             data-centered={centered ? "true" : undefined}
             style={{ width, ...style, ...styles?.container, ...styles?.content }}
             onAnimationEnd={onContentAnimationEnd}
@@ -188,20 +194,20 @@ function ModalView({
             }}
           >
             {(title || closable) && (
-              <div className="nonla-modal-header" style={styles?.header}>
-                <Dialog.Title className="nonla-modal-title">{title}</Dialog.Title>
+              <div className="nonla-modal-header flex shrink-0 items-center justify-between gap-3 bg-transparent px-4 py-3" style={styles?.header}>
+                <Dialog.Title className="nonla-modal-title m-0 text-[15px] leading-[1.4] font-semibold text-foreground">{title}</Dialog.Title>
                 {closable ? (
-                  <Dialog.Close className="nonla-modal-close" aria-label="Close">
+                  <Dialog.Close className="nonla-modal-close -mt-1 -mr-1.5 -mb-1 ml-0 inline-flex size-7 cursor-pointer items-center justify-center rounded-(--radius) border-0 bg-transparent text-[18px] leading-none text-muted-foreground hover:bg-muted hover:text-foreground" aria-label="Close">
                     ×
                   </Dialog.Close>
                 ) : null}
               </div>
             )}
-            <div className="nonla-modal-body" style={styles?.body}>
+            <div className="nonla-modal-body flex-1 overflow-auto bg-transparent px-4 pt-4 pb-6 text-sm leading-normal text-foreground" style={styles?.body}>
               {body}
             </div>
             {defaultFooter != null ? (
-              <div className="nonla-modal-footer" style={styles?.footer}>
+              <div className="nonla-modal-footer flex shrink-0 items-center justify-end gap-2 bg-transparent px-4 py-2.5" style={styles?.footer}>
                 {typeof defaultFooter === "function" ? null : defaultFooter}
               </div>
             ) : null}

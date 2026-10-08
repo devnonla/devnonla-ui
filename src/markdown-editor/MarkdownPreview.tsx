@@ -57,8 +57,8 @@ function BlockEditor({ value, mono, className, caret = "end", onChange, onBlur, 
         });
       }}
       className={cn(
-        "block w-full resize-none overflow-hidden border-0 bg-transparent p-0 text-(length:--md-body-size,16px) leading-(--md-body-leading,24px) text-(--md-ink) shadow-none outline-none ring-0 placeholder:text-placeholder focus:outline-none focus:ring-0",
-        mono && "font-mono text-[13px] leading-5",
+        "block w-full resize-none overflow-hidden border-0 bg-transparent p-0 text-(length:--md-body-size,16px) leading-(--md-body-leading,24px) text-foreground shadow-none outline-none ring-0 placeholder:text-quaternary-foreground focus:outline-none focus:ring-0",
+        mono && "font-mono text-(length:--md-code-size,14px) leading-(--md-code-leading,22px)",
         className,
       )}
       aria-label="Edit markdown"
@@ -142,9 +142,9 @@ export function MarkdownPreview({ doc, editingIndex, readOnly, placeholder = "Wr
           );
         })}
         {readOnly ? (
-          doc.blocks.length === 0 ? <p className="m-0 text-sm text-placeholder">{placeholder}</p> : null
+          doc.blocks.length === 0 ? <p className="m-0 text-sm text-quaternary-foreground">{placeholder}</p> : null
         ) : (
-          <button type="button" className="mt-3 min-h-16 text-left text-sm text-placeholder" onClick={onAppend} aria-label="Add paragraph">
+          <button type="button" className="mt-3 min-h-16 text-left text-sm text-quaternary-foreground" onClick={onAppend} aria-label="Add paragraph">
             {doc.blocks.length === 0 ? placeholder : ""}
           </button>
         )}

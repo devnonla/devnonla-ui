@@ -43,7 +43,7 @@ const NAMED_VAR: Record<string, string> = {
 };
 
 const SOFT = "bg-[color-mix(in_oklab,var(--nonla-tag)_12%,transparent)] text-[color-mix(in_oklab,var(--nonla-tag)_72%,black)]";
-const SOLID = "bg-(--nonla-tag) text-[var(--nonla-solid-fg)]";
+const SOLID = "bg-(--nonla-tag) text-[var(--nonla-text-on-solid)]";
 
 function resolveVariant(variant: TagProps["variant"]): TagVariant {
   if (variant === "solid") return "solid";
@@ -79,7 +79,7 @@ export function Tag({
     <span
       className={cn(
         "inline-flex h-5.5 max-w-full items-center gap-1.5 rounded-full px-2.5 text-[11px] font-medium tracking-[0.01em]",
-        isDefault && (solid ? "bg-foreground/10 text-(--nonla-ink)" : "bg-muted text-muted-foreground"),
+        isDefault && (solid ? "bg-foreground/10 text-foreground" : "bg-muted text-muted-foreground"),
         !isDefault && (solid ? SOLID : SOFT),
         className,
       )}
@@ -87,7 +87,7 @@ export function Tag({
     >
       {showDot ? (
         <span
-          className={cn("size-1.5 shrink-0 rounded-full", isDefault ? "bg-(--nonla-fg-muted)" : "bg-(--nonla-tag)")}
+          className={cn("size-1.5 shrink-0 rounded-full", isDefault ? "bg-(--nonla-text-secondary)" : "bg-(--nonla-tag)")}
           aria-hidden
         />
       ) : null}

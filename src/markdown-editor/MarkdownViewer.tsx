@@ -16,12 +16,12 @@ export { headingClass, markdownVariantStyle };
 
 /** Task checks use the body ink, so a checked box sits with the text instead of the brand fill. */
 const taskCheckClass =
-  "data-[state=checked]:border-(--md-ink)! data-[state=checked]:bg-(--md-ink)! data-[state=checked]:text-background! data-[state=indeterminate]:border-(--md-ink)! data-[state=indeterminate]:bg-(--md-ink)! data-[state=indeterminate]:text-background!";
+  "data-[state=checked]:border-foreground! data-[state=checked]:bg-foreground! data-[state=checked]:text-background! data-[state=indeterminate]:border-foreground! data-[state=indeterminate]:bg-foreground! data-[state=indeterminate]:text-background!";
 
 const documentClass = cn(
-  "min-w-0 wrap-anywhere text-(length:--md-body-size,16px) leading-(--md-body-leading,24px) text-(--md-ink)",
-  "[&_:is(h1,h2,h3,h4,h5,h6)]:text-(--md-heading)",
-  "[&_:is(h1,h2)]:mt-(--md-h2-mt,24px) [&_h1]:mb-(--md-h1-mb,12px) [&_h2]:mb-(--md-h2-mb,1px) [&_:is(h1,h2)]:pt-(--md-h2-py,3px) [&_:is(h1,h2)]:pb-(--md-h2-py,3px) [&_:is(h1,h2)]:text-(length:--md-h2-size,30px) [&_:is(h1,h2)]:leading-(--md-h2-leading,40px) [&_:is(h1,h2)]:font-(--md-h2-weight,600) [&_:is(h1,h2)]:tracking-normal",
+  "min-w-0 wrap-anywhere text-(length:--md-body-size,16px) leading-(--md-body-leading,24px) text-foreground",
+  "[&_:is(h1,h2,h3,h4,h5,h6)]:text-foreground",
+  "[&_:is(h1,h2)]:mt-(--md-h2-mt,24px) [&_h1]:mb-(--md-h1-mb,12px) [&_h2]:mb-(--md-h2-mb,1px) [&_:is(h1,h2)]:pt-(--md-h2-py,3px) [&_:is(h1,h2)]:pb-(--md-h2-py,3px) [&_:is(h1,h2)]:text-(length:--md-h2-size,30px) [&_:is(h1,h2)]:leading-(--md-h2-leading,40px) [&_:is(h1,h2)]:font-(--md-h2-weight,700) [&_:is(h1,h2)]:tracking-normal",
   "[&_h3]:mt-(--md-h3-mt,22px) [&_h3]:mb-(--md-h3-mb,1px) [&_h3]:text-(length:--md-h3-size,24px) [&_h3]:leading-(--md-h3-leading,32px) [&_h3]:font-(--md-h3-weight,700)",
   "[&_h4]:mt-(--md-h4-mt,16px) [&_h4]:mb-(--md-h4-mb,1px) [&_h4]:text-(length:--md-h4-size,20px) [&_h4]:leading-(--md-h4-leading,26px) [&_h4]:font-(--md-h4-weight,700)",
   "[&_h5]:mt-(--md-h5-mt,0px) [&_h5]:mb-(--md-h5-mb,0px) [&_h5]:text-(length:--md-h5-size,16px) [&_h5]:leading-(--md-h5-leading,1.375) [&_h5]:font-(--md-h5-weight,700)",
@@ -49,7 +49,7 @@ const previewComponents: Components = {
     const codeText = String(children).replace(/\n$/, "");
     const isBlock = codeText.includes("\n") || !!match;
     if (!isBlock) {
-      return <code className="nonla-inline-code">{children}</code>;
+      return <code className="nonla-inline-code rounded-sm bg-muted px-[0.35em] py-[0.12em] align-baseline font-mono text-(length:--md-inline-size,14px) leading-none whitespace-nowrap [box-decoration-break:clone] [-webkit-box-decoration-break:clone]">{children}</code>;
     }
     if (lang.toLowerCase() === "mermaid") return <MermaidView code={codeText} />;
     return <CodeBlock code={codeText} language={lang || undefined} className="my-(--md-code-my,8px)" />;
@@ -243,10 +243,10 @@ export type MarkdownViewerProps = {
 export function MarkdownViewer({ value = "", streaming = false, sandboxSrc, trustedModules, showHeader = true, showCode = true, placeholder, className, variant = "docs" }: MarkdownViewerProps) {
   const doc = useMemo(() => parseMarkdownDoc(value), [value]);
   if (doc.blocks.length === 0) {
-    return placeholder ? <p className={cn("m-0 text-sm text-placeholder", className)}>{placeholder}</p> : null;
+    return placeholder ? <p className={cn("m-0 text-sm text-quaternary-foreground", className)}>{placeholder}</p> : null;
   }
   return (
-    <div data-variant={variant} className={cn("nonla-markdown-viewer flex min-w-0 flex-col text-(--md-ink)", variant === "chat" && "[&>[data-md-block]:first-child_:is(h1,h2,h3,h4,h5,h6)]:mt-0", className)} style={markdownVariantStyle(variant)}>
+    <div data-variant={variant} className={cn("nonla-markdown-viewer flex min-w-0 flex-col text-foreground", variant === "chat" && "[&>[data-md-block]:first-child_:is(h1,h2,h3,h4,h5,h6)]:mt-0", className)} style={markdownVariantStyle(variant)}>
       {doc.blocks.map((block, index) => (
         <div
           // biome-ignore lint/suspicious/noArrayIndexKey: block position is the document identity

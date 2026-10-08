@@ -51,7 +51,7 @@ function CalendarDayButton({ className, day, modifiers, children, ...props }: Da
       data-range-middle={modifiers.range_middle ? "true" : undefined}
       className={cn(
         "relative flex aspect-square size-full min-w-8 items-center justify-center rounded-md bg-transparent text-sm font-normal leading-none",
-        "transition-colors hover:bg-brand-50 focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-ring",
+        "transition-colors hover:bg-brand-50 focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-brand/55",
         "data-[selected-single=true]:bg-brand-200 data-[selected-single=true]:text-foreground data-[selected-single=true]:hover:bg-brand-200",
         "data-[range-start=true]:bg-brand-200 data-[range-start=true]:text-foreground data-[range-start=true]:hover:bg-brand-200 data-[range-start=true]:rounded-md",
         "data-[range-end=true]:bg-brand-200 data-[range-end=true]:text-foreground data-[range-end=true]:hover:bg-brand-200 data-[range-end=true]:rounded-md",

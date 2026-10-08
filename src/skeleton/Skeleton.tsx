@@ -17,11 +17,11 @@ function SkeletonRoot({ active = true, loading = true, paragraph = true, title =
   const pulse = active ? "animate-pulse" : "";
   return (
     <div className={cn("flex gap-3", className)}>
-      {avatar ? <div className={cn("size-10 shrink-0 rounded-full bg-secondary", pulse)} /> : null}
+      {avatar ? <div className={cn("size-10 shrink-0 rounded-full bg-muted", pulse)} /> : null}
       <div className="flex-1 space-y-2">
-        {title ? <div className={cn("h-4 w-1/3 rounded bg-secondary", pulse)} /> : null}
+        {title ? <div className={cn("h-4 w-1/3 rounded bg-muted", pulse)} /> : null}
         {Array.from({ length: rows }, (_, i) => `sk-${i}`).map((key, i) => (
-          <div key={key} className={cn("h-3 rounded bg-secondary", pulse, i === rows - 1 ? "w-2/3" : "w-full")} />
+          <div key={key} className={cn("h-3 rounded bg-muted", pulse, i === rows - 1 ? "w-2/3" : "w-full")} />
         ))}
       </div>
     </div>
@@ -38,7 +38,7 @@ export type SkeletonInputProps = {
 function SkeletonInput({ active = true, block, className, style }: SkeletonInputProps) {
   return (
     <div
-      className={cn("h-8 rounded-md bg-secondary", active && "animate-pulse", block ? "w-full" : "w-40", className)}
+      className={cn("h-8 rounded-md bg-muted", active && "animate-pulse", block ? "w-full" : "w-40", className)}
       style={style}
     />
   );

@@ -8,7 +8,7 @@ export type MarkdownDiffLayout = "inline" | "side-by-side";
 function rowBg(kind: DiffLine["kind"]): string {
   if (kind === "insert") return "bg-[color-mix(in_oklab,var(--success)_16%,var(--card))]";
   if (kind === "delete") return "bg-[color-mix(in_oklab,var(--destructive)_14%,var(--card))]";
-  if (kind === "empty") return "bg-secondary/45";
+  if (kind === "empty") return "bg-muted/45";
   return "bg-card";
 }
 
@@ -65,7 +65,7 @@ function LineBody({ line }: { line: DiffLine }) {
 
 function FoldButton({ count, onClick, span }: { count: number; onClick: () => void; span?: boolean }) {
   return (
-    <button type="button" className={cn("flex w-full items-center justify-center border-y border-border bg-secondary/70 py-0.5 text-xs text-link hover:bg-secondary", span && "col-span-2")} onClick={onClick}>
+    <button type="button" className={cn("flex w-full items-center justify-center border-y border-border bg-muted/70 py-0.5 text-xs text-link hover:bg-muted", span && "col-span-2")} onClick={onClick}>
       Show {count} unchanged {count === 1 ? "line" : "lines"}
     </button>
   );
@@ -166,8 +166,8 @@ function SplitDiff({ model, open, toggle, originalLabel, modifiedLabel }: { mode
     segment += 1;
     chunks.push(
       <div key={`seg-${id}`} className="flex w-full items-start">
-        <div className="nonla-scroll-hover w-1/2 min-w-0 overflow-x-auto">{left}</div>
-        <div className="nonla-scroll-hover w-1/2 min-w-0 overflow-x-auto border-l border-border">{right}</div>
+        <div className="w-1/2 min-w-0 overflow-x-auto [scrollbar-color:transparent_transparent] hover:[scrollbar-color:var(--nonla-scrollbar-thumb)_transparent] [&::-webkit-scrollbar-thumb]:bg-transparent hover:[&::-webkit-scrollbar-thumb]:bg-(--nonla-scrollbar-thumb) hover:[&::-webkit-scrollbar-thumb:hover]:bg-(--nonla-scrollbar-thumb-hover)">{left}</div>
+        <div className="w-1/2 min-w-0 overflow-x-auto border-l border-border [scrollbar-color:transparent_transparent] hover:[scrollbar-color:var(--nonla-scrollbar-thumb)_transparent] [&::-webkit-scrollbar-thumb]:bg-transparent hover:[&::-webkit-scrollbar-thumb]:bg-(--nonla-scrollbar-thumb) hover:[&::-webkit-scrollbar-thumb:hover]:bg-(--nonla-scrollbar-thumb-hover)">{right}</div>
       </div>,
     );
     left = [];
