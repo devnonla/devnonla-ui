@@ -11,8 +11,8 @@ export type SidebarItemType = {
   /** Solar icon name (`settings`), a legacy Fluent Color id (`settings-24`), or a node. String icons render as bold-duotone. */
   icon?: ReactNode;
   disabled?: boolean;
+  /** `"group"` is a section label. `"divider"` is a rule. Anything else is a row. */
   type?: "item" | "group" | "divider";
-  children?: SidebarItemType[];
   href?: string;
   extra?: ReactNode;
   className?: string;
@@ -38,11 +38,7 @@ export type SidebarProps = {
 };
 
 function itemKey(item: SidebarItemType, i: number) {
-  return item.key ?? (item.type === "divider" ? `divider-${i}` : isGroup(item) ? `group-${i}` : `item-${i}`);
-}
-
-function isGroup(item: SidebarItemType) {
-  return item.type === "group" || (item.type !== "item" && item.type !== "divider" && Boolean(item.children?.length));
+  return item.key ?? (item.type === "divider" ? `divider-${i}` : item.type === "group" ? `group-${i}` : `item-${i}`);
 }
 
 function labelText(label: ReactNode) {
@@ -51,26 +47,40 @@ function labelText(label: ReactNode) {
 }
 
 function matchesQuery(item: SidebarItemType, q: string) {
-  if (!q) return true;
   return labelText(item.label).toLowerCase().includes(q);
 }
 
+/** A group label stays when it matches, or when a later row matches before the next group. */
 function filterItems(items: SidebarItemType[], q: string): SidebarItemType[] {
   if (!q) return items;
-  const out: SidebarItemType[] = [];
+
+  type Section = { group?: SidebarItemType; rows: SidebarItemType[] };
+  const sections: Section[] = [];
+  let current: Section = { rows: [] };
   for (const item of items) {
-    if (item.type === "divider") {
-      if (out.length && out[out.length - 1]?.type !== "divider") out.push(item);
+    if (item.type === "group") {
+      if (current.group || current.rows.length) sections.push(current);
+      current = { group: item, rows: [] };
       continue;
     }
-    if (isGroup(item)) {
-      const children = filterItems(item.children ?? [], q);
-      if (children.length || matchesQuery(item, q)) out.push({ ...item, children });
-      continue;
-    }
-    if (matchesQuery(item, q)) out.push(item);
+    current.rows.push(item);
   }
-  while (out[out.length - 1]?.type === "divider") out.pop();
+  if (current.group || current.rows.length) sections.push(current);
+
+  const out: SidebarItemType[] = [];
+  for (const section of sections) {
+    const kept: SidebarItemType[] = [];
+    for (const row of section.rows) {
+      if (row.type === "divider") {
+        if (kept.length && kept[kept.length - 1]?.type !== "divider") kept.push(row);
+        continue;
+      }
+      if (matchesQuery(row, q)) kept.push(row);
+    }
+    while (kept[kept.length - 1]?.type === "divider") kept.pop();
+    if (section.group && (matchesQuery(section.group, q) || kept.length)) out.push(section.group);
+    out.push(...kept);
+  }
   return out;
 }
 
@@ -90,32 +100,25 @@ function SidebarList({
   onSelect?: SidebarProps["onSelect"];
 }) {
   return (
-    <>
+    <div className="flex flex-col gap-1">
       {items.map((item, i) => {
         const key = itemKey(item, i);
         if (item.type === "divider") {
-          return <div key={key} className="mx-2 my-1 h-px bg-ink-line" />;
+          return <div key={key} className="mx-2 my-1 h-px bg-border" />;
         }
-        if (isGroup(item)) {
+        if (item.type === "group") {
+          if (item.label == null || item.label === "") return null;
           return (
-            <div key={key} className="mb-5 last:mb-0">
-              {item.label != null && item.label !== "" ? (
-                <div className={cn("px-3 pb-2 pt-3 text-[11px] font-semibold uppercase tracking-wider text-quaternary-foreground", item.className)}>
-                  {item.label}
-                </div>
-              ) : null}
-              <div className="flex flex-col gap-1">
-                <SidebarList items={item.children ?? []} selected={selected} onSelect={onSelect} />
-              </div>
+            <div key={key} className={cn("px-3 pb-1 pt-3 text-[11px] font-semibold uppercase tracking-wider text-tertiary-foreground not-first:mt-4", item.className)}>
+              {item.label}
             </div>
           );
         }
 
         const active = selected != null && key === selected;
         const className = cn(
-          "nonla-sidebar-item flex w-full items-center gap-3 px-3 text-left text-[14px] font-normal no-underline",
+          "nonla-sidebar-item box-border flex h-(--nonla-height) w-full items-center gap-3 rounded-(--nonla-radius) border-0 bg-transparent px-3 text-left text-[14px] font-normal text-foreground no-underline transition-[background-color,box-shadow] duration-(--nonla-dur-fast) ease-(--nonla-ease-out) hover:not-aria-current:not-disabled:not-aria-disabled:bg-ink-hover hover:not-disabled:not-aria-disabled:shadow-none aria-current:bg-ink-active aria-current:shadow-none aria-[current=page]:bg-ink-active aria-[current=page]:shadow-none",
           item.disabled ? "pointer-events-none cursor-not-allowed opacity-40" : "cursor-pointer",
-          active ? "text-foreground" : "text-foreground/80 hover:text-foreground",
           item.className,
         );
 
@@ -151,11 +154,11 @@ function SidebarList({
           </button>
         );
       })}
-    </>
+    </div>
   );
 }
 
-/** Grouped side nav — pass JSON groups + items. Router stays in the app (`onSelect` / `href`). */
+/** Side nav from a flat list. `type: "group"` is a section label. Router stays in the app (`onSelect` / `href`). */
 export function Sidebar({
   items = [],
   selectedKey,

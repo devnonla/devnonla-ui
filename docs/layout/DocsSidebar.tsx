@@ -9,17 +9,19 @@ export function DocsSidebar({ onNavigate }: { onNavigate?: () => void }) {
 
   const items = useMemo(
     () =>
-      DOCS_NAV.map((section) => ({
-        type: "group" as const,
-        key: section.id,
-        label: section.title,
-        children: section.items.map((item) => ({
+      DOCS_NAV.flatMap((section) => [
+        {
+          type: "group" as const,
+          key: section.id,
+          label: section.title,
+        },
+        ...section.items.map((item) => ({
           key: item.path,
           label: item.label,
           icon: item.icon ? <SolarIcon name={solarIconName(item.icon, "outline")} size={16} /> : undefined,
           href: item.path,
         })),
-      })),
+      ]),
     [],
   );
 

@@ -9,22 +9,16 @@ icon: "apps-list-detail-24"
 
 # Sidebar
 
-Grouped side nav from JSON — groups, child items, optional search. Routing stays in the app.
+Side nav from a flat list. A row with `type: "group"` is a section label. Routing stays in the app.
 
 ```live-react
 import { useState } from "react";
 import { Sidebar } from "devnonla-ui";
 
 const items = [
-  {
-    type: "group",
-    key: "start",
-    label: "Get started",
-    children: [
-      { key: "intro", label: "Introduction", icon: "apps-24" },
-      { key: "install", label: "Installation", icon: "code-24" },
-    ],
-  },
+  { type: "group", key: "start", label: "Get started" },
+  { key: "intro", label: "Introduction", icon: "apps-24" },
+  { key: "install", label: "Installation", icon: "code-24" },
   { type: "divider" },
   { key: "settings", label: "Settings", icon: "settings-24" },
 ];
