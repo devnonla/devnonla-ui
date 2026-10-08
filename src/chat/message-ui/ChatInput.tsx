@@ -1,6 +1,7 @@
 import { type KeyboardEvent as ReactKeyboardEvent, type ReactNode, useEffect, useLayoutEffect, useRef, useState } from "react";
 import { SolarIcon } from "../../icon/SolarIcon";
 import { cn } from "../../lib/cn";
+import { glassSurfaceClass } from "../../lib/surface";
 
 export type ChatInputProps = {
   generating?: boolean;
@@ -124,7 +125,7 @@ export function ChatInput({ generating = false, placeholder = "Message…", disa
   };
 
   return (
-    <div className={cn("nonla-glass nonla-chat-input relative isolate shrink-0 mx-4 mb-2.5 overflow-hidden pt-1 rounded-xl flex flex-col", disabled && "opacity-70", className)}>
+    <div className={cn(glassSurfaceClass, "nonla-chat-input relative isolate mx-4 mb-2.5 flex shrink-0 flex-col overflow-hidden rounded-xl border-(--nonla-input) bg-muted-strong pt-1 [.light:not(.dark)_&]:bg-background [.light:not(.dark)_&]:shadow-none [.light_.nonla-ui:not(.dark)_&]:bg-background [.light_.nonla-ui:not(.dark)_&]:shadow-none", disabled && "opacity-70", className)}>
       <textarea
         ref={textareaRef}
         data-chat-input
@@ -136,8 +137,8 @@ export function ChatInput({ generating = false, placeholder = "Message…", disa
         rows={1}
         className={cn(
           "w-full resize-none appearance-none border-0 bg-transparent shadow-none outline-none focus:outline-none px-2.5 pt-1 pb-2.5",
-          "text-(length:--chat-composer-size) leading-(--chat-composer-leading) font-normal",
-          disabled ? "text-muted-foreground cursor-not-allowed placeholder:text-placeholder" : "text-foreground placeholder:text-placeholder",
+          "text-[15px] leading-6 font-normal",
+          disabled ? "text-muted-foreground cursor-not-allowed placeholder:text-quaternary-foreground" : "text-foreground placeholder:text-quaternary-foreground",
         )}
       />
 
@@ -151,7 +152,7 @@ export function ChatInput({ generating = false, placeholder = "Message…", disa
         <div className="flex-1" />
 
         {generating ? (
-          <button type="button" onClick={onCancel} title="Stop" className="w-6 h-6 rounded-full bg-brand text-(--nonla-solid-fg) flex items-center justify-center shrink-0 cursor-pointer hover:bg-brand/90 active:scale-95 transition-all duration-100 border-0">
+          <button type="button" onClick={onCancel} title="Stop" className="w-6 h-6 rounded-full bg-brand text-(--nonla-text-on-solid) flex items-center justify-center shrink-0 cursor-pointer hover:bg-brand/90 active:scale-95 transition-all duration-100 border-0">
             <SolarIcon name="stop-bold" size={12} />
             <span className="sr-only">Stop</span>
           </button>

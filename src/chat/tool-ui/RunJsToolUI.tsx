@@ -97,7 +97,7 @@ export function RunJsToolUI({ msg, assistantLabel = "Assistant", assistantColor,
             {showOutput ? <SandboxOutput running={running} failed={failed} consoleOut={consoleOut} result={resultBody} /> : null}
           </CodeBlock>
         ) : showOutput ? (
-          <div className={cn("mt-1.5 mb-1 overflow-hidden rounded-lg border", failed ? "border-destructive/35" : "border-(--popper-border)")}>
+          <div className={cn("mt-1.5 mb-1 overflow-hidden rounded-lg border", failed ? "border-destructive/35" : "border-border")}>
             <SandboxOutput running={running} failed={failed} consoleOut={consoleOut} result={resultBody} />
           </div>
         ) : null}

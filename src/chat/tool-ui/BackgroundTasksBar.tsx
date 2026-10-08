@@ -27,7 +27,7 @@ function TaskLogsModal({
 
   return (
     <Modal open={open} onCancel={onClose} footer={null} title={task ? formatToolName(task.toolName) : "Logs"} width={560}>
-      <pre ref={preRef} className="m-0 max-h-[50vh] overflow-auto rounded-md border border-border-subtle bg-muted px-3 py-2 font-mono text-[13px] leading-relaxed whitespace-pre-wrap break-all text-foreground">
+      <pre ref={preRef} className="m-0 max-h-[50vh] overflow-auto rounded-md border border-border-secondary bg-muted px-3 py-2 font-mono text-[13px] leading-relaxed whitespace-pre-wrap break-all text-foreground">
         {logs || "Waiting for output…"}
       </pre>
     </Modal>
@@ -49,7 +49,7 @@ function TaskRow({
 }) {
   return (
     <div className="flex items-center gap-1 px-1.5 py-0.5">
-      <button type="button" onClick={onLogs} title="Logs" aria-label={`Logs ${formatToolName(task.toolName)}`} className="flex min-w-0 flex-1 cursor-pointer items-center gap-2 rounded-md px-1 py-[3px] text-left transition-colors hover:bg-secondary">
+      <button type="button" onClick={onLogs} title="Logs" aria-label={`Logs ${formatToolName(task.toolName)}`} className="flex min-w-0 flex-1 cursor-pointer items-center gap-2 rounded-md px-1 py-[3px] text-left transition-colors hover:bg-muted">
         <Spin variant="agent" size="small" className="shrink-0" />
         <span className="min-w-0 flex-1 truncate text-[13px] font-medium text-foreground">{formatToolName(task.toolName)}</span>
         <span className="shrink-0 text-[12px] tabular-nums text-tertiary-foreground">{formatBgElapsed(task.startedAt, now)}</span>
@@ -118,7 +118,7 @@ export function BackgroundTasksBar({ children, tasks = [], cancellingIds, onCanc
 
         {tasks.length > 0 ? (
           <div className="absolute inset-x-6 bottom-[calc(100%)] z-20 overflow-hidden rounded-t-lg border-x border-t border-border">
-            <div className={cn("flex h-7.5 items-center gap-1 px-1", open && "border-b border-border-subtle")}>
+            <div className={cn("flex h-7.5 items-center gap-1 px-1", open && "border-b border-border-secondary")}>
               <button type="button" onClick={() => setOpen((v) => !v)} className="flex min-w-0 flex-1 cursor-pointer font-medium items-center gap-1 rounded-md px-1.5 py-1 text-[13px] text-muted-foreground/90 transition-colors hover:text-foreground" aria-expanded={open} aria-label={label}>
                 <SolarIcon name="alt-arrow-down-linear" size={13} className={cn("shrink-0 transition-transform duration-150", !open && "-rotate-90")} />
                 <span className="truncate">{label}</span>

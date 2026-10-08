@@ -605,7 +605,7 @@ export function DesktopWindow({
 
   return (
     <WindowHeaderSlotContext.Provider value={headerChrome}>
-      <div ref={overlayRef} className="nonla-window-layer pointer-events-none absolute inset-x-0 bottom-0 top-desktop-bar">
+      <div ref={overlayRef} className="nonla-window-layer pointer-events-none absolute inset-x-0 bottom-0 top-[42px] z-(--nonla-z-window,30)">
         <section
           ref={frameRef}
           aria-label={typeof title === "string" && title ? title : "Window"}
@@ -627,13 +627,13 @@ export function DesktopWindow({
             transition: [geom, zoom].filter(Boolean).join(", ") || undefined,
           }}
           data-expanded={expanded || undefined}
-          className={cn("absolute flex flex-col rounded-xl pointer-events-auto transform-gpu", glassSurfaceClass, "nonla-window-glass", phase !== "open" && "pointer-events-none")}
+          className={cn("absolute flex flex-col rounded-xl pointer-events-auto transform-gpu", glassSurfaceClass, "nonla-window-glass border border-solid border-border bg-background shadow-(--nonla-shadow)", phase !== "open" && "pointer-events-none")}
         >
           <div className="relative flex min-h-0 flex-1 flex-col overflow-hidden rounded-xl">
             {header ? (
               <header
                 onPointerDown={startDrag}
-                className="nonla-window-header flex h-9 shrink-0 cursor-default items-center gap-4 border-0 px-3 select-none touch-none"
+                className="nonla-window-header flex h-9 shrink-0 cursor-default touch-none items-center gap-4 border-0 bg-bar px-3 select-none"
               >
                 <WindowTraffic expanded={expanded} onClose={requestClose} onToggleExpand={onToggleExpand} />
                 <div className="flex min-w-0 flex-1 items-center">

@@ -51,7 +51,7 @@ export function WebFetchToolUI({ msg, assistantLabel = "Assistant", assistantCol
       {expandable ? (
         <details className="group/webfetch px-4 pb-2" style={{ overflowAnchor: "none" }}>
           <summary className="flex cursor-pointer list-none items-center gap-2 py-0.5 text-[14px] leading-5.5 select-none [&::-webkit-details-marker]:hidden">{header}</summary>
-          <pre className={cn("m-0 mt-1.5 mb-1 max-h-40 overflow-y-auto rounded-lg border px-3 py-2 font-mono text-[13px] font-normal leading-[1.65] break-all whitespace-pre-wrap", failed ? "border-destructive/35 bg-destructive/6 text-destructive" : "border-(--popper-border) bg-(--nonla-elevated) text-muted-foreground")}>{body}</pre>
+          <pre className={cn("m-0 mt-1.5 mb-1 max-h-40 overflow-y-auto rounded-lg border px-3 py-2 font-mono text-[13px] font-normal leading-[1.65] break-all whitespace-pre-wrap", failed ? "border-destructive/35 bg-destructive/6 text-destructive" : "border-border bg-card text-muted-foreground")}>{body}</pre>
         </details>
       ) : (
         <div className="px-4 pb-2">

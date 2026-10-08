@@ -29,15 +29,15 @@ export function ChatUserMessage({ content, className }: ChatUserMessageProps) {
   return (
     <div
       className={cn(
-        "nonla-chat-user relative isolate mt-6 mb-3 mx-4 overflow-hidden rounded-xl px-3 py-1.5",
-        "border border-solid border-(--nonla-input) bg-well-strong",
+        "nonla-chat-user relative isolate mx-4 mt-6 mb-3 overflow-hidden rounded-xl border border-solid border-(--nonla-input) bg-muted-strong px-3 py-1.5",
+        "[.light:not(.dark)_&]:bg-sidebar [.light_.nonla-ui:not(.dark)_&]:bg-sidebar",
         className,
       )}
     >
       <div
         ref={contentRef}
         className={cn(
-          "overflow-hidden text-(length:--chat-body-size) leading-(--chat-body-leading) text-(--nonla-ink) whitespace-pre-wrap wrap-break-word",
+          "overflow-hidden text-[15px] leading-6 text-foreground whitespace-pre-wrap wrap-break-word",
           collapsed && "mask-[linear-gradient(to_bottom,#000_calc(100%-1.75rem),transparent)]",
         )}
         style={{ maxHeight: collapsed ? MAX_HEIGHT : undefined }}

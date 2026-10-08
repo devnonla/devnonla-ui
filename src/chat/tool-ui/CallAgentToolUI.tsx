@@ -122,7 +122,7 @@ export function CallAgentToolUI({ msg, assistantLabel = "Assistant", assistantCo
       <ToolUiBadge show={showAvatar} label={assistantLabel} color={assistantColor} />
       <div className="px-4 py-1">
         <div className={cn("overflow-hidden rounded-xl border bg-card", failed ? "border-destructive/35" : "border-border")}>
-          <div className="flex items-center gap-2 border-b border-border-subtle px-3 py-2">
+          <div className="flex items-center gap-2 border-b border-border-secondary px-3 py-2">
             {calling ? (
               <Spin variant="agent" size="small" className="shrink-0" />
             ) : (
@@ -138,7 +138,7 @@ export function CallAgentToolUI({ msg, assistantLabel = "Assistant", assistantCo
             <div className="flex flex-col gap-3 px-3 py-3">
               {composing || hasRequest ? (
                 <AgentTurn name={assistantLabel} align="end">
-                  <div className="nonla-chat-user rounded-2xl rounded-tr-sm border border-solid border-(--nonla-input) bg-well-strong px-3 py-2 text-left">
+                  <div className="nonla-chat-user rounded-2xl rounded-tr-sm border border-solid border-(--nonla-input) bg-muted-strong px-3 py-2 text-left [.light:not(.dark)_&]:bg-sidebar [.light_.nonla-ui:not(.dark)_&]:bg-sidebar">
                     {composing ? <TypingDots /> : <p className="m-0 text-[14px] leading-[1.55] whitespace-pre-wrap text-foreground">{requestMessage}</p>}
                   </div>
                 </AgentTurn>

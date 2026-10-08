@@ -53,14 +53,14 @@ export function ChatToolCall({ toolName = "Tool", label, toolInput, toolOutput, 
 
         {open && expandable ? (
           <div className="mt-1.5 mb-1 overflow-hidden rounded-lg border border-border bg-card font-mono text-[13px]">
-            {hasInput ? <pre className="m-0 max-h-27.5 overflow-y-auto bg-well px-3 py-1.5 break-all whitespace-pre-wrap font-normal leading-[1.65] text-muted-foreground">{prettyJson(toolInput)}</pre> : null}
+            {hasInput ? <pre className="m-0 max-h-27.5 overflow-y-auto bg-muted px-3 py-1.5 break-all whitespace-pre-wrap font-normal leading-[1.65] text-muted-foreground">{prettyJson(toolInput)}</pre> : null}
             {running ? (
-              <div className="bg-well-strong px-3 py-1.5 text-muted-foreground">
+              <div className="bg-muted-strong px-3 py-1.5 text-muted-foreground">
                 <Shimmer className="italic">Running…</Shimmer>
               </div>
             ) : null}
             {!isPending ? (
-              <pre className={cn("m-0 max-h-75 overflow-y-auto bg-well-strong px-3 py-1.5 break-all whitespace-pre-wrap font-normal leading-[1.65] text-muted-foreground", hasError && "bg-destructive/6")}>
+              <pre className={cn("m-0 max-h-75 overflow-y-auto bg-muted-strong px-3 py-1.5 break-all whitespace-pre-wrap font-normal leading-[1.65] text-muted-foreground", hasError && "bg-destructive/6")}>
                 {hasOutput ? prettyJson(toolOutput) : typeof toolError === "string" ? toolError : "Tool execution failed"}
               </pre>
             ) : null}

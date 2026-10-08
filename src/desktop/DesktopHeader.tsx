@@ -63,7 +63,7 @@ export function DesktopBarItem({
 }
 
 export function DesktopBarDivider({ className }: { className?: string }) {
-  return <span className={cn("mx-2 h-4 w-px bg-ink-line", className)} aria-hidden />;
+  return <span className={cn("mx-2 h-4 w-px bg-border", className)} aria-hidden />;
 }
 
 export type DesktopHeaderProps = {
@@ -76,7 +76,7 @@ export function DesktopHeader({ left, right, className }: DesktopHeaderProps) {
   return (
     <header
       className={cn(
-        "nonla-header-layer fixed inset-x-0 top-0 flex h-desktop-bar items-center justify-between gap-3 border-0 bg-background px-3",
+        "nonla-header-layer fixed inset-x-0 top-0 z-(--nonla-z-header,40) flex h-[42px] items-center justify-between gap-3 border-0 bg-background px-3",
         className,
       )}
     >

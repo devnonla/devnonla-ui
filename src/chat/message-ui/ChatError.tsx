@@ -12,7 +12,7 @@ export function ChatError({ children, className }: ChatErrorProps) {
     <div className={cn("nonla-chat-error px-4 py-1", className)}>
       <div
         role="alert"
-        className="flex items-center gap-2 rounded-lg border border-destructive/40 bg-[color-mix(in_oklab,var(--destructive)_14%,var(--nonla-surface))] px-3 py-2 text-(length:--chat-body-size) leading-(--chat-body-leading) text-destructive"
+        className="flex items-center gap-2 rounded-lg border border-destructive/40 bg-[color-mix(in_oklab,var(--destructive)_14%,var(--nonla-surface))] px-3 py-2 text-[15px] leading-6 text-destructive"
       >
         <SolarIcon name="close-circle-linear" size={16} className="shrink-0" />
         <div className="min-w-0">{children}</div>
