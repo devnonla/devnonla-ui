@@ -5,6 +5,38 @@ All notable changes to this project will be documented in this file.
 The format is based on [Keep a Changelog](https://keepachangelog.com/en/1.1.0/),
 and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0.html).
 
+## [0.14.0] - 2026-10-08
+
+### Added
+
+- `--nonla-text-main`, `--nonla-text-secondary`, `--nonla-text-tertiary`, `--nonla-text-quaternary`, and `--nonla-text-on-solid` for text ink.
+- `--nonla-border-secondary`, `--nonla-fill`, `--nonla-fill-strong`, `--nonla-input-focus`, and `--nonla-bar` for borders, washes, and the focus stroke.
+- `--nonla-font` and `--nonla-base-text-size` for the UI font and the markdown body size.
+- Tailwind utilities `bg-muted-strong`, `bg-bar`, `border-border-secondary`, and `text-quaternary-foreground`.
+- Docs: a colors page and the `EditableInput` API tables.
+
+### Changed
+
+- The theme is one small config block: `--nonla-bg`, the `--nonla-text-*` keys, `--nonla-brand`, the status colors, and the surface and border keys. Derived names follow it.
+- Focus rings on Calendar, Tabs, and copy buttons use `brand/55` instead of the old ring color.
+- Input focus fill uses the sidebar step, and the focus stroke is `--nonla-input-focus`.
+- Light palette: page and sidebar `#fafafa`, text `#404040`, borders `#e5e5e5`.
+- Chat body text is 15px with a 24px line height.
+- Tailwind's default type scale applies. `text-sm` is 14px and `text-xs` is 12px.
+- Sidebar: a flat list. `type: "group"` rows are labels. Search keeps a group label when one of its rows matches.
+- `ReactCode` keeps the live preview mounted when the code view opens.
+
+### Upgrade notes
+
+- **Removed exports** from `devnonla-ui`: `useToken`, `getDesignToken`, `NONLA_THEME_KEYS`, `NONLA_THEME_KNOBS`, and the types `NonlaThemeKnob`, `NonlaThemeKnobName`, `NonlaTokenSnapshot`.
+- **Renamed knobs:** `--nonla-fg` becomes `--nonla-text-main`, `--nonla-fg-muted` becomes `--nonla-text-secondary`, `--nonla-fg-tertiary` becomes `--nonla-text-tertiary`, `--nonla-fg-quaternary` becomes `--nonla-text-quaternary`, and `--nonla-solid-fg` becomes `--nonla-text-on-solid`. `--nonla-bg` is unchanged. If you followed 0.13.0's note and set `--nonla-fg`, set `--nonla-text-main` instead.
+- **Removed knobs** with no alias: `--nonla-ink`, `--nonla-elevated`, `--nonla-chip`, `--nonla-chip-hover`, `--nonla-composer`, `--nonla-chat-bg`, `--nonla-meadow`, `--nonla-glass*`, `--nonla-ink-line`, `--nonla-placeholder`, `--nonla-table-head`, `--nonla-desktop-bar-height`, `--nonla-window-header`. `--nonla-hairline` becomes `--nonla-border-secondary`.
+- **Removed markdown tokens** from 0.13.0: `--md-ink`, `--md-heading`, `--md-inline-bg`. Use `text-foreground`.
+- **Removed `--chat-*` size tokens and `--text-*` scale overrides.** `text-2xs` no longer exists. Re-set `--text-*` in your CSS if you need the old sizes.
+- **Removed shadow tokens:** `--shadow-card`, `--shadow-drop`, `--shadow-panel`, `--shadow-whisper`, `--shadow-button-outline`.
+- **Removed Tailwind colors:** `bg-primary`, `bg-secondary`, `bg-accent`, `bg-glass`, `bg-well`, `bg-meadow`, `bg-chat`, `text-placeholder`, `text-solid-fg`, `border-hairline`, `border-border-subtle`, `ring-ring`, `bg-ink-line`, and related names. Use `bg-muted`, `text-quaternary-foreground`, `border-border-secondary`, and `ring-brand/55`.
+- **Sidebar:** the `children` prop is gone. Put each group label as a `type: "group"` row in one flat `items` array.
+
 ## [0.13.0] - 2026-10-07
 
 ### Added
@@ -333,6 +365,7 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 - Replace class `nonla-chat-shimmer` with `Shimmer` or `.nonla-shimmer`.
 - `resolveToolUI(toolName, extras?)` — second argument is optional; extra UIs are checked first.
 
+[0.14.0]: https://github.com/devnonla/devnonla-ui/compare/v0.13.0...v0.14.0
 [0.13.0]: https://github.com/devnonla/devnonla-ui/compare/v0.12.0...v0.13.0
 [0.12.0]: https://github.com/devnonla/devnonla-ui/compare/v0.11.0...v0.12.0
 [0.11.0]: https://github.com/devnonla/devnonla-ui/compare/v0.10.0...v0.11.0
