@@ -6,9 +6,13 @@ export type OverlayScrollVisibility = "hover" | "always";
 const HIDE_MS = 1000;
 const MIN_THUMB = 32;
 
+export type OverlayScrollScope = "scroll" | "table";
+
 export type OverlayScrollProps = {
   /** `hover` shows the thumb on hover / while scrolling. `always` keeps it visible. */
   visibility?: OverlayScrollVisibility;
+  /** Named hover group. `table` does not light up when a parent chat scroller is hovered. */
+  scope?: OverlayScrollScope;
   /** Size to content (honors max-height on `className`) instead of filling the parent. */
   autoHeight?: boolean;
   className?: string;
@@ -46,7 +50,7 @@ function canScrollX(el: HTMLDivElement) {
   return overflow === "auto" || overflow === "scroll";
 }
 
-export function OverlayScroll({ visibility = "hover", autoHeight = false, className, style, innerClassName, children, onScroll, scrollRef, insetTop = 0 }: OverlayScrollProps) {
+export function OverlayScroll({ visibility = "hover", scope = "scroll", autoHeight = false, className, style, innerClassName, children, onScroll, scrollRef, insetTop = 0 }: OverlayScrollProps) {
   const elRef = useRef<HTMLDivElement | null>(null);
   const hideTimer = useRef<ReturnType<typeof setTimeout> | null>(null);
   const vThumbRef = useRef<Thumb>(HIDDEN);
@@ -146,18 +150,22 @@ export function OverlayScroll({ visibility = "hover", autoHeight = false, classN
 
   const thumbVisible = visibility === "always" || dragging || scrolling;
   const thumbClass = cn(
-    "absolute z-20 rounded-full bg-(--nonla-scrollbar-thumb) transition-opacity duration-150 group-hover/scroll:bg-(--nonla-scrollbar-thumb-hover)",
+    "absolute z-20 rounded-full bg-(--nonla-scrollbar-thumb) transition-opacity duration-150",
+    scope === "table" ? "group-hover/table:bg-(--nonla-scrollbar-thumb-hover)" : "group-hover/scroll:bg-(--nonla-scrollbar-thumb-hover)",
     visibility === "always" || dragging
       ? "pointer-events-auto opacity-100"
-      : "pointer-events-none opacity-0 group-hover/scroll:pointer-events-auto group-hover/scroll:opacity-100 group-data-scrolling/scroll:pointer-events-auto group-data-scrolling/scroll:opacity-100",
+      : scope === "table"
+        ? "pointer-events-none opacity-0 group-hover/table:pointer-events-auto group-hover/table:opacity-100 group-data-scrolling/table:pointer-events-auto group-data-scrolling/table:opacity-100"
+        : "pointer-events-none opacity-0 group-hover/scroll:pointer-events-auto group-hover/scroll:opacity-100 group-data-scrolling/scroll:pointer-events-auto group-data-scrolling/scroll:opacity-100",
   );
 
   return (
-    <div className={cn("group/scroll relative min-h-0 min-w-0 w-full overflow-hidden", className)} style={style} data-scrolling={thumbVisible ? "true" : undefined}>
+    <div className={cn(scope === "table" ? "group/table" : "group/scroll", "relative min-h-0 min-w-0 w-full overflow-hidden", className)} style={style} data-scrolling={thumbVisible ? "true" : undefined}>
       <div
         ref={setNode}
         onScroll={handleScroll}
-        className={cn("overflow-y-auto overflow-x-hidden [overflow-anchor:none] [scrollbar-width:none] [-ms-overflow-style:none] [&::-webkit-scrollbar]:hidden [&::-webkit-scrollbar]:h-0 [&::-webkit-scrollbar]:w-0", autoHeight ? "max-h-[inherit]" : "absolute inset-0", innerClassName)}
+        className={cn("overflow-y-auto overflow-x-hidden [overflow-anchor:none] [-ms-overflow-style:none] [&::-webkit-scrollbar]:hidden [&::-webkit-scrollbar]:h-0 [&::-webkit-scrollbar]:w-0", autoHeight ? "max-h-[inherit]" : "absolute inset-0", innerClassName)}
+        style={{ scrollbarWidth: "none" }}
       >
         {children}
       </div>
