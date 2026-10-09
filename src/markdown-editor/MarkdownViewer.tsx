@@ -1,4 +1,4 @@
-import { type ReactNode, useMemo } from "react";
+import { type CSSProperties, type ReactNode, useMemo } from "react";
 import ReactMarkdown, { type Components } from "react-markdown";
 import remarkGfm from "remark-gfm";
 import { Checkbox } from "../checkbox/Checkbox";
@@ -7,37 +7,35 @@ import { cn } from "../lib/cn";
 import { type InlineEdit, type MarkdownBlock, parseMarkdownDoc, readFence, readInlineEdit } from "./blocks";
 import { MarkdownTable } from "./MarkdownTable";
 import { MermaidBlock } from "./MermaidBlock";
-import { headingClass, type MarkdownVariant, markdownVariantStyle } from "./markdownScale";
+import { headingClass, markdownScaleStyle } from "./markdownScale";
 import { ReactCode } from "./ReactCode";
 import { ReactCodeSandbox } from "./ReactCodeSandbox";
 
-export type { MarkdownVariant };
-export { headingClass, markdownVariantStyle };
+export { headingClass, markdownScaleStyle };
 
 /** Task checks use the body ink, so a checked box sits with the text instead of the brand fill. */
 const taskCheckClass =
   "data-[state=checked]:border-foreground! data-[state=checked]:bg-foreground! data-[state=checked]:text-background! data-[state=indeterminate]:border-foreground! data-[state=indeterminate]:bg-foreground! data-[state=indeterminate]:text-background!";
 
 const documentClass = cn(
-  "min-w-0 wrap-anywhere text-(length:--md-body-size,16px) leading-(--md-body-leading,24px) text-foreground",
+  "min-w-0 wrap-anywhere text-(length:--md-body-size,var(--nonla-md-text-size,16px)) leading-(--md-body-leading,calc(var(--nonla-md-text-size,16px)*1.6)) text-foreground",
   "[&_:is(h1,h2,h3,h4,h5,h6)]:text-foreground",
-  "[&_:is(h1,h2)]:mt-(--md-h2-mt,24px) [&_h1]:mb-(--md-h1-mb,12px) [&_h2]:mb-(--md-h2-mb,1px) [&_:is(h1,h2)]:pt-(--md-h2-py,3px) [&_:is(h1,h2)]:pb-(--md-h2-py,3px) [&_:is(h1,h2)]:text-(length:--md-h2-size,30px) [&_:is(h1,h2)]:leading-(--md-h2-leading,40px) [&_:is(h1,h2)]:font-(--md-h2-weight,700) [&_:is(h1,h2)]:tracking-normal",
-  "[&_h3]:mt-(--md-h3-mt,22px) [&_h3]:mb-(--md-h3-mb,1px) [&_h3]:text-(length:--md-h3-size,24px) [&_h3]:leading-(--md-h3-leading,32px) [&_h3]:font-(--md-h3-weight,700)",
-  "[&_h4]:mt-(--md-h4-mt,16px) [&_h4]:mb-(--md-h4-mb,1px) [&_h4]:text-(length:--md-h4-size,20px) [&_h4]:leading-(--md-h4-leading,26px) [&_h4]:font-(--md-h4-weight,700)",
-  "[&_h5]:mt-(--md-h5-mt,0px) [&_h5]:mb-(--md-h5-mb,0px) [&_h5]:text-(length:--md-h5-size,16px) [&_h5]:leading-(--md-h5-leading,1.375) [&_h5]:font-(--md-h5-weight,700)",
-  "[&_h6]:mt-(--md-h6-mt,0px) [&_h6]:mb-(--md-h6-mb,0px) [&_h6]:text-(length:--md-h6-size,14px) [&_h6]:leading-(--md-h6-leading,1.375) [&_h6]:font-(--md-h6-weight,700)",
-  "[&_p]:my-(--md-p-my,1px) [&_p]:py-(--md-p-py,4px) [&_p]:leading-(--md-p-leading,1.5)",
+  "[&_:is(h1,h2)]:mt-(--md-h2-mt,24px) [&_h1]:mb-(--md-h1-mb,12px) [&_h2]:mb-(--md-h2-mb,8px) [&_:is(h1,h2)]:pt-(--md-h2-py,3px) [&_:is(h1,h2)]:pb-(--md-h2-py,3px) [&_:is(h1,h2)]:text-(length:--md-h2-size,26px) [&_:is(h1,h2)]:leading-(--md-h2-leading,32px) [&_:is(h1,h2)]:font-(--md-h2-weight,600) [&_:is(h1,h2)]:tracking-normal",
+  "[&_h3]:mt-(--md-h3-mt,22px) [&_h3]:mb-(--md-h3-mb,8px) [&_h3]:text-(length:--md-h3-size,24px) [&_h3]:leading-(--md-h3-leading,32px) [&_h3]:font-(--md-h3-weight,600)",
+  "[&_:is(h4,h5,h6)]:mt-(--md-h4-mt,16px) [&_:is(h4,h5,h6)]:mb-(--md-h4-mb,1px) [&_:is(h4,h5,h6)]:text-(length:--md-h4-size,20px) [&_:is(h4,h5,h6)]:leading-(--md-h4-leading,26px) [&_:is(h4,h5,h6)]:font-(--md-h4-weight,700)",
+  "[&_p]:my-(--md-p-my,1px) [&_p]:py-(--md-p-py,4px) [&_p]:leading-(--md-p-leading,1.6)",
   "[&_ul]:my-(--md-list-my,8px) [&_ul]:list-disc [&_ul]:pl-(--md-ul-pl,4px)",
   "[&_ol]:my-(--md-list-my,8px) [&_ol]:list-decimal [&_ol]:pl-(--md-ol-pl,4px)",
   "[&_li>ul]:mt-1 [&_li>ol]:mt-1 [&_li>ol]:pl-(--md-nest,1.25rem)",
   "[&_th_ul]:my-0 [&_td_ul]:my-0 [&_th_ol]:my-0 [&_td_ol]:my-0 [&_th_li]:mt-0 [&_td_li]:mt-0 [&_th_li>ul]:mt-0.5 [&_td_li>ul]:mt-0.5 [&_th_li>ol]:mt-0.5 [&_td_li>ol]:mt-0.5 [&_th_li>p]:my-0 [&_td_li>p]:my-0",
   "[&_ul.contains-task-list]:list-none",
-  "[&_li]:mt-(--md-li-mt,4px) [&_li]:leading-[1.5]",
+  "[&_li]:mt-(--md-li-mt,4px) [&_li]:leading-[1.6]",
   "[&_li.task-list-item]:relative",
   "[&_li.task-list-item>.nonla-md-task-check]:absolute [&_li.task-list-item>.nonla-md-task-check]:top-1 [&_li.task-list-item>.nonla-md-task-check]:-left-5",
-  "[&_blockquote]:my-(--md-quote-my,4px) [&_blockquote]:border-l-2 [&_blockquote]:border-border [&_blockquote]:pl-3 [&_blockquote]:text-muted-foreground",
+  /* Body paragraphs sit in separate blocks, so their margins do not collapse. Quote paragraphs share one block, so the next paragraph's top margin is doubled to land on that same gap. */
+  "[&_blockquote]:my-(--md-quote-my,0px) [&_blockquote>p:not(:first-child)]:mt-[calc(var(--md-p-my,1px)*2)] [&_blockquote>p:not(:last-child)]:mb-0 [&_blockquote]:border-l-2 [&_blockquote]:border-border [&_blockquote]:pl-3 [&_blockquote]:text-foreground",
   "[&_a]:text-link [&_a]:underline-offset-[3px] hover:[&_a]:underline",
-  "[&_hr]:my-(--md-rule-my,8px) [&_hr]:border-border",
+  "[&_hr]:hidden",
   "[&_strong]:font-(--md-strong-weight,600)",
   "[&_img]:my-(--md-img-my,4px) [&_img]:max-w-full [&_img]:rounded-lg",
 );
@@ -49,7 +47,7 @@ const previewComponents: Components = {
     const codeText = String(children).replace(/\n$/, "");
     const isBlock = codeText.includes("\n") || !!match;
     if (!isBlock) {
-      return <code className="nonla-inline-code rounded-sm bg-muted px-[0.35em] py-[0.12em] align-baseline font-mono text-(length:--md-inline-size,14px) leading-none whitespace-nowrap [box-decoration-break:clone] [-webkit-box-decoration-break:clone]">{children}</code>;
+      return <code className="nonla-inline-code rounded-[4px] bg-muted px-[2px] py-px align-baseline font-mono text-(length:--md-inline-size,var(--nonla-mono-text-size)) leading-none whitespace-nowrap [box-decoration-break:clone] [-webkit-box-decoration-break:clone]">{children}</code>;
     }
     if (lang.toLowerCase() === "mermaid") return <MermaidView code={codeText} />;
     return <CodeBlock code={codeText} language={lang || undefined} className="my-(--md-code-my,8px)" />;
@@ -67,7 +65,7 @@ const previewComponents: Components = {
   input({ type, checked }) {
     if (type !== "checkbox") return <input type={type} checked={checked} readOnly />;
     return (
-        <span className="nonla-md-task-check pointer-events-none inline-flex h-(--md-body-leading,24px) items-center">
+        <span className="nonla-md-task-check pointer-events-none inline-flex h-(--md-body-leading,calc(var(--nonla-md-text-size,16px)*1.6)) items-center">
         <Checkbox checked={Boolean(checked)} tabIndex={-1} className={taskCheckClass} />
       </span>
     );
@@ -137,7 +135,7 @@ function RichText({ source }: { source: string }) {
 export function ListItem({ view, children }: { view: Extract<InlineEdit, { kind: "list" }>; children: ReactNode }) {
   const level = Math.floor(view.indent.length / 2);
   const ordinal = Number(/^(\d+)/.exec(view.marker)?.[1] ?? "1");
-  const marker = "w-6 shrink-0 pt-0.5 text-(length:--md-body-size,16px) leading-(--md-p-leading,1.5)";
+  const marker = "w-6 shrink-0 pt-0.5 text-(length:--md-body-size,var(--nonla-md-text-size,16px)) leading-(--md-p-leading,1.6)";
   return (
     <div className="flex items-start gap-1.5 pl-(--md-item-pl,4px)" style={level > 0 ? { marginLeft: `calc(${level} * var(--md-nest, 1.25rem))` } : undefined}>
       {view.task ? (
@@ -162,14 +160,13 @@ function isListBlock(block: MarkdownBlock): boolean {
   return block.kind === "text" && readInlineEdit(block.body).kind === "list";
 }
 
-export function spaceBefore(block: MarkdownBlock, prev?: MarkdownBlock, variant: MarkdownVariant = "docs"): string {
-  const chat = variant === "chat";
+export function spaceBefore(block: MarkdownBlock, prev?: MarkdownBlock): string {
   if (!prev) return "";
-  if (isListBlock(block) && isListBlock(prev)) return chat ? "mt-px" : "mt-0.5";
-  if (prev.kind === "text" && readInlineEdit(prev.body).kind === "heading") return "[&_p]:mt-0! [&_p]:pt-0.5!";
-  if (isListBlock(block) && prev.kind === "text") return chat ? "mt-0.5" : "mt-1";
+  if (isListBlock(block) && isListBlock(prev)) return "mt-0.5";
+  if (prev.kind === "text" && readInlineEdit(prev.body).kind === "heading") return "[&_p:first-child]:mt-0! [&_p:first-child]:pt-0.5!";
+  if (isListBlock(block) && prev.kind === "text") return "mt-1";
   if (block.kind === "text" && prev.kind === "text") return "";
-  return chat ? "mt-2" : "mt-3";
+  return "mt-3";
 }
 
 function fenceClosed(body: string): boolean {
@@ -235,24 +232,24 @@ export type MarkdownViewerProps = {
   showHeader?: boolean;
   /** Switch that opens the source of a `live-react` preview. Needs `showHeader`. Default `true`. */
   showCode?: boolean;
-  /** `docs` is the article scale. `chat` tightens size and spacing for a thread. Default `docs`. */
-  variant?: MarkdownVariant;
+  /** Overrides scale variables from `markdownScaleStyle`, such as heading size. */
+  style?: CSSProperties;
 };
 
 /** Read-only markdown. Same blocks as the editor preview, without editing. */
-export function MarkdownViewer({ value = "", streaming = false, sandboxSrc, trustedModules, showHeader = true, showCode = true, placeholder, className, variant = "docs" }: MarkdownViewerProps) {
+export function MarkdownViewer({ value = "", streaming = false, sandboxSrc, trustedModules, showHeader = true, showCode = true, placeholder, className, style }: MarkdownViewerProps) {
   const doc = useMemo(() => parseMarkdownDoc(value), [value]);
   if (doc.blocks.length === 0) {
     return placeholder ? <p className={cn("m-0 text-sm text-quaternary-foreground", className)}>{placeholder}</p> : null;
   }
   return (
-    <div data-variant={variant} className={cn("nonla-markdown-viewer flex min-w-0 flex-col text-foreground", variant === "chat" && "[&>[data-md-block]:first-child_:is(h1,h2,h3,h4,h5,h6)]:mt-0", className)} style={markdownVariantStyle(variant)}>
+    <div className={cn("nonla-markdown-viewer flex min-w-0 flex-col text-foreground", className)} style={{ ...markdownScaleStyle, ...style }}>
       {doc.blocks.map((block, index) => (
         <div
           // biome-ignore lint/suspicious/noArrayIndexKey: block position is the document identity
           key={`${index}:${block.kind}`}
           data-md-block={block.kind}
-          className={cn("outline-none", spaceBefore(block, doc.blocks[index - 1], variant))}
+          className={cn("outline-none", spaceBefore(block, doc.blocks[index - 1]))}
         >
           <BlockBody block={block} streaming={streaming} trustedModules={trustedModules} sandboxSrc={sandboxSrc} showHeader={showHeader} showCode={showCode} />
         </div>

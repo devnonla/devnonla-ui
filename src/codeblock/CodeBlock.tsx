@@ -54,7 +54,7 @@ export function CodeBlock({ code, language, title, lineNumbers = false, wordWrap
 
         <OverlayScroll
           autoHeight
-          className="nonla-codeblock-body nonla-codeblock-well min-w-0 bg-card font-mono text-(length:--md-code-size,13px) leading-(--md-code-leading,20px) max-h-96"
+          className="nonla-codeblock-body nonla-codeblock-well min-w-0 bg-card font-mono text-(length:--md-code-size,var(--nonla-mono-text-size)) leading-(--md-code-leading,calc(var(--nonla-mono-text-size)*1.6)) max-h-96"
           innerClassName={wordWrap ? undefined : "overflow-x-auto"}
         >
           <pre className={cn("nonla-codeblock-pre m-0 whitespace-pre break-normal", lineNumbers && "nonla-codeblock-lines", wordWrap && "whitespace-pre-wrap wrap-break-word")}>

@@ -18,10 +18,6 @@ export default defineConfig({
         find: "@nonla-agents/ui/styles.css",
         replacement: `${import.meta.dirname}/../src/styles.css`,
       },
-      {
-        find: "@iconify-json/solar",
-        replacement: `${import.meta.dirname}/../node_modules/@iconify-json/solar`,
-      },
     ],
   },
   server: {

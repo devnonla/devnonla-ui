@@ -1,5 +1,4 @@
-import { OverlayScroll, ThemeSwitcher, ensureFluentIcons } from "@nonla-agents/ui";
-import { useEffect } from "react";
+import { OverlayScroll, ThemeSwitcher } from "@nonla-agents/ui";
 import { Link, Outlet, useLocation } from "react-router-dom";
 import { isFlushDoc } from "../catalog";
 import { GITHUB_REPO } from "../nav";
@@ -8,10 +7,6 @@ import { DocsSidebar } from "./DocsSidebar";
 export function DocsLayout() {
   const { pathname } = useLocation();
   const flush = isFlushDoc(pathname);
-
-  useEffect(() => {
-    void ensureFluentIcons();
-  }, []);
 
   return (
     <div className="flex h-full min-h-0 flex-col bg-background text-foreground">

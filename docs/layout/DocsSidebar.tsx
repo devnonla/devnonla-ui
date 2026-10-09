@@ -1,7 +1,8 @@
-import { Sidebar, SolarIcon, solarIconName } from "@nonla-agents/ui";
+import { Sidebar } from "@nonla-agents/ui";
 import { useMemo } from "react";
 import { useLocation, useNavigate } from "react-router-dom";
 import { DOCS_NAV } from "../nav";
+import { NavIcon } from "./NavIcon";
 
 export function DocsSidebar({ onNavigate }: { onNavigate?: () => void }) {
   const navigate = useNavigate();
@@ -18,7 +19,7 @@ export function DocsSidebar({ onNavigate }: { onNavigate?: () => void }) {
         ...section.items.map((item) => ({
           key: item.path,
           label: item.label,
-          icon: item.icon ? <SolarIcon name={solarIconName(item.icon, "outline")} size={16} /> : undefined,
+          icon: item.icon ? <NavIcon name={item.icon} /> : undefined,
           href: item.path,
         })),
       ]),

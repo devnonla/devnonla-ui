@@ -17,6 +17,8 @@ export type { AlertProps, AlertType } from "./alert/Alert";
 export { Alert } from "./alert/Alert";
 export type { AgentAvatarConfig, AgentAvatarEyeColor, AgentAvatarLook, AgentAvatarMotion, AgentAvatarProps } from "./avatar/AgentAvatar";
 export { AGENT_AVATAR_PARTS, AgentAvatar } from "./avatar/AgentAvatar";
+export type { BlobShapeAppearance, BlobShapeProps, BlobShapeVariant } from "./blob-shape/BlobShape";
+export { BlobShape } from "./blob-shape/BlobShape";
 export type { CalendarProps } from "./calendar/Calendar";
 export { Calendar } from "./calendar/Calendar";
 export type { CardFooterProps, CardItemProps, CardProps } from "./card/Card";
@@ -28,6 +30,7 @@ export type {
   AgentMessageRole,
   AgentPanelEndpoint,
   AgentPanelProps,
+  AgentSseCallbacks,
   AgentStreamRequest,
   AgentToolCallEvent,
   AgentToolHook,
@@ -134,25 +137,8 @@ export {
 export type { FormLayoutItemProps, FormLayoutProps } from "./form-layout/FormLayout";
 /** Layout-only Form + Form.Item for labeled fields. */
 export { Form } from "./form-layout/FormLayout";
-export { FluentIcon, SolarIcon } from "./icon/SolarIcon";
-export {
-  DEFAULT_ICON_NAME,
-  DEFAULT_TOOL_ICON,
-  ensureSolarIcons,
-  ensureSolarIcons as ensureFluentIcons,
-  getIconNames,
-  getSolarImgSrc,
-  getSolarImgSrc as getFluentImgSrc,
-  getSolarSvg,
-  ICON_PREFIX,
-  isSolarIcon,
-  isSolarIcon as isFluentIcon,
-  isSvgIcon,
-  solarIconName,
-  solarIconName as fluentIconName,
-  solarIconRef,
-  solarIconRef as fluentIconRef,
-} from "./icon/solar";
+export type { IconName } from "./icon/Icon";
+export { Icon } from "./icon/Icon";
 export { cn } from "./lib/cn";
 export type { PopperPlacement } from "./lib/placement";
 export { placementToRadix } from "./lib/placement";
@@ -163,7 +149,7 @@ export type { LogoProps, LogoVariant } from "./logo/Logo";
 export { Logo } from "./logo/Logo";
 export type { MarkdownDiffLayout, MarkdownEditorMode, MarkdownEditorProps } from "./markdown-editor/MarkdownEditor";
 export { MarkdownEditor } from "./markdown-editor/MarkdownEditor";
-export type { MarkdownVariant, MarkdownViewerProps } from "./markdown-editor/MarkdownViewer";
+export type { MarkdownViewerProps } from "./markdown-editor/MarkdownViewer";
 export { MarkdownViewer } from "./markdown-editor/MarkdownViewer";
 export type { MermaidBlockProps } from "./markdown-editor/MermaidBlock";
 export { MermaidBlock } from "./markdown-editor/MermaidBlock";

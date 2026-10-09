@@ -1,11 +1,10 @@
-import { FluentIcon, Input, ensureFluentIcons } from "@nonla-agents/ui";
+import { Icon, Input } from "@nonla-agents/ui";
 import { useEffect } from "react";
 
 /** Standalone preview — Input only, solid white. Not part of the docs shell. */
 export function InputWhitePage() {
   useEffect(() => {
     document.title = "Input · white";
-    void ensureFluentIcons();
   }, []);
 
   return (
@@ -21,8 +20,8 @@ export function InputWhitePage() {
           <Input status="warning" placeholder="Warning" defaultValue="Check this" />
         </div>
         <div className="grid gap-3 sm:grid-cols-2">
-          <Input prefix={<FluentIcon name="search-sparkle-24" size={14} />} placeholder="With prefix" />
-          <Input suffix={<FluentIcon name="add-circle-24" size={14} />} placeholder="With suffix" allowClear defaultValue="Clearable" />
+          <Input prefix={<Icon name="pen" size={14} />} placeholder="With prefix" />
+          <Input suffix={<Icon name="check" size={14} />} placeholder="With suffix" allowClear defaultValue="Clearable" />
         </div>
         <div className="grid gap-3 sm:grid-cols-2">
           <Input.Password placeholder="Password" />

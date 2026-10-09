@@ -1,6 +1,6 @@
 import { type AnchorHTMLAttributes, type CSSProperties, createElement, type HTMLAttributes, type ReactNode } from "react";
 import { cn } from "../lib/cn";
-import { headingClass, markdownBodyClass, markdownParagraphClass, markdownVariantStyle, pageTitleClass } from "../markdown-editor/markdownScale";
+import { headingClass, markdownBodyClass, markdownParagraphClass, markdownScaleStyle, pageTitleClass } from "../markdown-editor/markdownScale";
 
 export type TypographyType = "secondary" | "success" | "warning" | "danger";
 
@@ -40,10 +40,10 @@ const TITLE_TAG = {
   6: "h6",
 } as const;
 
-/** Same scale as MarkdownViewer `docs`. Body size is `--nonla-base-text-size`. Inline code reads `--md-inline-size` (14px). */
+/** Same scale as MarkdownViewer. Body size is `text-md`. Inline code reads `--nonla-mono-text-size`. */
 const BODY = markdownBodyClass;
 
-const INLINE_CODE = "nonla-inline-code rounded-sm bg-muted px-[0.35em] py-[0.12em] align-baseline font-mono text-(length:--md-inline-size,14px) leading-none whitespace-nowrap [box-decoration-break:clone] [-webkit-box-decoration-break:clone]";
+const INLINE_CODE = "nonla-inline-code rounded-[4px] bg-muted px-[2px] py-px align-baseline font-mono text-(length:--md-inline-size,var(--nonla-mono-text-size)) leading-none whitespace-nowrap [box-decoration-break:clone] [-webkit-box-decoration-break:clone]";
 
 const TITLE_SPACE = "nonla-typo";
 
@@ -82,7 +82,7 @@ function rankColor(role: InkRole, props: Decorations): string | undefined {
 function decorated(props: Decorations, children: ReactNode, base: string, className?: string, style?: HTMLAttributes<HTMLElement>["style"], role: InkRole = "body") {
   const line = decorationLine(props.underline, props.delete);
   const color = rankColor(role, props);
-  const scale: CSSProperties = { ...markdownVariantStyle("docs"), ...(color ? { color } : null), ...(line ? { textDecorationLine: line } : null), ...style };
+  const scale: CSSProperties = { ...markdownScaleStyle, ...(color ? { color } : null), ...(line ? { textDecorationLine: line } : null), ...style };
   return {
     className: cn(base, props.disabled && "cursor-not-allowed", props.strong && "font-(--md-strong-weight,600)", props.italic && "italic", props.underline && "underline-offset-[3px]", className),
     style: scale,
