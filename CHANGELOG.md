@@ -5,6 +5,36 @@ All notable changes to this project will be documented in this file.
 The format is based on [Keep a Changelog](https://keepachangelog.com/en/1.1.0/),
 and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0.html).
 
+## [0.15.0] - 2026-10-09
+
+### Added
+
+- `Icon` and `IconName`. Glyphs ship with the package. Pass `name` and an optional `size`.
+- `BlobShape`. Closed shapes (`blob`, `blob-alt`, `ring`, `orb`, `square`, `star`, `circle`, `cursor`) and line dividers (`horizontal`, `fade`, `dashed`, `double`, `ornament`, `zigzag`, `wave`, `waves`, `mountain`, `vertical`). `appearance` is `solid`, `outline`, or `sticker`.
+- `AgentSseCallbacks` is exported. `onTextEnd` closes the current assistant bubble so the next text delta starts another.
+- `OverlayScroll` `scope`: `"scroll"` (default) or `"table"`. A table scroller does not light up when a parent chat scroller is hovered.
+- Markdown tables have a fullscreen control.
+- Type tokens `--nonla-md-text-size` (16px), `--nonla-sm-text-size` (14px), and `--nonla-mono-text-size` (0.9× the body size). Tailwind `text-md` reads the markdown size. `text-sm`, `text-base`, and `text-lg` follow the theme.
+
+### Changed
+
+- `AgentChatbox` and `AgentPanel` read an [AG-UI](https://docs.ag-ui.com/concepts/events) SSE stream. Text, reasoning, and tool calls render. `RUN_FINISHED` ends the turn. `RUN_ERROR` shows the error. `CUSTOM` events `tool-meta` and `tool-call-input` update the open tool card.
+- `MarkdownViewer` uses one scale. Body is `text-md` (16px, leading 1.6). Tables stay `text-base`. Headings: H1/H2 are 26/32 at weight 600, H3 is 24/32 at weight 600, H4–H6 are 20/26. Pass `style` to override the scale variables. Agent replies keep that body size and paint headings at weight 400.
+- Tabs can be dragged when the bar overflows. The wheel scrolls faster. The active tab is brand colored.
+- Sidebar and Tabs `icon` accepts an `Icon` name or a node.
+- `--nonla-base-text-size` is 15px. `body` uses it at leading 1.6, so `1rem` and Tailwind spacing stay put. Dark `--nonla-text-main` is `#e0e0e0`.
+- Light page is `#ffffff`, text is `#262626`, sidebar and surface are `#fafafa`.
+- Chat rows share one rhythm. User bubbles are `text-base`. Tool lines, the composer, and errors are `text-sm`.
+
+### Upgrade notes
+
+- **Removed exports:** `SolarIcon`, `FluentIcon`, `ensureSolarIcons`, `ensureFluentIcons`, `solarIconName`, `fluentIconName`, `solarIconRef`, `fluentIconRef`, `getSolarSvg`, `getSolarImgSrc`, `getFluentImgSrc`, `getIconNames`, `isSolarIcon`, `isFluentIcon`, `isSvgIcon`, `ICON_PREFIX`, `DEFAULT_ICON_NAME`, `DEFAULT_TOOL_ICON`, and `MarkdownVariant`. Use `Icon`.
+- **`MarkdownViewer` `variant` is gone.** `"docs"` and `"chat"` are the same scale. Drop the prop. `normalizeSseEvent` and `AgentSseEvent` are gone. `parseSseStream` accepts AG-UI events.
+- **The agent endpoint must speak AG-UI.** `text-delta`, `thinking-delta`, `tool-call`, `tool-result`, `done`, and `error` are no longer read.
+- **`DesktopIcon` `icon` is gone.** Pass `media`, or leave it empty for the stars glyph.
+- **Sidebar and Tabs string icons** only render when the string is an `IconName`. A Solar id (`pen-linear`) or a Fluent id (`settings-24`) renders nothing. Pass `<Icon name="pen" />` or another node.
+- **Type scale:** `text-base` is 15px, not Tailwind’s 16px. `text-sm` is 14px via `--nonla-sm-text-size`. Markdown and agent body text are `text-md` (16px). To keep the 0.14.0 body, set `--nonla-base-text-size: 16px`. To keep the old light page (`#fafafa`, text `#404040`, surface `#ffffff`), set those `--nonla-*` keys yourself. Dark ink was `#ffffff`.
+
 ## [0.14.0] - 2026-10-08
 
 ### Added
@@ -365,6 +395,7 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 - Replace class `nonla-chat-shimmer` with `Shimmer` or `.nonla-shimmer`.
 - `resolveToolUI(toolName, extras?)` — second argument is optional; extra UIs are checked first.
 
+[0.15.0]: https://github.com/devnonla/devnonla-ui/compare/v0.14.0...v0.15.0
 [0.14.0]: https://github.com/devnonla/devnonla-ui/compare/v0.13.0...v0.14.0
 [0.13.0]: https://github.com/devnonla/devnonla-ui/compare/v0.12.0...v0.13.0
 [0.12.0]: https://github.com/devnonla/devnonla-ui/compare/v0.11.0...v0.12.0
