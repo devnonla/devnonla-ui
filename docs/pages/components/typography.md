@@ -9,7 +9,7 @@ icon: "text-edit-style-24"
 
 # Typography
 
-Same scale as MarkdownViewer `docs`. Body size is `--nonla-base-text-size` (16px, leading 1.5). Text uses `--nonla-text-main`. `type="secondary"` uses `--nonla-text-tertiary`. `disabled` uses `--nonla-text-quaternary`.
+Same scale as MarkdownViewer. Body size is `text-md`. Leading is 1.6. Text uses `--nonla-text-main`. `type="secondary"` uses `--nonla-text-tertiary`. `disabled` uses `--nonla-text-quaternary`.
 
 ```live-react
 import { Typography } from "devnonla-ui";

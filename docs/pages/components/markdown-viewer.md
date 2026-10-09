@@ -9,60 +9,11 @@ icon: "document-text-24"
 
 # MarkdownViewer
 
-Xem markdown đã viết. Chỉ đọc: heading, list, bảng, code, mermaid, và khối live-react.
-
-`variant` chọn preset cỡ chữ. `docs` (mặc định) để rộng. `chat` siết size và khoảng cách cho hội thoại. `ChatMarkdown` truyền `chat`.
-
-## Hai preset
-
-Cùng một đoạn. `docs` ở trái, `chat` ở phải.
-
-```live-react
-import { MarkdownViewer } from "devnonla-ui";
-
-const snippet = `# Bảy ngày ở Đà Lạt
-
-Mình lên Đà Lạt không phải để đi cho đủ chỗ. Phần **đậm** là thứ mình không muốn quên. Phần *nghiêng* là cảm giác lúc đó. Giờ ở lề sổ là \`06:41\`.
-
-## Sáng ở hồ Xuân Hương
-
-Hồ nằm giữa thành phố như một khoảng thở. Sáu giờ rưỡi, mặt nước còn xám.
-
-### Sương và người chạy bộ
-
-Sương không đều. Có quãng dày đến mức hàng thông phía xa chỉ còn một vệt.
-
-- Hồ Xuân Hương, gần như mỗi sáng
-- Chợ đêm, đi hai lần
-- Ga Đà Lạt
-
-> Hôm qua mưa phùn cả buổi. Mình ngồi ở quán gần chợ và viết đến khi hết trang.
-
-| Ngày | Trang sổ |
-| --- | --- |
-| Thứ hai | 4 |
-| Thứ tư | 7 |
-`;
-
-export default function Demo() {
-  return (
-    <div className="grid items-start gap-8 text-left md:grid-cols-2">
-      <div className="min-w-0">
-        <div className="mb-3 text-[13px] font-medium text-muted-foreground">docs</div>
-        <MarkdownViewer value={snippet} variant="docs" />
-      </div>
-      <div className="min-w-0">
-        <div className="mb-3 text-[13px] font-medium text-muted-foreground">chat</div>
-        <MarkdownViewer value={snippet} variant="chat" />
-      </div>
-    </div>
-  );
-}
-```
+Xem markdown đã viết. Chỉ đọc: heading, list, bảng, code, mermaid, và khối live-react. Body là `text-md`.
 
 ## Bài đầy đủ
 
-Dài như một blog, đủ các loại block. Preset `docs`.
+Dài như một blog, đủ các loại block.
 
 ```live-react
 import { MarkdownViewer, Tag } from "devnonla-ui";

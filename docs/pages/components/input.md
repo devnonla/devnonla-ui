@@ -12,7 +12,7 @@ icon: "text-edit-style-24"
 A basic widget for getting the user input.
 
 ```live-react
-import { FluentIcon, Input } from "devnonla-ui";
+import { Icon, Input } from "devnonla-ui";
 
 export default function Demo() {
   return (
@@ -21,7 +21,7 @@ export default function Demo() {
       <Input placeholder="Default" />
       <Input size="large" placeholder="Large" />
       <Input status="error" defaultValue="Invalid" />
-      <Input prefix={<FluentIcon name="search-sparkle-24" size={14} />} placeholder="With prefix" allowClear />
+      <Input prefix={<Icon name="pen" size={14} />} placeholder="With prefix" allowClear />
       <Input.Password placeholder="Password" />
       <Input.TextArea placeholder="Multi-line notes…" rows={3} />
     </div>

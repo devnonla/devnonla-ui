@@ -13,7 +13,7 @@ Switch between views. The bar stays on one line and scrolls when the labels do n
 
 ```live-react
 import { useState } from "react";
-import { Tabs } from "devnonla-ui";
+import { Icon, Tabs } from "devnonla-ui";
 
 export default function Demo() {
   const [key, setKey] = useState("account");
@@ -22,7 +22,7 @@ export default function Demo() {
       activeKey={key}
       onChange={setKey}
       items={[
-        { key: "account", label: "Account", icon: "person-24", children: "Profile, email, and password." },
+        { key: "account", label: "Account", icon: <Icon name="document" size={16} />, children: "Profile, email, and password." },
         { key: "team", label: "Team", children: "People who can access this workspace." },
         { key: "billing", label: "Billing", disabled: true, children: "Plan and invoices." },
       ]}

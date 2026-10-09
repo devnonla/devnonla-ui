@@ -13,14 +13,14 @@ Side nav from a flat list. A row with `type: "group"` is a section label. Routin
 
 ```live-react
 import { useState } from "react";
-import { Sidebar } from "devnonla-ui";
+import { Icon, Sidebar } from "devnonla-ui";
 
 const items = [
   { type: "group", key: "start", label: "Get started" },
-  { key: "intro", label: "Introduction", icon: "apps-24" },
-  { key: "install", label: "Installation", icon: "code-24" },
+  { key: "intro", label: "Introduction", icon: <Icon name="stars" size={16} /> },
+  { key: "install", label: "Installation", icon: <Icon name="code" size={16} /> },
   { type: "divider" },
-  { key: "settings", label: "Settings", icon: "settings-24" },
+  { key: "settings", label: "Settings", icon: <Icon name="pen" size={16} /> },
 ];
 
 export default function Demo() {

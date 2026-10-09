@@ -9,7 +9,7 @@ icon: "bot-24"
 
 # Agent message
 
-One assistant reply. The body is `MarkdownViewer` with `variant="chat"`. AgentPanel and AgentChatbox render this for assistant text.
+One assistant reply. The body is `MarkdownViewer`. AgentPanel and AgentChatbox render this for assistant text.
 
 ```live-react
 import { ChatAgentMessage, ChatError } from "devnonla-ui";

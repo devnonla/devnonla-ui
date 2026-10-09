@@ -29,7 +29,7 @@ import { AgentChatbox, AgentPanel } from "devnonla-ui";
 
 `toolbar` sits left of the composer. `toolUis` adds a card for a stream `toolName` (checked before builtins). `toolHooks` runs `onCall` / `onResult` for matching names.
 
-Stream events: `text-delta` · `thinking-delta` · `tool-call` · `tool-result` · `done` · `error`.
+The response is an [AG-UI](https://docs.ag-ui.com/concepts/events) SSE stream. The thread renders text, reasoning, and tool calls. `RUN_FINISHED` ends the turn and `RUN_ERROR` shows the error. Lifecycle, step, state, snapshot, activity, raw, and custom events are accepted and ignored.
 
 ## Pieces
 
@@ -39,7 +39,7 @@ These are the rows inside a surface. A custom layout imports them directly.
 | --- | --- |
 | `ChatWelcome` | Empty thread: name, description, starter prompts |
 | `ChatUserMessage` | One user bubble |
-| `ChatAgentMessage` | One assistant reply. Body is `MarkdownViewer` `variant="chat"` |
+| `ChatAgentMessage` | One assistant reply. Body is `MarkdownViewer` |
 | `ChatMarkdown` | That same body, when a row needs markdown on its own |
 | `ChatThinking` | Collapsible reasoning, usually inside the agent message |
 | `ChatError` | Error row |
