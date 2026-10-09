@@ -138,7 +138,7 @@ export function useAgentStream({
             : await fetcher(ep, {
                 method: "POST",
                 credentials: "include",
-                headers: { "Content-Type": "application/json", ...headers },
+                headers: { "Content-Type": "application/json", Accept: "text/event-stream", ...headers },
                 body: JSON.stringify({ messages: payload, ...extra }),
                 signal: controller.signal,
               });

@@ -56,17 +56,18 @@ export function createAgentSseSession(args: AgentSseSessionArgs): AgentSseSessio
 
   const freezeOpen = () => {
     const freezeId = currentId;
+    const text = assistantText;
     if (freezeId) {
       const thinkingSnapshot = thinkingRef.current;
       const liveDuration = thinkingStartRef.current > 0 ? thinkingDurationSec(thinkingStartRef.current) : undefined;
-      if (assistantText.trim()) {
+      if (text.trim()) {
         setMessages((prev) =>
           prev.map((m) => {
             if (m.id !== freezeId) return m;
             const existing = typeof m.meta?.thinkingDuration === "number" ? m.meta.thinkingDuration : undefined;
             return {
               ...m,
-              content: assistantText,
+              content: text,
               streaming: false,
               meta: thinkingSnapshot ? { ...m.meta, thinking: thinkingSnapshot, thinkingDuration: liveDuration ?? existing ?? 0 } : m.meta,
             };
@@ -142,8 +143,9 @@ export function createAgentSseSession(args: AgentSseSessionArgs): AgentSseSessio
         ensureBubble({ content: delta });
       } else {
         assistantText += delta;
+        const text = assistantText;
         const targetId = currentId;
-        setMessages((prev) => prev.map((m) => (m.id === targetId ? { ...m, content: assistantText, streaming: true } : m)));
+        setMessages((prev) => prev.map((m) => (m.id === targetId ? { ...m, content: text, streaming: true } : m)));
       }
     },
     onThinkingDelta: (delta) => {
@@ -258,6 +260,10 @@ export function createAgentSseSession(args: AgentSseSessionArgs): AgentSseSessio
         ];
       });
       emitResult({ toolCallId: event.toolCallId, toolName: event.toolName, output: raw });
+    },
+    onTextEnd: () => {
+      if (!assistantText.trim()) return;
+      freezeOpen();
     },
     onDone: () => {
       finishTerminalTools("Tool did not return a result");
