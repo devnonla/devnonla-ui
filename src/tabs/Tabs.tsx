@@ -1,6 +1,5 @@
-import { type CSSProperties, type KeyboardEvent, type ReactNode, useCallback, useEffect, useId, useLayoutEffect, useRef, useState } from "react";
-import { SolarIcon } from "../icon/SolarIcon";
-import { solarIconName } from "../icon/solar";
+import { type CSSProperties, type KeyboardEvent, type MouseEvent as ReactMouseEvent, type ReactNode, type PointerEvent as ReactPointerEvent, useCallback, useEffect, useId, useLayoutEffect, useRef, useState } from "react";
+import { Icon, isIconName } from "../icon/Icon";
 import { cn } from "../lib/cn";
 
 export type TabsItem = {
@@ -8,7 +7,7 @@ export type TabsItem = {
   label: ReactNode;
   children?: ReactNode;
   disabled?: boolean;
-  /** Solar icon name (`settings`), a legacy Fluent Color id (`settings-24`), or a node. */
+  /** An `Icon` name, or a node. */
   icon?: ReactNode;
 };
 
@@ -26,6 +25,12 @@ export type TabsProps = {
 const FADE = 32;
 const EDGE = 64;
 const TAB_HEIGHT = 40;
+/** Mouse wheel multiplier. Raise for faster wheel scrolling. */
+const WHEEL_SPEED = 2;
+/** Pointer travel (px) before a press becomes a drag instead of a click. */
+const DRAG_THRESHOLD = 4;
+
+type DragState = { id: number; startX: number; startLeft: number; moved: boolean };
 
 type Ink = { left: number; width: number };
 type Overflow = { left: boolean; right: boolean };
@@ -56,7 +61,8 @@ function scrollToX(el: HTMLElement, target: number) {
 
 function TabIcon({ icon, size }: { icon?: ReactNode; size: number }) {
   if (icon == null || icon === false) return null;
-  if (typeof icon === "string") return <SolarIcon name={solarIconName(icon)} size={size} />;
+  if (isIconName(icon)) return <Icon name={icon} size={size} />;
+  if (typeof icon === "string") return null;
   return <span className="inline-flex shrink-0 items-center justify-center">{icon}</span>;
 }
 
@@ -71,7 +77,7 @@ function ScrollButton({ dir, onClick }: { dir: "left" | "right"; onClick: () => 
       )}
       onClick={onClick}
     >
-      <SolarIcon name={dir === "left" ? "alt-arrow-left-linear" : "alt-arrow-right-linear"} size={16} />
+      <Icon name={dir === "left" ? "arrow-left" : "arrow-right"} size={16} />
     </button>
   );
 }
@@ -87,6 +93,8 @@ export function Tabs({ items, activeKey, defaultActiveKey, onChange, className, 
   const rowRef = useRef<HTMLDivElement>(null);
   const tabRefs = useRef(new Map<string, HTMLButtonElement>());
   const focusKey = useRef<string | null>(null);
+  const drag = useRef<DragState | null>(null);
+  const suppressClick = useRef(false);
 
   const [ink, setInk] = useState<Ink | null>(null);
   const [overflow, setOverflow] = useState<Overflow>({ left: false, right: false });
@@ -151,9 +159,10 @@ export function Tabs({ items, activeKey, defaultActiveKey, onChange, className, 
     const onWheel = (event: WheelEvent) => {
       if (el.scrollWidth <= el.clientWidth + 1) return;
       if (Math.abs(event.deltaX) >= Math.abs(event.deltaY)) return;
-      if (event.deltaY === 0) return;
+      const raw = event.deltaY * (event.deltaMode === 1 ? 16 : 1) * WHEEL_SPEED;
+      if (raw === 0) return;
       const max = el.scrollWidth - el.clientWidth;
-      const next = Math.min(max, Math.max(0, el.scrollLeft + event.deltaY));
+      const next = Math.min(max, Math.max(0, el.scrollLeft + raw));
       if (next === el.scrollLeft) return;
       el.scrollLeft = next;
       updateOverflow();
@@ -162,6 +171,49 @@ export function Tabs({ items, activeKey, defaultActiveKey, onChange, className, 
     el.addEventListener("wheel", onWheel, { passive: false });
     return () => el.removeEventListener("wheel", onWheel);
   }, [itemsKey, updateOverflow]);
+
+  function onPointerDown(event: ReactPointerEvent<HTMLDivElement>) {
+    const el = scrollerRef.current;
+    if (!el || el.scrollWidth <= el.clientWidth + 1) return;
+    if (event.pointerType === "mouse" && event.button !== 0) return;
+    suppressClick.current = false;
+    drag.current = { id: event.pointerId, startX: event.clientX, startLeft: el.scrollLeft, moved: false };
+  }
+
+  function onPointerMove(event: ReactPointerEvent<HTMLDivElement>) {
+    const state = drag.current;
+    const el = scrollerRef.current;
+    if (!state || !el || event.pointerId !== state.id) return;
+    if (event.pointerType === "mouse" && event.buttons === 0) {
+      drag.current = null;
+      return;
+    }
+    const dx = event.clientX - state.startX;
+    if (!state.moved) {
+      if (Math.abs(dx) < DRAG_THRESHOLD) return;
+      state.moved = true;
+      el.setPointerCapture(event.pointerId);
+    }
+    scrollToX(el, state.startLeft - dx);
+  }
+
+  function endDrag(event: ReactPointerEvent<HTMLDivElement>) {
+    const state = drag.current;
+    if (!state || event.pointerId !== state.id) return;
+    drag.current = null;
+    if (!state.moved) return;
+    suppressClick.current = true;
+    const el = scrollerRef.current;
+    if (el?.hasPointerCapture(event.pointerId)) el.releasePointerCapture(event.pointerId);
+  }
+
+  /** A drag that moved should not also activate the tab under the pointer. */
+  function onClickCapture(event: ReactMouseEvent<HTMLDivElement>) {
+    if (!suppressClick.current) return;
+    suppressClick.current = false;
+    event.stopPropagation();
+    event.preventDefault();
+  }
 
   function select(key: string, fromKeyboard = false) {
     if (fromKeyboard) focusKey.current = key;
@@ -203,9 +255,19 @@ export function Tabs({ items, activeKey, defaultActiveKey, onChange, className, 
         <div aria-hidden className="pointer-events-none absolute inset-x-0 bottom-0 h-px bg-border" />
         <div
           ref={scrollerRef}
-          className="relative overflow-x-auto overflow-y-hidden overscroll-x-contain [scrollbar-width:none] [-ms-overflow-style:none] [&::-webkit-scrollbar]:hidden [&::-webkit-scrollbar]:h-0 [&::-webkit-scrollbar]:w-0"
-          style={mask ? { maskImage: mask, WebkitMaskImage: mask } : undefined}
+          className="relative overflow-x-auto overflow-y-hidden overscroll-x-contain touch-pan-y select-none [scrollbar-width:none] [-ms-overflow-style:none] [&::-webkit-scrollbar]:hidden [&::-webkit-scrollbar]:h-0 [&::-webkit-scrollbar]:w-0"
+          style={{
+            // Inline on purpose: the unlayered `* { scrollbar-width: thin }` in styles.css beats the layered utility class.
+            scrollbarWidth: "none",
+            msOverflowStyle: "none",
+            ...(mask ? { maskImage: mask, WebkitMaskImage: mask } : null),
+          }}
           onScroll={updateOverflow}
+          onPointerDown={onPointerDown}
+          onPointerMove={onPointerMove}
+          onPointerUp={endDrag}
+          onPointerCancel={endDrag}
+          onClickCapture={onClickCapture}
         >
           <div ref={rowRef} role="tablist" aria-label={ariaLabel} aria-orientation="horizontal" className="relative flex w-max gap-3" onKeyDown={onKeyDown}>
             {ink ? <span aria-hidden className="pointer-events-none absolute bottom-0 left-0 z-1 h-0.5 rounded-t-xs bg-brand transition-[transform,width] duration-380 ease-[cubic-bezier(0.3,1.25,0.5,1)] motion-reduce:transition-none" style={{ width: ink.width, transform: `translateX(${ink.left}px)` }} /> : null}
@@ -226,10 +288,10 @@ export function Tabs({ items, activeKey, defaultActiveKey, onChange, className, 
                   tabIndex={selected ? 0 : -1}
                   disabled={item.disabled}
                   className={cn(
-                    "relative z-10 inline-flex shrink-0 cursor-pointer items-center justify-center gap-1.5 whitespace-nowrap border-0 bg-transparent font-normal text-tertiary-foreground transition-colors select-none",
-                    "hover:text-foreground focus-visible:ring-brand/55 focus-visible:ring-2 focus-visible:outline-none focus-visible:ring-inset",
+                    "relative z-10 inline-flex shrink-0 cursor-pointer items-center justify-center gap-1.5 whitespace-nowrap border-0 bg-transparent font-normal transition-colors select-none",
+                    "focus-visible:ring-brand/55 focus-visible:ring-2 focus-visible:outline-none focus-visible:ring-inset",
                     "disabled:cursor-not-allowed disabled:opacity-40",
-                    selected && "text-foreground",
+                    selected ? "text-brand" : "text-(--nonla-text-main) hover:text-foreground",
                   )}
                   style={{
                     height: TAB_HEIGHT,
