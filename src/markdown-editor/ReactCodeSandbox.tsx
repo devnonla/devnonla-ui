@@ -1,5 +1,5 @@
 import { type ReactNode, useEffect, useMemo, useRef, useState } from "react";
-import { SolarIcon } from "../icon/SolarIcon";
+import { Icon } from "../icon/Icon";
 import { cn } from "../lib/cn";
 import { getColorMode, type NonlaColorMode, subscribeColorMode } from "../theme";
 import { ReactCodeFrame } from "./ReactCodeFrame";
@@ -136,7 +136,7 @@ export function ReactCodeSandbox({ code, src, showHeader = true, showCode = true
   return (
     <ReactCodeFrame
       title={title}
-      icon={icon === undefined ? <SolarIcon name="shield-check-linear" size={16} className="text-success" /> : icon}
+      icon={icon === undefined ? <Icon name="shield-check" size={16} className="text-success" /> : icon}
       showHeader={showHeader}
       code={showCode ? code : undefined}
       className={className}

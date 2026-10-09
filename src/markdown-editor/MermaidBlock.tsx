@@ -1,7 +1,7 @@
 import { useCallback, useEffect, useId, useRef, useState, useSyncExternalStore } from "react";
 import { Button } from "../button/Button";
 import { CodeBlock } from "../codeblock/CodeBlock";
-import { SolarIcon } from "../icon/SolarIcon";
+import { Icon } from "../icon/Icon";
 import { cn } from "../lib/cn";
 import { getColorMode, subscribeColorMode } from "../theme";
 import { sanitizeMermaid } from "./sanitizeMermaid";
@@ -191,7 +191,7 @@ export function MermaidBlock({ children, className }: MermaidBlockProps) {
     <>
       <div className={cn("my-3 last:mb-0 group relative overflow-hidden rounded-xl bg-card", className)}>
         <div className="absolute top-2 right-2 z-10 flex items-center gap-1 opacity-0 group-hover:opacity-100 transition-opacity">
-          <Button size="small" icon={<SolarIcon name="maximize-linear" size={12} />} title="Fullscreen" aria-label="Fullscreen" onClick={openFullscreen} />
+          <Button size="small" icon={<Icon name="maximize" size={12} />} title="Fullscreen" aria-label="Fullscreen" onClick={openFullscreen} />
         </div>
         <div ref={containerRef} className="flex justify-center p-6 overflow-x-auto [&_svg]:max-w-full" />
       </div>
@@ -208,8 +208,8 @@ export function MermaidBlock({ children, className }: MermaidBlockProps) {
         }}
       >
         <div className="absolute top-5 right-5 z-50 flex items-center gap-1.5">
-          <Button size="small" icon={<SolarIcon name="download-linear" size={12} />} title="Download SVG" aria-label="Download SVG" onClick={downloadSvg} disabled={!svgContent} />
-          <Button size="small" icon={<SolarIcon name="minimize-linear" size={12} />} title="Exit fullscreen" onClick={closeFullscreen}>
+          <Button size="small" icon={<Icon name="download" size={12} />} title="Download SVG" aria-label="Download SVG" onClick={downloadSvg} disabled={!svgContent} />
+          <Button size="small" icon={<Icon name="minimize" size={12} />} title="Exit fullscreen" onClick={closeFullscreen}>
             Exit
           </Button>
         </div>

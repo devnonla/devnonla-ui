@@ -1,5 +1,5 @@
 import type { ButtonHTMLAttributes, ReactNode } from "react";
-import { SolarIcon } from "../icon/SolarIcon";
+import { Icon } from "../icon/Icon";
 import { cn } from "../lib/cn";
 import type { PopperPlacement } from "../lib/placement";
 import { Popover } from "../popover/Popover";
@@ -48,7 +48,7 @@ export function MenuTrigger({ active, open, className, children, ...rest }: Menu
       {...rest}
     >
       <span className="min-w-0 truncate leading-5">{children}</span>
-      <SolarIcon name="alt-arrow-down-linear" size={12} className={cn("shrink-0 transition-transform duration-150", open && "rotate-180")} />
+      <Icon name="arrow-down" size={12} className={cn("shrink-0 transition-transform duration-150", open && "rotate-180")} />
     </button>
   );
 }

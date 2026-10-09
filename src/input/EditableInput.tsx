@@ -2,7 +2,7 @@ import { type CSSProperties, cloneElement, isValidElement, type KeyboardEvent, t
 import { createPortal } from "react-dom";
 import { usePopupContainer } from "../app/context";
 import { Button } from "../button/Button";
-import { SolarIcon } from "../icon/SolarIcon";
+import { Icon } from "../icon/Icon";
 import { cn } from "../lib/cn";
 import { type CanonicalSize, type ControlSize, controlHeightVar, controlRadiusVar, getSizeTokens, useControlSize } from "../lib/sizes";
 import { glassSurfaceClass } from "../lib/surface";
@@ -228,7 +228,7 @@ function EditButton({ label, size, onClick }: { label: string; size: CanonicalSi
       className="inline-flex shrink-0 items-center justify-center rounded text-muted-foreground opacity-0 transition-opacity hover:bg-muted hover:text-foreground group-hover/edit:opacity-100 focus-visible:opacity-100"
       style={{ width: box, height: box }}
     >
-      <SolarIcon name="pen-linear" size={tok.icon} />
+      <Icon name="pen" size={tok.icon} />
     </button>
   );
 }

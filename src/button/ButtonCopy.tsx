@@ -1,5 +1,5 @@
 import { type ComponentProps, useEffect, useState } from "react";
-import { SolarIcon } from "../icon/SolarIcon";
+import { Icon } from "../icon/Icon";
 import { cn } from "../lib/cn";
 import { type ControlSize, getSizeTokens, useControlSize } from "../lib/sizes";
 
@@ -44,7 +44,7 @@ export function ButtonCopy({ text, getText, label = "Copy", className, onClick, 
         }
       }}
     >
-      {copied ? <SolarIcon name="check-linear" size={icon} /> : <SolarIcon name="copy-linear" size={icon} />}
+      {copied ? <Icon name="check" size={icon} /> : <Icon name="copy" size={icon} />}
     </button>
   );
 }

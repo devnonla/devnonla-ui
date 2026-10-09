@@ -1,6 +1,6 @@
 import { type ReactNode, useState } from "react";
 import { CodeBlock } from "../codeblock/CodeBlock";
-import { SolarIcon } from "../icon/SolarIcon";
+import { Icon } from "../icon/Icon";
 import { cn } from "../lib/cn";
 import { Segmented } from "../segmented/Segmented";
 import { Tooltip } from "../tooltip/Tooltip";
@@ -61,7 +61,7 @@ export function ReactCodeFrame({ title, icon, showHeader = true, code, className
               )}
               onClick={() => setOpen((value) => !value)}
             >
-              <SolarIcon name="code-square-linear" size={16} />
+              <Icon name="code" size={16} />
             </button>
           </Tooltip>
         </div>

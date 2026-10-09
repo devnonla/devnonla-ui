@@ -1,5 +1,5 @@
 import { type CSSProperties, type MouseEvent, type ReactNode, useCallback, useMemo, useRef, useState } from "react";
-import { SolarIcon } from "../icon/SolarIcon";
+import { Icon } from "../icon/Icon";
 import { cn } from "../lib/cn";
 import { Segmented } from "../segmented/Segmented";
 import { appendTextBlock, cleanupDoc, joinMarkdownDoc, type MarkdownDoc, parseMarkdownDoc, readInlineEdit, splitListItem } from "./blocks";
@@ -268,9 +268,9 @@ export function MarkdownEditor({
                 value={mode}
                 onChange={changeMode}
                 options={[
-                  { label: "Preview", value: "preview", icon: <SolarIcon name="eye-linear" size={14} /> },
-                  { label: "Edit", value: "edit", icon: <SolarIcon name="pen-linear" size={14} /> },
-                  { label: "Diff", value: "diff", icon: <SolarIcon name="transfer-horizontal-linear" size={14} />, disabled: original === undefined },
+                  { label: "Preview", value: "preview", icon: <Icon name="eye" size={14} /> },
+                  { label: "Edit", value: "edit", icon: <Icon name="pen" size={14} /> },
+                  { label: "Diff", value: "diff", icon: <Icon name="transfer" size={14} />, disabled: original === undefined },
                 ]}
               />
             ) : null}

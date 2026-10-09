@@ -1,5 +1,5 @@
 import { type ComponentType, type CSSProperties, cloneElement, isValidElement, type KeyboardEvent, type ReactElement, type ReactNode, useEffect, useState } from "react";
-import { SolarIcon } from "../icon/SolarIcon";
+import { Icon } from "../icon/Icon";
 import { cn } from "../lib/cn";
 import { type CanonicalSize, type ControlSize, controlFieldFocusBorder, controlFieldSurface, controlFieldTransition, controlHeightVar, controlRadiusVar, getSizeTokens, useControlSize } from "../lib/sizes";
 import { Select, type SelectProps } from "../select/Select";
@@ -137,7 +137,7 @@ function JumpInner({ dir, icon }: { dir: "prev" | "next"; icon: number }) {
     <span className="relative inline-flex size-full items-center justify-center">
       <span className="leading-none group-hover:opacity-0 group-focus-visible:opacity-0">…</span>
       <span className="absolute inset-0 flex items-center justify-center opacity-0 group-hover:opacity-100 group-focus-visible:opacity-100">
-        {dir === "prev" ? <SolarIcon name="double-alt-arrow-left-linear" size={icon} /> : <SolarIcon name="double-alt-arrow-right-linear" size={icon} />}
+        {dir === "prev" ? <Icon name="chevrons-left" size={icon} /> : <Icon name="chevrons-right" size={icon} />}
       </span>
     </span>
   );
@@ -369,8 +369,8 @@ export function Pagination(props: PaginationProps) {
 
   const sizeOptions = toSizes(pageSizeOptions);
 
-  const prevInner = wrap(page - 1, "prev", <SolarIcon name="alt-arrow-left-linear" size={icon} />);
-  const nextInner = wrap(page + 1, "next", <SolarIcon name="alt-arrow-right-linear" size={icon} />);
+  const prevInner = wrap(page - 1, "prev", <Icon name="arrow-left" size={icon} />);
+  const nextInner = wrap(page + 1, "next", <Icon name="arrow-right" size={icon} />);
 
   const pager = isSimple ? (
     <>

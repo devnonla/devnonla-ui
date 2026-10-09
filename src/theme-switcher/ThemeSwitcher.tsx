@@ -1,12 +1,12 @@
 import { useLayoutEffect, useSyncExternalStore } from "react";
-import { SolarIcon } from "../icon/SolarIcon";
+import { Icon, type IconName } from "../icon/Icon";
 import { cn } from "../lib/cn";
 import { getColorPreference, initColorMode, type NonlaColorPreference, setColorPreference, subscribeColorPreference } from "../theme";
 
-const OPTIONS: { value: NonlaColorPreference; label: string; icon: string }[] = [
-  { value: "system", label: "System", icon: "monitor-linear" },
-  { value: "light", label: "Light", icon: "sun-linear" },
-  { value: "dark", label: "Dark", icon: "moon-linear" },
+const OPTIONS: { value: NonlaColorPreference; label: string; icon: IconName }[] = [
+  { value: "system", label: "System", icon: "monitor" },
+  { value: "light", label: "Light", icon: "sun" },
+  { value: "dark", label: "Dark", icon: "moon" },
 ];
 
 export function useColorPreference(): NonlaColorPreference {
@@ -46,7 +46,7 @@ export function ThemeSwitcher({ className }: ThemeSwitcherProps) {
               selected ? "bg-ink-active text-foreground" : "hover:bg-ink-hover hover:text-foreground",
             )}
           >
-            <SolarIcon name={option.icon} size={12} />
+            <Icon name={option.icon} size={12} />
           </button>
         );
       })}

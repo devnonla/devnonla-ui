@@ -1,6 +1,5 @@
 import { type MouseEvent, type ReactNode, useMemo, useState } from "react";
-import { SolarIcon } from "../icon/SolarIcon";
-import { solarIconName } from "../icon/solar";
+import { Icon, isIconName } from "../icon/Icon";
 import { SearchInput } from "../input/SearchInput";
 import { cn } from "../lib/cn";
 import { OverlayScroll } from "../scroll/OverlayScroll";
@@ -8,7 +7,7 @@ import { OverlayScroll } from "../scroll/OverlayScroll";
 export type SidebarItemType = {
   key?: string;
   label?: ReactNode;
-  /** Solar icon name (`settings`), a legacy Fluent Color id (`settings-24`), or a node. String icons render as bold-duotone. */
+  /** An `Icon` name, or a node. */
   icon?: ReactNode;
   disabled?: boolean;
   /** `"group"` is a section label. `"divider"` is a rule. Anything else is a row. */
@@ -86,7 +85,8 @@ function filterItems(items: SidebarItemType[], q: string): SidebarItemType[] {
 
 function ItemIcon({ icon }: { icon?: ReactNode }) {
   if (icon == null || icon === false) return null;
-  if (typeof icon === "string") return <SolarIcon name={solarIconName(icon, "bold-duotone")} size={16} />;
+  if (isIconName(icon)) return <Icon name={icon} size={16} />;
+  if (typeof icon === "string") return null;
   return <span className="inline-flex size-4 shrink-0 items-center justify-center [&_img]:size-4 [&_svg]:size-4">{icon}</span>;
 }
 
@@ -109,7 +109,7 @@ function SidebarList({
         if (item.type === "group") {
           if (item.label == null || item.label === "") return null;
           return (
-            <div key={key} className={cn("px-3 pb-1 pt-3 text-[11px] font-semibold uppercase tracking-wider text-tertiary-foreground not-first:mt-4", item.className)}>
+            <div key={key} className={cn("px-3 pb-1 pt-3 text-[11px] font-semibold uppercase tracking-wider text-tertiary-foreground not-first:mt-2", item.className)}>
               {item.label}
             </div>
           );
