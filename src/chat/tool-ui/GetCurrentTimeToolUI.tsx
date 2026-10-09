@@ -1,5 +1,6 @@
-import { SolarIcon } from "../../icon/SolarIcon";
+import { Icon } from "../../icon/Icon";
 import { Shimmer } from "../../shimmer/Shimmer";
+import { chatRowClass, chatToolLineClass } from "../chatRhythm";
 import { parseJsonObject } from "../common/utils";
 import { ToolUiBadge } from "./ToolUiBadge";
 import { ToolUiTrailing } from "./ToolUiTrailing";
@@ -36,12 +37,12 @@ export function GetCurrentTimeToolUI({ msg, assistantLabel = "Assistant", assist
   const label = formatLabel(output?.iso, output?.timezone, output?.time);
 
   return (
-    <div className="mt-1 animate-fadeIn">
+    <div className={`${chatRowClass} animate-fadeIn`}>
       <ToolUiBadge show={showAvatar} label={assistantLabel} color={assistantColor} />
-      <div className="px-4 pb-1">
-        <div className="flex items-center gap-2 py-1">
-          <SolarIcon name="clock-circle-linear" size={13} className="shrink-0 text-muted-foreground" />
-          <Shimmer active={running} className="truncate text-[14px] font-medium tabular-nums text-muted-foreground">{hasError ? "Failed to get time" : running ? "Getting time…" : label}</Shimmer>
+      <div className="px-4">
+        <div className={chatToolLineClass}>
+          <Icon name="clock" size={13} className="shrink-0 text-muted-foreground" />
+          <Shimmer active={running} className="truncate font-medium tabular-nums text-muted-foreground">{hasError ? "Failed to get time" : running ? "Getting time…" : label}</Shimmer>
           <ToolUiTrailing failed={hasError} />
         </div>
       </div>

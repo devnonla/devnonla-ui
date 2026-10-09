@@ -1,5 +1,7 @@
 import { useCallback, useRef } from "react";
+import { cn } from "../lib/cn";
 import { Shimmer } from "../shimmer/Shimmer";
+import { chatRowBoxClass, chatRowClass } from "./chatRhythm";
 import { parseBgTaskRef } from "./common/bgTasks";
 import type { AgentMessage } from "./common/types";
 import { formatToolName } from "./common/utils";
@@ -51,7 +53,7 @@ export function MessageRow({ msg, generating, toolUis }: { msg: AgentMessage; ge
   if (msg.role === "user") return <ChatUserMessage content={msg.content} />;
   if (msg.role === "error") return <ChatError>{msg.content}</ChatError>;
   if (msg.role === "thinking") {
-    return <ChatThinking thinking={msg.content} duration={(msg.meta?.thinkingDuration as number) ?? 0} />;
+    return <ChatThinking className={chatRowClass} thinking={msg.content} duration={(msg.meta?.thinkingDuration as number) ?? 0} />;
   }
   if (msg.role === "tool-call") {
     const CustomUI = resolveToolUI(msg.toolName, toolUis);
@@ -101,8 +103,8 @@ export function AgentMessageList({
         <MessageRow key={msg.id} msg={msg} generating={generating} toolUis={toolUis} />
       ))}
       {showFooter ? (
-        <div className="mt-1 px-4 pb-0.5">
-          <Shimmer className="text-sm font-medium text-tertiary-foreground">{status}</Shimmer>
+        <div className={cn(chatRowClass, chatRowBoxClass)}>
+          <Shimmer className="text-sm font-medium leading-5.5 text-tertiary-foreground">{status}</Shimmer>
         </div>
       ) : null}
     </div>

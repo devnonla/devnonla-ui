@@ -1,6 +1,7 @@
-import { SolarIcon } from "../../icon/SolarIcon";
+import { Icon } from "../../icon/Icon";
 import { cn } from "../../lib/cn";
 import { Shimmer } from "../../shimmer/Shimmer";
+import { chatRowClass, chatToolLineClass } from "../chatRhythm";
 import { parseJsonObject } from "../common/utils";
 import { ToolUiBadge } from "./ToolUiBadge";
 import { ToolUiTrailing } from "./ToolUiTrailing";
@@ -37,25 +38,25 @@ export function WebFetchToolUI({ msg, assistantLabel = "Assistant", assistantCol
 
   const header = (
     <>
-      <SolarIcon name="globe-linear" size={13} className="shrink-0 text-muted-foreground" />
+      <Icon name="globe" size={13} className="shrink-0 text-muted-foreground" />
       <Shimmer active={running} className="min-w-0 truncate font-medium text-muted-foreground">
-        {verb} <span className="font-normal text-tertiary-foreground">{url}</span>
+        {verb} <span className="text-tertiary-foreground">{url}</span>
       </Shimmer>
       <ToolUiTrailing failed={failed} chevron={expandable} chevronClassName="group-hover/webfetch:opacity-100 group-open/webfetch:opacity-100 group-open/webfetch:rotate-90" />
     </>
   );
 
   return (
-    <div className="mt-1 animate-fadeIn">
+    <div className={`${chatRowClass} animate-fadeIn`}>
       <ToolUiBadge show={showAvatar} label={assistantLabel} color={assistantColor} />
       {expandable ? (
-        <details className="group/webfetch px-4 pb-2" style={{ overflowAnchor: "none" }}>
-          <summary className="flex cursor-pointer list-none items-center gap-2 py-0.5 text-[14px] leading-5.5 select-none [&::-webkit-details-marker]:hidden">{header}</summary>
-          <pre className={cn("m-0 mt-1.5 mb-1 max-h-40 overflow-y-auto rounded-lg border px-3 py-2 font-mono text-[13px] font-normal leading-[1.65] break-all whitespace-pre-wrap", failed ? "border-destructive/35 bg-destructive/6 text-destructive" : "border-border bg-card text-muted-foreground")}>{body}</pre>
+        <details className="group/webfetch px-4" style={{ overflowAnchor: "none" }}>
+          <summary className={cn(chatToolLineClass, "cursor-pointer list-none select-none [&::-webkit-details-marker]:hidden")}>{header}</summary>
+          <pre className={cn("m-0 mt-1.5 mb-1 max-h-40 overflow-y-auto rounded-lg border px-3 py-2 font-mono text-sm font-normal leading-[1.65] break-all whitespace-pre-wrap", failed ? "border-destructive/35 bg-destructive/6 text-destructive" : "border-border bg-card text-muted-foreground")}>{body}</pre>
         </details>
       ) : (
-        <div className="px-4 pb-2">
-          <div className="flex items-center gap-2 py-0.5 text-[14px] leading-5.5">{header}</div>
+        <div className="px-4">
+          <div className={chatToolLineClass}>{header}</div>
         </div>
       )}
     </div>

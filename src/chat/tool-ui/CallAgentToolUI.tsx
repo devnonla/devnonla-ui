@@ -1,8 +1,9 @@
 import { type ReactNode, useEffect, useRef, useState } from "react";
-import { SolarIcon } from "../../icon/SolarIcon";
+import { Icon } from "../../icon/Icon";
 import { cn } from "../../lib/cn";
 import { Shimmer } from "../../shimmer/Shimmer";
 import { Spin } from "../../spin/Spin";
+import { chatRowBoxClass, chatRowClass } from "../chatRhythm";
 import { formatBgElapsed, parseBgTaskRef } from "../common/bgTasks";
 import { parseJsonObject, prettyJson, timestampMs } from "../common/utils";
 import { ChatMarkdown } from "../message-ui/ChatMarkdown";
@@ -62,7 +63,7 @@ function AgentTurn({
     <div className={cn("flex items-start gap-2", align === "end" && "flex-row-reverse")}>
       <AgentAvatar name={name} className="mt-0.5 shrink-0" />
       <div className={cn("flex min-w-0 flex-1 flex-col gap-0.5", align === "end" ? "items-end" : "items-start")}>
-        <span className="select-none text-[12px] font-medium text-tertiary-foreground">{name}</span>
+        <span className="select-none text-sm font-medium text-tertiary-foreground">{name}</span>
         <div className="w-fit max-w-[92%]">{children}</div>
       </div>
     </div>
@@ -85,7 +86,7 @@ function ExpandableBody({ children, className }: { children: ReactNode; classNam
         {children}
       </div>
       {overflows ? (
-        <button type="button" onClick={() => setExpanded((v) => !v)} className="mt-1 cursor-pointer border-0 bg-transparent p-0 text-[13px] text-tertiary-foreground hover:text-foreground">
+        <button type="button" onClick={() => setExpanded((v) => !v)} className="mt-1 cursor-pointer border-0 bg-transparent p-0 text-sm text-tertiary-foreground hover:text-foreground">
           {expanded ? "Show less" : "Show more"}
         </button>
       ) : null}
@@ -118,19 +119,19 @@ export function CallAgentToolUI({ msg, assistantLabel = "Assistant", assistantCo
   const statusLabel = failed && !awaitingReply ? (parsed?.error ?? "Call failed") : null;
 
   return (
-    <div className="mt-1 animate-fadeIn">
+    <div className={`${chatRowClass} animate-fadeIn`}>
       <ToolUiBadge show={showAvatar} label={assistantLabel} color={assistantColor} />
-      <div className="px-4 py-1">
+      <div className={chatRowBoxClass}>
         <div className={cn("overflow-hidden rounded-xl border bg-card", failed ? "border-destructive/35" : "border-border")}>
           <div className="flex items-center gap-2 border-b border-border-secondary px-3 py-2">
             {calling ? (
               <Spin variant="agent" size="small" className="shrink-0" />
             ) : (
-              <SolarIcon name="dialog-2-linear" size={13} className="shrink-0 text-muted-foreground" />
+              <Icon name="dialog" size={13} className="shrink-0 text-muted-foreground" />
             )}
-            <Shimmer active={calling} className="min-w-0 flex-1 truncate text-[14px] font-medium text-foreground">Calling {calleeName}</Shimmer>
-            {bgRunning ? <span className="text-[14px] tabular-nums text-muted-foreground">{formatBgElapsed(timestampMs(msg.timestamp), now)}</span> : null}
-            {statusLabel ? <span className="max-w-40 truncate text-[13px] italic text-destructive">{statusLabel}</span> : null}
+            <Shimmer active={calling} className="min-w-0 flex-1 truncate text-sm font-medium text-foreground">Calling {calleeName}</Shimmer>
+            {bgRunning ? <span className="text-sm tabular-nums text-muted-foreground">{formatBgElapsed(timestampMs(msg.timestamp), now)}</span> : null}
+            {statusLabel ? <span className="max-w-40 truncate text-sm italic text-destructive">{statusLabel}</span> : null}
             <ToolUiTrailing failed={failed && !awaitingReply} />
           </div>
 
@@ -139,7 +140,7 @@ export function CallAgentToolUI({ msg, assistantLabel = "Assistant", assistantCo
               {composing || hasRequest ? (
                 <AgentTurn name={assistantLabel} align="end">
                   <div className="nonla-chat-user rounded-2xl rounded-tr-sm border border-solid border-(--nonla-input) bg-muted-strong px-3 py-2 text-left [.light:not(.dark)_&]:bg-sidebar [.light_.nonla-ui:not(.dark)_&]:bg-sidebar">
-                    {composing ? <TypingDots /> : <p className="m-0 text-[14px] leading-[1.55] whitespace-pre-wrap text-foreground">{requestMessage}</p>}
+                    {composing ? <TypingDots /> : <p className="m-0 text-sm leading-[1.55] whitespace-pre-wrap text-foreground">{requestMessage}</p>}
                   </div>
                 </AgentTurn>
               ) : null}
@@ -150,17 +151,17 @@ export function CallAgentToolUI({ msg, assistantLabel = "Assistant", assistantCo
                     {awaitingReply ? (
                       <div className="flex items-center gap-1.5 py-0.5">
                         <ChatSpinner />
-                        <span className="text-[14px] italic text-muted-foreground">Replying…</span>
+                        <span className="text-sm italic text-muted-foreground">Replying…</span>
                       </div>
                     ) : failed ? (
-                      <p className="m-0 text-[14px] leading-[1.55] text-destructive">{parsed?.error ?? "Agent call failed"}</p>
+                      <p className="m-0 text-sm leading-[1.55] text-destructive">{parsed?.error ?? "Agent call failed"}</p>
                     ) : parsed ? (
                       <ExpandableBody>
                         <ChatMarkdown content={parsed.response ?? "(no response)"} />
                       </ExpandableBody>
                     ) : (
                       <ExpandableBody>
-                        <pre className="m-0 font-mono text-[13px] leading-normal break-all whitespace-pre-wrap text-muted-foreground">{prettyJson(msg.toolOutput)}</pre>
+                        <pre className="m-0 font-mono text-sm leading-normal break-all whitespace-pre-wrap text-muted-foreground">{prettyJson(msg.toolOutput)}</pre>
                       </ExpandableBody>
                     )}
                   </div>

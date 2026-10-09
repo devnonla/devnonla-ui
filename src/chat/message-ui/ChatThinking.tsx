@@ -1,7 +1,8 @@
 import { useEffect, useLayoutEffect, useRef, useState } from "react";
-import { SolarIcon } from "../../icon/SolarIcon";
+import { Icon } from "../../icon/Icon";
 import { cn } from "../../lib/cn";
 import { Shimmer } from "../../shimmer/Shimmer";
+import { chatToolLineClass } from "../chatRhythm";
 
 export type ChatThinkingProps = {
   thinking: string;
@@ -40,7 +41,7 @@ export function ChatThinking({ thinking, duration = 0, streaming = false, classN
 
   return (
     <details
-      className={cn("nonla-chat-thinking px-4 pb-2 group/thinking", className)}
+      className={cn("nonla-chat-thinking px-4 group/thinking", className)}
       style={{ overflowAnchor: "none" }}
       onToggle={(e) => {
         if (!streaming || !e.currentTarget.open) return;
@@ -48,13 +49,13 @@ export function ChatThinking({ thinking, duration = 0, streaming = false, classN
         if (el) el.scrollTop = el.scrollHeight;
       }}
     >
-      <summary className="cursor-pointer select-none text-base font-normal flex items-center gap-1 py-0.5 list-none [&::-webkit-details-marker]:hidden">
-        <Shimmer active={streaming} className="text-tertiary-foreground">{label}</Shimmer>
-        <SolarIcon name="alt-arrow-right-linear" size={12} className="shrink-0 opacity-0 text-tertiary-foreground transition-[opacity,transform] duration-150 group-hover/thinking:opacity-100 group-open/thinking:opacity-100 group-open/thinking:rotate-90" />
+      <summary className={cn(chatToolLineClass, "cursor-pointer list-none font-medium select-none [&::-webkit-details-marker]:hidden")}>
+        <Shimmer active={streaming} className="text-muted-foreground">{label}</Shimmer>
+        <Icon name="arrow-right" size={12} className="shrink-0 opacity-0 text-muted-foreground transition-[opacity,transform] duration-150 group-hover/thinking:opacity-100 group-open/thinking:opacity-100 group-open/thinking:rotate-90" />
       </summary>
 
-      <div ref={bodyRef} className="pt-2 max-h-40 min-w-0 overflow-y-auto overflow-x-hidden mb-2 text-[14px] leading-normal">
-        <p className="text-[14px] leading-normal text-quaternary-foreground whitespace-pre-wrap wrap-break-word m-0">{thinking}</p>
+      <div ref={bodyRef} className="pt-2 max-h-40 min-w-0 overflow-y-auto overflow-x-hidden mb-2 text-sm">
+        <p className="m-0 text-sm text-tertiary-foreground whitespace-pre-wrap wrap-break-word">{thinking}</p>
       </div>
     </details>
   );

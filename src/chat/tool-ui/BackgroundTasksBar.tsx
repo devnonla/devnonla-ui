@@ -1,5 +1,5 @@
 import { type ReactNode, useEffect, useLayoutEffect, useRef, useState } from "react";
-import { SolarIcon } from "../../icon/SolarIcon";
+import { Icon } from "../../icon/Icon";
 import { cn } from "../../lib/cn";
 import { Modal } from "../../modal/Modal";
 import { Popconfirm } from "../../popconfirm/Popconfirm";
@@ -27,7 +27,7 @@ function TaskLogsModal({
 
   return (
     <Modal open={open} onCancel={onClose} footer={null} title={task ? formatToolName(task.toolName) : "Logs"} width={560}>
-      <pre ref={preRef} className="m-0 max-h-[50vh] overflow-auto rounded-md border border-border-secondary bg-muted px-3 py-2 font-mono text-[13px] leading-relaxed whitespace-pre-wrap break-all text-foreground">
+      <pre ref={preRef} className="m-0 max-h-[50vh] overflow-auto rounded-md border border-border-secondary bg-muted px-3 py-2 font-mono text-sm leading-relaxed whitespace-pre-wrap break-all text-foreground">
         {logs || "Waiting for output…"}
       </pre>
     </Modal>
@@ -51,12 +51,12 @@ function TaskRow({
     <div className="flex items-center gap-1 px-1.5 py-0.5">
       <button type="button" onClick={onLogs} title="Logs" aria-label={`Logs ${formatToolName(task.toolName)}`} className="flex min-w-0 flex-1 cursor-pointer items-center gap-2 rounded-md px-1 py-[3px] text-left transition-colors hover:bg-muted">
         <Spin variant="agent" size="small" className="shrink-0" />
-        <span className="min-w-0 flex-1 truncate text-[13px] font-medium text-foreground">{formatToolName(task.toolName)}</span>
-        <span className="shrink-0 text-[12px] tabular-nums text-tertiary-foreground">{formatBgElapsed(task.startedAt, now)}</span>
+        <span className="min-w-0 flex-1 truncate text-sm font-medium text-foreground">{formatToolName(task.toolName)}</span>
+        <span className="shrink-0 text-sm tabular-nums text-tertiary-foreground">{formatBgElapsed(task.startedAt, now)}</span>
       </button>
       <Popconfirm title={`Stop ${formatToolName(task.toolName)}?`} okText="Stop" okType="danger" onConfirm={onCancel} getPopupContainer={() => document.body}>
         <button type="button" disabled={cancelling} title="Stop" aria-label={`Stop ${formatToolName(task.toolName)}`} className="inline-flex size-5 shrink-0 items-center justify-center rounded cursor-pointer text-destructive transition-colors hover:bg-destructive/10 disabled:opacity-40">
-          <SolarIcon name="stop-bold" size={10} />
+          <Icon name="stop" size={10} />
         </button>
       </Popconfirm>
     </div>
@@ -119,8 +119,8 @@ export function BackgroundTasksBar({ children, tasks = [], cancellingIds, onCanc
         {tasks.length > 0 ? (
           <div className="absolute inset-x-6 bottom-[calc(100%)] z-20 overflow-hidden rounded-t-lg border-x border-t border-border">
             <div className={cn("flex h-7.5 items-center gap-1 px-1", open && "border-b border-border-secondary")}>
-              <button type="button" onClick={() => setOpen((v) => !v)} className="flex min-w-0 flex-1 cursor-pointer font-medium items-center gap-1 rounded-md px-1.5 py-1 text-[13px] text-muted-foreground/90 transition-colors hover:text-foreground" aria-expanded={open} aria-label={label}>
-                <SolarIcon name="alt-arrow-down-linear" size={13} className={cn("shrink-0 transition-transform duration-150", !open && "-rotate-90")} />
+              <button type="button" onClick={() => setOpen((v) => !v)} className="flex min-w-0 flex-1 cursor-pointer font-medium items-center gap-1 rounded-md px-1.5 py-1 text-sm text-muted-foreground/90 transition-colors hover:text-foreground" aria-expanded={open} aria-label={label}>
+                <Icon name="arrow-down" size={13} className={cn("shrink-0 transition-transform duration-150", !open && "-rotate-90")} />
                 <span className="truncate">{label}</span>
               </button>
             </div>

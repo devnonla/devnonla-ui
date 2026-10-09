@@ -1,5 +1,5 @@
 import { useEffect, useRef, useState } from "react";
-import { SolarIcon } from "../../icon/SolarIcon";
+import { Icon } from "../../icon/Icon";
 import { cn } from "../../lib/cn";
 
 const MAX_HEIGHT = 150;
@@ -29,7 +29,7 @@ export function ChatUserMessage({ content, className }: ChatUserMessageProps) {
   return (
     <div
       className={cn(
-        "nonla-chat-user relative isolate mx-4 mt-6 mb-3 overflow-hidden rounded-xl border border-solid border-(--nonla-input) bg-muted-strong px-3 py-1.5",
+        "nonla-chat-user relative isolate mx-4 mt-8 mb-3 overflow-hidden rounded-xl border border-solid border-(--nonla-input) bg-muted-strong px-3 py-1.5",
         "[.light:not(.dark)_&]:bg-sidebar [.light_.nonla-ui:not(.dark)_&]:bg-sidebar",
         className,
       )}
@@ -37,7 +37,7 @@ export function ChatUserMessage({ content, className }: ChatUserMessageProps) {
       <div
         ref={contentRef}
         className={cn(
-          "overflow-hidden text-[15px] leading-6 text-foreground whitespace-pre-wrap wrap-break-word",
+          "overflow-hidden text-base text-foreground whitespace-pre-wrap wrap-break-word",
           collapsed && "mask-[linear-gradient(to_bottom,#000_calc(100%-1.75rem),transparent)]",
         )}
         style={{ maxHeight: collapsed ? MAX_HEIGHT : undefined }}
@@ -55,7 +55,7 @@ export function ChatUserMessage({ content, className }: ChatUserMessageProps) {
           }}
           className="flex w-full cursor-pointer items-center justify-center border-0 bg-transparent pt-1 text-muted-foreground hover:text-foreground"
         >
-          <SolarIcon name="alt-arrow-down-linear" size={12} className={cn("transition-transform duration-200", isExpanded && "rotate-180")} />
+          <Icon name="arrow-down" size={12} className={cn("transition-transform duration-200", isExpanded && "rotate-180")} />
         </button>
       ) : null}
     </div>

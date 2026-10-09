@@ -1,6 +1,7 @@
 import { useEffect, useState } from "react";
 import { Shimmer } from "../../shimmer/Shimmer";
 import { Spin } from "../../spin/Spin";
+import { chatRowClass, chatToolLineClass } from "../chatRhythm";
 import { formatBgElapsed, parseBgTaskRef } from "../common/bgTasks";
 import { formatToolName, timestampMs } from "../common/utils";
 import { ToolUiBadge } from "./ToolUiBadge";
@@ -17,16 +18,16 @@ export function BackgroundTaskToolUI({ msg, assistantLabel = "Assistant", assist
   }, []);
 
   return (
-    <div className="mt-1 animate-fadeIn">
+    <div className={`${chatRowClass} animate-fadeIn`}>
       <ToolUiBadge show={showAvatar} label={assistantLabel} color={assistantColor} />
-      <div className="px-4 pb-1">
-        <div className="flex items-center gap-2 py-1">
+      <div className="px-4">
+        <div className={chatToolLineClass}>
           <Spin variant="agent" size="small" className="shrink-0" />
-          <Shimmer className="min-w-0 truncate text-[14px] font-medium text-muted-foreground">
+          <Shimmer className="min-w-0 truncate font-medium text-muted-foreground">
             {label}
-            <span className="font-normal text-tertiary-foreground"> in background</span>
+            <span className="text-muted-foreground [-webkit-text-fill-color:currentcolor]"> in background</span>
           </Shimmer>
-          <span className="shrink-0 text-[13px] tabular-nums text-tertiary-foreground">{formatBgElapsed(timestampMs(msg.timestamp), now)}</span>
+          <span className="shrink-0 tabular-nums text-tertiary-foreground">{formatBgElapsed(timestampMs(msg.timestamp), now)}</span>
         </div>
       </div>
     </div>

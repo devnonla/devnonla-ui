@@ -1,4 +1,4 @@
-import { SolarIcon } from "../../icon/SolarIcon";
+import { Icon } from "../../icon/Icon";
 import { cn } from "../../lib/cn";
 import { ChatSpinner } from "../message-ui/ChatSpinner";
 
@@ -14,7 +14,7 @@ export function ToolUiTrailing({
   chevronClassName?: string;
 }) {
   if (running) return <ChatSpinner />;
-  if (failed) return <SolarIcon name="close-circle-linear" size={13} className="text-destructive" />;
+  if (failed) return <Icon name="error" size={13} className="shrink-0 text-destructive" />;
   if (!chevron) return null;
-  return <SolarIcon name="alt-arrow-right-linear" size={12} className={cn("shrink-0 opacity-0 transition-[opacity,transform] duration-150", chevronClassName)} />;
+  return <Icon name="arrow-right" size={12} className={cn("shrink-0 opacity-0 transition-[opacity,transform] duration-150", chevronClassName)} />;
 }

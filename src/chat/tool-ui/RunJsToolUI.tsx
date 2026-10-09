@@ -1,7 +1,8 @@
 import { CodeBlock } from "../../codeblock/CodeBlock";
-import { SolarIcon } from "../../icon/SolarIcon";
+import { Icon } from "../../icon/Icon";
 import { cn } from "../../lib/cn";
 import { Shimmer } from "../../shimmer/Shimmer";
+import { chatRowClass, chatToolLineClass } from "../chatRhythm";
 import { parseBgTaskRef } from "../common/bgTasks";
 import { parseJsonObject, prettyJson } from "../common/utils";
 import { ChatSpinner } from "../message-ui/ChatSpinner";
@@ -45,7 +46,7 @@ function SandboxOutput({
 }) {
   if (running) {
     return (
-      <div className="flex items-center gap-2 border-t border-border px-3 py-2 text-[13px] text-muted-foreground">
+      <div className="flex items-center gap-2 border-t border-border px-3 py-2 text-sm text-muted-foreground">
         <ChatSpinner />
         <Shimmer>Running…</Shimmer>
       </div>
@@ -53,7 +54,7 @@ function SandboxOutput({
   }
 
   return (
-    <div className={cn("max-h-40 overflow-y-auto border-t px-3 py-2 font-mono text-[13px] leading-[1.65]", failed ? "border-destructive/35 bg-destructive/6" : "border-border")}>
+    <div className={cn("max-h-40 overflow-y-auto border-t px-3 py-2 font-mono text-sm leading-[1.65]", failed ? "border-destructive/35 bg-destructive/6" : "border-border")}>
       {consoleOut ? <pre className="m-0 whitespace-pre-wrap break-all text-tertiary-foreground">{consoleOut}</pre> : null}
       {failed ? (
         <pre className={cn("m-0 whitespace-pre-wrap break-all text-destructive", consoleOut && "mt-1")}>{resultText(result)}</pre>
@@ -83,11 +84,11 @@ export function RunJsToolUI({ msg, assistantLabel = "Assistant", assistantColor,
   const verb = failed ? "JS failed" : running ? "Running JS" : "Ran JS";
 
   return (
-    <div className="mt-1 animate-fadeIn">
+    <div className={`${chatRowClass} animate-fadeIn`}>
       <ToolUiBadge show={showAvatar} label={assistantLabel} color={assistantColor} />
-      <details className="group/runjs px-4 pb-2" style={{ overflowAnchor: "none" }}>
-        <summary className="flex cursor-pointer list-none items-center gap-2 py-0.5 text-[14px] leading-5.5 select-none [&::-webkit-details-marker]:hidden">
-          <SolarIcon name="code-square-linear" size={13} className="shrink-0 text-muted-foreground" />
+      <details className="group/runjs px-4" style={{ overflowAnchor: "none" }}>
+        <summary className={cn(chatToolLineClass, "cursor-pointer list-none select-none [&::-webkit-details-marker]:hidden")}>
+          <Icon name="code" size={13} className="shrink-0 text-muted-foreground" />
           <Shimmer active={running} className="min-w-0 truncate font-medium text-muted-foreground">{verb}</Shimmer>
           <ToolUiTrailing running={running} failed={failed} chevron chevronClassName="group-hover/runjs:opacity-100 group-open/runjs:opacity-100 group-open/runjs:rotate-90" />
         </summary>
