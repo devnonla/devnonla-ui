@@ -20,7 +20,7 @@
   /* ── Config. Set these. `.light` repeats the same keys. ────────────── */
   /* Page #141414. Sidebar sits with the page, #161616. Cards #181818. */
   --nonla-bg: #141414;
-  --nonla-text-main: #ffffff;
+  --nonla-text-main: #e0e0e0;
   --nonla-text-secondary: color-mix(in oklab, var(--nonla-text-main) 74%, var(--nonla-bg));
   --nonla-text-tertiary: color-mix(in oklab, var(--nonla-text-main) 60%, var(--nonla-bg));
   --nonla-text-quaternary: color-mix(in oklab, var(--nonla-text-main) 36%, var(--nonla-bg));
@@ -39,8 +39,14 @@
   --nonla-input: rgba(255, 255, 235, 0.1);
 
   --nonla-font: ui-sans-serif, -apple-system, system-ui, "Segoe UI Variable Display", "Segoe UI", Helvetica, "Apple Color Emoji", "Noto Sans Arabic", "Noto Sans Hebrew", Arial, sans-serif, "Segoe UI Emoji", "Segoe UI Symbol";
-  /* Body size for Typography and markdown docs. The text-* scale stays Tailwind’s default. */
-  --nonla-base-text-size: 16px;
+  /* Default body size. Tailwind `text-base` follows this. Leading is 1.6. */
+  --nonla-base-text-size: 15px;
+  /* `text-md`. MarkdownViewer body and agent reply text use this. */
+  --nonla-md-text-size: 16px;
+  /* `text-sm`. Composer, tool lines, and errors use this. User bubbles use `text-base`. */
+  --nonla-sm-text-size: 14px;
+  /* Code. A step under the body, so mono does not look larger than the text around it. */
+  --nonla-mono-text-size: calc(var(--nonla-base-text-size) * 0.9);
   --nonla-radius: 8px;
   --nonla-height: 32px;
   --nonla-height-sm: 24px;
@@ -122,29 +128,35 @@
   font-weight: 400;
 }
 
+/* Size stays off `html`, so `1rem` and Tailwind spacing do not shrink. */
+body {
+  font-size: var(--nonla-base-text-size);
+  line-height: 1.6;
+}
+
 /* Same color keys as Config above. Brand and the label on it stay. */
 .light:not(.dark),
 .light .nonla-ui:not(.dark) {
   color-scheme: light;
 
-  /* Light grays are Tailwind neutral. Page and sidebar are neutral-50. */
-  --nonla-bg: #fafafa;
-  --nonla-text-main: #404040;
-  --nonla-text-secondary: #737373;
-  --nonla-text-tertiary: #a1a1a1;
-  --nonla-text-quaternary: #d4d4d4;
-  --nonla-text-on-solid: #ffffff;
+  /* Light grays are Tailwind neutral. Page is white. Sidebar and cards are neutral-50. */
+  --nonla-bg: #ffffff; /* white */
+  --nonla-text-main: #262626; /* neutral-800 */
+  --nonla-text-secondary: #737373; /* neutral-500 */
+  --nonla-text-tertiary: #a1a1a1; /* neutral-400 */
+  --nonla-text-quaternary: #d4d4d4; /* neutral-300 */
+  --nonla-text-on-solid: #ffffff; /* white */
   --nonla-brand: #f18d00;
   --nonla-danger: #dc3b3b;
   --nonla-success: #2f7d4a;
-  --nonla-warn: #a16207;
+  --nonla-warn: #a16207; /* yellow-700 */
   --nonla-link: #3b6d99;
 
-  --nonla-sidebar: #fafafa;
-  --nonla-surface: #ffffff;
-  --nonla-bar: #e5e5e5;
-  --nonla-border: #e5e5e5;
-  --nonla-border-secondary: #f5f5f5;
+  --nonla-sidebar: #fafafa; /* neutral-50 */
+  --nonla-surface: #fafafa; /* neutral-50 */
+  --nonla-bar: #e5e5e5; /* neutral-200 */
+  --nonla-border: #e5e5e5; /* neutral-200 */
+  --nonla-border-secondary: #f5f5f5; /* neutral-100 */
   --nonla-input: rgb(0 0 0 / 11%);
 
   --mask: rgb(0 0 0 / 40%);
@@ -210,6 +222,14 @@
   --spacing-field-md: 32px;
   --spacing-field-lg: 40px;
   --spacing-field-nav: 32px;
+
+  --text-sm: var(--nonla-sm-text-size);
+  --text-base: var(--nonla-base-text-size);
+  --text-base--line-height: 1.6;
+  --text-md: var(--nonla-md-text-size);
+  --text-md--line-height: calc(1.5 / 1);
+  --text-lg: 18px;
+  --text-lg--line-height: calc(1.75 / 1.125);
 
   --font-sans: var(--nonla-font);
   --font-family-sans: var(--font-sans);
