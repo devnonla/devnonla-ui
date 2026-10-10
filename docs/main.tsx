@@ -8,6 +8,7 @@ import { DocsLayout } from "./layout/DocsLayout";
 import { MarkdownDoc } from "./MarkdownDoc";
 import { migrateLegacyLocation, resolveLegacyPath } from "./nav";
 import { InputWhitePage } from "./pages/preview/InputWhitePage";
+import { SortableTreePage } from "./pages/preview/SortableTreePage";
 
 migrateLegacyLocation();
 
@@ -35,6 +36,7 @@ function AppRoutes() {
   return (
     <Routes>
       <Route path="preview/input" element={<InputWhitePage />} />
+      <Route path="preview/sortable-tree" element={<SortableTreePage />} />
       <Route path="docs" element={<Navigate to="/introduction" replace />} />
       <Route path="docs/*" element={<DocsPrefixRedirect />} />
       <Route element={<DocsLayout />}>

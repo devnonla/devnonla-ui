@@ -40,6 +40,7 @@ const COMPONENT_LEGACY: Record<string, string> = {
   dropdown: "dropdown",
   pagination: "pagination",
   tabs: "tabs",
+  "sortable-tree": "sortable-tree",
 };
 
 const GROUPED_COMPONENT_LEGACY: Record<string, string> = {
@@ -48,6 +49,7 @@ const GROUPED_COMPONENT_LEGACY: Record<string, string> = {
   "general/typography": "typography",
   "layout/splitter": "splitter",
   "layout/sidebar": "sidebar",
+  "layout/sortable-tree": "sortable-tree",
   "data-entry/input": "input",
   "data-entry/editable-input": "editable-input",
   "data-entry/markdown-editor": "markdown-editor",
