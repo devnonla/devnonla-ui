@@ -1,6 +1,5 @@
-import { type ReactNode, useCallback, useRef } from "react";
+import { type ReactNode, useCallback, useEffect, useRef, useState } from "react";
 import { Button } from "../button/Button";
-import { ButtonCopy } from "../button/ButtonCopy";
 import { Icon } from "../icon/Icon";
 import { OverlayScroll } from "../scroll/OverlayScroll";
 
@@ -29,11 +28,29 @@ const tableClass =
 export function MarkdownTable({ children }: { children: ReactNode }) {
   const tableRef = useRef<HTMLTableElement>(null);
   const dialogRef = useRef<HTMLDialogElement>(null);
+  const [copied, setCopied] = useState(false);
 
   const getText = useCallback(() => {
     const table = tableRef.current;
     return table ? tableToMarkdown(table) : "";
   }, []);
+
+  useEffect(() => {
+    if (!copied) return;
+    const t = window.setTimeout(() => setCopied(false), 1600);
+    return () => window.clearTimeout(t);
+  }, [copied]);
+
+  const copyMarkdown = async () => {
+    const value = getText();
+    if (!value) return;
+    try {
+      await navigator.clipboard.writeText(value);
+      setCopied(true);
+    } catch {
+      /* ignore */
+    }
+  };
 
   const openFullscreen = () => {
     dialogRef.current?.showModal();
@@ -45,14 +62,14 @@ export function MarkdownTable({ children }: { children: ReactNode }) {
 
   return (
     <>
-      <div className="group relative my-(--md-table-my,16px) max-w-full">
-        <div className="absolute top-1 right-1 z-10 flex items-center gap-1 opacity-0 transition-opacity group-hover:opacity-100">
-          <ButtonCopy getText={getText} label="Copy as Markdown" />
-          <Button size="small" icon={<Icon name="maximize" size={12} />} title="Fullscreen" aria-label="Fullscreen" onClick={openFullscreen} />
+      <div className="group relative my-(--md-table-my,16px) max-w-full overflow-hidden rounded-xl border border-border bg-card">
+        <div className="absolute top-1.5 right-1.5 z-10 flex items-center gap-1 opacity-0 transition-opacity group-hover:opacity-100">
+          <Button size="small" className="bg-background" icon={<Icon name={copied ? "check" : "copy"} size={12} />} title={copied ? "Copied" : "Copy as Markdown"} aria-label={copied ? "Copied" : "Copy as Markdown"} onClick={copyMarkdown} />
+          <Button size="small" className="bg-background" icon={<Icon name="maximize" size={12} />} title="Fullscreen" aria-label="Fullscreen" onClick={openFullscreen} />
         </div>
 
         <OverlayScroll autoHeight visibility="hover" scope="table" innerClassName="overflow-x-auto">
-          <table ref={tableRef} className={`${tableClass} [&_th]:max-w-[360px] [&_td]:max-w-[360px] [&_th:first-child]:pl-0 [&_th:last-child]:pr-0 [&_td:first-child]:pl-0 [&_td:last-child]:pr-0`}>
+          <table ref={tableRef} className={`${tableClass} [&_tr:last-child_td]:border-b-0 [&_th]:max-w-[360px] [&_td]:max-w-[360px]`}>
             {children}
           </table>
         </OverlayScroll>
@@ -68,9 +85,9 @@ export function MarkdownTable({ children }: { children: ReactNode }) {
           closeFullscreen();
         }}
       >
-        <div className="absolute top-5 right-5 z-50 flex items-center gap-1.5">
-          <ButtonCopy getText={getText} label="Copy as Markdown" />
-          <Button size="small" icon={<Icon name="minimize" size={12} />} title="Exit fullscreen" aria-label="Exit fullscreen" onClick={closeFullscreen} />
+        <div className="absolute top-5 right-5 z-50 flex items-center gap-1">
+          <Button size="small" className="bg-background" icon={<Icon name={copied ? "check" : "copy"} size={12} />} title={copied ? "Copied" : "Copy as Markdown"} aria-label={copied ? "Copied" : "Copy as Markdown"} onClick={copyMarkdown} />
+          <Button size="small" className="bg-background" icon={<Icon name="minimize" size={12} />} title="Exit fullscreen" aria-label="Exit fullscreen" onClick={closeFullscreen} />
         </div>
 
         <div className="min-h-0 flex-1 overflow-auto p-8">
