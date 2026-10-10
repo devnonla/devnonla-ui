@@ -184,6 +184,8 @@ export type { SidebarItemType, SidebarProps, SidebarSelectInfo } from "./sidebar
 export { Sidebar } from "./sidebar/Sidebar";
 export type { SkeletonProps } from "./skeleton/Skeleton";
 export { Skeleton } from "./skeleton/Skeleton";
+export type { SortableTreeItem, SortableTreeProps } from "./sortable-tree/SortableTree";
+export { SortableTree } from "./sortable-tree/SortableTree";
 export type { SpinColor, SpinProps, SpinVariant } from "./spin/Spin";
 export { Spin } from "./spin/Spin";
 export type { SplitterOrientation, SplitterPanelProps, SplitterProps, SplitterSemanticSlot, SplitterSize } from "./splitter/Splitter";
