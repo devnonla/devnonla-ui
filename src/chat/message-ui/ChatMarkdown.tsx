@@ -6,26 +6,26 @@ export type ChatMarkdownProps = {
   streaming?: boolean;
 };
 
-/** Reply headings match the body: `text-md`, weight 400. Strong is 500. Tables stay `text-base`. */
+/** Reply headings are `text-lg` at the strong weight. Body stays `text-md`. Strong is 500. Tables stay `text-base`. */
 const chatHeadingScale = {
-  "--md-h1-size": "var(--nonla-md-text-size)",
-  "--md-h2-size": "var(--nonla-md-text-size)",
-  "--md-h3-size": "var(--nonla-md-text-size)",
-  "--md-h4-size": "var(--nonla-md-text-size)",
-  "--md-h5-size": "var(--nonla-md-text-size)",
-  "--md-h6-size": "var(--nonla-md-text-size)",
-  "--md-h1-leading": "var(--md-body-leading)",
-  "--md-h2-leading": "var(--md-body-leading)",
-  "--md-h3-leading": "var(--md-body-leading)",
-  "--md-h4-leading": "var(--md-body-leading)",
-  "--md-h5-leading": "var(--md-body-leading)",
-  "--md-h6-leading": "var(--md-body-leading)",
-  "--md-h1-weight": "400",
-  "--md-h2-weight": "400",
-  "--md-h3-weight": "400",
-  "--md-h4-weight": "400",
-  "--md-h5-weight": "400",
-  "--md-h6-weight": "400",
+  "--md-h1-size": "var(--text-lg)",
+  "--md-h2-size": "var(--text-lg)",
+  "--md-h3-size": "var(--text-lg)",
+  "--md-h4-size": "var(--text-lg)",
+  "--md-h5-size": "var(--text-lg)",
+  "--md-h6-size": "var(--text-lg)",
+  "--md-h1-leading": "var(--text-lg--line-height)",
+  "--md-h2-leading": "var(--text-lg--line-height)",
+  "--md-h3-leading": "var(--text-lg--line-height)",
+  "--md-h4-leading": "var(--text-lg--line-height)",
+  "--md-h5-leading": "var(--text-lg--line-height)",
+  "--md-h6-leading": "var(--text-lg--line-height)",
+  "--md-h1-weight": "500",
+  "--md-h2-weight": "500",
+  "--md-h3-weight": "500",
+  "--md-h4-weight": "500",
+  "--md-h5-weight": "500",
+  "--md-h6-weight": "500",
   "--md-strong-weight": "500",
 } as CSSProperties;
 
@@ -39,7 +39,7 @@ const chatEdgeClass = [
   "[&_[data-md-block]:first-child_:is(p,h1,h2,h3,h4,h5,h6,ul,ol)]:mt-0! [&_[data-md-block]:first-child_:is(p,h1,h2,h3,h4,h5,h6)]:pt-0! [&_[data-md-block]:last-child_:is(p,h1,h2,h3,h4,h5,h6,ul,ol)]:mb-0! [&_[data-md-block]:last-child_:is(p,h1,h2,h3,h4,h5,h6)]:pb-0!",
 ].join(" ");
 
-/** Agent markdown. Headings use the body size at weight 400. */
+/** Agent markdown. Headings are `text-lg` at the strong weight. */
 export function ChatMarkdown({ content, streaming = false }: ChatMarkdownProps) {
   return <MarkdownViewer value={content} streaming={streaming} className={chatEdgeClass} style={chatHeadingScale} />;
 }
