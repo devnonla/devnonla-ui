@@ -18,25 +18,25 @@
   color-scheme: dark;
 
   /* ── Config. Set these. `.light` repeats the same keys. ────────────── */
-  /* Page #141414. Sidebar sits with the page, #161616. Cards #181818. */
-  --nonla-bg: #141414;
-  --nonla-text-main: #e0e0e0;
-  --nonla-text-secondary: color-mix(in oklab, var(--nonla-text-main) 74%, var(--nonla-bg));
-  --nonla-text-tertiary: color-mix(in oklab, var(--nonla-text-main) 60%, var(--nonla-bg));
-  --nonla-text-quaternary: color-mix(in oklab, var(--nonla-text-main) 36%, var(--nonla-bg));
+  /* Claude dark (claude.com). Warm gray, hue ~60. Page 950, sidebar 900, cards 850, bar 800. */
+  --nonla-bg: #141413;
+  --nonla-text-main: #faf9f5;
+  --nonla-text-secondary: #b0aea5;
+  --nonla-text-tertiary: #87867f;
+  --nonla-text-quaternary: #73726c;
   --nonla-text-on-solid: #ffffff;
   --nonla-brand: #f18d00;
-  --nonla-danger: #ef4444;
-  --nonla-success: #3fa266;
+  --nonla-danger: #bf4d43;
+  --nonla-success: #629987; /* mineral */
   --nonla-warn: #f1b467;
-  --nonla-link: #81a1c1;
+  --nonla-link: #6a9bcc; /* sky */
 
-  --nonla-sidebar: #161616;
-  --nonla-surface: #181818;
-  --nonla-bar: #242424;
-  --nonla-border: color-mix(in oklab, var(--nonla-text-main) 6%, transparent);
-  --nonla-border-secondary: color-mix(in oklab, var(--nonla-text-main) 3%, transparent);
-  --nonla-input: rgba(255, 255, 235, 0.1);
+  --nonla-sidebar: #1a1918;
+  --nonla-surface: #1f1e1d;
+  --nonla-bar: #262624;
+  --nonla-border: #2c2b29;
+  --nonla-border-secondary: #242322;
+  --nonla-input: rgb(250 249 245 / 14%);
 
   --nonla-font: ui-sans-serif, -apple-system, system-ui, "Segoe UI Variable Display", "Segoe UI", Helvetica, "Apple Color Emoji", "Noto Sans Arabic", "Noto Sans Hebrew", Arial, sans-serif, "Segoe UI Emoji", "Segoe UI Symbol";
   /* Default body size. Tailwind `text-base` follows this. Leading is 1.6. */
