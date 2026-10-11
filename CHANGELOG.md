@@ -5,6 +5,22 @@ All notable changes to this project will be documented in this file.
 The format is based on [Keep a Changelog](https://keepachangelog.com/en/1.1.0/),
 and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0.html).
 
+## [0.16.1] - 2026-10-11
+
+### Added
+
+- `AgentAvatar` shape `nonla`. One color splits into brim, face, and hat. Eyes and the smile travel with `look`. The mark stays centered.
+
+### Changed
+
+- Dark defaults are a warm gray. Page `#141413`, text `#faf9f5`, sidebar `#1a1918`, surface `#1f1e1d`, bar `#262624`. Danger `#bf4d43`, success `#629987`, link `#6a9bcc`. Borders and the input wash are opaque warm steps.
+- `AgentAvatar` `look` keeps the shape on center. Only the eyes move. On `nonla`, the smile moves with them.
+- `motion="idle"` holds a random direction, then picks another. It still blinks.
+
+### Upgrade notes
+
+- To keep the 0.16.0 dark page, set `--nonla-bg: #141414`, `--nonla-text-main: #e0e0e0`, `--nonla-sidebar: #161616`, `--nonla-surface: #181818`, `--nonla-bar: #242424`, `--nonla-danger: #ef4444`, `--nonla-success: #3fa266`, and `--nonla-link: #81a1c1`. Secondary text and borders were `color-mix` off the main ink.
+
 ## [0.16.0] - 2026-10-11
 
 ### Added
@@ -412,6 +428,7 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 - Replace class `nonla-chat-shimmer` with `Shimmer` or `.nonla-shimmer`.
 - `resolveToolUI(toolName, extras?)` — second argument is optional; extra UIs are checked first.
 
+[0.16.1]: https://github.com/devnonla/devnonla-ui/compare/v0.16.0...v0.16.1
 [0.16.0]: https://github.com/devnonla/devnonla-ui/compare/v0.15.0...v0.16.0
 [0.15.0]: https://github.com/devnonla/devnonla-ui/compare/v0.14.0...v0.15.0
 [0.14.0]: https://github.com/devnonla/devnonla-ui/compare/v0.13.0...v0.14.0
