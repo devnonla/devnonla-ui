@@ -9,9 +9,11 @@ icon: "list-bar-24"
 
 # SortableTree
 
-Reorder a tree. Drag a row to move it among its siblings. Drag a parent to move that whole group, children included. While the row is in the air, the list keeps an empty slot the size of what you picked up.
+Reorder a tree. Drag a row to move it among its siblings. Drag a child up onto a parent row to lift it to that level and set it down between parents. Drag a parent to move that whole group, children included. While the row is in the air, the list keeps an empty slot the size of what you picked up.
 
-Ids are unique across the tree. A row only swaps with siblings.
+`onChange` receives the next tree. `onDragEnd` receives the rows that need a new position: `{ id, index }[]`. `index` is the new index in the list that row landed in. Rows that did not move are left out of that list.
+
+Ids are unique across the tree.
 
 ```live-react
 import { useState } from "react";
@@ -49,7 +51,7 @@ export default function Demo() {
   const [items, setItems] = useState(seed);
   return (
     <div className="w-full max-w-80 overflow-x-auto rounded-lg border border-border bg-card p-1.5">
-      <SortableTree items={items} onChange={setItems} />
+      <SortableTree items={items} onChange={(next) => setItems(next)} />
     </div>
   );
 }

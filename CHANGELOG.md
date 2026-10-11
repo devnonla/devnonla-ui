@@ -5,6 +5,23 @@ All notable changes to this project will be documented in this file.
 The format is based on [Keep a Changelog](https://keepachangelog.com/en/1.1.0/),
 and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0.html).
 
+## [0.15.1] - 2026-10-10
+
+### Added
+
+- `SortableTree`. Drag a row to reorder it among its siblings. Drag a child onto a parent row to lift it between parents. Drag a parent to move that group with its children. `onChange` receives the next tree. `onDragEnd` receives the rows that moved: `{ id, index }[]`. `SortableTreeItem` and `SortableTreeChange` are exported.
+- Icon names `text`, `json`, `select`, `checkbox`, `datetime`, `md`, and `trash`. `md` marks a markdown column.
+- `Icon` `stroke`. Line weight in the 24px viewBox. The default is `1.5`.
+
+### Changed
+
+- Agent reply headings are `text-lg` at weight 500. Body stays `text-md`. Strong stays 500. Tables stay `text-base`.
+- Markdown tables sit in a card. Copy uses the copy icon and shows a check after it succeeds.
+
+### Upgrade notes
+
+- Reply headings no longer match the body size at weight 400.
+
 ## [0.15.0] - 2026-10-09
 
 ### Added
@@ -395,6 +412,7 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 - Replace class `nonla-chat-shimmer` with `Shimmer` or `.nonla-shimmer`.
 - `resolveToolUI(toolName, extras?)` — second argument is optional; extra UIs are checked first.
 
+[0.15.1]: https://github.com/devnonla/devnonla-ui/compare/v0.15.0...v0.15.1
 [0.15.0]: https://github.com/devnonla/devnonla-ui/compare/v0.14.0...v0.15.0
 [0.14.0]: https://github.com/devnonla/devnonla-ui/compare/v0.13.0...v0.14.0
 [0.13.0]: https://github.com/devnonla/devnonla-ui/compare/v0.12.0...v0.13.0
