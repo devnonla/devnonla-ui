@@ -25,7 +25,7 @@ export default function Demo() {
 
 ## Shape
 
-Twelve silhouettes. The color stays the same so the shape is the only change.
+Thirteen silhouettes. The color stays the same so the shape is the only change. `nonla` is the logo mark.
 
 ```live-react
 import { AGENT_AVATAR_PARTS, AgentAvatar } from "devnonla-ui";
@@ -42,7 +42,7 @@ export default function Demo() {
 
 ## Motion
 
-`still` is the default and holds the pose. `idle` looks left, up, right, and down, then returns to `look`.
+`still` is the default and holds the pose. `idle` turns to a random direction, holds it, then picks another. It blinks.
 
 ```live-react
 import { AgentAvatar } from "devnonla-ui";
@@ -67,7 +67,7 @@ export default function Demo() {
 
 ## Look
 
-Facing is fixed. The head shifts that way and the eyes travel further.
+Facing is fixed. The shape stays centered. The eyes travel that way.
 
 ```live-react
 import { AgentAvatar } from "devnonla-ui";
@@ -88,6 +88,35 @@ export default function Demo() {
   return looks.map(([look, label]) => (
     <div key={look} className="flex w-20 flex-col items-center gap-1">
       <AgentAvatar config={{ shape: "drop", color: "#6E56F0" }} look={look} label={label} />
+      <span className="text-center text-[15px] leading-7 text-muted-foreground">{label}</span>
+    </div>
+  ));
+}
+```
+
+## Nonla
+
+The logo mark, as a face. The mark stays centered. The eyes and the smile travel that way.
+
+```live-react
+import { AgentAvatar } from "devnonla-ui";
+
+const looks = [
+  ["forward", "Forward"],
+  ["left", "Left"],
+  ["right", "Right"],
+  ["up", "Up"],
+  ["down", "Down"],
+  ["up-left", "Top left"],
+  ["up-right", "Top right"],
+  ["down-left", "Bottom left"],
+  ["down-right", "Bottom right"],
+];
+
+export default function Demo() {
+  return looks.map(([look, label]) => (
+    <div key={look} className="flex w-20 flex-col items-center gap-1">
+      <AgentAvatar config={{ shape: "nonla", color: "#ffa333" }} size={80} look={look} label={label} />
       <span className="text-center text-[15px] leading-7 text-muted-foreground">{label}</span>
     </div>
   ));
@@ -196,11 +225,11 @@ Pass shape, color, and eye color together: `config={{ shape, color, eyeColor }}`
 
 | Property | Description | Type | Default |
 | --- | --- | --- | --- |
-| `config.shape` | Silhouette of the face. | `circle` \| `square` \| `triangle` \| `diamond` \| `hex` \| `gem` \| `pill` \| `arch` \| `cloud` \| `blob` \| `drop` \| `shield` | `circle` |
+| `config.shape` | Silhouette of the face. `nonla` is the logo mark: one color splits into brim, face, and hat. | `circle` \| `square` \| `triangle` \| `diamond` \| `hex` \| `gem` \| `pill` \| `arch` \| `cloud` \| `blob` \| `drop` \| `shield` \| `nonla` | `circle` |
 | `config.color` | Face color, as a hex string. | `string` | `#6E56F0` |
 | `config.eyeColor` | Pupil color. Omitted uses black, or white when the face is dark. | `black` \| `white` | black, or white on a dark face |
 | `size` | Width and height, in pixels. | `number` | `64` |
-| `motion` | `still` holds the pose. `idle` looks around and blinks. | `still` \| `idle` | `still` |
-| `look` | Fixed facing. The head turns that way and the eyes follow. | `forward` \| `left` \| `right` \| `up` \| `down` \| `up-left` \| `up-right` \| `down-left` \| `down-right` | `forward` |
+| `motion` | `still` holds the pose. `idle` turns to a random direction and blinks. | `still` \| `idle` | `still` |
+| `look` | Fixed facing. The shape stays centered and the eyes move that way. | `forward` \| `left` \| `right` \| `up` \| `down` \| `up-left` \| `up-right` \| `down-left` \| `down-right` | `forward` |
 | `className` | Extra class on the root element. | `string` | `-` |
 | `label` | Accessible name. | `string` | `Agent` |
