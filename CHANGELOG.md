@@ -5,6 +5,26 @@ All notable changes to this project will be documented in this file.
 The format is based on [Keep a Changelog](https://keepachangelog.com/en/1.1.0/),
 and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0.html).
 
+## [0.17.0] - 2026-10-12
+
+### Added
+
+- `devnonla-ui/chat` and `devnonla-ui/markdown`. Chat (`AgentPanel`, `AgentChatbox`, and the rest) and markdown (`MarkdownViewer`, `MarkdownEditor`, `ReactCodeSandbox`, and the rest) import from these entries.
+- `App` `className` on the `.nonla-ui` host.
+
+### Changed
+
+- Tokens, font, and scrollbars live on the `.nonla-ui` host that `App` renders. They no longer paint `:root`, `body`, or the rest of the consumer page.
+- Dark is the default on that host. `setColorMode` and `initColorMode` paint `light` or `dark` there. Light is `.nonla-ui.light`.
+- Popups portal into the `App` host by default, then `document.body`.
+
+### Upgrade notes
+
+- **Desktop is gone.** `DesktopWindow`, `WindowHeader`, `DesktopHeader`, `DesktopBarButton`, `DesktopBarDivider`, `DesktopBarItem`, `DesktopIcon`, `DesktopStage`, `MeadowDesktop`, `MeadowShell`, and `MeadowWallpaper` are no longer exported.
+- **Chat and markdown are no longer on `devnonla-ui`.** Import them from `devnonla-ui/chat` and `devnonla-ui/markdown`.
+- **Override `--nonla-*` on `.nonla-ui`**, not on `:root` or `<html>`. The `light` and `dark` classes sit on that host.
+- **Removed** `--nonla-z-desktop`, `--nonla-z-window`, and `--nonla-z-header`.
+
 ## [0.16.1] - 2026-10-11
 
 ### Added
@@ -428,6 +448,7 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 - Replace class `nonla-chat-shimmer` with `Shimmer` or `.nonla-shimmer`.
 - `resolveToolUI(toolName, extras?)` — second argument is optional; extra UIs are checked first.
 
+[0.17.0]: https://github.com/devnonla/devnonla-ui/compare/v0.16.1...v0.17.0
 [0.16.1]: https://github.com/devnonla/devnonla-ui/compare/v0.16.0...v0.16.1
 [0.16.0]: https://github.com/devnonla/devnonla-ui/compare/v0.15.0...v0.16.0
 [0.15.0]: https://github.com/devnonla/devnonla-ui/compare/v0.14.0...v0.15.0

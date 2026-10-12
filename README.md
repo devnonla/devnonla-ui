@@ -23,4 +23,11 @@ export function Root() {
 }
 ```
 
+Chat and markdown are separate entries. Theme tokens live on the `.nonla-ui` host that `App` renders, not on the rest of the page.
+
+```tsx
+import { AgentPanel } from "devnonla-ui/chat";
+import { MarkdownViewer } from "devnonla-ui/markdown";
+```
+
 Install, theme, and each control are in the [docs](https://devnonla.github.io/devnonla-ui/).
