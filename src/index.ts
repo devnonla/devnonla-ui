@@ -96,15 +96,6 @@ export type { ColorFormat, ColorPickerProps, ColorPickerSemanticSlot, ColorType,
 export { Color, ColorPicker } from "./colorpicker/ColorPicker";
 export type { DatePickerProps, RangePickerProps, RangeValue } from "./datepicker/DatePicker";
 export { DatePicker, RangePicker } from "./datepicker/DatePicker";
-export type { DesktopHeaderProps } from "./desktop/DesktopHeader";
-export { DesktopBarButton, DesktopBarDivider, DesktopBarItem, DesktopHeader } from "./desktop/DesktopHeader";
-export { DesktopIcon } from "./desktop/DesktopIcon";
-export { DesktopStage } from "./desktop/DesktopStage";
-export type { DesktopWindowProps, WindowHeaderProps } from "./desktop/DesktopWindow";
-export { DesktopWindow, WindowHeader } from "./desktop/DesktopWindow";
-export { MeadowDesktop } from "./desktop/MeadowDesktop";
-export { MeadowShell } from "./desktop/MeadowShell";
-export { MeadowWallpaper } from "./desktop/MeadowWallpaper";
 export type { DrawerPlacement, DrawerProps } from "./drawer/Drawer";
 export { Drawer } from "./drawer/Drawer";
 export type { ContextMenuProps } from "./dropdown/ContextMenu";
