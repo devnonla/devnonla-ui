@@ -14,6 +14,8 @@
     "noEmit": true,
     "paths": {
       "@nonla-agents/ui": ["../src/index.ts"],
+      "@nonla-agents/ui/markdown": ["../src/markdown-editor/index.ts"],
+      "@nonla-agents/ui/chat": ["../src/chat/index.ts"],
       "@nonla-agents/ui/styles.css": ["../src/styles.css"]
     }
   },

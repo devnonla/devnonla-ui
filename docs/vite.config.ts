@@ -11,6 +11,14 @@ export default defineConfig({
   resolve: {
     alias: [
       {
+        find: "@nonla-agents/ui/markdown",
+        replacement: `${import.meta.dirname}/../src/markdown-editor/index.ts`,
+      },
+      {
+        find: "@nonla-agents/ui/chat",
+        replacement: `${import.meta.dirname}/../src/chat/index.ts`,
+      },
+      {
         find: /^@nonla-agents\/ui$/,
         replacement: `${import.meta.dirname}/../src/index.ts`,
       },

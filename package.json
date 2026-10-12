@@ -21,6 +21,8 @@
   ],
   "exports": {
     ".": "./src/index.ts",
+    "./markdown": "./src/markdown-editor/index.ts",
+    "./chat": "./src/chat/index.ts",
     "./styles.css": "./src/styles.css"
   },
   "main": "./src/index.ts",
