@@ -1,11 +1,15 @@
 /**
- * Paint `light` or `dark` on `<html>`. Dark is the default.
+ * Paint `light` or `dark` on the Nonla host (`.nonla-ui`). Dark is the default.
  * The stored choice may be `system`, which follows the OS and still paints one of those two.
+ *
+ * `App` binds the host via `bindColorModeTarget`. Callers can still pass an explicit
+ * `target` to `setColorMode` / `initColorMode`. Without a bound host, the fallback is
+ * `<html>` for sandboxes that mount their own root.
  */
 
 export type NonlaColorMode = "light" | "dark";
 
-/** Stored choice. `system` follows the OS and still applies `light` or `dark` on `<html>`. */
+/** Stored choice. `system` follows the OS and still applies `light` or `dark` on the host. */
 export type NonlaColorPreference = NonlaColorMode | "system";
 
 /** `localStorage` key written by `setColorMode` / `setColorPreference`. */
@@ -16,6 +20,7 @@ let mode: NonlaColorMode = "dark";
 let preference: NonlaColorPreference = "dark";
 let ready = false;
 let schemeQuery: MediaQueryList | null = null;
+let boundTarget: HTMLElement | null = null;
 
 function notify() {
   for (const listener of listeners) listener();
@@ -37,6 +42,15 @@ export function getColorMode(): NonlaColorMode {
 
 export function getColorPreference(): NonlaColorPreference {
   return preference;
+}
+
+/** Host `App` paints mode on. Cleared on unmount. */
+export function bindColorModeTarget(target: HTMLElement | null) {
+  boundTarget = target;
+}
+
+function colorTarget(explicit?: HTMLElement): HTMLElement {
+  return explicit ?? boundTarget ?? document.documentElement;
 }
 
 function readStored(): NonlaColorPreference | null {
@@ -74,12 +88,19 @@ function watchSystem() {
   });
 }
 
-/** Set `light` or `dark` on `target` (default `<html>`) so portals inherit the palette. */
-export function applyColorMode(next: NonlaColorMode, target: HTMLElement = document.documentElement) {
+function modeFromClass(el: HTMLElement): NonlaColorMode | null {
+  if (el.classList.contains("light")) return "light";
+  if (el.classList.contains("dark")) return "dark";
+  return null;
+}
+
+/** Set `light` or `dark` on `target` (bound host, or `<html>` fallback) so portals inherit the palette. */
+export function applyColorMode(next: NonlaColorMode, target?: HTMLElement) {
   mode = next;
-  target.classList.toggle("light", next === "light");
-  target.classList.toggle("dark", next === "dark");
-  target.style.colorScheme = next;
+  const el = colorTarget(target);
+  el.classList.toggle("light", next === "light");
+  el.classList.toggle("dark", next === "dark");
+  el.style.colorScheme = next;
   notify();
 }
 
@@ -104,13 +125,17 @@ export function setColorMode(next: NonlaColorMode, target?: HTMLElement) {
 
 /** Apply the saved mode once. Falls back to dark. A stored `system` choice follows the OS. */
 export function initColorMode(target?: HTMLElement): NonlaColorMode {
-  if (typeof document === "undefined" || ready) return mode;
+  if (typeof document === "undefined") return mode;
+  const el = colorTarget(target);
+  if (ready) {
+    applyColorMode(mode, el);
+    return mode;
+  }
   ready = true;
-  const root = document.documentElement;
-  const fromClass = root.classList.contains("light") ? "light" : root.classList.contains("dark") ? "dark" : null;
+  const fromClass = modeFromClass(el) ?? modeFromClass(document.documentElement);
   const next = readStored() ?? fromClass ?? "dark";
   preference = next;
   if (next === "system") watchSystem();
-  applyColorMode(resolved(next), target);
+  applyColorMode(resolved(next), el);
   return mode;
 }

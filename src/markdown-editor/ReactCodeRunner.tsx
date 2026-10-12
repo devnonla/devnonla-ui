@@ -1,7 +1,7 @@
 import { Component, type ReactNode } from "react";
 import { flushSync } from "react-dom";
 import { createRoot } from "react-dom/client";
-import { applyColorMode } from "../theme";
+import { applyColorMode, bindColorModeTarget } from "../theme";
 import { REACT_CODE_SOURCE, type RunnerPayload, readHostMessage } from "./reactCodeProtocol";
 import { compileReactCode } from "./reactCompile";
 
@@ -32,6 +32,13 @@ class Boundary extends Component<{ report: Report; children: ReactNode }, { erro
  * `Access-Control-Allow-Origin: *` on its assets, since a sandboxed frame loads them cross-origin.
  */
 export function mountReactCodeRunner(root: HTMLElement, modules: Record<string, unknown>): () => void {
+  root.classList.add("nonla-ui");
+  bindColorModeTarget(root);
+  const pending = document.documentElement.dataset.pendingMode;
+  if (pending === "light" || pending === "dark") {
+    applyColorMode(pending, root);
+    delete document.documentElement.dataset.pendingMode;
+  }
   const reactRoot = createRoot(root);
   const report: Report = (message) => window.parent.postMessage({ source: REACT_CODE_SOURCE, ...message }, "*");
 
@@ -40,7 +47,7 @@ export function mountReactCodeRunner(root: HTMLElement, modules: Record<string, 
     if (event.source !== window.parent) return;
     const msg = readHostMessage(event.data);
     if (!msg) return;
-    applyColorMode(msg.mode);
+    applyColorMode(msg.mode, root);
     if (msg.type === "mode") return;
     waitingForRun = false;
     try {
@@ -77,6 +84,7 @@ export function mountReactCodeRunner(root: HTMLElement, modules: Record<string, 
     window.clearInterval(readyBeat);
     window.removeEventListener("message", onMessage);
     observer.disconnect();
+    bindColorModeTarget(null);
     reactRoot.unmount();
   };
 }

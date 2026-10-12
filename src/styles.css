@@ -4,20 +4,21 @@
 /**
  * NonlaUI theme.
  *
- * Config is the first block in `:root` and `.light`. Set those.
+ * Tokens and chrome live on `.nonla-ui` (the host `App` renders). They do not
+ * paint `:root`, `body`, or the rest of the consumer page.
+ *
+ * Config is the first block in `.nonla-ui`. `.nonla-ui.light` repeats those keys.
  * Derived (`--background`, `--nonla-fill`, `--brand-500`, borders) follows Config.
  * `@theme` only maps tokens to Tailwind utilities (`bg-card`, `text-brand`).
  *
- * Dark is the default. Put `class="light"` or `class="dark"` on `<html>`
- * (or call `setColorMode`). Override Config in the consuming app's CSS.
+ * Dark is the default on `.nonla-ui`. `App` / `setColorMode` toggle `light` or
+ * `dark` on that host. Override Config on `.nonla-ui` in the consuming app's CSS.
  */
 
-:root,
-.dark,
 .nonla-ui {
   color-scheme: dark;
 
-  /* ── Config. Set these. `.light` repeats the same keys. ────────────── */
+  /* ── Config. Set these. `.nonla-ui.light` repeats the same keys. ───── */
   /* Claude dark (claude.com). Warm gray, hue ~60. Page 950, sidebar 900, cards 850, bar 800. */
   --nonla-bg: #141413;
   --nonla-text-main: #faf9f5;
@@ -57,13 +58,10 @@
   --nonla-fill: color-mix(in oklab, var(--nonla-text-main) 6%, var(--nonla-surface));
   --nonla-fill-strong: color-mix(in oklab, var(--nonla-text-main) 10%, var(--nonla-surface));
   --nonla-input-focus: rgb(from var(--nonla-input) r g b / calc(alpha * 2));
-  /* Hover and pressed/selected. Sidebar, menus, selects, buttons, and the desktop header share these. */
+  /* Hover and pressed/selected. Sidebar, menus, selects, and buttons share these. */
   --nonla-ink-hover: color-mix(in oklab, var(--nonla-text-main) 6%, transparent);
   --nonla-ink-active: color-mix(in oklab, var(--nonla-text-main) 10%, transparent);
   --nonla-z-base: 0;
-  --nonla-z-desktop: 20;
-  --nonla-z-window: 30;
-  --nonla-z-header: 40;
   --nonla-z-popup-base: 1000;
 
   /* ── Aliases. Same rule: do not set. ────────────────────────────────── */
@@ -126,17 +124,13 @@
   color: var(--foreground);
   font-family: var(--nonla-font);
   font-weight: 400;
-}
-
-/* Size stays off `html`, so `1rem` and Tailwind spacing do not shrink. */
-body {
+  /* Size stays on the host, so `1rem` and Tailwind spacing do not shrink globally. */
   font-size: var(--nonla-base-text-size);
   line-height: 1.6;
 }
 
 /* Same color keys as Config above. Brand and the label on it stay. */
-.light:not(.dark),
-.light .nonla-ui:not(.dark) {
+.nonla-ui.light {
   color-scheme: light;
 
   /* Light grays are Tailwind neutral. Page is white. Sidebar and cards are neutral-50. */
@@ -191,7 +185,6 @@ body {
   --color-destructive: var(--destructive);
   --color-border: var(--border);
   --color-border-secondary: var(--border-secondary);
-  --default-border-color: var(--border);
   --color-input: var(--input);
   --color-input-focus: var(--input-focus);
   --color-brand: var(--brand);
@@ -233,10 +226,8 @@ body {
 
   --font-sans: var(--nonla-font);
   --font-family-sans: var(--font-sans);
-  --default-font-family: var(--font-sans);
   --font-mono: Menlo, Monaco, "Courier New", monospace;
   --font-family-mono: var(--font-mono);
-  --default-mono-font-family: var(--font-mono);
 
   --animate-fadeIn: fadeIn 0.28s ease-out both;
 }
@@ -252,23 +243,24 @@ body {
   }
 }
 
-/* Page scrollbar. */
-* {
+/* Scrollbar inside the Nonla host only. */
+.nonla-ui,
+.nonla-ui * {
   scrollbar-width: thin;
   scrollbar-color: var(--nonla-scrollbar-thumb) transparent;
 }
-::-webkit-scrollbar {
+.nonla-ui ::-webkit-scrollbar {
   width: var(--nonla-scrollbar-size);
   height: var(--nonla-scrollbar-size);
 }
-::-webkit-scrollbar-track {
+.nonla-ui ::-webkit-scrollbar-track {
   background: transparent;
 }
-::-webkit-scrollbar-thumb {
+.nonla-ui ::-webkit-scrollbar-thumb {
   background: var(--nonla-scrollbar-thumb);
   border-radius: 99px;
 }
-::-webkit-scrollbar-thumb:hover {
+.nonla-ui ::-webkit-scrollbar-thumb:hover {
   background: var(--nonla-scrollbar-thumb-hover);
 }
 
@@ -567,70 +559,70 @@ body {
   font-size: 11px;
 }
 
-/* GitHub light syntax. The imported sheet is github-dark-dimmed; these beat it under `.light`. */
-.light .hljs-doctag,
-.light .hljs-keyword,
-.light .hljs-meta .hljs-keyword,
-.light .hljs-template-tag,
-.light .hljs-template-variable,
-.light .hljs-type,
-.light .hljs-variable.language_ {
+/* GitHub light syntax. The imported sheet is github-dark-dimmed; these beat it under `.nonla-ui.light`. */
+.nonla-ui.light .hljs-doctag,
+.nonla-ui.light .hljs-keyword,
+.nonla-ui.light .hljs-meta .hljs-keyword,
+.nonla-ui.light .hljs-template-tag,
+.nonla-ui.light .hljs-template-variable,
+.nonla-ui.light .hljs-type,
+.nonla-ui.light .hljs-variable.language_ {
   color: #d73a49;
 }
-.light .hljs-title,
-.light .hljs-title.class_,
-.light .hljs-title.class_.inherited__,
-.light .hljs-title.function_ {
+.nonla-ui.light .hljs-title,
+.nonla-ui.light .hljs-title.class_,
+.nonla-ui.light .hljs-title.class_.inherited__,
+.nonla-ui.light .hljs-title.function_ {
   color: #6f42c1;
 }
-.light .hljs-attr,
-.light .hljs-attribute,
-.light .hljs-literal,
-.light .hljs-meta,
-.light .hljs-number,
-.light .hljs-operator,
-.light .hljs-variable,
-.light .hljs-selector-attr,
-.light .hljs-selector-class,
-.light .hljs-selector-id {
+.nonla-ui.light .hljs-attr,
+.nonla-ui.light .hljs-attribute,
+.nonla-ui.light .hljs-literal,
+.nonla-ui.light .hljs-meta,
+.nonla-ui.light .hljs-number,
+.nonla-ui.light .hljs-operator,
+.nonla-ui.light .hljs-variable,
+.nonla-ui.light .hljs-selector-attr,
+.nonla-ui.light .hljs-selector-class,
+.nonla-ui.light .hljs-selector-id {
   color: #005cc5;
 }
-.light .hljs-regexp,
-.light .hljs-string,
-.light .hljs-meta .hljs-string {
+.nonla-ui.light .hljs-regexp,
+.nonla-ui.light .hljs-string,
+.nonla-ui.light .hljs-meta .hljs-string {
   color: #032f62;
 }
-.light .hljs-built_in,
-.light .hljs-symbol {
+.nonla-ui.light .hljs-built_in,
+.nonla-ui.light .hljs-symbol {
   color: #e36209;
 }
-.light .hljs-comment,
-.light .hljs-code,
-.light .hljs-formula {
+.nonla-ui.light .hljs-comment,
+.nonla-ui.light .hljs-code,
+.nonla-ui.light .hljs-formula {
   color: #6a737d;
 }
-.light .hljs-name,
-.light .hljs-quote,
-.light .hljs-selector-tag,
-.light .hljs-selector-pseudo {
+.nonla-ui.light .hljs-name,
+.nonla-ui.light .hljs-quote,
+.nonla-ui.light .hljs-selector-tag,
+.nonla-ui.light .hljs-selector-pseudo {
   color: #22863a;
 }
-.light .hljs-subst,
-.light .hljs-emphasis,
-.light .hljs-strong {
+.nonla-ui.light .hljs-subst,
+.nonla-ui.light .hljs-emphasis,
+.nonla-ui.light .hljs-strong {
   color: #24292e;
 }
-.light .hljs-section {
+.nonla-ui.light .hljs-section {
   color: #005cc5;
 }
-.light .hljs-bullet {
+.nonla-ui.light .hljs-bullet {
   color: #735c0f;
 }
-.light .hljs-addition {
+.nonla-ui.light .hljs-addition {
   color: #22863a;
   background-color: #f0fff4;
 }
-.light .hljs-deletion {
+.nonla-ui.light .hljs-deletion {
   color: #b31d28;
   background-color: #ffeef0;
 }

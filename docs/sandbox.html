@@ -18,7 +18,8 @@
     <script>
       (function () {
         var mode = new URLSearchParams(location.search).get("mode");
-        document.documentElement.classList.add(mode === "light" ? "light" : "dark");
+        var root = document.documentElement;
+        root.dataset.pendingMode = mode === "light" ? "light" : "dark";
       })();
     </script>
     <style>
@@ -26,14 +27,17 @@
         color-scheme: dark;
         background: #141414;
       }
-      html.light {
+      html:has(.nonla-ui.light) {
         color-scheme: light;
         background: #ffffff;
+      }
+      .nonla-ui {
+        min-height: 100%;
       }
     </style>
   </head>
   <body>
-    <div id="root"></div>
+    <div id="root" class="nonla-ui"></div>
     <script type="module" src="./sandbox.tsx"></script>
   </body>
 </html>

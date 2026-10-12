@@ -12,7 +12,7 @@ export function useAppConfig() {
   return useContext(AppContext);
 }
 
-/** Portal container for overlays (`getPopupContainer`). Always leaves the desktop stacking context. */
+/** Portal container for overlays (`getPopupContainer`). Defaults to the `App` `.nonla-ui` host, then `document.body`. */
 export function usePopupContainer(override?: () => HTMLElement) {
   const { getPopupContainer } = useAppConfig();
   return () => (override ?? getPopupContainer)?.() ?? document.body;

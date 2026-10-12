@@ -1,9 +1,10 @@
 import * as TooltipPrimitive from "@radix-ui/react-tooltip";
-import { type ReactNode, useMemo } from "react";
+import { type ReactNode, useLayoutEffect, useMemo, useRef } from "react";
+import { cn } from "../lib/cn";
 import { type ControlSize, ControlSizeContext, normalizeSize } from "../lib/sizes";
 import { MessageHolder, message } from "../message/message";
 import { ConfirmHolder, Modal } from "../modal/Modal";
-import { initColorMode } from "../theme";
+import { bindColorModeTarget, initColorMode } from "../theme";
 import { AppContext, type NonlaAppConfig, useAppConfig, usePopupContainer } from "./context";
 
 export type { NonlaAppConfig };
@@ -14,25 +15,42 @@ export type AppProps = {
   getPopupContainer?: () => HTMLElement;
   /** Default control size (`componentSize`). Per-control `size` still wins. */
   componentSize?: ControlSize;
+  /** Extra classes on the `.nonla-ui` host. */
+  className?: string;
 };
 
-/** Root host for NonlaUI — ConfigProvider + message/modal holders. Mount once near app root. */
-export function App({ children, getPopupContainer, componentSize }: AppProps) {
-  // Before children paint, so a sandbox iframe can open on the saved mode instead of flashing the default.
-  initColorMode();
+/** Root host for NonlaUI — theme scope + message/modal holders. Mount once near app root. */
+export function App({ children, getPopupContainer, componentSize, className }: AppProps) {
+  const hostRef = useRef<HTMLDivElement>(null);
   const size = componentSize ? normalizeSize(componentSize) : undefined;
-  const value = useMemo<NonlaAppConfig>(() => ({ getPopupContainer, componentSize: size }), [getPopupContainer, size]);
+  const value = useMemo<NonlaAppConfig>(
+    () => ({
+      getPopupContainer: getPopupContainer ?? (() => hostRef.current ?? document.body),
+      componentSize: size,
+    }),
+    [getPopupContainer, size],
+  );
+
+  useLayoutEffect(() => {
+    const host = hostRef.current;
+    if (!host) return;
+    bindColorModeTarget(host);
+    initColorMode(host);
+    return () => bindColorModeTarget(null);
+  }, []);
 
   return (
-    <AppContext.Provider value={value}>
-      <ControlSizeContext.Provider value={size}>
-        <TooltipPrimitive.Provider delayDuration={100}>
-          {children}
-          <MessageHolder />
-          <ConfirmHolder />
-        </TooltipPrimitive.Provider>
-      </ControlSizeContext.Provider>
-    </AppContext.Provider>
+    <div ref={hostRef} className={cn("nonla-ui h-full min-h-0", className)}>
+      <AppContext.Provider value={value}>
+        <ControlSizeContext.Provider value={size}>
+          <TooltipPrimitive.Provider delayDuration={100}>
+            {children}
+            <MessageHolder />
+            <ConfirmHolder />
+          </TooltipPrimitive.Provider>
+        </ControlSizeContext.Provider>
+      </AppContext.Provider>
+    </div>
   );
 }
 
