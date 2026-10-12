@@ -28,12 +28,12 @@ Peer deps: `react` / `react-dom` ≥ 19, `react-hook-form`. Tailwind CSS v4 on t
 
 ## Root
 
-`App` is the wrapper you put once around the whole app. It is not a screen. Controls still render without it, but shared setup lives here.
+`App` is the wrapper you put once around the Nonla tree. It is not a screen. It renders a `.nonla-ui` host: theme tokens, font, and scrollbars stay inside that host and do not restyle the rest of the consumer page.
 
-It does three things:
+It also does three things:
 
-- Remembers light or dark, and sets the default size of buttons, inputs, and the rest (`small`, `default`, `large`). A control's own `size` still wins.
-- Gives dropdowns, tooltips, and dialogs a place to render, so they sit above the page and follow the theme.
+- Remembers light or dark on that host, and sets the default size of buttons, inputs, and the rest (`small`, `default`, `large`). A control's own `size` still wins.
+- Gives dropdowns, tooltips, and dialogs a place to render (the host), so they sit above the page and follow the theme.
 - Hosts `message.success("Saved")` and `Modal.confirm(...)`. Those calls have no component of their own. `App` is where they show up.
 
 ```tsx
@@ -51,4 +51,14 @@ export function Root() {
 }
 ```
 
-Pass props only when a default is wrong. `componentSize` changes the shared size. Colors come from `--nonla-*` — see [Theming](/theming). `getPopupContainer` points floating UI at a specific element when the page itself is the wrong place.
+Pass props only when a default is wrong. `componentSize` changes the shared size. Override `--nonla-*` on `.nonla-ui` (or a child) — see [Theming](/theming). `getPopupContainer` points floating UI at a specific element when the host itself is the wrong place.
+
+## Entries
+
+One package, three import paths. Controls stay on `devnonla-ui`. Chat and markdown are separate so an app that only needs buttons and forms does not load them.
+
+```tsx
+import { Button, AgentAvatar } from "devnonla-ui";
+import { MarkdownViewer } from "devnonla-ui/markdown";
+import { AgentPanel } from "devnonla-ui/chat";
+```

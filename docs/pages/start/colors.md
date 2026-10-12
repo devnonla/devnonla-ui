@@ -12,7 +12,7 @@ wide: true
 
 Every color in the theme, and where it shows up. Use the theme switch in the header to see dark and light.
 
-**Config** is what you set. **Derived** follows it. A second name on the row is the same color, the one Tailwind classes use (`bg-card`, `text-brand`).
+Config is set on the `.nonla-ui` host (`App`), not on `:root`. **Config** is what you set. **Derived** follows it. A second name on the row is the same color, the one Tailwind classes use (`bg-card`, `text-brand`).
 
 ```live-react
 import { useEffect, useState } from "react";
@@ -22,7 +22,7 @@ const GROUPS = [
     title: "Page and text",
     note: "Config. Placeholders and markdown use these text colors directly.",
     items: [
-      ["--nonla-bg", "background", "Page background. Chat sits on this. Desktop wallpaper uses it too."],
+      ["--nonla-bg", "background", "Page background. Chat sits on this."],
       ["--nonla-text-main", "foreground", "Primary text, markdown body, and headings."],
       ["--nonla-text-secondary", "muted-foreground", "Secondary text: descriptions and inactive controls."],
       ["--nonla-text-tertiary", "tertiary-foreground", "Third step: input steppers and quieter icons. The shimmer uses it."],
@@ -47,7 +47,7 @@ const GROUPS = [
     items: [
       ["--nonla-sidebar", "sidebar", "Sidebar, and the fill of a focused field."],
       ["--nonla-surface", "card", "Cards, menus, modal, drawer, and popover."],
-      ["--nonla-bar", "bar", "A solid bar. The desktop window title uses it. Toolbars and other strips can too."],
+      ["--nonla-bar", "bar", "A solid bar. Toolbars and other strips can use it."],
       ["--nonla-fill", "muted", "Soft wash on a card: chips, skeleton, filled inputs, inline code, table headers, tool-call input."],
       ["--nonla-fill-strong", "muted-strong", "Stronger wash: hover on a chip or filled input, the user bubble, tool results."],
     ],
@@ -58,7 +58,7 @@ const GROUPS = [
     items: [
       ["--nonla-border", "border", "The outline around a control, card, menu, or input."],
       ["--nonla-border-secondary", "border-secondary", "The faint border inside. Table rows, card sections, and chat dividers."],
-      ["--nonla-ink-hover", "ink-hover", "Hover wash. Sidebar rows, menu and select rows, buttons, and the desktop header."],
+      ["--nonla-ink-hover", "ink-hover", "Hover wash. Sidebar rows, menu and select rows, and buttons."],
       ["--nonla-ink-active", "ink-active", "Pressed or selected wash. Current sidebar item, selected select row, open menu row, and a pressed button."],
       ["--nonla-input", "input", "Rest stroke of a field."],
       ["--nonla-input-focus", "input-focus", "Stroke when a field is focused."],
@@ -136,7 +136,7 @@ export default function Demo() {
   const [tick, setTick] = useState(0);
 
   useEffect(() => {
-    const root = document.documentElement;
+    const root = document.querySelector(".nonla-ui") ?? document.documentElement;
     const watch = new MutationObserver(() => setTick((value) => value + 1));
     watch.observe(root, { attributes: true, attributeFilter: ["class"] });
     return () => watch.disconnect();

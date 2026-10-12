@@ -15,7 +15,6 @@ Published: https://devnonla.github.io/devnonla-ui/
 | `/` | Redirects to `/introduction` |
 | `/introduction` | Get started |
 | `/theming` | Theme playground |
-| `/desktop` | Desktop window dialog |
 | `/components/button` | Button |
 | `/chat/agent-panel` | AgentPanel (full height) |
 

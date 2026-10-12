@@ -12,7 +12,8 @@ icon: "people-community-24"
 Empty thread inside AgentPanel and AgentChatbox: name, description, starter prompts. Import `ChatWelcome` only for a custom layout.
 
 ```live-react
-import { ChatWelcome, message } from "devnonla-ui";
+import { message } from "devnonla-ui";
+import { ChatWelcome } from "devnonla-ui/chat";
 
 export default function Demo() {
   return (

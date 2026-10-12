@@ -12,7 +12,7 @@ icon: "lightbulb-filament-24"
 Collapsible reasoning. AgentPanel and AgentChatbox show `ChatThinking` inside the agent message while the model is reasoning, and after it finishes.
 
 ```live-react
-import { ChatThinking } from "devnonla-ui";
+import { ChatThinking } from "devnonla-ui/chat";
 
 export default function Demo() {
   return (

@@ -13,7 +13,8 @@ Composer at the bottom of AgentPanel and AgentChatbox. Import `ChatInput` when y
 
 ```live-react
 import { useState } from "react";
-import { ChatInput, message } from "devnonla-ui";
+import { message } from "devnonla-ui";
+import { ChatInput } from "devnonla-ui/chat";
 
 export default function Demo() {
   const [generating, setGenerating] = useState(false);

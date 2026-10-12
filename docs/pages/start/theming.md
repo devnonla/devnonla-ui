@@ -12,6 +12,8 @@ wide: true
 
 Font, body size, corner radius, and control height. Colors are on [Colors](/colors).
 
+Theme Config lives on the `.nonla-ui` host that `App` renders — not on `:root` or `<html>`. Override `--nonla-*` there (or on a child) so the rest of the consumer page stays untouched.
+
 **Config** is the font, `--nonla-base-text-size`, `--nonla-radius`, and the three control heights. Small and large radius follow the radius knob. Light does not change these. `text-base` follows the body size, 15px, leading 1.6. `text-md` is 16px. `text-lg` is 18px. The other `text-*` steps stay on Tailwind’s default scale.
 
 ```live-react
@@ -106,7 +108,7 @@ export default function Demo() {
   const [tick, setTick] = useState(0);
 
   useEffect(() => {
-    const root = document.documentElement;
+    const root = document.querySelector(".nonla-ui") ?? document.documentElement;
     const watch = new MutationObserver(() => setTick((value) => value + 1));
     watch.observe(root, { attributes: true, attributeFilter: ["class"] });
     return () => watch.disconnect();

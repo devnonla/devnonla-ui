@@ -14,7 +14,7 @@ Click từng block để sửa. Diff so bản gốc với bản hiện tại. B�
 
 ```live-react
 import { useState } from "react";
-import { MarkdownEditor } from "devnonla-ui";
+import { MarkdownEditor } from "devnonla-ui/markdown";
 
 const original = "# Notes\n\nPreview renders the document.\n\n- Lists stay markdown\n- Code blocks open as source";
 

@@ -12,7 +12,7 @@ icon: "person-24"
 One user bubble. AgentPanel and AgentChatbox render `ChatUserMessage` for `role: "user"`. Long text expands and collapses.
 
 ```live-react
-import { ChatUserMessage } from "devnonla-ui";
+import { ChatUserMessage } from "devnonla-ui/chat";
 
 export default function Demo() {
   return (

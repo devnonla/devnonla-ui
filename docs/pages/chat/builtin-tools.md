@@ -13,7 +13,7 @@ className: "bg-background"
 Specialized cards for Nonla built-ins. AgentPanel and AgentChatbox check your `toolUis` first, then these, then [ChatToolCall](/chat/tool). Each card below is running, finished, then failed.
 
 ```live-react
-import { BackgroundTaskToolUI, CallAgentToolUI, GetCurrentTimeToolUI, ReadSkillToolUI, RunJsToolUI, WebFetchToolUI } from "devnonla-ui";
+import { BackgroundTaskToolUI, CallAgentToolUI, GetCurrentTimeToolUI, ReadSkillToolUI, RunJsToolUI, WebFetchToolUI } from "devnonla-ui/chat";
 
 const assistant = { assistantLabel: "Nova", showAvatar: false };
 

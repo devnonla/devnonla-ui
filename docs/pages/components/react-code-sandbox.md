@@ -14,7 +14,7 @@ Chạy một component React viết dạng chuỗi trong iframe sandbox. Không 
 Mặc định có khung: icon, nhãn Sandbox, Preview và Code nằm trên cùng một thanh. `showHeader={false}` bỏ khung, kết quả nằm trong bài.
 
 ```tsx
-import { ReactCodeSandbox } from "devnonla-ui";
+import { ReactCodeSandbox } from "devnonla-ui/markdown";
 
 <ReactCodeSandbox src="/sandbox.html" code={source} />
 <ReactCodeSandbox src="/sandbox.html" code={source} showHeader={false} />
@@ -23,7 +23,7 @@ import { ReactCodeSandbox } from "devnonla-ui";
 ## Hai kiểu
 
 ```live-react
-import { ReactCodeSandbox } from "devnonla-ui";
+import { ReactCodeSandbox } from "devnonla-ui/markdown";
 
 const source = `import { useState } from "react";
 import { Button } from "devnonla-ui";

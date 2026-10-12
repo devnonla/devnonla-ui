@@ -20,7 +20,7 @@ Two surfaces, then the pieces they already compose. Import a piece only when you
 Same screen either way: welcome when empty, then the message list, then the composer.
 
 ```tsx
-import { AgentChatbox, AgentPanel } from "devnonla-ui";
+import { AgentChatbox, AgentPanel } from "devnonla-ui/chat";
 
 <AgentPanel endpoint="/api/agents/abc/assistant/stream" title="Nova" toolbar={<ModelPicker />} />
 

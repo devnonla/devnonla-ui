@@ -16,7 +16,8 @@ Xem markdown đã viết. Chỉ đọc: heading, list, bảng, code, mermaid, v�
 Dài như một blog, đủ các loại block.
 
 ```live-react
-import { MarkdownViewer, Tag } from "devnonla-ui";
+import { Tag } from "devnonla-ui";
+import { MarkdownViewer } from "devnonla-ui/markdown";
 
 const sample = [
   "# Bảy ngày ở Đà Lạt",
