@@ -4,10 +4,10 @@ import remarkGfm from "remark-gfm";
 import { Checkbox } from "../checkbox/Checkbox";
 import { CodeBlock } from "../codeblock/CodeBlock";
 import { cn } from "../lib/cn";
+import { headingClass, markdownScaleStyle } from "../lib/markdownScale";
 import { type InlineEdit, type MarkdownBlock, parseMarkdownDoc, readFence, readInlineEdit } from "./blocks";
 import { MarkdownTable } from "./MarkdownTable";
 import { MermaidBlock } from "./MermaidBlock";
-import { headingClass, markdownScaleStyle } from "./markdownScale";
 import { ReactCode } from "./ReactCode";
 import { ReactCodeSandbox } from "./ReactCodeSandbox";
 

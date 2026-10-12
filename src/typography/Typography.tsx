@@ -1,6 +1,6 @@
 import { type AnchorHTMLAttributes, type CSSProperties, createElement, type HTMLAttributes, type ReactNode } from "react";
 import { cn } from "../lib/cn";
-import { headingClass, markdownBodyClass, markdownParagraphClass, markdownScaleStyle, pageTitleClass } from "../markdown-editor/markdownScale";
+import { headingClass, markdownBodyClass, markdownParagraphClass, markdownScaleStyle, pageTitleClass } from "../lib/markdownScale";
 
 export type TypographyType = "secondary" | "success" | "warning" | "danger";
 
