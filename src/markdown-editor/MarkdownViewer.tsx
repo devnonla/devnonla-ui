@@ -1,4 +1,4 @@
-import { type CSSProperties, type ReactNode, useMemo } from "react";
+import { type ComponentType, type CSSProperties, createContext, type ReactNode, useContext, useMemo } from "react";
 import ReactMarkdown, { type Components } from "react-markdown";
 import remarkGfm from "remark-gfm";
 import { Checkbox } from "../checkbox/Checkbox";
@@ -176,14 +176,54 @@ function fenceClosed(body: string): boolean {
   return /^(?:`{3,}|~{3,})$/.test(last);
 }
 
+/** Props for a component registered on a fence language. */
+export type MarkdownFenceProps = {
+  /** Fence body, without the opening and closing lines. */
+  code: string;
+  /** Fence language, lowercased. */
+  lang: string;
+  /** True while the parent viewer is still receiving the document. */
+  streaming: boolean;
+  /** True once the closing fence line has arrived. */
+  closed: boolean;
+};
+
+export type MarkdownFenceComponent = ComponentType<MarkdownFenceProps>;
+
+/** Fence language → component. Keys are languages such as `step`, `subagent`, and `mindmap`. */
+export type MarkdownComponents = Record<string, MarkdownFenceComponent>;
+
+const MarkdownComponentsContext = createContext<MarkdownComponents | undefined>(undefined);
+
+/** Shares a fence component map with every `ChatMarkdown` under this tree. */
+export function MarkdownComponentsProvider({ components, children }: { components?: MarkdownComponents; children: ReactNode }) {
+  return <MarkdownComponentsContext.Provider value={components}>{children}</MarkdownComponentsContext.Provider>;
+}
+
+export function useMarkdownComponents(): MarkdownComponents | undefined {
+  return useContext(MarkdownComponentsContext);
+}
+
+function fenceComponent(components: MarkdownComponents | undefined, lang: string): MarkdownFenceComponent | undefined {
+  if (!components || !lang) return undefined;
+  const direct = components[lang];
+  if (direct) return direct;
+  const lower = lang.toLowerCase();
+  for (const key of Object.keys(components)) {
+    if (key.toLowerCase() === lower) return components[key];
+  }
+  return undefined;
+}
+
 type LiveReactOptions = {
   trustedModules?: Record<string, unknown>;
   sandboxSrc?: string;
   showHeader?: boolean;
   showCode?: boolean;
+  components?: MarkdownComponents;
 };
 
-export function BlockBody({ block, streaming, trustedModules, sandboxSrc, showHeader, showCode }: { block: MarkdownBlock; streaming?: boolean } & LiveReactOptions): ReactNode {
+export function BlockBody({ block, streaming, trustedModules, sandboxSrc, showHeader, showCode, components }: { block: MarkdownBlock; streaming?: boolean } & LiveReactOptions): ReactNode {
   if (block.kind === "mermaid") {
     const fence = readFence(block.body);
     const code = fence?.code ?? block.body;
@@ -193,10 +233,16 @@ export function BlockBody({ block, streaming, trustedModules, sandboxSrc, showHe
   if (block.kind === "code") {
     const fence = readFence(block.body);
     if (!fence) return <CodeBlock code={block.body} className="my-0" />;
+    const closed = fenceClosed(block.body);
     // An unclosed fence is still being written, so it never runs.
-    if (fence.lang === "live-react" && fenceClosed(block.body)) {
+    if (fence.lang === "live-react" && closed) {
       if (sandboxSrc) return <ReactCodeSandbox key={fence.code} code={fence.code} src={sandboxSrc} showHeader={showHeader} showCode={showCode} />;
       if (trustedModules) return <ReactCode code={fence.code} trustedModules={trustedModules} showHeader={showHeader} showCode={showCode} />;
+    }
+    const Custom = fence.lang === "live-react" ? undefined : fenceComponent(components, fence.lang);
+    if (Custom) {
+      if (streaming && !closed) return <CodeBlock code={fence.code} language={fence.lang} className="my-0" />;
+      return <Custom code={fence.code} lang={fence.lang} streaming={!!streaming} closed={closed} />;
     }
     return <CodeBlock code={fence.code} language={fence.lang || undefined} className="my-0" />;
   }
@@ -213,7 +259,7 @@ export function BlockBody({ block, streaming, trustedModules, sandboxSrc, showHe
 
 export type MarkdownViewerProps = {
   value?: string;
-  /** An open mermaid fence stays a code block until the stream closes it. */
+  /** An open mermaid or custom fence stays a code block until the stream closes it. */
   streaming?: boolean;
   placeholder?: string;
   className?: string;
@@ -234,10 +280,15 @@ export type MarkdownViewerProps = {
   showCode?: boolean;
   /** Overrides scale variables from `markdownScaleStyle`, such as heading size. */
   style?: CSSProperties;
+  /**
+   * Components for fenced blocks, keyed by language (`step`, `subagent`, `mindmap`).
+   * `mermaid` and `live-react` stay built in.
+   */
+  components?: MarkdownComponents;
 };
 
 /** Read-only markdown. Same blocks as the editor preview, without editing. */
-export function MarkdownViewer({ value = "", streaming = false, sandboxSrc, trustedModules, showHeader = true, showCode = true, placeholder, className, style }: MarkdownViewerProps) {
+export function MarkdownViewer({ value = "", streaming = false, sandboxSrc, trustedModules, showHeader = true, showCode = true, placeholder, className, style, components }: MarkdownViewerProps) {
   const doc = useMemo(() => parseMarkdownDoc(value), [value]);
   if (doc.blocks.length === 0) {
     return placeholder ? <p className={cn("m-0 text-sm text-quaternary-foreground", className)}>{placeholder}</p> : null;
@@ -251,7 +302,7 @@ export function MarkdownViewer({ value = "", streaming = false, sandboxSrc, trus
           data-md-block={block.kind}
           className={cn("outline-none", spaceBefore(block, doc.blocks[index - 1]))}
         >
-          <BlockBody block={block} streaming={streaming} trustedModules={trustedModules} sandboxSrc={sandboxSrc} showHeader={showHeader} showCode={showCode} />
+          <BlockBody block={block} streaming={streaming} trustedModules={trustedModules} sandboxSrc={sandboxSrc} showHeader={showHeader} showCode={showCode} components={components} />
         </div>
       ))}
     </div>
