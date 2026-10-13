@@ -137,7 +137,7 @@ export function ListItem({ view, children }: { view: Extract<InlineEdit, { kind:
   const ordinal = Number(/^(\d+)/.exec(view.marker)?.[1] ?? "1");
   const marker = "w-6 shrink-0 pt-0.5 text-(length:--md-body-size,var(--nonla-md-text-size,16px)) leading-(--md-p-leading,1.6)";
   return (
-    <div className="flex items-start gap-1.5 pl-(--md-item-pl,4px)" style={level > 0 ? { marginLeft: `calc(${level} * var(--md-nest, 1.25rem))` } : undefined}>
+    <div data-md-list="" className="flex items-start gap-1.5 pl-(--md-item-pl,4px)" style={level > 0 ? { marginLeft: `calc(${level} * var(--md-nest, 1.25rem))` } : undefined}>
       {view.task ? (
         <span className={cn(marker, "pointer-events-none inline-flex justify-center")}>
           <span className="mt-[calc((1lh-1rem)/2)] inline-flex">

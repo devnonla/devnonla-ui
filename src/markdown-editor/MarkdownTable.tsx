@@ -23,7 +23,7 @@ function tableToMarkdown(table: HTMLTableElement): string {
 }
 
 const tableClass =
-  "w-max min-w-full border-separate border-spacing-0 text-base [&_th]:whitespace-normal [&_td]:whitespace-normal [&_th]:wrap-normal [&_td]:wrap-normal [&_th]:border-b [&_th]:border-border-secondary [&_th]:px-4 [&_th]:py-1.5 [&_th]:text-left [&_th]:align-top [&_th]:font-medium [&_td]:border-b [&_td]:border-border-secondary [&_td]:px-4 [&_td]:py-1.5 [&_td]:align-top";
+  "w-max min-w-full border-separate border-spacing-0 text-sm [&_th]:whitespace-normal [&_td]:whitespace-normal [&_th]:wrap-normal [&_td]:wrap-normal [&_th]:border-b [&_th]:border-border-secondary [&_th]:px-4 [&_th]:py-1.5 [&_th]:text-left [&_th]:align-top [&_th]:font-medium [&_td]:border-b [&_td]:border-border-secondary [&_td]:px-4 [&_td]:py-1.5 [&_td]:align-top";
 
 export function MarkdownTable({ children }: { children: ReactNode }) {
   const tableRef = useRef<HTMLTableElement>(null);

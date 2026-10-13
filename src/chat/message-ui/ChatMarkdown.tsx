@@ -8,8 +8,10 @@ export type ChatMarkdownProps = {
   components?: MarkdownComponents;
 };
 
-/** Reply headings are `text-lg` at the strong weight. Body stays `text-md`. Strong is 500. Tables stay `text-base`. */
+/** Reply headings are `text-lg` at the strong weight. Body is `text-base`. Strong is 500. Tables are `text-sm`. */
 const chatHeadingScale = {
+  "--md-body-size": "var(--nonla-base-text-size)",
+  "--md-body-leading": "calc(var(--nonla-base-text-size) * 1.6)",
   "--md-h1-size": "var(--text-lg)",
   "--md-h2-size": "var(--text-lg)",
   "--md-h3-size": "var(--text-lg)",
@@ -34,11 +36,12 @@ const chatHeadingScale = {
 /**
  * Headings use the paragraph box, so `#` does not keep the article margin.
  * The first and last line drop that padding so the row padding is the only gap.
+ * List rows keep their own marker padding, so this box skips `[data-md-list]`.
  */
 const chatEdgeClass = [
   "[&_:is(h1,h2,h3,h4,h5,h6)]:my-(--md-p-my,1px)! [&_:is(h1,h2,h3,h4,h5,h6)]:py-(--md-p-py,4px)!",
-  "[&_[data-md-block]:not(:first-child)_p:first-child]:mt-(--md-p-my,1px)! [&_[data-md-block]:not(:first-child)_p:first-child]:pt-(--md-p-py,4px)!",
-  "[&_[data-md-block]:first-child_:is(p,h1,h2,h3,h4,h5,h6,ul,ol)]:mt-0! [&_[data-md-block]:first-child_:is(p,h1,h2,h3,h4,h5,h6)]:pt-0! [&_[data-md-block]:last-child_:is(p,h1,h2,h3,h4,h5,h6,ul,ol)]:mb-0! [&_[data-md-block]:last-child_:is(p,h1,h2,h3,h4,h5,h6)]:pb-0!",
+  "[&_[data-md-block]:not(:first-child):not(:has([data-md-list]))_p:first-child]:mt-(--md-p-my,1px)! [&_[data-md-block]:not(:first-child):not(:has([data-md-list]))_p:first-child]:pt-(--md-p-py,4px)!",
+  "[&_[data-md-block]:first-child:not(:has([data-md-list]))_:is(p,h1,h2,h3,h4,h5,h6,ul,ol)]:mt-0! [&_[data-md-block]:first-child:not(:has([data-md-list]))_:is(p,h1,h2,h3,h4,h5,h6)]:pt-0! [&_[data-md-block]:last-child:not(:has([data-md-list]))_:is(p,h1,h2,h3,h4,h5,h6,ul,ol)]:mb-0! [&_[data-md-block]:last-child:not(:has([data-md-list]))_:is(p,h1,h2,h3,h4,h5,h6)]:pb-0!",
 ].join(" ");
 
 /** Agent markdown. Headings are `text-lg` at the strong weight. */
