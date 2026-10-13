@@ -51,7 +51,7 @@ function TaskRow({
     <div className="flex items-center gap-1 px-1.5 py-0.5">
       <button type="button" onClick={onLogs} title="Logs" aria-label={`Logs ${formatToolName(task.toolName)}`} className="flex min-w-0 flex-1 cursor-pointer items-center gap-2 rounded-md px-1 py-[3px] text-left transition-colors hover:bg-muted">
         <Spin variant="agent" size="small" className="shrink-0" />
-        <span className="min-w-0 flex-1 truncate text-sm font-medium text-foreground">{formatToolName(task.toolName)}</span>
+        <span className="min-w-0 flex-1 truncate text-sm font-normal text-foreground">{formatToolName(task.toolName)}</span>
         <span className="shrink-0 text-sm tabular-nums text-tertiary-foreground">{formatBgElapsed(task.startedAt, now)}</span>
       </button>
       <Popconfirm title={`Stop ${formatToolName(task.toolName)}?`} okText="Stop" okType="danger" onConfirm={onCancel} getPopupContainer={() => document.body}>
@@ -100,50 +100,48 @@ export function BackgroundTasksBar({ children, tasks = [], cancellingIds, onCanc
       setListH(0);
       return;
     }
-    const update = () => setListH(el.scrollHeight);
+    const update = () => {
+      const next = el.offsetHeight;
+      setListH((h) => (h === next ? h : next));
+    };
     update();
     const ro = new ResizeObserver(update);
     ro.observe(el);
     return () => ro.disconnect();
-  }, [tasks.length, open]);
+  }, [tasks.length]);
 
   const label = tasks.length === 1 ? "1 background task" : `${tasks.length} background tasks`;
-  const reserve = tasks.length > 0 ? 28 + (open ? listH : 0) : 0;
 
   return (
     <>
-      <div className="pointer-events-none shrink-0 overflow-hidden transition-[height] duration-200 ease-out" style={{ height: reserve }} aria-hidden />
-      <div className="relative">
-        {children}
+      {tasks.length > 0 ? (
+        <div className="mx-8 rounded-t-lg bg-muted-strong shadow-[inset_0_1px_0_0_var(--nonla-border),inset_1px_0_0_0_var(--nonla-border),inset_-1px_0_0_0_var(--nonla-border)] [.light:not(.dark)_&]:bg-background [.light_.nonla-ui:not(.dark)_&]:bg-background">
+          <div className={cn("flex h-7.5 items-center gap-1 border-b px-1", open ? "border-border-secondary" : "border-transparent")}>
+            <button type="button" onClick={() => setOpen((v) => !v)} className="flex min-w-0 flex-1 cursor-pointer font-normal items-center gap-1 rounded-md px-1.5 py-1 text-sm text-muted-foreground/90 transition-colors hover:text-foreground" aria-expanded={open} aria-label={label}>
+              <Icon name="arrow-down" size={13} className={cn("shrink-0 transition-transform duration-200 ease-out", !open && "-rotate-90")} />
+              <span className="truncate">{label}</span>
+            </button>
+          </div>
 
-        {tasks.length > 0 ? (
-          <div className="absolute inset-x-6 bottom-[calc(100%)] z-20 overflow-hidden rounded-t-lg border-x border-t border-border">
-            <div className={cn("flex h-7.5 items-center gap-1 px-1", open && "border-b border-border-secondary")}>
-              <button type="button" onClick={() => setOpen((v) => !v)} className="flex min-w-0 flex-1 cursor-pointer font-medium items-center gap-1 rounded-md px-1.5 py-1 text-sm text-muted-foreground/90 transition-colors hover:text-foreground" aria-expanded={open} aria-label={label}>
-                <Icon name="arrow-down" size={13} className={cn("shrink-0 transition-transform duration-150", !open && "-rotate-90")} />
-                <span className="truncate">{label}</span>
-              </button>
-            </div>
-
-            <div className={cn("overflow-hidden transition-[max-height] duration-200 ease-out", open ? "max-h-55" : "max-h-0")}>
-              <div ref={listInnerRef} className="max-h-55 overflow-y-auto py-0.5">
-                {tasks.map((task) => (
-                  <TaskRow
-                    key={task.taskId}
-                    task={task}
-                    now={now}
-                    cancelling={cancellingIds?.has(task.taskId) ?? false}
-                    onCancel={() => {
-                      void onCancel?.(task.taskId);
-                    }}
-                    onLogs={() => setLogsTaskId(task.taskId)}
-                  />
-                ))}
-              </div>
+          <div className="overflow-hidden transition-[height] duration-200 ease-out" style={{ height: open ? listH : 0 }}>
+            <div ref={listInnerRef} className="max-h-55 overflow-y-auto py-0.5">
+              {tasks.map((task) => (
+                <TaskRow
+                  key={task.taskId}
+                  task={task}
+                  now={now}
+                  cancelling={cancellingIds?.has(task.taskId) ?? false}
+                  onCancel={() => {
+                    void onCancel?.(task.taskId);
+                  }}
+                  onLogs={() => setLogsTaskId(task.taskId)}
+                />
+              ))}
             </div>
           </div>
-        ) : null}
-      </div>
+        </div>
+      ) : null}
+      {children}
 
       <TaskLogsModal task={logsTask} open={Boolean(logsTask)} onClose={() => setLogsTaskId(null)} />
     </>
