@@ -1,9 +1,11 @@
 import type { CSSProperties } from "react";
-import { MarkdownViewer } from "../../markdown-editor/MarkdownViewer";
+import { type MarkdownComponents, MarkdownViewer, useMarkdownComponents } from "../../markdown-editor/MarkdownViewer";
 
 export type ChatMarkdownProps = {
   content: string;
   streaming?: boolean;
+  /** Fence language → component, such as `step`, `subagent`, or `mindmap`. */
+  components?: MarkdownComponents;
 };
 
 /** Reply headings are `text-lg` at the strong weight. Body stays `text-md`. Strong is 500. Tables stay `text-base`. */
@@ -40,6 +42,7 @@ const chatEdgeClass = [
 ].join(" ");
 
 /** Agent markdown. Headings are `text-lg` at the strong weight. */
-export function ChatMarkdown({ content, streaming = false }: ChatMarkdownProps) {
-  return <MarkdownViewer value={content} streaming={streaming} className={chatEdgeClass} style={chatHeadingScale} />;
+export function ChatMarkdown({ content, streaming = false, components }: ChatMarkdownProps) {
+  const inherited = useMarkdownComponents();
+  return <MarkdownViewer value={content} streaming={streaming} className={chatEdgeClass} style={chatHeadingScale} components={components ?? inherited} />;
 }

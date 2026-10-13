@@ -1,5 +1,6 @@
 import { type ReactNode, useEffect, useLayoutEffect, useState } from "react";
 import { cn } from "../lib/cn";
+import { type MarkdownComponents, MarkdownComponentsProvider } from "../markdown-editor/MarkdownViewer";
 import { OverlayScroll, type OverlayScrollVisibility } from "../scroll/OverlayScroll";
 import { AgentMessageList, activityStatus, useStickToBottom } from "./chatMessageList";
 import type { AgentMessage, AgentPanelEndpoint, AgentToolHook } from "./common/types";
@@ -27,6 +28,8 @@ export type AgentPanelProps = {
   toolbar?: ReactNode;
   /** Extra tool cards keyed by stream `toolName`. Checked before builtins. */
   toolUis?: AgentToolUI[];
+  /** Fence language → component for assistant markdown (`step`, `subagent`, `mindmap`). */
+  components?: MarkdownComponents;
   /** Tool lifecycle hooks, matched by `name` like `toolUis`. Omit `name` to hear every tool. */
   toolHooks?: AgentToolHook[];
   accessory?: ReactNode;
@@ -51,6 +54,7 @@ export function AgentPanel({
   initialMessages,
   toolbar,
   toolUis,
+  components,
   toolHooks,
   accessory,
   emptyState,
@@ -95,25 +99,27 @@ export function AgentPanel({
   };
 
   return (
-    <div className={cn("nonla-agent-panel relative flex h-full min-h-0 flex-col overflow-hidden bg-transparent", className)}>
-      <OverlayScroll visibility={scrollbar} scrollRef={scrollRef} onScroll={onScroll} className="flex-1 min-h-0 min-w-0" innerClassName={messages.length === 0 ? "flex flex-col" : undefined}>
-        <div data-chat-scroll-content className={`max-w-200 mx-auto min-w-0 w-full ${messages.length === 0 ? "flex flex-1 flex-col" : "px-2.5 pt-4 pb-28"}`}>
-          {messages.length === 0 ? (
-            (emptyState ?? (
-              <ChatWelcome name={welcomeName} description={description} avatar={avatar} starters={starters} onStarter={sendMessage} disabled={generating} />
-            ))
-          ) : (
-            <AgentMessageList messages={messages} generating={generating} toolUis={toolUis} showFooter={showFooter} status={status} />
-          )}
-        </div>
-      </OverlayScroll>
+    <MarkdownComponentsProvider components={components}>
+      <div className={cn("nonla-agent-panel relative flex h-full min-h-0 flex-col overflow-hidden bg-transparent", className)}>
+        <OverlayScroll visibility={scrollbar} scrollRef={scrollRef} onScroll={onScroll} className="flex-1 min-h-0 min-w-0" innerClassName={messages.length === 0 ? "flex flex-col" : undefined}>
+          <div data-chat-scroll-content className={`max-w-200 mx-auto min-w-0 w-full ${messages.length === 0 ? "flex flex-1 flex-col" : "px-2.5 pt-4 pb-28"}`}>
+            {messages.length === 0 ? (
+              (emptyState ?? (
+                <ChatWelcome name={welcomeName} description={description} avatar={avatar} starters={starters} onStarter={sendMessage} disabled={generating} />
+              ))
+            ) : (
+              <AgentMessageList messages={messages} generating={generating} toolUis={toolUis} showFooter={showFooter} status={status} />
+            )}
+          </div>
+        </OverlayScroll>
 
-      <div className="relative shrink-0">
-        {accessory}
-        <div className="mx-auto w-full max-w-200">
-          <ChatInput generating={generating} placeholder={placeholder} onSend={sendMessage} onCancel={cancel} onClear={handleNewChat} toolbar={toolbar} focusSignal={String(epoch)} enableTypeToFocus />
+        <div className="relative shrink-0">
+          {accessory}
+          <div className="mx-auto w-full max-w-200">
+            <ChatInput generating={generating} placeholder={placeholder} onSend={sendMessage} onCancel={cancel} onClear={handleNewChat} toolbar={toolbar} focusSignal={String(epoch)} enableTypeToFocus />
+          </div>
         </div>
       </div>
-    </div>
+    </MarkdownComponentsProvider>
   );
 }

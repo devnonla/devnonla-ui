@@ -1,3 +1,4 @@
+export type { MarkdownComponents } from "../markdown-editor/MarkdownViewer";
 export type { AgentChatboxProps } from "./AgentChatbox";
 export { AgentChatbox } from "./AgentChatbox";
 export type { AgentPanelProps } from "./AgentPanel";
