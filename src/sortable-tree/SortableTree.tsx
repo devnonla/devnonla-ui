@@ -47,18 +47,34 @@ export type SortableTreeProps<T = unknown> = {
 
 const DROP_ANIMATION = { duration: 180, easing: "cubic-bezier(0.16, 1, 0.3, 1)" };
 
-/** Keep the floating preview inside the window. Uses the source rect so the overlay is not clamped twice. */
-const clampOverlayToWindow: Modifier = ({ transform, activeNodeRect, windowRect }) => {
+type OverlayOrigin = { key: string; left: number; top: number; width: number; height: number };
+
+/**
+ * The overlay is `position: fixed` at the rect from drag start, then translated.
+ * `activeNodeRect` keeps moving as the list scrolls, so clamping against it
+ * walks the preview off the pointer. Lock the origin for the whole drag.
+ */
+let overlayOrigin: OverlayOrigin | null = null;
+
+const clampOverlayToWindow: Modifier = ({ transform, active, activeNodeRect, windowRect }) => {
+  if (!active) {
+    overlayOrigin = null;
+    return transform;
+  }
   if (!activeNodeRect || !windowRect) return transform;
+  const key = String(active.id);
+  if (!overlayOrigin || overlayOrigin.key !== key) {
+    overlayOrigin = { key, left: activeNodeRect.left, top: activeNodeRect.top, width: activeNodeRect.width, height: activeNodeRect.height };
+  }
   const next = { ...transform };
-  const left = activeNodeRect.left + transform.x;
-  const top = activeNodeRect.top + transform.y;
-  const maxLeft = windowRect.left + windowRect.width - activeNodeRect.width;
-  const maxTop = windowRect.top + windowRect.height - activeNodeRect.height;
-  if (left < windowRect.left) next.x = windowRect.left - activeNodeRect.left;
-  else if (left > maxLeft) next.x = maxLeft - activeNodeRect.left;
-  if (top < windowRect.top) next.y = windowRect.top - activeNodeRect.top;
-  else if (top > maxTop) next.y = maxTop - activeNodeRect.top;
+  const left = overlayOrigin.left + transform.x;
+  const top = overlayOrigin.top + transform.y;
+  const maxLeft = windowRect.left + windowRect.width - overlayOrigin.width;
+  const maxTop = windowRect.top + windowRect.height - overlayOrigin.height;
+  if (left < windowRect.left) next.x = windowRect.left - overlayOrigin.left;
+  else if (left > maxLeft) next.x = maxLeft - overlayOrigin.left;
+  if (top < windowRect.top) next.y = windowRect.top - overlayOrigin.top;
+  else if (top > maxTop) next.y = maxTop - overlayOrigin.top;
   return next;
 };
 
@@ -87,10 +103,9 @@ function faceRect(root: HTMLElement | null, id: string): DOMRect | null {
   return node instanceof HTMLElement ? node.getBoundingClientRect() : null;
 }
 
-/**
- * The seam between two parents is only a couple of pixels, and it falls on the last child.
- * A pointer in the lower half of that child — or in the seam just under it — is aiming at the next parent.
- */
+/** Only the last few pixels of a trailing child belong to the next parent. The rest of the row stays with that child. */
+const PARENT_SEAM = 6;
+
 function gapTarget<T>(items: SortableTreeItem<T>[], hitId: string, pointerY: number | null, root: HTMLElement | null, blocked: Set<string>): string {
   if (pointerY == null) return hitId;
   const flat = flatten(items);
@@ -106,8 +121,26 @@ function gapTarget<T>(items: SortableTreeItem<T>[], hitId: string, pointerY: num
   const following = flat[scan];
   if (!following || following.depth >= hit.depth || blocked.has(following.id)) return hitId;
   const rect = faceRect(root, hitId);
-  if (!rect || pointerY < rect.top + rect.height / 2) return hitId;
+  if (!rect || pointerY < rect.bottom - PARENT_SEAM) return hitId;
   return following.id;
+}
+
+/** Distance from the pointer. `closestCenter` measures the overlay rect, which already includes the drag delta, so it drifts off the cursor. */
+function closestToPointer(containers: Parameters<CollisionDetection>[0]["droppableContainers"], rects: Parameters<CollisionDetection>[0]["droppableRects"], pointer: { x: number; y: number }): Collision | undefined {
+  let best: Collision | undefined;
+  let bestDistance = Number.POSITIVE_INFINITY;
+  for (const container of containers) {
+    const rect = rects.get(container.id);
+    if (!rect) continue;
+    const dx = rect.left + rect.width / 2 - pointer.x;
+    const dy = rect.top + rect.height / 2 - pointer.y;
+    const distance = dx * dx + dy * dy;
+    if (distance < bestDistance) {
+      bestDistance = distance;
+      best = { id: container.id };
+    }
+  }
+  return best;
 }
 
 function smallestHit(hits: Collision[], rects: Parameters<CollisionDetection>[0]["droppableRects"]): Collision {
@@ -147,14 +180,14 @@ function collideTree<T>(args: Parameters<CollisionDetection>[0], items: Sortable
   const containers = args.droppableContainers.filter((container) => !blocked.has(String(container.id)));
   const scoped = { ...args, droppableContainers: containers };
   const inside = pointerWithin(scoped);
-  let hit = inside.length > 0 ? smallestHit(inside, args.droppableRects) : closestCenter(scoped)[0];
+  let hit = inside.length > 0 ? smallestHit(inside, args.droppableRects) : pointer ? closestToPointer(containers, args.droppableRects, pointer) : closestCenter(scoped)[0];
   if (!hit) return [];
 
   const activeId = String(args.active.id);
   if (isAncestor(items, activeId, String(hit.id)) && !pointerInside(faceRect(root, String(hit.id)), pointer)) {
     const parentId = parentIdOf(args.active.data.current);
     const siblings = containers.filter((container) => parentIdOf(container.data.current) === parentId);
-    const siblingHit = closestCenter({ ...scoped, droppableContainers: siblings })[0];
+    const siblingHit = pointer ? closestToPointer(siblings, args.droppableRects, pointer) : closestCenter({ ...scoped, droppableContainers: siblings })[0];
     if (siblingHit) hit = siblingHit;
   }
 
@@ -395,8 +428,12 @@ function OverlayBranch<T>({ item, renderItem }: { item: SortableTreeItem<T>; ren
   );
 }
 
-function DropLine({ edge }: { edge: "top" | "bottom" }) {
-  return <span aria-hidden className={cn("pointer-events-none absolute inset-x-1 z-10 h-0.5 rounded-full bg-foreground", edge === "top" ? "top-0" : "bottom-0")} />;
+/** Insertion edge, painted above the drag preview so the ghost cannot hide it. */
+function FloatingDropLine({ root, hint }: { root: HTMLElement | null; hint: DropHint }) {
+  const rect = faceRect(root, hint.overId);
+  if (!rect) return null;
+  const top = hint.edge === "top" ? rect.top : rect.bottom;
+  return <span aria-hidden className="pointer-events-none fixed z-1100 h-0.5 rounded-full bg-foreground" style={{ top: top - 1, left: rect.left + 6, width: Math.max(0, rect.width - 12) }} />;
 }
 
 function SortableNode<T>({
@@ -404,20 +441,19 @@ function SortableNode<T>({
   parentId,
   depth,
   renderItem,
-  hint,
+  sorting,
 }: {
   item: SortableTreeItem<T>;
   parentId: string | null;
   depth: number;
   renderItem?: SortableTreeProps<T>["renderItem"];
-  hint: DropHint | null;
+  sorting: boolean;
 }) {
   const { attributes, listeners, setActivatorNodeRef, setNodeRef, transform, transition, isDragging } = useSortable({
     id: item.id,
     data: { parentId },
     disabled: item.disabled ? { draggable: true } : false,
   });
-  const edge = hint?.overId === item.id ? hint.edge : null;
 
   return (
     <div
@@ -426,11 +462,10 @@ function SortableNode<T>({
       className={cn("relative min-w-0 max-w-full", isDragging && "rounded-md bg-muted shadow-[inset_0_0_0_1px_var(--nonla-border)]")}
       style={{
         transform: verticalShift(transform),
-        transition,
+        transition: sorting ? undefined : transition,
         zIndex: isDragging ? 1 : undefined,
       }}
     >
-      {edge ? <DropLine edge={edge} /> : null}
       <div className={cn("min-w-0", isDragging && "invisible")}>
         <RowFace
           item={item}
@@ -447,7 +482,7 @@ function SortableNode<T>({
         />
         {item.children?.length ? (
           <div className="min-w-0 ps-4">
-            <SortableLevel items={item.children} parentId={item.id} depth={depth + 1} renderItem={renderItem} hint={hint} />
+            <SortableLevel items={item.children} parentId={item.id} depth={depth + 1} renderItem={renderItem} sorting={sorting} />
           </div>
         ) : null}
       </div>
@@ -460,19 +495,19 @@ function SortableLevel<T>({
   parentId,
   depth,
   renderItem,
-  hint,
+  sorting,
 }: {
   items: SortableTreeItem<T>[];
   parentId: string | null;
   depth: number;
   renderItem?: SortableTreeProps<T>["renderItem"];
-  hint: DropHint | null;
+  sorting: boolean;
 }) {
   return (
     <SortableContext items={items.map((item) => item.id)} strategy={verticalListSortingStrategy}>
       <div className="flex min-w-0 flex-col gap-0.5">
         {items.map((item) => (
-          <SortableNode key={item.id} item={item} parentId={parentId} depth={depth} renderItem={renderItem} hint={hint} />
+          <SortableNode key={item.id} item={item} parentId={parentId} depth={depth} renderItem={renderItem} sorting={sorting} />
         ))}
       </div>
     </SortableContext>
@@ -486,6 +521,7 @@ export function SortableTree<T = unknown>({ items, onChange, onDragEnd, renderIt
   const overRef = useRef<string | null>(null);
   const blockedRef = useRef<Set<string>>(new Set());
   const rootRef = useRef<HTMLDivElement>(null);
+  const pointerRef = useRef<{ x: number; y: number } | null>(null);
   const onChangeRef = useRef(onChange);
   const onDragEndRef = useRef(onDragEnd);
   const itemsRef = useRef(items);
@@ -499,7 +535,12 @@ export function SortableTree<T = unknown>({ items, onChange, onDragEnd, renderIt
     useSensor(KeyboardSensor, { coordinateGetter: sortableKeyboardCoordinates }),
   );
 
-  const collisionDetection: CollisionDetection = (args) => collideTree(args, itemsRef.current, blockedRef.current, rootRef.current);
+  const collisionDetection: CollisionDetection = (args) => {
+    if (args.pointerCoordinates) pointerRef.current = args.pointerCoordinates;
+    return collideTree(args, itemsRef.current, blockedRef.current, rootRef.current);
+  };
+
+  const cursorY = (event: DragMoveEvent | DragEndEvent) => pointerRef.current?.y ?? pointerY(event);
 
   const assignHint = (next: DropHint | null) => {
     const prev = hintRef.current;
@@ -524,6 +565,8 @@ export function SortableTree<T = unknown>({ items, onChange, onDragEnd, renderIt
 
   const onDragStart = (event: DragStartEvent) => {
     const id = String(event.active.id);
+    overlayOrigin = null;
+    pointerRef.current = null;
     setActiveId(id);
     overRef.current = null;
     const node = findItem(itemsRef.current, id);
@@ -533,27 +576,28 @@ export function SortableTree<T = unknown>({ items, onChange, onDragEnd, renderIt
   const onDragOver = (event: DragMoveEvent) => {
     const id = event.over ? String(event.over.id) : null;
     overRef.current = id;
-    showPlace(String(event.active.id), id, pointerY(event));
+    showPlace(String(event.active.id), id, cursorY(event));
   };
 
   const onDragMove = (event: DragMoveEvent) => {
     const id = event.over ? String(event.over.id) : overRef.current;
     if (!id) return;
     if (event.over) overRef.current = id;
-    showPlace(String(event.active.id), id, pointerY(event));
+    showPlace(String(event.active.id), id, cursorY(event));
   };
 
   const stopDrag = () => {
     setActiveId(null);
     overRef.current = null;
     blockedRef.current = new Set();
+    pointerRef.current = null;
     assignHint(null);
   };
 
   const handleDragEnd = (event: DragEndEvent) => {
     const activeDragId = String(event.active.id);
     const overId = event.over ? String(event.over.id) : overRef.current;
-    const place = placeFor(activeDragId, overId, pointerY(event));
+    const place = placeFor(activeDragId, overId, cursorY(event));
     stopDrag();
     if (!place || !overId) return;
     const current = itemsRef.current;
@@ -575,21 +619,24 @@ export function SortableTree<T = unknown>({ items, onChange, onDragEnd, renderIt
   return (
     <div ref={rootRef} className={cn("w-full min-w-0 max-w-full overscroll-x-none", className)} style={{ overflowX: "clip" }}>
       <DndContext sensors={sensors} collisionDetection={collisionDetection} onDragStart={onDragStart} onDragOver={onDragOver} onDragMove={onDragMove} onDragEnd={handleDragEnd} onDragCancel={onDragCancel}>
-        <SortableLevel items={items} parentId={null} depth={0} renderItem={renderItem} hint={hint} />
+        <SortableLevel items={items} parentId={null} depth={0} renderItem={renderItem} sorting={activeId != null} />
         {portalNode
           ? createPortal(
-              <DragOverlay
-                zIndex={1050}
-                dropAnimation={DROP_ANIMATION}
-                modifiers={[clampOverlayToWindow]}
-                className="pointer-events-none overflow-hidden rounded-md bg-card shadow-(--nonla-card-shadow)"
-              >
-                {activeItem ? (
-                  <div data-sortable-overlay="">
-                    <OverlayBranch item={activeItem} renderItem={renderItem} />
-                  </div>
-                ) : null}
-              </DragOverlay>,
+              <>
+                <DragOverlay
+                  zIndex={1050}
+                  dropAnimation={DROP_ANIMATION}
+                  modifiers={[clampOverlayToWindow]}
+                  className="pointer-events-none overflow-hidden rounded-md bg-card shadow-(--nonla-card-shadow)"
+                >
+                  {activeItem ? (
+                    <div data-sortable-overlay="">
+                      <OverlayBranch item={activeItem} renderItem={renderItem} />
+                    </div>
+                  ) : null}
+                </DragOverlay>
+                {hint ? <FloatingDropLine root={rootRef.current} hint={hint} /> : null}
+              </>,
               portalNode,
             )
           : null}
