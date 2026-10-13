@@ -2,11 +2,12 @@ import { type CSSProperties, type MouseEvent, type ReactNode, useCallback, useMe
 import { Icon } from "../icon/Icon";
 import { cn } from "../lib/cn";
 import { Segmented } from "../segmented/Segmented";
-import { appendTextBlock, cleanupDoc, joinMarkdownDoc, type MarkdownDoc, parseMarkdownDoc, readInlineEdit, splitListItem } from "./blocks";
+import { appendTextBlock, cleanupDoc, joinMarkdownDoc, type MarkdownBlock, type MarkdownDoc, parseMarkdownDoc, readInlineEdit, splitListItem } from "./blocks";
 import { diffMarkdown } from "./diff";
 import { MarkdownDiff, type MarkdownDiffLayout } from "./MarkdownDiff";
 import { MarkdownPreview } from "./MarkdownPreview";
 import { MarkdownSource } from "./MarkdownSource";
+import { isCustomFence, type MarkdownComponents } from "./MarkdownViewer";
 
 export type MarkdownEditorMode = "preview" | "edit" | "diff";
 export type { MarkdownDiffLayout };
@@ -32,7 +33,17 @@ export type MarkdownEditorProps = {
   modifiedLabel?: ReactNode;
   className?: string;
   style?: CSSProperties;
+  /**
+   * Components for fenced blocks, keyed by language (`step`, `subagent`, `mindmap`).
+   * Same map as `MarkdownViewer`. Those fences stay view only, like mermaid.
+   */
+  components?: MarkdownComponents;
 };
+
+function viewOnlyBlock(block: MarkdownBlock | undefined, components?: MarkdownComponents): boolean {
+  if (!block || block.kind === "mermaid") return true;
+  return block.kind === "code" && isCustomFence(block.body, components);
+}
 
 type EditSession = {
   index: number;
@@ -60,7 +71,7 @@ function useControllable<T>(value: T | undefined, defaultValue: T, onChange?: (v
  * Markdown editor in the style of Cursor's document editor.
  *
  * Preview renders the document. Click a heading, list item, or paragraph to edit that text in place.
- * Mermaid fences render as diagrams and stay view only.
+ * Mermaid fences and registered fence components render in place and stay view only.
  * Edit is the full-file text buffer. Diff compares `original` and `value` like Monaco.
  * `readOnly` locks editing and hides the mode switcher.
  * A finished document with no editor chrome uses `MarkdownViewer`.
@@ -83,6 +94,7 @@ export function MarkdownEditor({
   modifiedLabel = "Modified",
   className,
   style,
+  components,
 }: MarkdownEditorProps) {
   const [value, setValue] = useControllable(valueProp, defaultValue, onChange);
   const [mode, setMode] = useControllable(modeProp, defaultMode, onModeChange);
@@ -129,7 +141,7 @@ export function MarkdownEditor({
     if (readOnly || mode !== "preview") return false;
     const doc = currentDoc();
     const block = doc.blocks[index];
-    if (!block || block.kind === "mermaid") return false;
+    if (viewOnlyBlock(block, components)) return false;
     const next: EditSession = { index, doc };
     sessionRef.current = next;
     setSession(next);
@@ -203,7 +215,7 @@ export function MarkdownEditor({
     if (!current || current.index === index) return;
     if (event.target instanceof Element && event.target.closest("a, button, textarea, input")) return;
     const block = current.doc.blocks[index];
-    if (!block || block.kind === "mermaid") return;
+    if (viewOnlyBlock(block, components)) return;
     event.preventDefault();
     if (startEdit(index)) switching.current = true;
   };
@@ -292,6 +304,7 @@ export function MarkdownEditor({
             onEnterList={enterList}
             caret={live?.caret}
             onAppend={append}
+            components={components}
           />
         ) : null}
         {mode === "diff" && model ? <MarkdownDiff model={model} layout={layout} originalLabel={originalLabel} modifiedLabel={modifiedLabel} /> : null}

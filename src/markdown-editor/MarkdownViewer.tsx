@@ -204,6 +204,14 @@ export function useMarkdownComponents(): MarkdownComponents | undefined {
   return useContext(MarkdownComponentsContext);
 }
 
+/** True when this fence language has a component in the map. */
+export function isCustomFence(body: string, components?: MarkdownComponents): boolean {
+  if (!components) return false;
+  const lang = readFence(body)?.lang.toLowerCase();
+  if (!lang) return false;
+  return Object.keys(components).some((key) => key.toLowerCase() === lang);
+}
+
 function fenceComponent(components: MarkdownComponents | undefined, lang: string): MarkdownFenceComponent | undefined {
   if (!components || !lang) return undefined;
   const direct = components[lang];

@@ -2,7 +2,7 @@ import { type MouseEvent, useLayoutEffect, useRef } from "react";
 import { cn } from "../lib/cn";
 import { OverlayScroll } from "../scroll/OverlayScroll";
 import { type MarkdownDoc, readInlineEdit, writeInlineEdit } from "./blocks";
-import { BlockBody, headingClass, ListItem, markdownScaleStyle, spaceBefore } from "./MarkdownViewer";
+import { BlockBody, headingClass, isCustomFence, ListItem, type MarkdownComponents, markdownScaleStyle, spaceBefore } from "./MarkdownViewer";
 
 function BlockEditor({ value, mono, className, caret = "end", onChange, onBlur, onEnter }: { value: string; mono?: boolean; className?: string; caret?: "start" | "end"; onChange: (value: string) => void; onBlur: () => void; onEnter?: (before: string, after: string) => void }) {
   const ref = useRef<HTMLTextAreaElement>(null);
@@ -83,15 +83,17 @@ export type MarkdownPreviewProps = {
   /** Where the caret goes when an edit starts. */
   caret?: "start" | "end";
   onAppend: () => void;
+  /** Fence language → component. Same map as `MarkdownViewer`. */
+  components?: MarkdownComponents;
 };
 
-export function MarkdownPreview({ doc, editingIndex, readOnly, placeholder = "Write markdown…", onStartEdit, onEditMouseDown, onChangeBody, onBlurBlock, onEnterList, caret = "end", onAppend }: MarkdownPreviewProps) {
+export function MarkdownPreview({ doc, editingIndex, readOnly, placeholder = "Write markdown…", onStartEdit, onEditMouseDown, onChangeBody, onBlurBlock, onEnterList, caret = "end", onAppend, components }: MarkdownPreviewProps) {
   return (
     <OverlayScroll className="h-full bg-card">
       <div className="mx-auto flex w-full max-w-3xl flex-col px-8 py-6" style={markdownScaleStyle}>
         {doc.blocks.map((block, index) => {
           const editing = editingIndex === index;
-          const locked = block.kind === "mermaid" || readOnly;
+          const locked = block.kind === "mermaid" || (block.kind === "code" && isCustomFence(block.body, components)) || readOnly;
           const view = block.kind === "text" ? readInlineEdit(block.body) : null;
           const editor =
             view?.kind === "heading" ? (
@@ -112,7 +114,7 @@ export function MarkdownPreview({ doc, editingIndex, readOnly, placeholder = "Wr
                 data-md-block={block.kind}
                 className={cn("outline-none", gap)}
               >
-                <BlockBody block={block} />
+                <BlockBody block={block} components={components} />
               </div>
             );
           }
@@ -137,7 +139,7 @@ export function MarkdownPreview({ doc, editingIndex, readOnly, placeholder = "Wr
                 onStartEdit(index);
               }}
             >
-              {editing ? editor : <BlockBody block={block} />}
+              {editing ? editor : <BlockBody block={block} components={components} />}
             </div>
           );
         })}

@@ -5,6 +5,16 @@ All notable changes to this project will be documented in this file.
 The format is based on [Keep a Changelog](https://keepachangelog.com/en/1.1.0/),
 and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0.html).
 
+## [0.17.2] - 2026-10-13
+
+### Added
+
+- `MarkdownEditor` `components` uses the same fence map as `MarkdownViewer`. A fence with a registered component renders in place and stays view only, like mermaid.
+
+### Upgrade notes
+
+- Optional. Omit `components` and the editor behaves as before.
+
 ## [0.17.1] - 2026-10-13
 
 ### Added
@@ -460,6 +470,7 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 - Replace class `nonla-chat-shimmer` with `Shimmer` or `.nonla-shimmer`.
 - `resolveToolUI(toolName, extras?)` — second argument is optional; extra UIs are checked first.
 
+[0.17.2]: https://github.com/devnonla/devnonla-ui/compare/v0.17.1...v0.17.2
 [0.17.1]: https://github.com/devnonla/devnonla-ui/compare/v0.17.0...v0.17.1
 [0.17.0]: https://github.com/devnonla/devnonla-ui/compare/v0.16.1...v0.17.0
 [0.16.1]: https://github.com/devnonla/devnonla-ui/compare/v0.16.0...v0.16.1
