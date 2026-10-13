@@ -12,7 +12,7 @@ export type { AgentChatResumeRequest, AgentChatSendRequest, UseAgentChatStreamOp
 export { useAgentChatStream } from "./common/useAgentChatStream";
 export type { UseAgentStreamOptions } from "./common/useAgentStream";
 export { buildAgentHistory, useAgentStream } from "./common/useAgentStream";
-export { formatToolName, isCallAgentToolName, matchesToolHook, matchesToolName, parseCallAgentToolTargetId, prettyJson } from "./common/utils";
+export { formatToolName, matchesToolHook, matchesToolName, prettyJson } from "./common/utils";
 export type { ChatAgentMessageProps } from "./message-ui/ChatAgentMessage";
 export { ChatAgentMessage } from "./message-ui/ChatAgentMessage";
 export type { ChatErrorProps } from "./message-ui/ChatError";
@@ -31,7 +31,6 @@ export { ChatWelcome } from "./message-ui/ChatWelcome";
 export type { BackgroundTasksBarProps } from "./tool-ui/BackgroundTasksBar";
 export { BackgroundTasksBar } from "./tool-ui/BackgroundTasksBar";
 export { BackgroundTaskToolUI } from "./tool-ui/BackgroundTaskToolUI";
-export { CallAgentToolUI } from "./tool-ui/CallAgentToolUI";
 export type { ChatToolCallProps } from "./tool-ui/ChatToolCall";
 export { ChatToolCall } from "./tool-ui/ChatToolCall";
 export { GetCurrentTimeToolUI } from "./tool-ui/GetCurrentTimeToolUI";

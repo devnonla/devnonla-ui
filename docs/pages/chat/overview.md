@@ -50,7 +50,7 @@ These are the rows inside a surface. A custom layout imports them directly.
 
 A tool row resolves in this order: your `toolUis`, then builtins, then `ChatToolCall`.
 
-Builtins: `web_fetch`, `get_current_time`, `read_skill`, `run_js`, `call_agent__*`, plus a background-task card when the result is a task ref. `BackgroundTasksBar` lists tasks that are still running.
+Builtins: `nonla_web_fetch`, `nonla_get_current_time`, `nonla_read_skill`, `nonla_run_js`, plus a background-task card when the result is a task ref. `BackgroundTasksBar` lists tasks that are still running.
 
 ## Owning the thread
 

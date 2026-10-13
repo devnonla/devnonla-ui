@@ -1,8 +1,9 @@
 import type { AgentToolNameMatch } from "./types";
 
-/** snake_case / camelCase → Title Case (e.g. edit_code → Edit Code). */
+/** snake_case / camelCase → Title Case. A leading `nonla_` stays on the function name and is dropped here (`nonla_read_skill` → Read Skill). */
 export function formatToolName(name: string): string {
   return name
+    .replace(/^nonla_/i, "")
     .replace(/([A-Z])/g, " $1")
     .replace(/[_-]+/g, " ")
     .trim()
@@ -46,22 +47,6 @@ export function parseJsonObject<T extends object>(raw: unknown): T | null {
     /* ignore */
   }
   return null;
-}
-
-const CALL_AGENT_PREFIX = "call_agent__";
-
-/** True for legacy `call_agent` and per-target `call_agent__<uuid>` tools. */
-export function isCallAgentToolName(name: string | null | undefined): boolean {
-  if (!name) return false;
-  return name === "call_agent" || name.startsWith(CALL_AGENT_PREFIX);
-}
-
-/** Reconstruct target agent UUID from `call_agent__<uuid_with_underscores>`. */
-export function parseCallAgentToolTargetId(toolName: string): string | null {
-  if (!toolName.startsWith(CALL_AGENT_PREFIX)) return null;
-  const parts = toolName.slice(CALL_AGENT_PREFIX.length).split("_");
-  if (parts.length !== 5) return null;
-  return parts.join("-");
 }
 
 export function timestampMs(value: unknown): number {

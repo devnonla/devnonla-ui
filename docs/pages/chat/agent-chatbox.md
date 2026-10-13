@@ -32,19 +32,19 @@ const initialMessages = [
   }),
   msg("fetch", {
     role: "tool-call",
-    toolName: "web_fetch",
+    toolName: "nonla_web_fetch",
     toolInput: { url: "https://example.com/checkout" },
     toolOutput: { ok: true, url: "https://example.com/checkout", text: "Checkout — p95 1.4s after the 14:00 deploy." },
   }),
   msg("time", {
     role: "tool-call",
-    toolName: "get_current_time",
+    toolName: "nonla_get_current_time",
     toolInput: { timezone: "Asia/Ho_Chi_Minh" },
     toolOutput: { time: "17:05:12", timezone: "Asia/Ho_Chi_Minh", iso: "2026-09-11T10:05:12.000Z" },
   }),
   msg("skill", {
     role: "tool-call",
-    toolName: "read_skill",
+    toolName: "nonla_read_skill",
     toolInput: { name: "incident" },
     toolOutput: {
       ok: true,
@@ -60,24 +60,13 @@ const initialMessages = [
   }),
   msg("js", {
     role: "tool-call",
-    toolName: "run_js",
+    toolName: "nonla_run_js",
     toolInput: { code: "const p95 = 1400;\np95 > 800" },
     toolOutput: { ok: true, result: true, console: "p95 1400ms" },
   }),
-  msg("between-agent", {
-    role: "assistant",
-    content: "It crosses the line. Asking Nova before I open the client.",
-  }),
-  msg("agent", {
-    role: "tool-call",
-    toolName: "call_agent",
-    toolLabel: "Call Nova",
-    toolInput: { message: "Summarize the checkout regression." },
-    toolOutput: { success: true, response: "Rollback `PaymentClient` first. p95 is **1.4s**.", agent_id: "nova" },
-  }),
   msg("between-files", {
     role: "assistant",
-    content: "Nova agrees on `PaymentClient`. Reading the file, then the live page.",
+    content: "It crosses the line. Reading the file, then the live page.",
   }),
   msg("file", {
     role: "tool-call",
