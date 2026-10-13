@@ -5,6 +5,18 @@ All notable changes to this project will be documented in this file.
 The format is based on [Keep a Changelog](https://keepachangelog.com/en/1.1.0/),
 and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0.html).
 
+## [0.17.1] - 2026-10-13
+
+### Added
+
+- `MarkdownViewer` `components` maps a fence language to a component (`step`, `subagent`, `mindmap`). The component receives `{ code, lang, streaming, closed }`. An open fence stays a code block while `streaming` is set. `mermaid` and `live-react` stay built in.
+- The same `components` prop on `ChatMarkdown`, `ChatAgentMessage`, `AgentPanel`, and `AgentChatbox`. A panel shares the map with nested markdown.
+- `MarkdownComponents`, `MarkdownFenceProps`, `MarkdownFenceComponent`, and `MarkdownComponentsProvider` from `devnonla-ui/markdown`. `MarkdownComponents` is also exported from `devnonla-ui/chat`.
+
+### Upgrade notes
+
+- Optional. Omit `components` and existing markdown renders as before.
+
 ## [0.17.0] - 2026-10-12
 
 ### Added
@@ -448,6 +460,7 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 - Replace class `nonla-chat-shimmer` with `Shimmer` or `.nonla-shimmer`.
 - `resolveToolUI(toolName, extras?)` — second argument is optional; extra UIs are checked first.
 
+[0.17.1]: https://github.com/devnonla/devnonla-ui/compare/v0.17.0...v0.17.1
 [0.17.0]: https://github.com/devnonla/devnonla-ui/compare/v0.16.1...v0.17.0
 [0.16.1]: https://github.com/devnonla/devnonla-ui/compare/v0.16.0...v0.16.1
 [0.16.0]: https://github.com/devnonla/devnonla-ui/compare/v0.15.0...v0.16.0
