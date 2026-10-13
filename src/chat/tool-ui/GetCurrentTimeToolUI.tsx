@@ -42,7 +42,7 @@ export function GetCurrentTimeToolUI({ msg, assistantLabel = "Assistant", assist
       <div className="px-4">
         <div className={chatToolLineClass}>
           <Icon name="clock" size={13} className="shrink-0 text-muted-foreground" />
-          <Shimmer active={running} className="truncate font-medium tabular-nums text-muted-foreground">{hasError ? "Failed to get time" : running ? "Getting time…" : label}</Shimmer>
+          <Shimmer active={running} className="truncate font-normal tabular-nums text-muted-foreground">{hasError ? "Failed to get time" : running ? "Getting time…" : label}</Shimmer>
           <ToolUiTrailing failed={hasError} />
         </div>
       </div>

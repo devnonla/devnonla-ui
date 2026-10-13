@@ -35,7 +35,7 @@ export function ChatToolCall({ toolName = "Tool", label, toolInput, toolOutput, 
     <>
       {identityIcon}
       <span className="flex min-w-0 items-center gap-1">
-        <Shimmer active={running} className={cn("min-w-0 truncate text-left font-medium", !running && "text-muted-foreground")}>{displayLabel}</Shimmer>
+        <Shimmer active={running} className={cn("min-w-0 truncate text-left font-normal", !running && "text-muted-foreground")}>{displayLabel}</Shimmer>
         <ToolUiTrailing failed={hasError} chevron={expandable} chevronClassName={cn("text-muted-foreground group-hover:opacity-100", open && "opacity-100 rotate-90")} />
       </span>
     </>

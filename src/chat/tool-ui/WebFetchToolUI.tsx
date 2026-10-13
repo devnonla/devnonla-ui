@@ -39,7 +39,7 @@ export function WebFetchToolUI({ msg, assistantLabel = "Assistant", assistantCol
   const header = (
     <>
       <Icon name="globe" size={13} className="shrink-0 text-muted-foreground" />
-      <Shimmer active={running} className="min-w-0 truncate font-medium text-muted-foreground">
+      <Shimmer active={running} className="min-w-0 truncate font-normal text-muted-foreground">
         {verb} <span className="text-tertiary-foreground">{url}</span>
       </Shimmer>
       <ToolUiTrailing failed={failed} chevron={expandable} chevronClassName="group-hover/webfetch:opacity-100 group-open/webfetch:opacity-100 group-open/webfetch:rotate-90" />

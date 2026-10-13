@@ -23,7 +23,7 @@ export function BackgroundTaskToolUI({ msg, assistantLabel = "Assistant", assist
       <div className="px-4">
         <div className={chatToolLineClass}>
           <Spin variant="agent" size="small" className="shrink-0" />
-          <Shimmer className="min-w-0 truncate font-medium text-muted-foreground">
+          <Shimmer className="min-w-0 truncate font-normal text-muted-foreground">
             {label}
             <span className="text-muted-foreground [-webkit-text-fill-color:currentcolor]"> in background</span>
           </Shimmer>

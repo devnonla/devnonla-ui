@@ -57,7 +57,7 @@ export function ReadSkillToolUI({ msg, assistantLabel = "Assistant", assistantCo
       <details className="group/readskill px-4" style={{ overflowAnchor: "none" }}>
         <summary className={cn(chatToolLineClass, "cursor-pointer list-none select-none [&::-webkit-details-marker]:hidden")}>
           <Icon name={reference ? "document" : "book"} size={13} className="shrink-0 text-muted-foreground" />
-          <Shimmer active={running} className="min-w-0 truncate font-medium text-muted-foreground">
+          <Shimmer active={running} className="min-w-0 truncate font-normal text-muted-foreground">
             {verb}
             {targetLabel ? <span className="text-tertiary-foreground"> {targetLabel}</span> : null}
           </Shimmer>

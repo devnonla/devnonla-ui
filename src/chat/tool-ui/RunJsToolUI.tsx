@@ -89,7 +89,7 @@ export function RunJsToolUI({ msg, assistantLabel = "Assistant", assistantColor,
       <details className="group/runjs px-4" style={{ overflowAnchor: "none" }}>
         <summary className={cn(chatToolLineClass, "cursor-pointer list-none select-none [&::-webkit-details-marker]:hidden")}>
           <Icon name="code" size={13} className="shrink-0 text-muted-foreground" />
-          <Shimmer active={running} className="min-w-0 truncate font-medium text-muted-foreground">{verb}</Shimmer>
+          <Shimmer active={running} className="min-w-0 truncate font-normal text-muted-foreground">{verb}</Shimmer>
           <ToolUiTrailing running={running} failed={failed} chevron chevronClassName="group-hover/runjs:opacity-100 group-open/runjs:opacity-100 group-open/runjs:rotate-90" />
         </summary>
 
