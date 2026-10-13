@@ -1,4 +1,8 @@
 @import "highlight.js/styles/github-dark-dimmed.css";
+@import "@fontsource-variable/inter/opsz.css";
+@import "@fontsource-variable/inter/opsz-italic.css";
+@import "@fontsource-variable/geist-mono/wght.css";
+@import "@fontsource-variable/geist-mono/wght-italic.css";
 @import "./avatar/avatar.css";
 
 /**
@@ -19,7 +23,6 @@
   color-scheme: dark;
 
   /* ── Config. Set these. `.nonla-ui.light` repeats the same keys. ───── */
-  /* Claude dark (claude.com). Warm gray, hue ~60. Page 950, sidebar 900, cards 850, bar 800. */
   --nonla-bg: #141413;
   --nonla-text-main: #faf9f5;
   --nonla-text-secondary: #b0aea5;
@@ -39,15 +42,16 @@
   --nonla-border-secondary: #242322;
   --nonla-input: rgb(250 249 245 / 14%);
 
-  --nonla-font: ui-sans-serif, -apple-system, system-ui, "Segoe UI Variable Display", "Segoe UI", Helvetica, "Apple Color Emoji", "Noto Sans Arabic", "Noto Sans Hebrew", Arial, sans-serif, "Segoe UI Emoji", "Segoe UI Symbol";
+  --nonla-font: "Inter Variable", ui-sans-serif, -apple-system, system-ui, "Segoe UI Variable Display", "Segoe UI", Helvetica, "Apple Color Emoji", "Noto Sans Arabic", "Noto Sans Hebrew", Arial, sans-serif, "Segoe UI Emoji", "Segoe UI Symbol";
+  --nonla-mono-font: "Geist Mono Variable", ui-monospace, SFMono-Regular, Menlo, Monaco, Consolas, "Courier New", monospace;
   /* Default body size. Tailwind `text-base` follows this. Leading is 1.6. */
   --nonla-base-text-size: 15px;
-  /* `text-md`. MarkdownViewer body and agent reply text use this. */
+  /* `text-md`. MarkdownViewer body uses this. Agent replies use `text-base`. */
   --nonla-md-text-size: 16px;
   /* `text-sm`. Composer, tool lines, and errors use this. User bubbles use `text-base`. */
   --nonla-sm-text-size: 14px;
-  /* Code. A step under the body, so mono does not look larger than the text around it. */
-  --nonla-mono-text-size: calc(var(--nonla-base-text-size) * 0.9);
+  /* Code. One pixel under the body, so mono does not look larger than the text around it. */
+  --nonla-mono-text-size: calc(var(--nonla-base-text-size) - 1px);
   --nonla-radius: 8px;
   --nonla-height: 32px;
   --nonla-height-sm: 24px;
@@ -226,7 +230,7 @@
 
   --font-sans: var(--nonla-font);
   --font-family-sans: var(--font-sans);
-  --font-mono: Menlo, Monaco, "Courier New", monospace;
+  --font-mono: var(--nonla-mono-font);
   --font-family-mono: var(--font-mono);
 
   --animate-fadeIn: fadeIn 0.28s ease-out both;
@@ -523,6 +527,10 @@
     -webkit-text-fill-color: unset;
     color: var(--muted-foreground);
   }
+}
+
+.nonla-ui :is(pre, code, kbd, samp) {
+  font-family: var(--nonla-mono-font);
 }
 
 .nonla-codeblock-pre code,

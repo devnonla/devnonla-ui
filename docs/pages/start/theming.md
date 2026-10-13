@@ -22,10 +22,10 @@ import { useEffect, useState } from "react";
 const GROUPS = [
   {
     title: "Font",
-    note: "Config is --nonla-font. Mono is for code.",
+    note: "Config is --nonla-font. The stylesheet ships Inter. Mono is Geist Mono.",
     items: [
       { token: "--nonla-font", alias: "font-sans", use: "UI text. Buttons, fields, markdown, and this page.", kind: "font", sample: "Nonla 0123", className: "font-sans" },
-      { token: "--font-mono", alias: "font-mono", use: "Code, token names, and line numbers.", kind: "font", sample: "const n = 8", className: "font-mono" },
+      { token: "--nonla-mono-font", alias: "font-mono", use: "Code, token names, and line numbers.", kind: "font", sample: "const n = 8", className: "font-mono" },
     ],
   },
   {
@@ -33,7 +33,7 @@ const GROUPS = [
     note: "Config is --nonla-base-text-size. Mono code reads --nonla-mono-text-size.",
     items: [
       { token: "--nonla-base-text-size", alias: "", use: "Default body size. Leading is 1.6.", kind: "type", className: "text-(length:--nonla-base-text-size) leading-[calc(var(--nonla-base-text-size)*1.6)]" },
-      { token: "--nonla-mono-text-size", alias: "", use: "Inline code and fenced code. Defaults to 90% of the body size.", kind: "type", className: "font-mono text-(length:--nonla-mono-text-size) leading-[calc(var(--nonla-mono-text-size)*1.6)]" },
+      { token: "--nonla-mono-text-size", alias: "", use: "Inline code and fenced code. One pixel under the body size.", kind: "type", className: "font-mono text-(length:--nonla-mono-text-size) leading-[calc(var(--nonla-mono-text-size)*1.6)]" },
     ],
   },
   {
