@@ -9,7 +9,104 @@ icon: "document-text-24"
 
 # MarkdownViewer
 
-Xem markdown đã viết. Chỉ đọc: heading, list, bảng, code, mermaid, và khối live-react. Body là `text-md`.
+Xem markdown đã viết. Chỉ đọc: heading, list, bảng, code, mermaid, khối live-react, và fence gắn component riêng. Body là `text-md`.
+
+## Component riêng
+
+Truyền `components` theo ngôn ngữ fence. Ba khối dưới là `Step`, `SubAgent`, và `Mindmap` của trang này. Fence `ts` vẫn là code. Bấm nút để giả một fence `step` chưa đóng khi đang stream.
+
+```live-react
+import { useState } from "react";
+import { Button } from "devnonla-ui";
+import { MarkdownViewer } from "devnonla-ui/markdown";
+
+function Step({ code }) {
+  const items = code.split("\n").map((line) => line.trim()).filter(Boolean);
+  return (
+    <ol className="m-0 flex list-none flex-col gap-2 rounded-xl border border-border bg-card p-3">
+      {items.map((item, index) => (
+        <li key={item} className="flex items-start gap-2 text-sm text-foreground">
+          <span className="inline-flex size-5 shrink-0 items-center justify-center rounded-full bg-muted text-xs font-medium">{index + 1}</span>
+          <span>{item}</span>
+        </li>
+      ))}
+    </ol>
+  );
+}
+
+function SubAgent({ code }) {
+  const [nameLine, ...rest] = code.trim().split("\n");
+  const name = (nameLine ?? "Agent").replace(/^name:\s*/i, "");
+  return (
+    <div className="rounded-xl border border-border bg-card px-3 py-2">
+      <div className="text-xs font-medium text-muted-foreground">{name}</div>
+      <p className="m-0 mt-1 text-sm leading-normal text-foreground">{rest.join("\n").trim()}</p>
+    </div>
+  );
+}
+
+function Mindmap({ code }) {
+  const lines = code.split("\n").filter((line) => line.trim());
+  return (
+    <ul className="m-0 flex list-none flex-col gap-1 rounded-xl border border-border bg-card p-3 text-sm text-foreground">
+      {lines.map((line) => {
+        const level = Math.floor((line.match(/^ */)?.[0].length ?? 0) / 2);
+        return (
+          <li key={line} className="flex items-center gap-2" style={{ paddingLeft: level * 16 }}>
+            <span className="size-1.5 shrink-0 rounded-full bg-current" />
+            <span>{line.trim()}</span>
+          </li>
+        );
+      })}
+    </ul>
+  );
+}
+
+const article = [
+  "Agent vừa lập kế hoạch cho incident checkout.",
+  "",
+  "```step",
+  "Đọc log checkout",
+  "Đối chiếu deploy 14:00",
+  "Viết recap",
+  "```",
+  "",
+  "```subagent",
+  "name: Logs",
+  "p95 tăng sau retry budget mới, không phải Redis.",
+  "```",
+  "",
+  "```mindmap",
+  "Incident",
+  "  Checkout",
+  "    p95",
+  "    Retry",
+  "  Rollback",
+  "```",
+  "",
+  "```ts",
+  "const retries = 4;",
+  "```",
+].join("\n");
+
+const partial = article + "\n```step\nĐang viết bước cuối";
+
+export default function Demo() {
+  const [streaming, setStreaming] = useState(false);
+  return (
+    <div className="flex w-full flex-col gap-3 text-left">
+      <Button type="default" onClick={() => setStreaming((on) => !on)}>
+        {streaming ? "Đóng stream" : "Giả stream"}
+      </Button>
+      <MarkdownViewer
+        value={streaming ? partial : article}
+        streaming={streaming}
+        components={{ step: Step, subagent: SubAgent, mindmap: Mindmap }}
+      />
+    </div>
+  );
+}
+```
 
 ## Bài đầy đủ
 
