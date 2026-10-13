@@ -5,6 +5,28 @@ All notable changes to this project will be documented in this file.
 The format is based on [Keep a Changelog](https://keepachangelog.com/en/1.1.0/),
 and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0.html).
 
+## [0.18.0] - 2026-10-13
+
+### Added
+
+- `--nonla-mono-font`. The default is Geist Mono. `pre`, `code`, `kbd`, and `samp` inside `.nonla-ui` use it. Tailwind `font-mono` follows the same token.
+
+### Changed
+
+- The UI font is Inter Variable (`--nonla-font`).
+- `--nonla-mono-text-size` is one pixel under `--nonla-base-text-size`. It was 90% of the body size.
+- Builtin tool cards match `nonla_web_fetch`, `nonla_get_current_time`, `nonla_read_skill`, and `nonla_run_js`. `formatToolName` drops a leading `nonla_`.
+- Agent replies use `text-base`. Markdown tables use `text-sm`. List rows keep their marker padding.
+- Tool line labels use regular weight.
+- `BackgroundTasksBar` sits on the composer.
+- `SortableTree` keeps the drop line above the drag preview and follows the pointer.
+
+### Upgrade notes
+
+- Builtin names `web_fetch` (also `fetch_url` and `browser`), `get_current_time`, `read_skill`, and `run_js` no longer match. Use the `nonla_` names.
+- `CallAgentToolUI`, `isCallAgentToolName`, and `parseCallAgentToolTargetId` are no longer exported from `devnonla-ui/chat`. A call-agent row uses `ChatToolCall`.
+- To keep the previous type stack, set `--nonla-font` and `--nonla-mono-font` on `.nonla-ui`. The old mono size was `calc(var(--nonla-base-text-size) * 0.9)`.
+
 ## [0.17.2] - 2026-10-13
 
 ### Added
@@ -470,6 +492,7 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 - Replace class `nonla-chat-shimmer` with `Shimmer` or `.nonla-shimmer`.
 - `resolveToolUI(toolName, extras?)` — second argument is optional; extra UIs are checked first.
 
+[0.18.0]: https://github.com/devnonla/devnonla-ui/compare/v0.17.2...v0.18.0
 [0.17.2]: https://github.com/devnonla/devnonla-ui/compare/v0.17.1...v0.17.2
 [0.17.1]: https://github.com/devnonla/devnonla-ui/compare/v0.17.0...v0.17.1
 [0.17.0]: https://github.com/devnonla/devnonla-ui/compare/v0.16.1...v0.17.0
