@@ -5,6 +5,27 @@ All notable changes to this project will be documented in this file.
 The format is based on [Keep a Changelog](https://keepachangelog.com/en/1.1.0/),
 and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0.html).
 
+## [0.18.1] - 2026-10-14
+
+### Added
+
+- `AgentBody`: standing character (head, torso, arms, legs). Motions `still`, `idle`, `walk`, `run`, and `talk`. Optional `say` for a speech bubble. Same face `config` as `AgentAvatar`. Pass it as `avatar` on welcome surfaces. Exports `AgentBody`, `AGENT_BODY_PARTS`, and related types from `devnonla-ui`.
+
+### Changed
+
+- `AgentAvatar` `idle` bobs the body, blinks, and glances.
+- `ChatWelcome` default avatar uses `motion="idle"`.
+- `--nonla-mono-text-size` matches `--nonla-base-text-size` (no longer one pixel smaller).
+
+### Fixed
+
+- `MermaidBlock` uses `--nonla-font` from `.nonla-ui` (Inter Variable) in rendered diagrams.
+
+### Upgrade notes
+
+- `AgentAvatar` `look` no longer accepts `"up"`. Use `"up-left"` / `"up-right"`, or `AgentBody` with `look="up"` for a view from behind.
+- To keep mono one pixel under body text, set `--nonla-mono-text-size: calc(var(--nonla-base-text-size) - 1px)` on `.nonla-ui`.
+
 ## [0.18.0] - 2026-10-13
 
 ### Added
@@ -492,6 +513,7 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 - Replace class `nonla-chat-shimmer` with `Shimmer` or `.nonla-shimmer`.
 - `resolveToolUI(toolName, extras?)` — second argument is optional; extra UIs are checked first.
 
+[0.18.1]: https://github.com/devnonla/devnonla-ui/compare/v0.18.0...v0.18.1
 [0.18.0]: https://github.com/devnonla/devnonla-ui/compare/v0.17.2...v0.18.0
 [0.17.2]: https://github.com/devnonla/devnonla-ui/compare/v0.17.1...v0.17.2
 [0.17.1]: https://github.com/devnonla/devnonla-ui/compare/v0.17.0...v0.17.1
