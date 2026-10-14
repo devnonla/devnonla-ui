@@ -10,7 +10,21 @@
   }
 }
 
-/* The shape stays put. Only the eyes travel. */
+/* Soft idle bob: rise + stretch, settle + squash. Claude-style weight. */
+@keyframes nonla-avatar-bob {
+  0%,
+  100% {
+    transform: translate3d(0, 0, 0) scale3d(1, 1, 1);
+  }
+  45% {
+    transform: translate3d(0, -6%, 0) scale3d(0.97, 1.045, 1);
+  }
+  70% {
+    transform: translate3d(0, 1.5%, 0) scale3d(1.025, 0.97, 1);
+  }
+}
+
+/* The body bobs as one piece. Only the eyes travel for look. */
 .nonla-avatar {
   display: inline-flex;
   flex-shrink: 0;
@@ -22,6 +36,8 @@
   display: block;
   width: 100%;
   height: 100%;
+  transform-origin: 50% 85%;
+  will-change: transform;
 }
 
 .nonla-avatar-gaze {
@@ -34,19 +50,551 @@
   transform-origin: center;
 }
 
-.nonla-avatar[data-motion="idle"] .nonla-avatar-gaze {
-  transition: transform 0.55s ease-in-out;
+.nonla-avatar[data-motion="idle"] .nonla-avatar-bob {
+  animation: nonla-avatar-bob 2.2s ease-in-out infinite;
+  animation-delay: var(--nonla-avatar-delay, 0s);
 }
 
-.nonla-avatar[data-motion="idle"] .nonla-avatar-eyes {
+.nonla-avatar[data-motion="idle"] .nonla-avatar-gaze,
+.nonla-body[data-motion] .nonla-avatar-gaze {
+  transition: transform 0.35s ease-out;
+}
+
+.nonla-avatar[data-motion="idle"] .nonla-avatar-eyes,
+.nonla-body[data-motion="idle"] .nonla-avatar-eyes,
+.nonla-body[data-motion="walk"] .nonla-avatar-eyes {
   animation: nonla-avatar-blink 6.4s ease-in-out infinite;
   animation-delay: var(--nonla-avatar-delay, 0s);
 }
 
+/* Seen from behind (look="up"): the eyes and mouth are on the far side of the head. */
+.nonla-body[data-back] .nonla-avatar-gaze {
+  display: none;
+}
+
 @media (prefers-reduced-motion: reduce) {
+  .nonla-avatar[data-motion] .nonla-avatar-bob,
   .nonla-avatar[data-motion] .nonla-avatar-gaze,
   .nonla-avatar[data-motion] .nonla-avatar-eyes {
     animation: none;
     transition: none;
+  }
+}
+
+/* —— AgentBody: stick figure. Every limb is straight in the SVG and rotates around its joint. —— */
+
+.nonla-body {
+  position: relative;
+  display: inline-flex;
+  flex-shrink: 0;
+  line-height: 0;
+  vertical-align: middle;
+  overflow: visible;
+
+  /* One full stride (left step + right step). Docs demo moves ~84px/s at 80px wide to match. */
+  --nonla-step: 0.5s;
+  /* Gait size. 1 is a walk. `run` raises them: bigger swing, deeper knee and elbow bend, shorter stride time. */
+  --nonla-a: 1;
+  --nonla-knee: 1;
+  --nonla-elbow: 1;
+  --nonla-fold: 1;
+  /* Front / back walk: how far a leg lengthens (toward the viewer) or shortens (away) on screen. */
+  --nonla-reach: 0.35;
+
+  /* +1 walks right, -1 walks left. Angles below are written as "forward" and flipped by this. */
+  --nonla-d: 1;
+}
+
+/* RPG speech bubble: thick ink outline, cream fill, pointed tail, types out `say`. */
+.nonla-body-bubble {
+  position: absolute;
+  left: 50%;
+  bottom: calc(100% - 2%);
+  z-index: 1;
+  box-sizing: border-box;
+  width: max-content;
+  max-width: var(--nonla-body-bubble-max, 160px);
+  min-width: 2.75em;
+  padding: 0.42em 0.62em 0.48em;
+  border: 2.5px solid #1c1c1c;
+  border-radius: 0.95em;
+  background: #fffef6;
+  color: #1c1c1c;
+  font-family: var(--nonla-mono-font, ui-monospace, SFMono-Regular, Menlo, Monaco, Consolas, monospace);
+  font-size: var(--nonla-body-bubble-size, 11px);
+  font-weight: 400;
+  line-height: 1.3;
+  letter-spacing: 0.01em;
+  text-align: left;
+  white-space: normal;
+  overflow-wrap: anywhere;
+  word-break: break-word;
+  hyphens: auto;
+  box-shadow: 2px 2px 0 rgba(0, 0, 0, 0.18);
+  transform: translateX(-50%);
+  transform-origin: 50% 100%;
+  pointer-events: none;
+}
+
+/* Outer (ink) triangle, then the cream fill on top — classic game balloon tail. */
+.nonla-body-bubble::before,
+.nonla-body-bubble::after {
+  content: "";
+  position: absolute;
+  left: 50%;
+  top: 100%;
+  width: 0;
+  height: 0;
+  border-style: solid;
+  border-left-color: transparent;
+  border-right-color: transparent;
+  border-bottom: 0;
+}
+
+.nonla-body-bubble::before {
+  margin-left: -7px;
+  border-width: 9px 7px 0;
+  border-top-color: #1c1c1c;
+}
+
+.nonla-body-bubble::after {
+  margin-left: -5px;
+  margin-top: -0.5px;
+  border-width: 6.5px 5px 0;
+  border-top-color: #fffef6;
+}
+
+.nonla-body-bubble-text {
+  display: block;
+  position: relative;
+  z-index: 1;
+  min-height: 1.3em;
+}
+
+.nonla-body-bubble-caret {
+  display: inline-block;
+  width: 0.08em;
+  height: 0.95em;
+  margin-left: 0.08em;
+  vertical-align: -0.12em;
+  background: #1c1c1c;
+  animation: nonla-body-bubble-caret 0.55s steps(1, end) infinite;
+}
+
+/* Classic RPG "more text" cue while waiting on the next page. */
+.nonla-body-bubble-more {
+  display: block;
+  width: 0;
+  height: 0;
+  margin: 0.15em auto 0;
+  border-style: solid;
+  border-width: 0.42em 0.34em 0;
+  border-color: #1c1c1c transparent transparent;
+  animation: nonla-body-bubble-caret 0.7s steps(1, end) infinite;
+}
+
+.nonla-body[data-say] .nonla-body-bubble {
+  animation: nonla-body-bubble-in 0.22s cubic-bezier(0.2, 1.4, 0.4, 1) both;
+}
+
+@keyframes nonla-body-bubble-in {
+  from {
+    opacity: 0;
+    transform: translateX(-50%) translateY(6px) scale(0.86);
+  }
+  to {
+    opacity: 1;
+    transform: translateX(-50%) translateY(0) scale(1);
+  }
+}
+
+@keyframes nonla-body-bubble-caret {
+  0%,
+  49% {
+    opacity: 1;
+  }
+  50%,
+  100% {
+    opacity: 0;
+  }
+}
+
+.nonla-body[data-dir="left"] {
+  --nonla-d: -1;
+}
+
+.nonla-body[data-gait="run"] {
+  --nonla-step: 0.38s;
+  --nonla-a: 1.45;
+  --nonla-knee: 1.7;
+  --nonla-elbow: 2.3;
+  --nonla-fold: 1.2;
+  --nonla-reach: 0.45;
+}
+
+.nonla-body svg {
+  display: block;
+  overflow: visible;
+}
+
+/*
+ * Joint pivots in viewBox units (80x108). Each limb sets its own x; hip y=72, knee y=85,
+ * shoulder y=53, elbow y=61.5. Children inherit x, so a shin pivots under its own thigh.
+ */
+.nonla-stick-leg {
+  transform-box: view-box;
+  transform-origin: var(--nonla-x) 72px;
+}
+
+.nonla-stick-shin {
+  transform-box: view-box;
+  transform-origin: var(--nonla-x) 85px;
+}
+
+.nonla-stick-arm {
+  transform-box: view-box;
+  transform-origin: var(--nonla-x) 53px;
+}
+
+.nonla-stick-forearm {
+  transform-box: view-box;
+  transform-origin: var(--nonla-x) 61.5px;
+}
+
+/* Rest pose: a small natural splay, outward on each side. Left limbs lean left, right limbs lean right. */
+.nonla-stick-leg-b {
+  --nonla-x: 35px;
+  --nonla-rest: 2deg;
+}
+
+.nonla-stick-leg-f {
+  --nonla-x: 45px;
+  --nonla-rest: -2deg;
+}
+
+/*
+ * Rest (still / idle / talk): one continuous stick — no knee joint, so the leg does not look bent.
+ * Walk: hide the full bone and show thigh + shin so the knee can fold.
+ */
+.nonla-stick-thigh,
+.nonla-stick-shin {
+  opacity: 0;
+}
+
+.nonla-body[data-motion="walk"] .nonla-stick-leg-bone {
+  opacity: 0;
+}
+
+.nonla-body[data-motion="walk"] .nonla-stick-thigh,
+.nonla-body[data-motion="walk"] .nonla-stick-shin {
+  opacity: 1;
+}
+
+.nonla-stick-arm-b {
+  --nonla-x: 25.5px;
+  --nonla-rest: 2deg;
+}
+
+.nonla-stick-arm-f {
+  --nonla-x: 54.5px;
+  --nonla-rest: -2deg;
+}
+
+.nonla-stick-leg,
+.nonla-stick-arm {
+  transform: rotate(var(--nonla-rest, 0deg));
+}
+
+/* Talk: soft bob + a small near-arm gesture. After base limb selectors (specificity order). */
+@keyframes nonla-body-talk-bob {
+  0%,
+  100% {
+    transform: translate3d(0, 0, 0);
+  }
+  40% {
+    transform: translate3d(0, -1.6%, 0);
+  }
+  70% {
+    transform: translate3d(0, 0.4%, 0);
+  }
+}
+
+@keyframes nonla-body-talk-arm {
+  0%,
+  100% {
+    transform: rotate(calc(var(--nonla-rest, 0deg) - 18deg));
+  }
+  45% {
+    transform: rotate(calc(var(--nonla-rest, 0deg) - 32deg));
+  }
+  70% {
+    transform: rotate(calc(var(--nonla-rest, 0deg) - 14deg));
+  }
+}
+
+@keyframes nonla-body-talk-forearm {
+  0%,
+  100% {
+    transform: rotate(-28deg);
+  }
+  45% {
+    transform: rotate(-42deg);
+  }
+  70% {
+    transform: rotate(-22deg);
+  }
+}
+
+.nonla-body[data-motion="talk"] svg {
+  animation: nonla-body-talk-bob 1.6s ease-in-out infinite;
+  animation-delay: var(--nonla-avatar-delay, 0s);
+}
+
+.nonla-body[data-motion="talk"] .nonla-stick-arm-f {
+  animation: nonla-body-talk-arm 1.6s ease-in-out infinite;
+  animation-delay: var(--nonla-avatar-delay, 0s);
+}
+
+.nonla-body[data-motion="talk"] .nonla-stick-arm-f .nonla-stick-forearm {
+  animation: nonla-body-talk-forearm 1.6s ease-in-out infinite;
+  animation-delay: var(--nonla-avatar-delay, 0s);
+}
+
+.nonla-body[data-motion="talk"] .nonla-avatar-eyes {
+  animation: nonla-avatar-blink 6.4s ease-in-out infinite;
+  animation-delay: var(--nonla-avatar-delay, 0s);
+}
+
+/*
+ * Side walk (left / right). Negative angle = limb reaches forward when walking right;
+ * --nonla-d flips it for walking left.
+ *
+ * Leg, one stride:
+ *   0%   heel strike: leg forward, almost straight
+ *   0-50% stance: foot stays planted, so the thigh sweeps back at a steady rate (linear)
+ *   50%  toe off: leg behind the hip
+ *   50-100% swing: thigh comes forward and the knee folds to clear the ground
+ */
+@keyframes nonla-stick-thigh {
+  0% {
+    transform: rotate(calc(var(--nonla-d) * -28deg * var(--nonla-a)));
+    animation-timing-function: linear;
+  }
+  50% {
+    transform: rotate(calc(var(--nonla-d) * 24deg * var(--nonla-a)));
+    animation-timing-function: ease-in-out;
+  }
+  100% {
+    transform: rotate(calc(var(--nonla-d) * -28deg * var(--nonla-a)));
+  }
+}
+
+/* The shin folds backward (opposite to forward) and straightens before the next heel strike. */
+@keyframes nonla-stick-knee {
+  0% {
+    transform: rotate(calc(var(--nonla-d) * 3deg * var(--nonla-knee)));
+  }
+  14% {
+    transform: rotate(calc(var(--nonla-d) * 12deg * var(--nonla-knee)));
+  }
+  50% {
+    transform: rotate(calc(var(--nonla-d) * 14deg * var(--nonla-knee)));
+  }
+  72% {
+    transform: rotate(calc(var(--nonla-d) * 50deg * var(--nonla-knee)));
+  }
+  90% {
+    transform: rotate(calc(var(--nonla-d) * 16deg * var(--nonla-knee)));
+  }
+  100% {
+    transform: rotate(calc(var(--nonla-d) * 3deg * var(--nonla-knee)));
+  }
+}
+
+/* Arms swing opposite to the leg on the same side, with a looser elbow. */
+@keyframes nonla-stick-arm-swing {
+  0% {
+    transform: rotate(calc(var(--nonla-d) * -22deg * var(--nonla-a)));
+  }
+  50% {
+    transform: rotate(calc(var(--nonla-d) * 16deg * var(--nonla-a)));
+  }
+  100% {
+    transform: rotate(calc(var(--nonla-d) * -22deg * var(--nonla-a)));
+  }
+}
+
+@keyframes nonla-stick-elbow {
+  0% {
+    transform: rotate(calc(var(--nonla-d) * -26deg * var(--nonla-elbow)));
+  }
+  50% {
+    transform: rotate(calc(var(--nonla-d) * -6deg * var(--nonla-elbow)));
+  }
+  100% {
+    transform: rotate(calc(var(--nonla-d) * -26deg * var(--nonla-elbow)));
+  }
+}
+
+.nonla-body[data-motion="walk"][data-dir="left"] .nonla-stick-leg,
+.nonla-body[data-motion="walk"][data-dir="right"] .nonla-stick-leg {
+  animation: nonla-stick-thigh var(--nonla-step) linear infinite;
+}
+
+.nonla-body[data-motion="walk"][data-dir="left"] .nonla-stick-shin,
+.nonla-body[data-motion="walk"][data-dir="right"] .nonla-stick-shin {
+  animation: nonla-stick-knee var(--nonla-step) linear infinite;
+}
+
+.nonla-body[data-motion="walk"][data-dir="left"] .nonla-stick-arm,
+.nonla-body[data-motion="walk"][data-dir="right"] .nonla-stick-arm {
+  animation: nonla-stick-arm-swing var(--nonla-step) ease-in-out infinite;
+}
+
+.nonla-body[data-motion="walk"][data-dir="left"] .nonla-stick-forearm,
+.nonla-body[data-motion="walk"][data-dir="right"] .nonla-stick-forearm {
+  animation: nonla-stick-elbow var(--nonla-step) ease-in-out infinite;
+}
+
+/*
+ * Walking toward or away from the viewer. The legs stay under the hip, and depth shows as
+ * foreshortening: a leg reaching toward the viewer is longer on screen, one reaching away is shorter.
+ * Timing is the side walk's (planted 0-50%, swing 50-100% with the knee folding at 72%), and the
+ * planted foot must stand still on the floor. The body moves on screen while it is planted, so the
+ * foot slides the other way along the leg: toward the viewer the body goes down, the foot goes up
+ * (long to short), and away from the viewer the foot goes down (short to long). It moves linearly,
+ * by 0.7 of the leg when walking (about 18 units, --nonla-reach 0.35 each way). That is the floor
+ * distance one half-stride covers on screen, so the docs demo walks vertically at SPEED_Y = 70px/s,
+ * close to the 84px/s sideways. A foot closer to the viewer sits lower, which is also what depth
+ * looks like, so the legs may reach a little past the usual foot line.
+ */
+@keyframes nonla-stick-step-down {
+  0% {
+    transform: rotate(var(--nonla-rest, 0deg)) scaleY(calc(1 + var(--nonla-reach)));
+    animation-timing-function: linear;
+  }
+  50% {
+    transform: rotate(var(--nonla-rest, 0deg)) scaleY(calc(1 - var(--nonla-reach)));
+    animation-timing-function: ease-out;
+  }
+  72% {
+    transform: rotate(var(--nonla-rest, 0deg)) scaleY(calc(1 - 0.5 * var(--nonla-fold)));
+    animation-timing-function: ease-in;
+  }
+  100% {
+    transform: rotate(var(--nonla-rest, 0deg)) scaleY(calc(1 + var(--nonla-reach)));
+  }
+}
+
+@keyframes nonla-stick-step-up {
+  0% {
+    transform: rotate(var(--nonla-rest, 0deg)) scaleY(calc(1 - var(--nonla-reach)));
+    animation-timing-function: linear;
+  }
+  50% {
+    transform: rotate(var(--nonla-rest, 0deg)) scaleY(calc(1 + var(--nonla-reach)));
+    animation-timing-function: ease-out;
+  }
+  72% {
+    transform: rotate(var(--nonla-rest, 0deg)) scaleY(calc(1 - 0.5 * var(--nonla-fold)));
+    animation-timing-function: ease-in;
+  }
+  100% {
+    transform: rotate(var(--nonla-rest, 0deg)) scaleY(calc(1 - var(--nonla-reach)));
+  }
+}
+
+/*
+ * Arms keep the side-walk rhythm (same period, same ease-in-out, same phase) turned to face the
+ * viewer. The swing now goes toward and away from the screen, so an angle becomes a length:
+ *   0%   arm reaches forward (side walk: -22deg) and the elbow bends most (-26deg), so both
+ *        segments are foreshortened, the forearm more because its angle adds up (48deg)
+ *   50%  arm swings back (+16deg) and the elbow nearly straightens (-6deg): almost full length
+ * The lengths are cos(angle), a little exaggerated so the perspective reads at 80px.
+ */
+@keyframes nonla-stick-arm-depth {
+  0%,
+  100% {
+    transform: rotate(var(--nonla-rest, 0deg)) scaleY(calc(1 - 0.12 * var(--nonla-a)));
+  }
+  50% {
+    transform: rotate(var(--nonla-rest, 0deg)) scaleY(1);
+  }
+}
+
+@keyframes nonla-stick-forearm-depth {
+  0%,
+  100% {
+    transform: scaleY(calc(1 - 0.28 * var(--nonla-fold)));
+  }
+  50% {
+    transform: scaleY(1);
+  }
+}
+
+.nonla-body[data-motion="walk"][data-dir="down"] .nonla-stick-leg {
+  animation: nonla-stick-step-down var(--nonla-step) linear infinite;
+}
+
+.nonla-body[data-motion="walk"][data-dir="up"] .nonla-stick-leg {
+  animation: nonla-stick-step-up var(--nonla-step) linear infinite;
+}
+
+/* Seen from the front or back the legs stay parallel: no outward splay while walking. */
+.nonla-body[data-motion="walk"][data-dir="up"] .nonla-stick-leg-b,
+.nonla-body[data-motion="walk"][data-dir="up"] .nonla-stick-leg-f,
+.nonla-body[data-motion="walk"][data-dir="down"] .nonla-stick-leg-b,
+.nonla-body[data-motion="walk"][data-dir="down"] .nonla-stick-leg-f {
+  --nonla-rest: 0deg;
+}
+
+.nonla-body[data-motion="walk"][data-dir="up"] .nonla-stick-arm,
+.nonla-body[data-motion="walk"][data-dir="down"] .nonla-stick-arm {
+  animation: nonla-stick-arm-depth var(--nonla-step) ease-in-out infinite;
+}
+
+/* The forearm shortens as the elbow bends toward the viewer. The shin stays straight. */
+.nonla-body[data-motion="walk"][data-dir="up"] .nonla-stick-shin,
+.nonla-body[data-motion="walk"][data-dir="down"] .nonla-stick-shin {
+  animation: none;
+}
+
+.nonla-body[data-motion="walk"][data-dir="up"] .nonla-stick-forearm,
+.nonla-body[data-motion="walk"][data-dir="down"] .nonla-stick-forearm {
+  animation: nonla-stick-forearm-depth var(--nonla-step) ease-in-out infinite;
+}
+
+/*
+ * Far leg and near leg are half a stride apart. A negative delay starts an animation midway,
+ * so both legs share one keyframe set and stay in step. An arm moves with the leg on the other side.
+ * Keep this after every `animation` shorthand above: the shorthand resets the delay.
+ */
+.nonla-body[data-motion="walk"][data-dir] .nonla-stick-leg-b,
+.nonla-body[data-motion="walk"][data-dir] .nonla-stick-leg-b .nonla-stick-shin,
+.nonla-body[data-motion="walk"][data-dir] .nonla-stick-arm-f,
+.nonla-body[data-motion="walk"][data-dir] .nonla-stick-arm-f .nonla-stick-forearm {
+  animation-delay: calc(var(--nonla-step) * -0.5);
+}
+
+@media (prefers-reduced-motion: reduce) {
+  .nonla-body[data-motion][data-dir] .nonla-stick-leg,
+  .nonla-body[data-motion][data-dir] .nonla-stick-shin,
+  .nonla-body[data-motion][data-dir] .nonla-stick-arm,
+  .nonla-body[data-motion][data-dir] .nonla-stick-forearm,
+  .nonla-body[data-motion="talk"] svg,
+  .nonla-body[data-motion="talk"] .nonla-stick-arm-f,
+  .nonla-body[data-motion="talk"] .nonla-stick-arm-f .nonla-stick-forearm,
+  .nonla-body[data-motion] .nonla-avatar-gaze,
+  .nonla-body[data-motion] .nonla-avatar-eyes,
+  .nonla-body[data-say] .nonla-body-bubble,
+  .nonla-body-bubble-caret,
+  .nonla-body-bubble-more {
+    animation: none;
+    transition: none;
+  }
+
+  .nonla-body-bubble-caret,
+  .nonla-body-bubble-more {
+    opacity: 1;
   }
 }

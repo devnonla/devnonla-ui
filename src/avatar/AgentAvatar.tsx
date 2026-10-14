@@ -1,11 +1,11 @@
 import { createContext, type ReactNode, useContext, useEffect, useId, useState } from "react";
 import { cn } from "../lib/cn";
 
-/** `still` holds the pose. `idle` turns to a random direction. Defaults to `still`. */
+/** `still` holds the pose. `idle` bobs the body, blinks, and glances. Defaults to `still`. */
 export type AgentAvatarMotion = "still" | "idle";
 
-/** Fixed facing. The shape stays centered and the eyes move that way. */
-export type AgentAvatarLook = "forward" | "left" | "right" | "up" | "down" | "up-left" | "up-right" | "down-left" | "down-right";
+/** Fixed facing. The shape stays centered and the eyes move that way. No straight-up glance. */
+export type AgentAvatarLook = "forward" | "left" | "right" | "down" | "up-left" | "up-right" | "down-left" | "down-right";
 
 /** Pupil color. Omitted picks black, or white when the face is dark. */
 export type AgentAvatarEyeColor = "black" | "white";
@@ -130,7 +130,6 @@ const LOOK: Record<AgentAvatarLook, [number, number]> = {
   forward: [0, 0],
   left: [-6.4, 0],
   right: [6.4, 0],
-  up: [0, -4.4],
   down: [0, 4.4],
   "up-left": [-4.5, -3.1],
   "up-right": [4.5, -3.1],
@@ -272,6 +271,19 @@ function Shape({ shape, color, eyeColor }: AgentAvatarConfig) {
   };
   return <InkContext.Provider value={eyeFill(color, eyeColor)}>{body[shape]}</InkContext.Provider>;
 }
+
+export {
+  eyeFill,
+  InkContext,
+  LOOK,
+  mixHex,
+  PaintContext,
+  resolveConfig as resolveAvatarConfig,
+  ShadowContext,
+  Shape as AvatarShape,
+  stagger as avatarStagger,
+  useIdleLook,
+};
 
 export function AgentAvatar({ config, size = 64, motion = "still", look = "forward", className, label = "Agent" }: AgentAvatarProps) {
   const resolved = resolveConfig(config);

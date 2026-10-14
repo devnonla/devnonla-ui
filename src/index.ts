@@ -17,6 +17,8 @@ export type { AlertProps, AlertType } from "./alert/Alert";
 export { Alert } from "./alert/Alert";
 export type { AgentAvatarConfig, AgentAvatarEyeColor, AgentAvatarLook, AgentAvatarMotion, AgentAvatarProps } from "./avatar/AgentAvatar";
 export { AGENT_AVATAR_PARTS, AgentAvatar } from "./avatar/AgentAvatar";
+export type { AgentBodyConfig, AgentBodyLook, AgentBodyMotion, AgentBodyProps } from "./avatar/AgentBody";
+export { AGENT_BODY_PARTS, AgentBody } from "./avatar/AgentBody";
 export type { BlobShapeAppearance, BlobShapeProps, BlobShapeVariant } from "./blob-shape/BlobShape";
 export { BlobShape } from "./blob-shape/BlobShape";
 export type { CalendarProps } from "./calendar/Calendar";

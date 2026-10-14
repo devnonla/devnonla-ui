@@ -17,7 +17,7 @@ export type ChatWelcomeProps = {
 const DEFAULT_STARTERS = ["What can you help me with?", "Brainstorm a few ideas with me", "Walk me through how you work"] as const;
 
 function DefaultAvatar({ name }: { name: string }) {
-  return <AgentAvatar size={72} label={name} />;
+  return <AgentAvatar size={72} motion="idle" label={name} />;
 }
 
 export function ChatWelcome({ name, description, avatar, starters = [...DEFAULT_STARTERS], onStarter, disabled, className }: ChatWelcomeProps) {
