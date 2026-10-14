@@ -12,6 +12,15 @@ function useMermaidTheme(): "default" | "dark" {
   return mode === "light" ? "default" : "dark";
 }
 
+/** Same stack as `--nonla-font` on `.nonla-ui` (Inter Variable). Mermaid bakes this into the SVG. */
+function mermaidFontFamily(): string {
+  const fallback = '"Inter Variable", ui-sans-serif, system-ui, sans-serif';
+  if (typeof document === "undefined") return fallback;
+  const host = document.querySelector(".nonla-ui");
+  const value = host ? getComputedStyle(host).getPropertyValue("--nonla-font").trim() : "";
+  return value || fallback;
+}
+
 /** Mermaid keeps one global theme. Render one diagram at a time so a cancelled pass cannot overwrite it. */
 let mermaidQueue: Promise<unknown> = Promise.resolve();
 
@@ -51,9 +60,12 @@ export function MermaidBlock({ children, className }: MermaidBlockProps) {
 
       await enqueueMermaid(async () => {
         if (cancelled) return;
+        const fontFamily = mermaidFontFamily();
         mermaid.initialize({
           startOnLoad: false,
           theme,
+          fontFamily,
+          themeVariables: { fontFamily },
         });
 
         const raw = children.trim();
