@@ -9,7 +9,7 @@ icon: "bot-24"
 
 # Agent avatar
 
-Face on the welcome screen. Pass it as `avatar` on AgentPanel, AgentChatbox, or ChatWelcome. A flat shape and two eyes.
+Face on the welcome screen. Pass it as `avatar` on AgentPanel, AgentChatbox, or ChatWelcome. A flat shape and two eyes. For a standing character with legs, use [Agent body](/chat/agent-body).
 
 ## Basic
 
@@ -42,22 +42,22 @@ export default function Demo() {
 
 ## Motion
 
-`still` is the default and holds the pose. `idle` turns to a random direction, holds it, then picks another. It blinks.
+`still` is the default and holds the pose. `idle` bobs the body (soft rise and squash), blinks, and glances to a random direction.
 
 ```live-react
 import { AgentAvatar } from "devnonla-ui";
 
-const face = { shape: "drop", color: "#6E56F0" };
+const face = { shape: "nonla", color: "#ffa333" };
 
 export default function Demo() {
   return (
     <>
       <div className="flex flex-col items-center gap-1">
-        <AgentAvatar config={face} motion="still" />
+        <AgentAvatar config={face} size={80} motion="still" />
         <span className="text-[15px] leading-7 text-muted-foreground">still</span>
       </div>
       <div className="flex flex-col items-center gap-1">
-        <AgentAvatar config={face} motion="idle" />
+        <AgentAvatar config={face} size={80} motion="idle" />
         <span className="text-[15px] leading-7 text-muted-foreground">idle</span>
       </div>
     </>
@@ -76,7 +76,6 @@ const looks = [
   ["forward", "Forward"],
   ["left", "Left"],
   ["right", "Right"],
-  ["up", "Up"],
   ["down", "Down"],
   ["up-left", "Top left"],
   ["up-right", "Top right"],
@@ -105,7 +104,6 @@ const looks = [
   ["forward", "Forward"],
   ["left", "Left"],
   ["right", "Right"],
-  ["up", "Up"],
   ["down", "Down"],
   ["up-left", "Top left"],
   ["up-right", "Top right"],
@@ -140,7 +138,6 @@ const looks = [
   { label: "Forward", value: "forward" },
   { label: "Left", value: "left" },
   { label: "Right", value: "right" },
-  { label: "Up", value: "up" },
   { label: "Down", value: "down" },
   { label: "Top left", value: "up-left" },
   { label: "Top right", value: "up-right" },
@@ -229,7 +226,7 @@ Pass shape, color, and eye color together: `config={{ shape, color, eyeColor }}`
 | `config.color` | Face color, as a hex string. | `string` | `#6E56F0` |
 | `config.eyeColor` | Pupil color. Omitted uses black, or white when the face is dark. | `black` \| `white` | black, or white on a dark face |
 | `size` | Width and height, in pixels. | `number` | `64` |
-| `motion` | `still` holds the pose. `idle` turns to a random direction and blinks. | `still` \| `idle` | `still` |
-| `look` | Fixed facing. The shape stays centered and the eyes move that way. | `forward` \| `left` \| `right` \| `up` \| `down` \| `up-left` \| `up-right` \| `down-left` \| `down-right` | `forward` |
+| `motion` | `still` holds the pose. `idle` bobs the body, blinks, and glances. | `still` \| `idle` | `still` |
+| `look` | Fixed facing. The shape stays centered and the eyes move that way. | `forward` \| `left` \| `right` \| `down` \| `up-left` \| `up-right` \| `down-left` \| `down-right` | `forward` |
 | `className` | Extra class on the root element. | `string` | `-` |
 | `label` | Accessible name. | `string` | `Agent` |

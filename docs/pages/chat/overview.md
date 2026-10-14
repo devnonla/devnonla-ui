@@ -45,6 +45,7 @@ These are the rows inside a surface. A custom layout imports them directly.
 | `ChatError` | Error row |
 | `ChatInput` | Composer: type, send, stop |
 | `AgentAvatar` | Face on the welcome screen. Pass as `avatar` |
+| `AgentBody` | Standing character (head, torso, arms, legs). Pass as `avatar` |
 
 ## Tool cards
 
