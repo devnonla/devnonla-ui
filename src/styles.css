@@ -51,7 +51,7 @@
   /* `text-sm`. Composer, tool lines, and errors use this. User bubbles use `text-base`. */
   --nonla-sm-text-size: 14px;
   /* Code. One pixel under the body, so mono does not look larger than the text around it. */
-  --nonla-mono-text-size: calc(var(--nonla-base-text-size) - 1px);
+  --nonla-mono-text-size: calc(var(--nonla-base-text-size));
   --nonla-radius: 8px;
   --nonla-height: 32px;
   --nonla-height-sm: 24px;
