@@ -225,13 +225,13 @@ function fenceComponent(components: MarkdownComponents | undefined, lang: string
 
 type LiveReactOptions = {
   trustedModules?: Record<string, unknown>;
-  sandboxSrc?: string;
+  sandbox?: boolean;
   showHeader?: boolean;
   showCode?: boolean;
   components?: MarkdownComponents;
 };
 
-export function BlockBody({ block, streaming, trustedModules, sandboxSrc, showHeader, showCode, components }: { block: MarkdownBlock; streaming?: boolean } & LiveReactOptions): ReactNode {
+export function BlockBody({ block, streaming, trustedModules, sandbox, showHeader, showCode, components }: { block: MarkdownBlock; streaming?: boolean } & LiveReactOptions): ReactNode {
   if (block.kind === "mermaid") {
     const fence = readFence(block.body);
     const code = fence?.code ?? block.body;
@@ -244,7 +244,7 @@ export function BlockBody({ block, streaming, trustedModules, sandboxSrc, showHe
     const closed = fenceClosed(block.body);
     // An unclosed fence is still being written, so it never runs.
     if (fence.lang === "live-react" && closed) {
-      if (sandboxSrc) return <ReactCodeSandbox key={fence.code} code={fence.code} src={sandboxSrc} showHeader={showHeader} showCode={showCode} />;
+      if (sandbox) return <ReactCodeSandbox key={fence.code} code={fence.code} showHeader={showHeader} showCode={showCode} />;
       if (trustedModules) return <ReactCode code={fence.code} trustedModules={trustedModules} showHeader={showHeader} showCode={showCode} />;
     }
     const Custom = fence.lang === "live-react" ? undefined : fenceComponent(components, fence.lang);
@@ -273,10 +273,9 @@ export type MarkdownViewerProps = {
   className?: string;
   /**
    * Runs ```live-react fences in a sandboxed iframe. Use this for markdown written by
-   * users or agents. Points at a page that calls `mountReactCodeRunner`, on its own origin.
-   * Wins over `trustedModules` when both are set.
+   * users or agents. Wins over `trustedModules` when both are set.
    */
-  sandboxSrc?: string;
+  sandbox?: boolean;
   /**
    * Runs ```live-react fences in this page, with its cookies, storage, and network.
    * Only for markdown you wrote. `react` is provided. Other imports must be listed here.
@@ -296,7 +295,7 @@ export type MarkdownViewerProps = {
 };
 
 /** Read-only markdown. Same blocks as the editor preview, without editing. */
-export function MarkdownViewer({ value = "", streaming = false, sandboxSrc, trustedModules, showHeader = true, showCode = true, placeholder, className, style, components }: MarkdownViewerProps) {
+export function MarkdownViewer({ value = "", streaming = false, sandbox = false, trustedModules, showHeader = true, showCode = true, placeholder, className, style, components }: MarkdownViewerProps) {
   const doc = useMemo(() => parseMarkdownDoc(value), [value]);
   if (doc.blocks.length === 0) {
     return placeholder ? <p className={cn("m-0 text-sm text-quaternary-foreground", className)}>{placeholder}</p> : null;
@@ -310,7 +309,7 @@ export function MarkdownViewer({ value = "", streaming = false, sandboxSrc, trus
           data-md-block={block.kind}
           className={cn("outline-none", spaceBefore(block, doc.blocks[index - 1]))}
         >
-          <BlockBody block={block} streaming={streaming} trustedModules={trustedModules} sandboxSrc={sandboxSrc} showHeader={showHeader} showCode={showCode} components={components} />
+          <BlockBody block={block} streaming={streaming} trustedModules={trustedModules} sandbox={sandbox} showHeader={showHeader} showCode={showCode} components={components} />
         </div>
       ))}
     </div>

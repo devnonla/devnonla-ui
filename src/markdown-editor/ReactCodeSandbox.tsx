@@ -1,21 +1,11 @@
-import { type ReactNode, useEffect, useMemo, useRef, useState } from "react";
+import { type ReactNode, useEffect, useRef, useState } from "react";
 import { Icon } from "../icon/Icon";
 import { cn } from "../lib/cn";
 import { getColorMode, type NonlaColorMode, subscribeColorMode } from "../theme";
 import { ReactCodeFrame } from "./ReactCodeFrame";
 import { type HostMessage, REACT_CODE_SOURCE, readRunnerMessage } from "./reactCodeProtocol";
 
-/** Keep `mode` on the runner URL without dropping a query the caller already set. */
-function withColorMode(src: string, mode: NonlaColorMode): string {
-  const hashAt = src.indexOf("#");
-  const hash = hashAt >= 0 ? src.slice(hashAt) : "";
-  const beforeHash = hashAt >= 0 ? src.slice(0, hashAt) : src;
-  const queryAt = beforeHash.indexOf("?");
-  const path = queryAt >= 0 ? beforeHash.slice(0, queryAt) : beforeHash;
-  const params = new URLSearchParams(queryAt >= 0 ? beforeHash.slice(queryAt + 1) : "");
-  params.set("mode", mode);
-  return `${path}?${params.toString()}${hash}`;
-}
+const RUNNER_URL = new URL("./reactSandboxFrame.ts", import.meta.url).href;
 
 /** The runner page must report `ready` within this time. */
 const READY_TIMEOUT_MS = 20000;
@@ -24,11 +14,81 @@ const RENDER_TIMEOUT_MS = 15000;
 const MIN_HEIGHT = 32;
 const MAX_HEIGHT = 1200;
 
+function escapeAttr(value: string): string {
+  return value.replace(/&/g, "&amp;").replace(/"/g, "&quot;").replace(/</g, "&lt;");
+}
+
+type ViteEnv = { DEV?: boolean; BASE_URL?: string };
+
+function viteEnv(): ViteEnv {
+  return (import.meta as ImportMeta & { env?: ViteEnv }).env ?? {};
+}
+
+/** Local Vite needs a websocket. A deployed host does not get network from the frame. */
+function connectSrc(origin: string): string {
+  const host = new URL(origin).hostname;
+  if (host !== "localhost" && host !== "127.0.0.1") return "'none'";
+  return `${origin} ${origin.replace(/^http/, "ws")}`;
+}
+
+/** Vite's React refresh check fails unless this runs before the runner module. Dev only. */
+function reactRefreshPreamble(): string {
+  const env = viteEnv();
+  if (env.DEV !== true) return "";
+  const base = env.BASE_URL ?? "/";
+  return `<script type="module">
+import { injectIntoGlobalHook } from ${JSON.stringify(`${base}@react-refresh`)};
+injectIntoGlobalHook(window);
+window.$RefreshReg$ = function () {};
+window.$RefreshSig$ = function () { return function (type) { return type; }; };
+</script>`;
+}
+
+/** Document for the sandboxed frame. The runner and its styles load from this package. */
+function sandboxDocument(mode: NonlaColorMode): string {
+  const origin = new URL(RUNNER_URL).origin;
+  const csp = [
+    "default-src 'none'",
+    `script-src 'unsafe-inline' 'unsafe-eval' ${origin}`,
+    `style-src 'unsafe-inline' ${origin}`,
+    `img-src data: blob: ${origin}`,
+    `font-src data: ${origin}`,
+    `connect-src ${connectSrc(origin)}`,
+    "form-action 'none'",
+    "base-uri 'none'",
+    "frame-src 'none'",
+  ].join("; ");
+  return `<!doctype html>
+<html lang="en">
+<head>
+<meta charset="UTF-8" />
+<meta name="viewport" content="width=device-width, initial-scale=1.0" />
+<meta http-equiv="Content-Security-Policy" content="${escapeAttr(csp)}" />
+<script>
+document.documentElement.dataset.pendingMode=${JSON.stringify(mode)};
+window.addEventListener("error", function (event) {
+  var message = event.message || "The sandbox did not start.";
+  parent.postMessage({ source: ${JSON.stringify(REACT_CODE_SOURCE)}, type: "error", message: String(message).slice(0, 300) }, "*");
+});
+</script>
+<style>
+  html { color-scheme: dark; background: #141414; }
+  html:has(.nonla-ui.light) { color-scheme: light; background: #ffffff; }
+  .nonla-ui { min-height: 100%; }
+</style>
+</head>
+<body>
+<div id="root"></div>
+${reactRefreshPreamble()}
+<script type="module" src="${escapeAttr(RUNNER_URL)}"></script>
+</body>
+</html>`;
+}
+
 export type ReactCodeSandboxProps = {
+  /** Component source. Must `export default` a React component. */
   code: string;
-  /** URL of a page that calls `mountReactCodeRunner`. Serve it from its own origin. Loaded with `?mode=light|dark` so the runner can paint before its script. */
-  src: string;
-  /** Header above the result. Default `true`. */
+  /** Header above the result. Default `false`. */
   showHeader?: boolean;
   /** Preview / Code switch in the header. Needs `showHeader`. Default `true`. */
   showCode?: boolean;
@@ -43,29 +103,37 @@ export type ReactCodeSandboxProps = {
 /**
  * Runs untrusted `live-react` source in a sandboxed iframe.
  *
+ * Pass `code`. The frame is built here and loads this package's runner.
+ * `react`, `devnonla-ui`, `devnonla-ui/chat`, `devnonla-ui/markdown`, and
+ * `react-hook-form` can be imported. Nothing else can.
+ *
  * `sandbox="allow-scripts"` without `allow-same-origin` gives the frame an opaque origin,
  * so it cannot read this page's cookies, storage, or DOM.
  */
-export function ReactCodeSandbox({ code, src, showHeader = true, showCode = true, title = "Sandbox", icon, className }: ReactCodeSandboxProps) {
+export function ReactCodeSandbox({ code, showHeader = false, showCode = true, title = "Sandbox", icon, className }: ReactCodeSandboxProps) {
   const frameRef = useRef<HTMLIFrameElement>(null);
   const [height, setHeight] = useState(MIN_HEIGHT);
   const [error, setError] = useState<string | null>(null);
   const [mode, setMode] = useState(getColorMode);
   const [painted, setPainted] = useState(false);
-  // Mode stays out of the URL after first load. A later theme change is a message, so the frame does not reload.
+  const [srcDoc, setSrcDoc] = useState<string | null>(null);
+  // Mode is baked into the document once. A later theme change is a message, so the frame does not reload.
   const modeOnLoad = useRef(getColorMode());
-  const frameSrc = useMemo(() => withColorMode(src, modeOnLoad.current), [src]);
 
   useEffect(() => subscribeColorMode(() => setMode(getColorMode())), []);
 
   useEffect(() => {
+    setSrcDoc(sandboxDocument(modeOnLoad.current));
+  }, []);
+
+  useEffect(() => {
     setPainted(false);
     setError(null);
-  }, [frameSrc, code]);
+  }, [srcDoc, code]);
 
   useEffect(() => {
     const frame = frameRef.current;
-    if (!frame) return;
+    if (!frame || !srcDoc) return;
     let alive = true;
     // Once the runner has painted, a late timer must not replace the preview with an error.
     let didRender = false;
@@ -131,7 +199,7 @@ export function ReactCodeSandbox({ code, src, showHeader = true, showCode = true
       clearTimeout(readyTimer);
       clearTimeout(renderTimer);
     };
-  }, [code, src]);
+  }, [code, srcDoc]);
 
   return (
     <ReactCodeFrame
@@ -142,15 +210,17 @@ export function ReactCodeSandbox({ code, src, showHeader = true, showCode = true
       className={className}
     >
       {error ? <p className="m-0 text-sm text-destructive">{error}</p> : null}
-      <iframe
-        ref={frameRef}
-        src={frameSrc}
-        title="React example"
-        sandbox="allow-scripts"
-        referrerPolicy="no-referrer"
-        className={cn("block w-full border-0 bg-background", (!painted || error) && "opacity-0")}
-        style={{ height, colorScheme: mode }}
-      />
+      {srcDoc ? (
+        <iframe
+          ref={frameRef}
+          srcDoc={srcDoc}
+          title="React example"
+          sandbox="allow-scripts"
+          referrerPolicy="no-referrer"
+          className={cn("block w-full border-0 bg-background", (!painted || error) && "opacity-0")}
+          style={{ height, colorScheme: mode }}
+        />
+      ) : null}
     </ReactCodeFrame>
   );
 }

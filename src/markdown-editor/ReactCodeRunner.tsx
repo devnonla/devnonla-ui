@@ -25,11 +25,11 @@ class Boundary extends Component<{ report: Report; children: ReactNode }, { erro
 }
 
 /**
- * Runner side of the sandbox. Call this once from the page `ReactCodeSandbox` loads.
+ * Runner side of the sandbox. `ReactCodeSandbox` loads this from its own frame.
  *
  * `modules` is the only thing the markdown can import, and the host cannot change it.
- * Serve the page with `Content-Security-Policy: connect-src 'none'`, and with
- * `Access-Control-Allow-Origin: *` on its assets, since a sandboxed frame loads them cross-origin.
+ * The frame document sets `Content-Security-Policy: connect-src 'none'`. Its scripts
+ * load cross-origin from an opaque origin, so those assets need `Access-Control-Allow-Origin`.
  */
 export function mountReactCodeRunner(root: HTMLElement, modules: Record<string, unknown>): () => void {
   root.classList.add("nonla-ui");
