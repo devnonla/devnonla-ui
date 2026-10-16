@@ -58,7 +58,7 @@ Pass props only when a default is wrong. `componentSize` changes the shared size
 One package, three import paths. Controls stay on `devnonla-ui`. Chat and markdown are separate so an app that only needs buttons and forms does not load them.
 
 ```tsx
-import { Button, AgentAvatar } from "devnonla-ui";
+import { Button } from "devnonla-ui";
 import { MarkdownViewer } from "devnonla-ui/markdown";
 import { AgentPanel } from "devnonla-ui/chat";
 ```

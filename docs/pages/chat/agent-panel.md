@@ -147,7 +147,7 @@ export default function Demo() {
 | `title` | Panel title. Welcome uses this when `name` is omitted. | `string` | `"Assistant"` |
 | `name` | Welcome name. | `string` | `title` |
 | `description` | Welcome description. | `string` | — |
-| `avatar` | Welcome face. | `ReactNode` | — |
+| `avatar` | Welcome face. Any node. Omit it and the welcome shows the first letter of the name. | `ReactNode` | name initial |
 | `starters` | Welcome prompts. A click sends that text. | `string[]` | — |
 | `placeholder` | Composer placeholder. | `string` | `"Message…"` |
 | `initialMessages` | Thread already on screen. | `AgentMessage[]` | — |
