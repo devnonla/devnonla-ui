@@ -32,7 +32,7 @@
   ],
   "scripts": {
     "typecheck": "tsc --noEmit",
-    "docs": "bun --cwd docs run dev"
+    "docs": "cd docs && bun run dev"
   },
   "peerDependencies": {
     "react": ">=19",
