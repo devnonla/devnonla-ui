@@ -1,11 +1,12 @@
-import { type ReactNode, useEffect, useLayoutEffect, useState } from "react";
+import { type ReactNode, type Ref, useEffect, useLayoutEffect, useState } from "react";
 import { cn } from "../lib/cn";
 import { type MarkdownComponents, MarkdownComponentsProvider } from "../markdown-editor/MarkdownViewer";
 import { OverlayScroll, type OverlayScrollVisibility } from "../scroll/OverlayScroll";
 import { AgentMessageList, activityStatus, useStickToBottom } from "./chatMessageList";
 import type { AgentMessage, AgentPanelEndpoint, AgentToolHook } from "./common/types";
 import { useAgentStream } from "./common/useAgentStream";
-import { ChatInput } from "./message-ui/ChatInput";
+import { ChatInput, type ChatInputHandle } from "./message-ui/ChatInput";
+import type { ChatTrigger } from "./message-ui/ChatSuggestions";
 import { ChatWelcome } from "./message-ui/ChatWelcome";
 import type { AgentToolUI } from "./tool-ui/registry";
 
@@ -26,6 +27,10 @@ export type AgentPanelProps = {
   initialMessages?: AgentMessage[];
   /** Custom node in the composer toolbar (model picker, tools, …). */
   toolbar?: ReactNode;
+  /** Markers that open a composer menu, e.g. `/` and `@`. Each `menu` is a React node. */
+  triggers?: ChatTrigger[];
+  /** Imperative composer handle, e.g. `insertChip` to add a text selection as context. */
+  inputRef?: Ref<ChatInputHandle>;
   /** Extra tool cards keyed by stream `toolName`. Checked before builtins. */
   toolUis?: AgentToolUI[];
   /** Fence language → component for assistant markdown (`step`, `subagent`, `mindmap`). */
@@ -53,6 +58,8 @@ export function AgentPanel({
   fetcher,
   initialMessages,
   toolbar,
+  triggers,
+  inputRef,
   toolUis,
   components,
   toolHooks,
@@ -116,7 +123,7 @@ export function AgentPanel({
         <div className="relative shrink-0">
           {accessory}
           <div className="mx-auto w-full max-w-200">
-            <ChatInput generating={generating} placeholder={placeholder} onSend={sendMessage} onCancel={cancel} onClear={handleNewChat} toolbar={toolbar} focusSignal={String(epoch)} enableTypeToFocus />
+            <ChatInput inputRef={inputRef} generating={generating} placeholder={placeholder} onSend={sendMessage} onCancel={cancel} onClear={handleNewChat} toolbar={toolbar} triggers={triggers} focusSignal={String(epoch)} enableTypeToFocus />
           </div>
         </div>
       </div>

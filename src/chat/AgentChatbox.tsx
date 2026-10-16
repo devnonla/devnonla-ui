@@ -1,4 +1,4 @@
-import { type ReactNode, useEffect, useLayoutEffect } from "react";
+import { type ReactNode, type Ref, useEffect, useLayoutEffect } from "react";
 import { cn } from "../lib/cn";
 import { type MarkdownComponents, MarkdownComponentsProvider } from "../markdown-editor/MarkdownViewer";
 import { OverlayScroll, type OverlayScrollVisibility } from "../scroll/OverlayScroll";
@@ -9,7 +9,8 @@ import {
   type AgentChatSendRequest,
   useAgentChatStream,
 } from "./common/useAgentChatStream";
-import { ChatInput } from "./message-ui/ChatInput";
+import { ChatInput, type ChatInputHandle } from "./message-ui/ChatInput";
+import type { ChatTrigger } from "./message-ui/ChatSuggestions";
 import { ChatWelcome } from "./message-ui/ChatWelcome";
 import type { AgentToolUI } from "./tool-ui/registry";
 
@@ -30,6 +31,10 @@ export type AgentChatboxProps = {
   starters?: string[];
   placeholder?: string;
   toolbar?: ReactNode;
+  /** Markers that open a composer menu, e.g. `/` and `@`. Each `menu` is a React node. */
+  triggers?: ChatTrigger[];
+  /** Imperative composer handle, e.g. `insertChip` to add a text selection as context. */
+  inputRef?: Ref<ChatInputHandle>;
   toolUis?: AgentToolUI[];
   /** Fence language → component for assistant markdown (`step`, `subagent`, `mindmap`). */
   components?: MarkdownComponents;
@@ -53,6 +58,8 @@ export function AgentChatbox({
   starters,
   placeholder = "Message…",
   toolbar,
+  triggers,
+  inputRef,
   toolUis,
   components,
   toolHooks,
@@ -109,7 +116,7 @@ export function AgentChatbox({
         <div className="relative shrink-0">
           {accessory}
           <div className="mx-auto w-full max-w-200">
-            <ChatInput generating={generating} placeholder={placeholder} onSend={sendMessage} onCancel={cancel} toolbar={toolbar} enableTypeToFocus />
+            <ChatInput inputRef={inputRef} generating={generating} placeholder={placeholder} onSend={sendMessage} onCancel={cancel} toolbar={toolbar} triggers={triggers} enableTypeToFocus />
           </div>
         </div>
       </div>
