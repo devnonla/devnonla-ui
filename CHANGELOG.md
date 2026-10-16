@@ -5,6 +5,27 @@ All notable changes to this project will be documented in this file.
 The format is based on [Keep a Changelog](https://keepachangelog.com/en/1.1.0/),
 and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0.html).
 
+## [0.19.0] - 2026-10-16
+
+### Added
+
+- Composer menus on `ChatInput`, `AgentPanel`, and `AgentChatbox` via `triggers`. A marker such as `/` or `@` opens that item's `menu`. `useChatSuggest` reads the live query. `ChatSuggestOption` inserts a chip.
+- `inputRef` on those three. `insertChip` adds a chip at the caret (`label` shown, `value` sent, optional `title` and `color`). `focus` and `clear` are on the same handle.
+- `ChatChip`, `ChatInputHandle`, `ChatSuggest`, `ChatTrigger`, `ChatSuggestOption`, and `useChatSuggest` from `devnonla-ui/chat`.
+
+### Changed
+
+- `ReactCodeSandbox` builds its own frame. Pass `code` only. The frame can import `react`, `devnonla-ui`, `devnonla-ui/chat`, `devnonla-ui/markdown`, and `react-hook-form`.
+- `ReactCodeSandbox` `showHeader` defaults to `false`.
+- `MarkdownViewer` runs `live-react` fences when `sandbox` is set. It no longer takes a runner URL.
+- `ChatWelcome` shows the first letter of the name when `avatar` is omitted.
+
+### Upgrade notes
+
+- Remove `AgentAvatar`, `AgentBody`, `AGENT_AVATAR_PARTS`, `AGENT_BODY_PARTS`, and their types. Pass any node as `avatar`, or omit it for the letter.
+- Replace `sandboxSrc="/sandbox.html"` with `sandbox`. Drop the host page that called `mountReactCodeRunner`.
+- Drop `src` on `ReactCodeSandbox`. Pass `showHeader` where you still want the Preview / Code bar.
+
 ## [0.18.1] - 2026-10-14
 
 ### Added
@@ -513,6 +534,7 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 - Replace class `nonla-chat-shimmer` with `Shimmer` or `.nonla-shimmer`.
 - `resolveToolUI(toolName, extras?)` — second argument is optional; extra UIs are checked first.
 
+[0.19.0]: https://github.com/devnonla/devnonla-ui/compare/v0.18.1...v0.19.0
 [0.18.1]: https://github.com/devnonla/devnonla-ui/compare/v0.18.0...v0.18.1
 [0.18.0]: https://github.com/devnonla/devnonla-ui/compare/v0.17.2...v0.18.0
 [0.17.2]: https://github.com/devnonla/devnonla-ui/compare/v0.17.1...v0.17.2
