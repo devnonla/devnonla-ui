@@ -1,5 +1,4 @@
 import type { ReactNode } from "react";
-import { AgentAvatar } from "../../avatar/AgentAvatar";
 import { Button } from "../../button/Button";
 import { cn } from "../../lib/cn";
 
@@ -17,7 +16,12 @@ export type ChatWelcomeProps = {
 const DEFAULT_STARTERS = ["What can you help me with?", "Brainstorm a few ideas with me", "Walk me through how you work"] as const;
 
 function DefaultAvatar({ name }: { name: string }) {
-  return <AgentAvatar size={72} motion="idle" label={name} />;
+  const initial = (name.trim()[0] ?? "?").toUpperCase();
+  return (
+    <div className="flex size-16 items-center justify-center rounded-full bg-brand/20 text-xl font-semibold text-brand-700" aria-hidden>
+      {initial}
+    </div>
+  );
 }
 
 export function ChatWelcome({ name, description, avatar, starters = [...DEFAULT_STARTERS], onStarter, disabled, className }: ChatWelcomeProps) {
