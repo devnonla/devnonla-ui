@@ -122,7 +122,7 @@ function splitSoftBreaks(node: MdNode): MdNode[] {
   return out;
 }
 
-function RichText({ source }: { source: string }) {
+export function RichText({ source }: { source: string }) {
   return (
     <div className={documentClass}>
       <ReactMarkdown remarkPlugins={[remarkGfm, remarkKeepLineBreaks]} components={previewComponents}>
@@ -131,6 +131,13 @@ function RichText({ source }: { source: string }) {
     </div>
   );
 }
+
+/**
+ * List body uses leading-none plus padding that equals the old half-leading + py-0.5.
+ * Paragraphs and the block textarea then share the same text origin, so edit does not nudge the line.
+ */
+const listBodyClass =
+  "[&_p]:my-0! [&_p]:leading-none! [&_p]:py-[calc((var(--md-p-leading,1.6)*1em-1em)/2+0.125rem)]! [&_textarea]:my-0! [&_textarea]:leading-none! [&_textarea]:py-[calc((var(--md-p-leading,1.6)*1em-1em)/2+0.125rem)]!";
 
 export function ListItem({ view, children }: { view: Extract<InlineEdit, { kind: "list" }>; children: ReactNode }) {
   const level = Math.floor(view.indent.length / 2);
@@ -151,7 +158,7 @@ export function ListItem({ view, children }: { view: Extract<InlineEdit, { kind:
           <span className="mt-[calc((1lh-0.375rem)/2)] size-1.5 rounded-full bg-current" />
         </span>
       )}
-      <div className="min-w-0 flex-1 [&_p]:my-0! [&_p]:py-0.5!">{children}</div>
+      <div className={cn("min-w-0 flex-1", listBodyClass)}>{children}</div>
     </div>
   );
 }
@@ -163,8 +170,9 @@ function isListBlock(block: MarkdownBlock): boolean {
 export function spaceBefore(block: MarkdownBlock, prev?: MarkdownBlock): string {
   if (!prev) return "";
   if (isListBlock(block) && isListBlock(prev)) return "mt-0.5";
-  if (prev.kind === "text" && readInlineEdit(prev.body).kind === "heading") return "[&_p:first-child]:mt-0! [&_p:first-child]:pt-0.5!";
+  // List rows keep their own padding model; do not reuse the paragraph-after-heading trim.
   if (isListBlock(block) && prev.kind === "text") return "mt-1";
+  if (prev.kind === "text" && readInlineEdit(prev.body).kind === "heading") return "[&_p:first-child]:mt-0! [&_p:first-child]:pt-0.5! [&_textarea]:mt-0! [&_textarea]:pt-0.5!";
   if (block.kind === "text" && prev.kind === "text") return "";
   return "mt-3";
 }
