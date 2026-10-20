@@ -27,6 +27,12 @@ export type MarkdownEditorProps = {
   defaultDiffLayout?: MarkdownDiffLayout;
   onDiffLayoutChange?: (layout: MarkdownDiffLayout) => void;
   readOnly?: boolean;
+  /**
+   * Show Preview / Edit / Diff in the header. Default `true`.
+   * Set `false` for inline-only editing (stay on `mode` / `defaultMode`, usually `preview`).
+   * Hidden automatically when `readOnly`.
+   */
+  showModes?: boolean;
   placeholder?: string;
   title?: ReactNode;
   originalLabel?: ReactNode;
@@ -73,6 +79,7 @@ function useControllable<T>(value: T | undefined, defaultValue: T, onChange?: (v
  * Preview renders the document. Click a heading, list item, or paragraph to edit that text in place.
  * Mermaid fences and registered fence components render in place and stay view only.
  * Edit is the full-file text buffer. Diff compares `original` and `value` like Monaco.
+ * `showModes={false}` hides the mode switcher for inline-only editing.
  * `readOnly` locks editing and hides the mode switcher.
  * A finished document with no editor chrome uses `MarkdownViewer`.
  */
@@ -88,6 +95,7 @@ export function MarkdownEditor({
   defaultDiffLayout = "side-by-side",
   onDiffLayoutChange,
   readOnly = false,
+  showModes: showModesProp = true,
   placeholder = "Write markdown…",
   title,
   originalLabel = "Original",
@@ -243,7 +251,7 @@ export function MarkdownEditor({
 
   const doc = live?.doc ?? parseMarkdownDoc(valueRef.current);
   const model = useMemo(() => (mode === "diff" && original !== undefined ? diffMarkdown(original, value) : null), [mode, original, value]);
-  const showModes = !readOnly;
+  const showModes = !readOnly && showModesProp;
   const showHeader = Boolean(title) || showModes || model !== null;
 
   return (
