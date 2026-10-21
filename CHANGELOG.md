@@ -5,6 +5,21 @@ All notable changes to this project will be documented in this file.
 The format is based on [Keep a Changelog](https://keepachangelog.com/en/1.1.0/),
 and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0.html).
 
+## [0.19.2] - 2026-10-21
+
+### Changed
+
+- Markdown and Typography body use `text-base` (15px). They were `text-md` (16px).
+- Fenced code and `--nonla-mono-text-size` follow `text-sm` (14px). They matched the body size (15px).
+- Inline code is 0.875em of the surrounding line, at normal weight, with a lighter wash. A token stays on one line.
+- Light text is warm stone. Quaternary is darker, so disabled copy stays readable.
+- Markdown list rows use paragraph leading, so a wrapped line stays readable.
+
+### Upgrade notes
+
+- Markdown body follows `--nonla-base-text-size`, not `--nonla-md-text-size`.
+- `--nonla-mono-text-size` follows `--nonla-sm-text-size`. Set it on `.nonla-ui` to keep the old 15px code size.
+
 ## [0.19.1] - 2026-10-20
 
 ### Added
@@ -544,6 +559,7 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 - Replace class `nonla-chat-shimmer` with `Shimmer` or `.nonla-shimmer`.
 - `resolveToolUI(toolName, extras?)` — second argument is optional; extra UIs are checked first.
 
+[0.19.2]: https://github.com/devnonla/devnonla-ui/compare/v0.19.1...v0.19.2
 [0.19.1]: https://github.com/devnonla/devnonla-ui/compare/v0.19.0...v0.19.1
 [0.19.0]: https://github.com/devnonla/devnonla-ui/compare/v0.18.1...v0.19.0
 [0.18.1]: https://github.com/devnonla/devnonla-ui/compare/v0.18.0...v0.18.1
