@@ -9,7 +9,7 @@ icon: "text-edit-style-24"
 
 # Typography
 
-Same scale as MarkdownViewer. Body size is `text-md`. Leading is 1.6. Text uses `--nonla-text-main`. `type="secondary"` uses `--nonla-text-tertiary`. `disabled` uses `--nonla-text-quaternary`.
+Headings, paragraphs, and inline text. Same scale as MarkdownViewer.
 
 ```live-react
 import { Typography } from "devnonla-ui";
@@ -38,16 +38,14 @@ export default function Demo() {
 
 ## API
 
-`Typography` is a `div` wrapper. `Title`, `Paragraph`, `Text`, and `Link` share the same decorations.
+Title, Paragraph, Text, and Link share the decorations below.
 
 ### Shared decorations
 
-Used by `Typography.Title`, `Typography.Paragraph`, `Typography.Text`, and `Typography.Link`.
-
 | Property | Description | Type | Default |
 | --- | --- | --- | --- |
-| `type` | Text color tone. `secondary` is `--nonla-text-tertiary`. | `secondary` \| `success` \| `warning` \| `danger` | `-` |
-| `disabled` | `--nonla-text-quaternary`. On `Link`, drops `href` and blocks clicks. | `boolean` | `false` |
+| `type` | Text color. Secondary sits quieter than the body. | `secondary` \| `success` \| `warning` \| `danger` | `-` |
+| `disabled` | Quieter still. On a link, drops `href` and blocks clicks. | `boolean` | `false` |
 | `mark` | Highlight with a mark. | `boolean` | `false` |
 | `code` | Wrap in inline code. | `boolean` | `false` |
 | `keyboard` | Wrap in a keyboard key. | `boolean` | `false` |
@@ -58,23 +56,23 @@ Used by `Typography.Title`, `Typography.Paragraph`, `Typography.Text`, and `Typo
 
 ### Typography.Title
 
-Renders `h1`–`h6`. Uses the shared decorations.
+Renders a heading, from h1 to h6. Uses the shared decorations.
 
 | Property | Description | Type | Default |
 | --- | --- | --- | --- |
-| `level` | Heading level. Maps to `h1`–`h6`. Same sizes as MarkdownViewer. | `1` \| `2` \| `3` \| `4` \| `5` \| `6` | `1` |
+| `level` | Heading level. Same sizes as MarkdownViewer. | `1`–`6` | `1` |
 
 ### Typography.Paragraph
 
-Renders a `p`. Uses the shared decorations.
+Renders a paragraph. Uses the shared decorations.
 
 ### Typography.Text
 
-Renders a `span`. Uses the shared decorations.
+Renders inline text. Uses the shared decorations.
 
 ### Typography.Link
 
-Renders an `a`. Uses the shared decorations.
+Renders a link. Uses the shared decorations.
 
 | Property | Description | Type | Default |
 | --- | --- | --- | --- |

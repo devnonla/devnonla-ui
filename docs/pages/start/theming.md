@@ -14,7 +14,7 @@ Font, body size, corner radius, and control height. Colors are on [Colors](/colo
 
 Theme Config lives on the `.nonla-ui` host that `App` renders — not on `:root` or `<html>`. Override `--nonla-*` there (or on a child) so the rest of the consumer page stays untouched.
 
-**Config** is the font, `--nonla-base-text-size`, `--nonla-radius`, and the three control heights. Small and large radius follow the radius knob. Light does not change these. `text-base` follows the body size, 15px, leading 1.6. `text-md` is 16px. `text-lg` is 18px. The other `text-*` steps stay on Tailwind’s default scale.
+**Config** is the font, `--nonla-base-text-size`, `--nonla-radius`, and the three control heights. Small and large radius follow the radius knob. Light does not change these. `text-base` follows the body size, 15px, leading 1.6. Markdown body uses that size. `text-md` is 16px. `text-lg` is 18px. The other `text-*` steps stay on Tailwind’s default scale.
 
 ```live-react
 import { useEffect, useState } from "react";
@@ -33,7 +33,7 @@ const GROUPS = [
     note: "Config is --nonla-base-text-size. Mono code reads --nonla-mono-text-size.",
     items: [
       { token: "--nonla-base-text-size", alias: "", use: "Default body size. Leading is 1.6.", kind: "type", className: "text-(length:--nonla-base-text-size) leading-[calc(var(--nonla-base-text-size)*1.6)]" },
-      { token: "--nonla-mono-text-size", alias: "", use: "Inline code and fenced code. One pixel under the body size.", kind: "type", className: "font-mono text-(length:--nonla-mono-text-size) leading-[calc(var(--nonla-mono-text-size)*1.6)]" },
+      { token: "--nonla-mono-text-size", alias: "", use: "Fenced code. Same size as text-sm.", kind: "type", className: "font-mono text-(length:--nonla-mono-text-size) leading-[calc(var(--nonla-mono-text-size)*1.6)]" },
     ],
   },
   {

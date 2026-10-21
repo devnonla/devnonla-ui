@@ -1,6 +1,6 @@
 import { type AnchorHTMLAttributes, type CSSProperties, createElement, type HTMLAttributes, type ReactNode } from "react";
 import { cn } from "../lib/cn";
-import { headingClass, markdownBodyClass, markdownParagraphClass, markdownScaleStyle, pageTitleClass } from "../lib/markdownScale";
+import { headingClass, markdownBodyClass, markdownInlineCodeClass, markdownParagraphClass, markdownScaleStyle, pageTitleClass } from "../lib/markdownScale";
 
 export type TypographyType = "secondary" | "success" | "warning" | "danger";
 
@@ -40,10 +40,8 @@ const TITLE_TAG = {
   6: "h6",
 } as const;
 
-/** Same scale as MarkdownViewer. Body size is `text-md`. Inline code reads `--nonla-mono-text-size`. */
+/** Same scale as MarkdownViewer. Body size is `text-base`. Inline code uses the viewer chip. */
 const BODY = markdownBodyClass;
-
-const INLINE_CODE = "nonla-inline-code rounded-[4px] bg-muted px-[2px] py-px align-baseline font-mono text-(length:--md-inline-size,var(--nonla-mono-text-size)) leading-none whitespace-nowrap [box-decoration-break:clone] [-webkit-box-decoration-break:clone]";
 
 const TITLE_SPACE = "nonla-typo";
 
@@ -60,7 +58,7 @@ function wrapDecorations(children: ReactNode, props: Decorations) {
     node = <mark className="rounded-sm bg-[color-mix(in_oklab,var(--nonla-warn)_40%,transparent)] px-0.5 text-inherit">{node}</mark>;
   }
   if (props.code) {
-    node = <code className={INLINE_CODE}>{node}</code>;
+    node = <code className={markdownInlineCodeClass}>{node}</code>;
   }
   if (props.keyboard) {
     node = <kbd className="inline-block rounded-md border border-b-2 border-border bg-muted px-1.5 font-mono text-[0.85em] leading-5">{node}</kbd>;

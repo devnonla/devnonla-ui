@@ -43,14 +43,14 @@
 
   --nonla-font: "Inter Variable", ui-sans-serif, -apple-system, system-ui, "Segoe UI Variable Display", "Segoe UI", Helvetica, "Apple Color Emoji", "Noto Sans Arabic", "Noto Sans Hebrew", Arial, sans-serif, "Segoe UI Emoji", "Segoe UI Symbol";
   --nonla-mono-font: "Geist Mono Variable", ui-monospace, SFMono-Regular, Menlo, Monaco, Consolas, "Courier New", monospace;
-  /* Default body size. Tailwind `text-base` follows this. Leading is 1.6. */
+  /* Default body size. Markdown body and Tailwind `text-base` follow this. Leading is 1.6. */
   --nonla-base-text-size: 15px;
-  /* `text-md`. MarkdownViewer body uses this. Agent replies use `text-base`. */
+  /* `text-md`. One step above the body. */
   --nonla-md-text-size: 16px;
   /* `text-sm`. Composer, tool lines, and errors use this. User bubbles use `text-base`. */
   --nonla-sm-text-size: 14px;
-  /* Code. One pixel under the body, so mono does not look larger than the text around it. */
-  --nonla-mono-text-size: calc(var(--nonla-base-text-size));
+  /* Fenced code. Same size as `text-sm`. */
+  --nonla-mono-text-size: var(--nonla-sm-text-size);
   --nonla-radius: 8px;
   --nonla-height: 32px;
   --nonla-height-sm: 24px;
@@ -136,12 +136,12 @@
 .nonla-ui.light {
   color-scheme: light;
 
-  /* Light grays are Tailwind neutral. Page is white. Sidebar and cards are neutral-50. */
+  /* Page is white. Text is warm stone, same family as dark. Sidebar and cards stay neutral-50. */
   --nonla-bg: #ffffff; /* white */
-  --nonla-text-main: #262626; /* neutral-800 */
-  --nonla-text-secondary: #737373; /* neutral-500 */
-  --nonla-text-tertiary: #a1a1a1; /* neutral-400 */
-  --nonla-text-quaternary: #d4d4d4; /* neutral-300 */
+  --nonla-text-main: #1e1d1b;
+  --nonla-text-secondary: #564f48;
+  --nonla-text-tertiary: #6f6a63;
+  --nonla-text-quaternary: #8a847c;
   --nonla-text-on-solid: #ffffff; /* white */
   --nonla-brand: #f18d00;
   --nonla-danger: #dc3b3b;

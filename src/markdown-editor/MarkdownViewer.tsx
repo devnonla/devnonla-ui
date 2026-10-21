@@ -4,7 +4,7 @@ import remarkGfm from "remark-gfm";
 import { Checkbox } from "../checkbox/Checkbox";
 import { CodeBlock } from "../codeblock/CodeBlock";
 import { cn } from "../lib/cn";
-import { headingClass, markdownScaleStyle } from "../lib/markdownScale";
+import { headingClass, markdownInlineCodeClass, markdownScaleStyle } from "../lib/markdownScale";
 import { type InlineEdit, type MarkdownBlock, parseMarkdownDoc, readFence, readInlineEdit } from "./blocks";
 import { MarkdownTable } from "./MarkdownTable";
 import { MermaidBlock } from "./MermaidBlock";
@@ -18,7 +18,7 @@ const taskCheckClass =
   "data-[state=checked]:border-foreground! data-[state=checked]:bg-foreground! data-[state=checked]:text-background! data-[state=indeterminate]:border-foreground! data-[state=indeterminate]:bg-foreground! data-[state=indeterminate]:text-background!";
 
 const documentClass = cn(
-  "min-w-0 wrap-anywhere text-(length:--md-body-size,var(--nonla-md-text-size,16px)) leading-(--md-body-leading,calc(var(--nonla-md-text-size,16px)*1.6)) text-foreground",
+  "min-w-0 wrap-anywhere text-(length:--md-body-size,var(--nonla-base-text-size,15px)) leading-(--md-body-leading,calc(var(--nonla-base-text-size,15px)*1.6)) text-foreground",
   "[&_:is(h1,h2,h3,h4,h5,h6)]:text-foreground",
   "[&_:is(h1,h2)]:mt-(--md-h2-mt,24px) [&_h1]:mb-(--md-h1-mb,12px) [&_h2]:mb-(--md-h2-mb,8px) [&_:is(h1,h2)]:pt-(--md-h2-py,3px) [&_:is(h1,h2)]:pb-(--md-h2-py,3px) [&_:is(h1,h2)]:text-(length:--md-h2-size,26px) [&_:is(h1,h2)]:leading-(--md-h2-leading,32px) [&_:is(h1,h2)]:font-(--md-h2-weight,600) [&_:is(h1,h2)]:tracking-normal",
   "[&_h3]:mt-(--md-h3-mt,22px) [&_h3]:mb-(--md-h3-mb,8px) [&_h3]:text-(length:--md-h3-size,24px) [&_h3]:leading-(--md-h3-leading,32px) [&_h3]:font-(--md-h3-weight,600)",
@@ -47,7 +47,7 @@ const previewComponents: Components = {
     const codeText = String(children).replace(/\n$/, "");
     const isBlock = codeText.includes("\n") || !!match;
     if (!isBlock) {
-      return <code className="nonla-inline-code rounded-[4px] bg-muted px-[2px] py-px align-baseline font-mono text-(length:--md-inline-size,var(--nonla-mono-text-size)) leading-none whitespace-nowrap [box-decoration-break:clone] [-webkit-box-decoration-break:clone]">{children}</code>;
+      return <code className={markdownInlineCodeClass}>{children}</code>;
     }
     if (lang.toLowerCase() === "mermaid") return <MermaidView code={codeText} />;
     return <CodeBlock code={codeText} language={lang || undefined} className="my-(--md-code-my,8px)" />;
@@ -65,7 +65,7 @@ const previewComponents: Components = {
   input({ type, checked }) {
     if (type !== "checkbox") return <input type={type} checked={checked} readOnly />;
     return (
-        <span className="nonla-md-task-check pointer-events-none inline-flex h-(--md-body-leading,calc(var(--nonla-md-text-size,16px)*1.6)) items-center">
+        <span className="nonla-md-task-check pointer-events-none inline-flex h-(--md-body-leading,calc(var(--nonla-base-text-size,15px)*1.6)) items-center">
         <Checkbox checked={Boolean(checked)} tabIndex={-1} className={taskCheckClass} />
       </span>
     );
@@ -133,16 +133,16 @@ export function RichText({ source }: { source: string }) {
 }
 
 /**
- * List body uses leading-none plus padding that equals the old half-leading + py-0.5.
- * Paragraphs and the block textarea then share the same text origin, so edit does not nudge the line.
+ * List body keeps paragraph leading so wrapped lines stay readable.
+ * View and edit share the same rhythm so the block does not jump.
  */
 const listBodyClass =
-  "[&_p]:my-0! [&_p]:leading-none! [&_p]:py-[calc((var(--md-p-leading,1.6)*1em-1em)/2+0.125rem)]! [&_textarea]:my-0! [&_textarea]:leading-none! [&_textarea]:py-[calc((var(--md-p-leading,1.6)*1em-1em)/2+0.125rem)]!";
+  "[&_p]:my-0! [&_p]:py-0.5! [&_p]:leading-(--md-p-leading,1.6)! [&_textarea]:my-0! [&_textarea]:py-0.5! [&_textarea]:leading-(--md-p-leading,1.6)!";
 
 export function ListItem({ view, children }: { view: Extract<InlineEdit, { kind: "list" }>; children: ReactNode }) {
   const level = Math.floor(view.indent.length / 2);
   const ordinal = Number(/^(\d+)/.exec(view.marker)?.[1] ?? "1");
-  const marker = "w-6 shrink-0 pt-0.5 text-(length:--md-body-size,var(--nonla-md-text-size,16px)) leading-(--md-p-leading,1.6)";
+  const marker = "w-6 shrink-0 pt-0.5 text-(length:--md-body-size,var(--nonla-base-text-size,15px)) leading-(--md-p-leading,1.6)";
   return (
     <div data-md-list="" className="flex items-start gap-1.5 pl-(--md-item-pl,4px)" style={level > 0 ? { marginLeft: `calc(${level} * var(--md-nest, 1.25rem))` } : undefined}>
       {view.task ? (

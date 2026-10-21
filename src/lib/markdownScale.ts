@@ -1,14 +1,15 @@
 import type { CSSProperties } from "react";
 
 /**
- * One markdown scale. Body reads `text-md` (`--nonla-md-text-size`). Leading is 1.6.
+ * One markdown scale. Body reads `--nonla-base-text-size` (`text-base`). Leading is 1.6.
  * Tables always use `text-base`.
- * Inline code and fenced code read `--nonla-mono-text-size`.
+ * Fenced code reads `--nonla-mono-text-size`, which is `text-sm`.
+ * Inline code is `0.875em` of the surrounding text, so the chip stays inside the line.
  * Class fallbacks match these values when the variables are not set.
  */
 export const markdownScaleStyle = {
-  "--md-body-size": "var(--nonla-md-text-size)",
-  "--md-body-leading": "calc(var(--nonla-md-text-size) * 1.6)",
+  "--md-body-size": "var(--nonla-base-text-size)",
+  "--md-body-leading": "calc(var(--nonla-base-text-size) * 1.6)",
   "--md-h1-size": "32px",
   "--md-h1-leading": "1.25",
   "--md-h1-weight": "800",
@@ -56,7 +57,7 @@ export const markdownScaleStyle = {
   "--md-code-my": "8px",
   "--md-code-size": "var(--nonla-mono-text-size)",
   "--md-code-leading": "calc(var(--nonla-mono-text-size) * 1.6)",
-  "--md-inline-size": "var(--nonla-mono-text-size)",
+  "--md-inline-size": "0.875em",
   "--md-item-pl": "4px",
   "--md-nest": "1.25rem",
 } as CSSProperties;
@@ -77,7 +78,15 @@ export function headingClass(level: number): string {
 export const pageTitleClass = "text-foreground mt-(--md-h1-mt,0px) mb-(--md-h1-mb,1px) pt-(--md-h1-py,3px) pb-(--md-h1-py,3px) text-(length:--md-h1-size,32px) leading-(--md-h1-leading,1.25) font-(--md-h1-weight,800) tracking-tight";
 
 /** Body line. Same size and color as a markdown paragraph. */
-export const markdownBodyClass = "text-(length:--md-body-size,var(--nonla-md-text-size,16px)) leading-(--md-body-leading,calc(var(--nonla-md-text-size,16px)*1.6)) text-foreground";
+export const markdownBodyClass = "text-(length:--md-body-size,var(--nonla-base-text-size,15px)) leading-(--md-body-leading,calc(var(--nonla-base-text-size,15px)*1.6)) text-foreground";
 
 /** Paragraph box. Same rhythm as `MarkdownViewer` `p`. */
-export const markdownParagraphClass = "nonla-typo m-0 my-(--md-p-my,1px) py-(--md-p-py,4px) text-(length:--md-body-size,var(--nonla-md-text-size,16px)) leading-(--md-p-leading,1.6) text-foreground";
+export const markdownParagraphClass = "nonla-typo m-0 my-(--md-p-my,1px) py-(--md-p-py,4px) text-(length:--md-body-size,var(--nonla-base-text-size,15px)) leading-(--md-p-leading,1.6) text-foreground";
+
+/**
+ * Inline code. Smaller than the line, normal weight, with a light wash.
+ * The wash is ink on whatever sits behind, so it stays visible on the page and on a card.
+ * A token stays whole; the line breaks before it.
+ */
+export const markdownInlineCodeClass =
+  "nonla-inline-code rounded-[4px] bg-[color-mix(in_oklab,var(--nonla-text-main)_6%,transparent)] px-[0.25em] py-px align-baseline font-mono text-(length:--md-inline-size,0.875em) leading-none whitespace-nowrap";

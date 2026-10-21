@@ -9,7 +9,7 @@ icon: "document-text-24"
 
 # MarkdownViewer
 
-Xem markdown đã viết. Chỉ đọc: heading, list, bảng, code, mermaid, khối live-react, và fence gắn component riêng. Body là `text-md`.
+Xem markdown đã viết. Chỉ đọc: heading, list, bảng, code, mermaid, khối live-react, và fence gắn component riêng. Body là `text-base`.
 
 ## Component riêng
 
