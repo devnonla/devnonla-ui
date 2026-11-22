@@ -5,6 +5,55 @@ All notable changes to this project will be documented in this file.
 The format is based on [Keep a Changelog](https://keepachangelog.com/en/1.1.0/),
 and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0.html).
 
+## [0.20.0] - 2026-11-22
+
+### Added
+
+- `Breadcrumb`, `CommandPalette` (⌘K, grouped items, key hints), `Kbd`, and `PageHeader`.
+- `Button` `type="icon"`: an icon-only text button.
+- `Tabs` `variant="pill"`.
+- `Empty` `icon`, `title`, `action`, and `bordered`.
+- `Sidebar` item `description`: a muted second line.
+- `Table` shows skeleton rows while `loading` with no data.
+- `Select` option `description` (second line, searchable) and `optionRender` for custom rows of any height.
+- `Tooltip` `arrow` now works (default `true`; was a no-op).
+- Icons: `arrow-back`, `arrow-forward`, `more`, `panel`, `pointer`, `refresh`, `search`, `send`, `window`.
+- Status, button, pill, switch, inline-code, tooltip, and motion tokens (`--nonla-{danger,success,warn}-fill`, `--nonla-text-on-*`, `--nonla-btn-*`, `--nonla-pill-*`, `--nonla-switch-*`, `--nonla-tooltip-*`, `--nonla-nav-text-size`, `--nonla-dur-instant`, `--nonla-ease-spring`, …).
+- Claude Code plugin with one `devnonla-ui` skill and an API reference per component (`/plugin marketplace add devnonla/devnonla-ui`).
+
+### Changed
+
+- Brand is ink (near-black in light, near-white in dark). Dark mode is neutral gray; light mode uses a `#fafafa` page with white surfaces and alpha borders.
+- Hover, active, and focus states share one motion and ink scale across controls.
+- Default button gets a raised surface; primary darkens on hover. `Segmented` and pill `Tabs` use the same raised thumb on a faint track.
+- `Switch`, `Checkbox`, `Tag`, `Alert`, and `message` follow the new status roles.
+- Icon set redrawn to a 24 grid with ~1.25px optical strokes.
+- Menus, `Select`, and `Dropdown` rows are 30px with lighter hover; overlays use a 10px radius.
+- `Tooltip` is a white bubble with a 1px outline, soft arrow, and scale-fade (150ms).
+- Sidebar rows and tabs use medium weight. Table headers are muted.
+- `Select` with `allowClear` swaps the chevron for the clear button on hover. Rich labels are vertically centered; while searching, the current pick shows as plain text.
+
+### Fixed
+
+- Tooltip and ContextMenu portaled to `<body>` on first open and lost theme tokens.
+- `Input` with `allowClear` lost focus on clear.
+- `Segmented` uncontrolled value did not update.
+- `Dropdown` jumped on first open.
+
+### Removed
+
+- `BlobShape` (and its types).
+- Built-in tool UIs from `devnonla-ui/chat`: `GetCurrentTimeToolUI`, `ReadSkillToolUI`, `RunJsToolUI`, `WebFetchToolUI`, `builtinToolUis`.
+- `Button` `type="dashed"` and `variant="dashed"`.
+
+### Upgrade notes
+
+- Replace `BlobShape` with your own SVG.
+- Register tool UIs yourself through `resolveToolUI` / your own registry; the built-ins are gone.
+- `type="dashed"` → `type="default"`.
+- Default brand changed to ink. Set `--nonla-brand` on `.nonla-ui` to keep a colored brand.
+- Menu rows are 2px shorter. `--nonla-nav-text-size` (14px) sets sidebar and tooltip text.
+
 ## [0.19.2] - 2026-10-21
 
 ### Changed
@@ -559,6 +608,7 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 - Replace class `nonla-chat-shimmer` with `Shimmer` or `.nonla-shimmer`.
 - `resolveToolUI(toolName, extras?)` — second argument is optional; extra UIs are checked first.
 
+[0.20.0]: https://github.com/devnonla/devnonla-ui/compare/v0.19.2...v0.20.0
 [0.19.2]: https://github.com/devnonla/devnonla-ui/compare/v0.19.1...v0.19.2
 [0.19.1]: https://github.com/devnonla/devnonla-ui/compare/v0.19.0...v0.19.1
 [0.19.0]: https://github.com/devnonla/devnonla-ui/compare/v0.18.1...v0.19.0
