@@ -1,0 +1,10 @@
+{
+  "name": "devnonla-ui",
+  "version": "0.19.2",
+  "description": "Skill for building with NonlaUI (devnonla-ui): components, house style, theming, the agent chat kit, and an API table per component.",
+  "author": { "name": "devnonla" },
+  "homepage": "https://devnonla.github.io/devnonla-ui/",
+  "repository": "https://github.com/devnonla/devnonla-ui",
+  "license": "MIT",
+  "keywords": ["react", "ui", "design-system", "agents", "chat"]
+}

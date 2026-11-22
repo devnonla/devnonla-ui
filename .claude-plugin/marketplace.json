@@ -1,0 +1,12 @@
+{
+  "name": "devnonla-ui",
+  "description": "Claude Code plugins for the NonlaUI library.",
+  "owner": { "name": "devnonla" },
+  "plugins": [
+    {
+      "name": "devnonla-ui",
+      "source": "./plugins/devnonla-ui",
+      "description": "Skill for building with NonlaUI: components, house style, theming, agent chat, API tables."
+    }
+  ]
+}

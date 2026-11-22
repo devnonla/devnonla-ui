@@ -31,3 +31,14 @@ import { MarkdownViewer } from "devnonla-ui/markdown";
 ```
 
 Install, theme, and each control are in the [docs](https://devnonla.github.io/devnonla-ui/).
+
+## Claude Code plugin
+
+One `devnonla-ui` skill that teaches coding agents to build with NonlaUI: setup, which component to use, house style, theming, and the agent chat kit, plus an API table for every component that agents read on demand.
+
+```
+/plugin marketplace add devnonla/devnonla-ui
+/plugin install devnonla-ui@devnonla-ui
+```
+
+Agents load it on their own when a task touches NonlaUI, or call it with `/devnonla-ui:devnonla-ui`.
