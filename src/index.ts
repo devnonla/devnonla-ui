@@ -10,13 +10,15 @@ export type { InputNumberProps, InputProps, InputSize, PasswordProps, TextAreaPr
 export { Input, InputNumber, TextArea } from "./input/Input";
 export type { SearchInputProps } from "./input/SearchInput";
 export { SearchInput } from "./input/SearchInput";
+export type { KbdProps } from "./kbd/Kbd";
+export { Kbd } from "./kbd/Kbd";
 /** Native input element ref. */
 export type InputRef = HTMLInputElement;
 
 export type { AlertProps, AlertType } from "./alert/Alert";
 export { Alert } from "./alert/Alert";
-export type { BlobShapeAppearance, BlobShapeProps, BlobShapeVariant } from "./blob-shape/BlobShape";
-export { BlobShape } from "./blob-shape/BlobShape";
+export type { BreadcrumbItem, BreadcrumbProps } from "./breadcrumb/Breadcrumb";
+export { Breadcrumb } from "./breadcrumb/Breadcrumb";
 export type { CalendarProps } from "./calendar/Calendar";
 export { Calendar } from "./calendar/Calendar";
 export type { CardFooterProps, CardItemProps, CardProps } from "./card/Card";
@@ -27,6 +29,8 @@ export type { CodeBlockCopyButtonProps, CodeBlockProps } from "./codeblock/CodeB
 export { CodeBlock, CodeBlockCopyButton } from "./codeblock/CodeBlock";
 export type { ColorFormat, ColorPickerProps, ColorPickerSemanticSlot, ColorType, PresetColorType } from "./colorpicker/ColorPicker";
 export { Color, ColorPicker } from "./colorpicker/ColorPicker";
+export type { CommandGroup, CommandItem, CommandPaletteProps } from "./command-palette/CommandPalette";
+export { CommandPalette } from "./command-palette/CommandPalette";
 export type { DatePickerProps, RangePickerProps, RangeValue } from "./datepicker/DatePicker";
 export { DatePicker, RangePicker } from "./datepicker/DatePicker";
 export type { DrawerPlacement, DrawerProps } from "./drawer/Drawer";
@@ -77,6 +81,8 @@ export type { MessageConfig, MessageType } from "./message/message";
 export { message } from "./message/message";
 export type { ModalConfirmProps, ModalProps } from "./modal/Modal";
 export { Modal } from "./modal/Modal";
+export type { PageHeaderProps } from "./page-header/PageHeader";
+export { PageHeader } from "./page-header/PageHeader";
 export type { PaginationAlign, PaginationItemType, PaginationProps, PaginationSemanticSlot, PaginationSizeChangerProps } from "./pagination/Pagination";
 export { Pagination } from "./pagination/Pagination";
 export type { PopconfirmProps } from "./popconfirm/Popconfirm";
