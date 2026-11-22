@@ -1,10 +1,12 @@
-import { type AnchorHTMLAttributes, type ButtonHTMLAttributes, type CSSProperties, createContext, type ForwardRefExoticComponent, forwardRef, type MouseEvent, type ReactNode, type RefAttributes, useContext, useEffect, useLayoutEffect, useMemo, useRef, useState } from "react";
-import { cn } from "../lib/cn";
+import { type AnchorHTMLAttributes, type ButtonHTMLAttributes, type CSSProperties, cloneElement, createContext, type ForwardRefExoticComponent, forwardRef, isValidElement, type MouseEvent, type ReactNode, type RefAttributes, useContext, useEffect, useLayoutEffect, useMemo, useRef, useState } from "react";
+import { Icon } from "../icon/Icon";
+import { cn, focusRing } from "../lib/cn";
 import type { ControlSize } from "../lib/sizes";
 import { controlHeightVar, controlRadiusVar, getSizeTokens, useControlSize } from "../lib/sizes";
 
-export type ButtonType = "default" | "primary" | "dashed" | "link" | "text";
-export type ButtonVariant = "outlined" | "dashed" | "solid" | "filled" | "text" | "link" | "nostyle";
+/** `icon` is a square, icon-only button that looks like `text`: no fill or border until hover. Give it an `aria-label`. */
+export type ButtonType = "default" | "primary" | "link" | "text" | "icon";
+export type ButtonVariant = "outlined" | "solid" | "filled" | "text" | "icon" | "link" | "nostyle";
 export type ButtonShape = "default" | "circle" | "round" | "square";
 export type ButtonHtmlType = "submit" | "button" | "reset";
 export type ButtonSize = ControlSize;
@@ -44,9 +46,9 @@ export type ButtonGroupProps = {
 const TYPE_MAP: Record<ButtonType, [ButtonColor, ButtonVariant]> = {
   default: ["default", "outlined"],
   primary: ["primary", "solid"],
-  dashed: ["default", "dashed"],
   link: ["link", "link"],
   text: ["default", "text"],
+  icon: ["default", "icon"],
 };
 
 const HTML_BUTTON_TYPES = new Set(["button", "submit", "reset"]);
@@ -66,6 +68,9 @@ function resolveTone(type: ButtonType | undefined, color: ButtonColor | undefine
   return ["default", variant ?? "outlined"];
 }
 
+/** Glyph box for `type="icon"` per size: about 60% of the button. */
+const ICON_BUTTON_GLYPH = { small: 16, default: 20, large: 24 } as const;
+
 const PRESET_COLORS = new Set<ButtonColor>(["blue", "purple", "cyan", "green", "magenta", "pink", "red", "orange", "yellow", "volcano", "geekblue", "lime", "gold"]);
 
 const TWO_CN = /^[\u4e00-\u9fa5]{2}$/;
@@ -75,35 +80,37 @@ function tokenAppearance(color: "default" | "primary" | "danger" | "link", varia
   if (variant === "nostyle") return "";
   const g = ghost && variant !== "text" && variant !== "link";
   if (color === "primary") {
-    if (variant === "solid" && !g) return "border-transparent bg-brand text-[var(--nonla-text-on-solid)] hover:bg-[color-mix(in_oklab,var(--brand),var(--background)_14%)] active:bg-[color-mix(in_oklab,var(--brand),black_18%)]";
-    if (variant === "filled") return "bg-brand/15 text-brand-700 border-transparent hover:bg-brand/25";
-    if (variant === "text") return "bg-transparent text-brand border-transparent hover:bg-brand/10";
-    if (variant === "link") return "text-brand border-transparent hover:text-brand-700";
-    return "bg-transparent text-brand border-brand hover:bg-brand/10";
+    if (variant === "solid" && !g) return "border-(--nonla-brand-ring) bg-brand-fill text-on-brand shadow-(--nonla-solid-shadow) hover:bg-brand-fill-hover active:bg-brand-fill-active";
+    if (variant === "filled") return "bg-brand-bg text-brand border-transparent hover:bg-brand-bg-hover active:bg-brand-border";
+    if (variant === "text" || variant === "icon") return "bg-transparent text-brand border-transparent hover:bg-brand-bg active:bg-brand-bg-hover";
+    if (variant === "link") return "text-brand border-transparent underline-offset-4 hover:underline";
+    return "bg-transparent text-brand border-brand hover:bg-brand-bg active:bg-brand-bg-hover";
   }
   if (color === "danger") {
-    if (variant === "solid" && !g) return "border-transparent bg-destructive text-(--nonla-text-on-solid) hover:bg-destructive/90";
-    if (variant === "filled") return "bg-destructive/15 text-destructive border-transparent hover:bg-destructive/25";
-    if (variant === "text") return "bg-transparent text-destructive border-transparent hover:bg-destructive/10";
-    if (variant === "link") return "text-destructive border-transparent hover:text-destructive/80";
-    return "bg-transparent text-destructive border-destructive hover:bg-destructive/10";
+    if (variant === "solid" && !g) return "border-(--nonla-danger-ring) bg-destructive-fill text-on-destructive shadow-(--nonla-solid-shadow) hover:bg-destructive-fill-hover active:bg-destructive-fill-active";
+    if (variant === "filled") return "bg-destructive-bg text-destructive border-transparent hover:bg-destructive-bg-hover active:bg-destructive-border";
+    if (variant === "text" || variant === "icon") return "bg-transparent text-destructive border-transparent hover:bg-destructive-bg active:bg-destructive-bg-hover";
+    if (variant === "link") return "text-destructive border-transparent underline-offset-4 hover:underline";
+    return "bg-transparent text-destructive border-destructive-border hover:bg-destructive-bg active:bg-destructive-bg-hover";
   }
-  if (color === "link" || variant === "link") return "text-link border-transparent hover:text-link/80";
-  if (variant === "filled") return "bg-muted text-foreground border-transparent hover:bg-muted/80";
-  if (variant === "text") return "bg-transparent text-foreground border-transparent hover:bg-ink-hover hover:text-foreground";
-  if (variant === "dashed") return "bg-transparent text-foreground border-dashed border-border hover:bg-ink-hover";
-  return "nonla-btn-glass border-border bg-transparent text-foreground shadow-none transition-[box-shadow,transform] duration-(--nonla-dur-fast) ease-(--nonla-ease-out) hover:not-disabled:not-aria-disabled:shadow-[inset_0_0_0_999px_var(--nonla-ink-hover)] active:not-disabled:not-aria-disabled:scale-[0.98] active:not-disabled:not-aria-disabled:shadow-[inset_0_0_0_999px_var(--nonla-ink-active)] motion-reduce:transition-[box-shadow] motion-reduce:active:transform-none";
+  if (color === "link" || variant === "link") return "text-link border-transparent underline-offset-4 hover:underline";
+  if (variant === "filled") return "bg-muted text-foreground border-transparent hover:bg-(--nonla-fill-strong) active:bg-ink-active";
+  if (variant === "text") return "bg-transparent text-foreground border-transparent hover:bg-ink-hover active:bg-ink-active";
+  if (variant === "icon") return "bg-transparent text-foreground border-transparent hover:bg-ink-hover active:bg-ink-active";
+  // Raised default (measured on Cloudflare): surface fill, hairline, 1px contact shadow. Hover darkens the fill a step, press a bit more.
+  // No press scale on popup triggers (Radix sets `data-state`): the popup anchors to the trigger box and would jump with it.
+  return "nonla-btn-glass border-border bg-card text-foreground shadow-(--nonla-btn-shadow) transition-[background-color,transform] duration-(--nonla-dur-fast) ease-(--nonla-ease-out) hover:not-disabled:not-aria-disabled:bg-(--nonla-btn-bg-hover) active:not-disabled:not-aria-disabled:not-data-[state]:scale-[0.97] active:not-disabled:not-aria-disabled:bg-(--nonla-btn-bg-active) motion-reduce:transition-[background-color] motion-reduce:active:transform-none";
 }
 
 function presetAppearance(variant: ButtonVariant, ghost: boolean): string {
   if (variant === "nostyle") return "";
   const g = ghost && variant !== "text" && variant !== "link";
-  if (variant === "solid" && !g) return "bg-(--nonla-btn) text-[var(--nonla-text-on-solid)] border-transparent hover:brightness-110";
-  if (variant === "filled") return "bg-(--nonla-btn)/15 text-(--nonla-btn) border-transparent hover:bg-(--nonla-btn)/25";
-  if (variant === "link") return "text-(--nonla-btn) border-transparent hover:opacity-80";
-  if (variant === "dashed") return "bg-transparent text-(--nonla-btn) border-dashed border-(--nonla-btn) hover:bg-(--nonla-btn)/10";
-  if (variant === "text") return "bg-transparent text-(--nonla-btn) border-transparent hover:bg-(--nonla-btn)/10";
-  return "bg-transparent text-(--nonla-btn) border-(--nonla-btn) hover:bg-(--nonla-btn)/10";
+  if (variant === "solid" && !g)
+    return "bg-(--nonla-btn) text-(--nonla-text-on-solid) border-transparent hover:bg-[color-mix(in_oklab,var(--nonla-btn)_90%,var(--nonla-fill-shade))] active:bg-[color-mix(in_oklab,var(--nonla-btn)_82%,var(--nonla-fill-shade))]";
+  if (variant === "filled") return "bg-(--nonla-btn)/10 text-(--nonla-btn) border-transparent hover:bg-(--nonla-btn)/16 active:bg-(--nonla-btn)/24";
+  if (variant === "link") return "text-(--nonla-btn) border-transparent underline-offset-4 hover:underline";
+  if (variant === "text" || variant === "icon") return "bg-transparent text-(--nonla-btn) border-transparent hover:bg-(--nonla-btn)/10 active:bg-(--nonla-btn)/16";
+  return "bg-transparent text-(--nonla-btn) border-(--nonla-btn) hover:bg-(--nonla-btn)/10 active:bg-(--nonla-btn)/16";
 }
 
 function LoadingDot({ size }: { size: number }) {
@@ -162,7 +169,10 @@ const ButtonInner = forwardRef<HTMLButtonElement | HTMLAnchorElement, ButtonProp
   const [mergedColor, mergedVariant] = resolveTone(type, color, variant, danger);
   const preset = PRESET_COLORS.has(mergedColor);
   const placement = iconPlacement ?? iconPosition ?? "start";
-  const iconOnly = children == null || children === false || children === "";
+  const iconVariant = mergedVariant === "icon";
+  // `type="icon"` takes the glyph from `icon` or, if unset, from `children`. It never renders a label.
+  const iconProp = iconVariant && icon == null ? children : icon;
+  const iconOnly = iconVariant || children == null || children === false || children === "";
 
   const loadingOn = typeof loading === "object" ? true : !!loading;
   const loadingDelay = typeof loading === "object" ? (loading.delay ?? 0) : 0;
@@ -197,12 +207,16 @@ const ButtonInner = forwardRef<HTMLButtonElement | HTMLAnchorElement, ButtonProp
     return children;
   }, [children, autoInsertSpace]);
 
-  const iconNode = innerLoading ? typeof loading === "object" && loading.icon ? loading.icon : <LoadingDot size={tok.icon} /> : icon;
+  // Icon-only buttons use a toolbar-sized glyph box (20px in a 32px button, as on Claude desktop).
+  const iconSize = iconVariant ? ICON_BUTTON_GLYPH[size] : tok.icon;
+  // An `<Icon>` without its own `size` takes the icon button's glyph box, so the stroke weight matches the drawn size.
+  const sizedIcon = iconVariant && isValidElement<{ size?: number }>(iconProp) && iconProp.type === Icon && iconProp.props.size == null ? cloneElement(iconProp, { size: iconSize }) : iconProp;
+  const iconNode = innerLoading ? typeof loading === "object" && loading.icon ? loading.icon : <LoadingDot size={iconSize} /> : sizedIcon;
   const showIcon = Boolean(iconNode);
   const bare = mergedVariant === "nostyle";
   const radius = shape === "circle" || shape === "round" ? 9999 : shape === "square" ? 4 : controlRadiusVar(size);
   const appearance = bare ? "" : preset ? presetAppearance(mergedVariant, ghost) : tokenAppearance(mergedColor as "default" | "primary" | "danger" | "link", mergedVariant, ghost);
-  const bordered = !bare && mergedVariant !== "text" && mergedVariant !== "link";
+  const bordered = !bare && mergedVariant !== "text" && mergedVariant !== "icon" && mergedVariant !== "link";
 
   const padText = tok.paddingInline;
   const paddingLeft = iconOnly ? 0 : showIcon && placement === "start" ? tok.paddingInlineIconStart : padText;
@@ -210,8 +224,9 @@ const ButtonInner = forwardRef<HTMLButtonElement | HTMLAnchorElement, ButtonProp
 
   const rootClass = cn(
     bare
-      ? "inline-flex items-center justify-center gap-2 cursor-pointer border-0 bg-transparent px-0 py-0 text-inherit rounded-none disabled:cursor-not-allowed"
-      : "inline-flex items-center justify-center gap-2 font-normal whitespace-nowrap select-none cursor-pointer border border-solid transition-colors duration-150 focus-visible:outline-none disabled:cursor-not-allowed disabled:opacity-45",
+      ? "inline-flex items-center justify-center gap-2 cursor-pointer border-0 bg-transparent px-0 py-0 text-inherit rounded-none disabled:cursor-not-allowed focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-focus-ring"
+      : "inline-flex items-center justify-center gap-1.5 font-medium whitespace-nowrap select-none cursor-pointer border border-solid transition-colors disabled:cursor-not-allowed disabled:opacity-45",
+    !bare && focusRing,
     !bare && (bordered ? "border" : "border-transparent"),
     appearance,
     block && "flex w-full",
@@ -251,11 +266,11 @@ const ButtonInner = forwardRef<HTMLButtonElement | HTMLAnchorElement, ButtonProp
   const inner = (
     <>
       {showIcon ? (
-        <span className={cn("relative z-10 inline-flex shrink-0 items-center justify-center", !bare && "[&_svg]:size-full", classNames?.icon)} style={bare ? styles?.icon : { width: tok.icon, height: tok.icon, ...styles?.icon }}>
+        <span className={cn("relative z-10 inline-flex shrink-0 items-center justify-center", !bare && "[&_svg]:size-full", classNames?.icon)} style={bare ? styles?.icon : { width: iconSize, height: iconSize, ...styles?.icon }}>
           {iconNode}
         </span>
       ) : null}
-      {content != null && content !== false && content !== "" ? (
+      {!iconVariant && content != null && content !== false && content !== "" ? (
         <span className={cn("relative z-10 inline-flex min-w-0 items-center", classNames?.content)} style={styles?.content}>
           {content}
         </span>

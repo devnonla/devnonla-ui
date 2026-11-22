@@ -297,7 +297,7 @@ function PickGrid({
             type="button"
             tabIndex={-1}
             className={cn(
-              "flex h-11 items-center justify-center rounded-md tabular-nums text-[13.5px] font-normal transition-colors",
+              "flex h-11 items-center justify-center rounded-md tabular-nums text-sm font-normal transition-colors",
               selected ? "bg-ink-active text-foreground" : "text-foreground hover:bg-ink-hover",
             )}
             onClick={() => onSelect(opt.value)}
@@ -632,7 +632,7 @@ export const TimePicker = forwardRef<HTMLInputElement, TimePickerProps>(function
             onKeyDown={handleKeyDown}
             onKeyUp={(e) => syncPartFromCaret(e.currentTarget)}
             onClick={(e) => syncPartFromCaret(e.currentTarget)}
-            className="min-w-0 flex-1 border-0 bg-transparent p-0 text-foreground placeholder:text-quaternary-foreground outline-none disabled:cursor-not-allowed"
+            className="min-w-0 flex-1 border-0 bg-transparent p-0 text-foreground placeholder:text-tertiary-foreground outline-none disabled:cursor-not-allowed"
             style={{ fontSize: fieldStyle.fontSize, lineHeight: fieldStyle.lineHeight }}
           />
           {allowClear && selected && !disabled ? (

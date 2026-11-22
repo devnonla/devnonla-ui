@@ -1,4 +1,4 @@
-import { type CSSProperties, forwardRef, type InputHTMLAttributes, type KeyboardEvent, type ReactNode, type TextareaHTMLAttributes, useCallback, useEffect, useImperativeHandle, useLayoutEffect, useRef, useState } from "react";
+import { type ChangeEvent, type CSSProperties, forwardRef, type InputHTMLAttributes, type KeyboardEvent, type ReactNode, type TextareaHTMLAttributes, useCallback, useEffect, useImperativeHandle, useLayoutEffect, useRef, useState } from "react";
 import { cn } from "../lib/cn";
 import { type ControlSize, controlFieldFocusBorder, controlFieldStyle, controlFieldSurface, controlFieldTransition, controlHeightVar, controlRadiusVar, controlStatusClass, getSizeTokens, useControlSize } from "../lib/sizes";
 
@@ -15,7 +15,7 @@ export type InputProps = Omit<InputHTMLAttributes<HTMLInputElement>, "size" | "p
   onPressEnter?: (e: KeyboardEvent<HTMLInputElement>) => void;
 };
 
-const fieldBase = cn("w-full", controlFieldSurface, "placeholder:text-quaternary-foreground focus-visible:outline-none disabled:cursor-not-allowed disabled:opacity-45", controlFieldFocusBorder);
+const fieldBase = cn("w-full", controlFieldSurface, "placeholder:text-tertiary-foreground focus-visible:outline-none disabled:cursor-not-allowed disabled:opacity-45", controlFieldFocusBorder);
 
 function variantClass(variant: InputProps["variant"]) {
   if (variant === "borderless") return "border-transparent bg-transparent hover:bg-transparent shadow-none focus:border-transparent focus:bg-transparent focus-within:bg-transparent";
@@ -23,10 +23,25 @@ function variantClass(variant: InputProps["variant"]) {
   return "";
 }
 
-const InputRoot = forwardRef<HTMLInputElement, InputProps>(function Input({ className, size, status, prefix, suffix, allowClear, variant = "outlined", disabled, value, onChange, onPressEnter, onKeyDown, style, ...rest }, ref) {
+const InputRoot = forwardRef<HTMLInputElement, InputProps>(function Input({ className, size, status, prefix, suffix, allowClear, variant = "outlined", disabled, value, defaultValue, onChange, onPressEnter, onKeyDown, style, ...rest }, ref) {
   const fieldStyle = controlFieldStyle(useControlSize(size));
-  const showClear = allowClear && !disabled && value != null && String(value).length > 0;
-  const wrapped = Boolean(prefix || suffix || showClear);
+  // `allowClear` needs to know the text, so an uncontrolled input keeps it locally.
+  const controlled = value !== undefined;
+  const [inner, setInner] = useState(() => (defaultValue == null ? "" : String(defaultValue)));
+  const current = controlled ? value : inner;
+  const showClear = allowClear && !disabled && current != null && String(current).length > 0;
+  // Keep the wrapper whenever a clear button may appear, so the <input> is not remounted (and does not lose focus) on the first keystroke.
+  const wrapped = Boolean(prefix || suffix || allowClear);
+
+  const handleChange = (e: ChangeEvent<HTMLInputElement>) => {
+    if (!controlled) setInner(e.target.value);
+    onChange?.(e);
+  };
+
+  const clear = () => {
+    if (!controlled) setInner("");
+    onChange?.({ target: { value: "" }, currentTarget: { value: "" } } as never);
+  };
 
   const handleKeyDown = (e: KeyboardEvent<HTMLInputElement>) => {
     onKeyDown?.(e);
@@ -37,8 +52,9 @@ const InputRoot = forwardRef<HTMLInputElement, InputProps>(function Input({ clas
     <input
       ref={ref}
       disabled={disabled}
-      value={value}
-      onChange={onChange}
+      value={allowClear ? current : value}
+      defaultValue={allowClear ? undefined : defaultValue}
+      onChange={handleChange}
       onKeyDown={handleKeyDown}
       className={cn(fieldBase, controlFieldTransition, controlStatusClass(status), variantClass(variant), wrapped && "border-0 bg-transparent h-full focus:bg-transparent p-0!", !wrapped && className)}
       style={wrapped ? { height: "100%", fontSize: fieldStyle.fontSize, lineHeight: fieldStyle.lineHeight, ...style } : { ...fieldStyle, ...style }}
@@ -56,7 +72,7 @@ const InputRoot = forwardRef<HTMLInputElement, InputProps>(function Input({ clas
       {prefix ? <span className="shrink-0 text-muted-foreground inline-flex items-center">{prefix}</span> : null}
       {input}
       {showClear ? (
-        <button type="button" className="shrink-0 text-muted-foreground hover:text-foreground text-xs leading-none" aria-label="Clear" onClick={() => onChange?.({ target: { value: "" } } as never)}>
+        <button type="button" className="shrink-0 text-muted-foreground hover:text-foreground text-xs leading-none" aria-label="Clear" onClick={clear}>
           ×
         </button>
       ) : null}
@@ -169,9 +185,9 @@ function HandlerChevron({ dir, size }: { dir: "up" | "down"; size: number }) {
 }
 
 /** Stepper reveal and press. Same ease-out and duration as the field focus. */
-const handlerEase = "duration-[var(--nonla-dur-fast,150ms)] ease-[var(--nonla-ease-out,cubic-bezier(0.16,1,0.3,1))] motion-reduce:transition-none";
+const handlerEase = "duration-(--nonla-dur-fast) ease-(--nonla-ease-out) motion-reduce:transition-none";
 
-const InputNumber = forwardRef<HTMLInputElement, InputNumberProps>(function InputNumber({ value, defaultValue, onChange, min, max, step = 1, controls = true, precision, parser, formatter, disabled, size, status, className, style, placeholder, onBlur, onFocus, onKeyDown, ...rest }, ref) {
+const InputNumber = forwardRef<HTMLInputElement, InputNumberProps>(function InputNumber({ value, defaultValue, onChange, min, max, step = 1, controls = true, precision, parser, formatter, disabled, size, status, className, style, placeholder, onBlur, onFocus, onKeyDown, onPressEnter, ...rest }, ref) {
   const controlled = value !== undefined;
   const [inner, setInner] = useState<number | null>(defaultValue ?? null);
   const numeric = controlled ? (value ?? null) : inner;
@@ -237,6 +253,7 @@ const InputNumber = forwardRef<HTMLInputElement, InputNumberProps>(function Inpu
       stepBy(-1);
     }
     onKeyDown?.(e);
+    if (e.key === "Enter" && !e.nativeEvent.isComposing) onPressEnter?.(e);
   };
 
   return (
@@ -278,7 +295,7 @@ const InputNumber = forwardRef<HTMLInputElement, InputNumberProps>(function Inpu
         }}
         onKeyDown={handleKeyDown}
         className={cn(
-          "min-w-0 flex-1 border-0 bg-transparent text-foreground placeholder:text-quaternary-foreground outline-none",
+          "min-w-0 flex-1 border-0 bg-transparent text-foreground placeholder:text-tertiary-foreground outline-none",
           "disabled:cursor-not-allowed",
           // Kill native number chrome if type ever switches
           "[appearance:textfield] [&::-webkit-inner-spin-button]:appearance-none [&::-webkit-outer-spin-button]:appearance-none",
@@ -307,7 +324,7 @@ const InputNumber = forwardRef<HTMLInputElement, InputNumberProps>(function Inpu
             tabIndex={-1}
             aria-label="Increase"
             disabled={atMax}
-            className={cn("flex flex-1 items-center justify-center border-b border-input text-tertiary-foreground", "transition-colors", handlerEase, "hover:bg-ink-hover hover:text-foreground active:bg-ink-active active:duration-75", "disabled:pointer-events-none disabled:opacity-30")}
+            className={cn("flex flex-1 items-center justify-center border-b border-input text-tertiary-foreground", "transition-colors", handlerEase, "hover:bg-ink-hover hover:text-foreground active:bg-ink-active active:duration-(--nonla-dur-instant)", "disabled:pointer-events-none disabled:opacity-30")}
             onMouseDown={(e) => e.preventDefault()}
             onClick={() => stepBy(1)}
           >
@@ -318,7 +335,7 @@ const InputNumber = forwardRef<HTMLInputElement, InputNumberProps>(function Inpu
             tabIndex={-1}
             aria-label="Decrease"
             disabled={atMin}
-            className={cn("flex flex-1 items-center justify-center text-tertiary-foreground", "transition-colors", handlerEase, "hover:bg-ink-hover hover:text-foreground active:bg-ink-active active:duration-75", "disabled:pointer-events-none disabled:opacity-30")}
+            className={cn("flex flex-1 items-center justify-center text-tertiary-foreground", "transition-colors", handlerEase, "hover:bg-ink-hover hover:text-foreground active:bg-ink-active active:duration-(--nonla-dur-instant)", "disabled:pointer-events-none disabled:opacity-30")}
             onMouseDown={(e) => e.preventDefault()}
             onClick={() => stepBy(-1)}
           >

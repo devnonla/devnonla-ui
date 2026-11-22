@@ -31,7 +31,7 @@ export type AgentPanelProps = {
   triggers?: ChatTrigger[];
   /** Imperative composer handle, e.g. `insertChip` to add a text selection as context. */
   inputRef?: Ref<ChatInputHandle>;
-  /** Extra tool cards keyed by stream `toolName`. Checked before builtins. */
+  /** Tool cards keyed by stream `toolName`. Unmatched tools render `ChatToolCall`. */
   toolUis?: AgentToolUI[];
   /** Fence language → component for assistant markdown (`step`, `subagent`, `mindmap`). */
   components?: MarkdownComponents;

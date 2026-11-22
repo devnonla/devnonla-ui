@@ -96,7 +96,7 @@ export function FormItem(props: FormItemProps) {
                 <button
                   type="button"
                   aria-label={collapsed ? "Expand" : "Collapse"}
-                  className="inline-flex size-4 cursor-pointer items-center justify-center rounded-[3px] border-0 bg-muted p-0 text-muted-foreground"
+                  className="inline-flex size-4 cursor-pointer items-center justify-center rounded-xs border-0 bg-muted p-0 text-muted-foreground"
                   onClick={() => setCollapsed((v) => !v)}
                 >
                   <svg

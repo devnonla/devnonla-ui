@@ -1,9 +1,9 @@
 import * as CheckboxPrimitive from "@radix-ui/react-checkbox";
 import { type ComponentPropsWithoutRef, forwardRef, type ReactNode } from "react";
-import { cn } from "../lib/cn";
+import { cn, focusRing } from "../lib/cn";
 
-/** Checked fill. `white` is the on-state for dark surfaces — the mark stays ink. */
-export type CheckboxColor = "brand" | "success" | "white";
+/** Checked fill. `default` is ink (`--nonla-selected`). `white` is the on-state for dark surfaces — the mark stays ink. */
+export type CheckboxColor = "default" | "brand" | "success" | "white";
 
 export type CheckboxProps = Omit<ComponentPropsWithoutRef<typeof CheckboxPrimitive.Root>, "onCheckedChange" | "checked" | "onChange"> & {
   checked?: boolean | "indeterminate";
@@ -16,12 +16,14 @@ export type CheckboxProps = Omit<ComponentPropsWithoutRef<typeof CheckboxPrimiti
 };
 
 const CHECKED_FILL: Record<CheckboxColor, string> = {
+  default:
+    "data-[state=checked]:bg-selected data-[state=checked]:border-selected data-[state=checked]:text-on-selected data-[state=indeterminate]:bg-selected data-[state=indeterminate]:border-selected data-[state=indeterminate]:text-on-selected",
   brand:
-    "data-[state=checked]:bg-brand data-[state=checked]:border-brand data-[state=checked]:text-(--nonla-text-on-solid) data-[state=indeterminate]:bg-brand data-[state=indeterminate]:border-brand data-[state=indeterminate]:text-(--nonla-text-on-solid)",
+    "data-[state=checked]:bg-brand data-[state=checked]:border-brand data-[state=checked]:text-(--nonla-text-on-brand) data-[state=indeterminate]:bg-brand data-[state=indeterminate]:border-brand data-[state=indeterminate]:text-(--nonla-text-on-brand)",
   success:
-    "data-[state=checked]:bg-success data-[state=checked]:border-success data-[state=checked]:text-(--nonla-text-on-solid) data-[state=indeterminate]:bg-success data-[state=indeterminate]:border-success data-[state=indeterminate]:text-(--nonla-text-on-solid)",
+    "data-[state=checked]:bg-success-fill data-[state=checked]:border-success-fill data-[state=checked]:text-on-success data-[state=indeterminate]:bg-success-fill data-[state=indeterminate]:border-success-fill data-[state=indeterminate]:text-on-success",
   white:
-    "data-[state=checked]:bg-white data-[state=checked]:border-white data-[state=checked]:text-[#141414] data-[state=indeterminate]:bg-white data-[state=indeterminate]:border-white data-[state=indeterminate]:text-[#141414]",
+    "data-[state=checked]:bg-white data-[state=checked]:border-white data-[state=checked]:text-(--nonla-bg) data-[state=indeterminate]:bg-white data-[state=indeterminate]:border-white data-[state=indeterminate]:text-(--nonla-bg)",
 };
 
 function CheckIcon() {
@@ -33,7 +35,7 @@ function CheckIcon() {
 }
 
 export const Checkbox = forwardRef<HTMLButtonElement, CheckboxProps>(function Checkbox(
-  { className, checked, defaultChecked, onChange, children, indeterminate, disabled, color = "brand", ...rest },
+  { className, checked, defaultChecked, onChange, children, indeterminate, disabled, color = "default", ...rest },
   ref,
 ) {
   const resolved = indeterminate ? "indeterminate" : checked;
@@ -47,14 +49,14 @@ export const Checkbox = forwardRef<HTMLButtonElement, CheckboxProps>(function Ch
         disabled={disabled}
         onCheckedChange={(v) => onChange?.(v === true)}
         className={cn(
-          "size-4 shrink-0 rounded-sm border border-input bg-(--nonla-surface) transition-colors duration-150 ease-[cubic-bezier(0.16,1,0.3,1)]",
-          "focus-visible:outline-none",
+          "size-4 shrink-0 rounded-sm border border-input bg-(--nonla-surface) transition-colors",
+          focusRing,
           CHECKED_FILL[color],
           className,
         )}
         {...rest}
       >
-        <CheckboxPrimitive.Indicator className="flex items-center justify-center text-current animate-[nonla-check-in_150ms_cubic-bezier(0.16,1,0.3,1)]">
+        <CheckboxPrimitive.Indicator className="flex items-center justify-center text-current animate-[nonla-check-in_var(--nonla-dur-fast)_var(--nonla-ease-out)]">
           <CheckIcon />
         </CheckboxPrimitive.Indicator>
       </CheckboxPrimitive.Root>

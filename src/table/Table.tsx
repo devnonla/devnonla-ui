@@ -26,6 +26,7 @@ export type ColumnType<T> = {
    */
   flex?: boolean | number;
   ellipsis?: boolean;
+  /** @deprecated Not supported yet: columns do not pin. Use `scroll` for long tables. */
   fixed?: "left" | "right";
   /** `true` = default compare on `dataIndex`; or pass a compare fn. */
   sorter?: boolean | ((a: T, b: T) => number);
@@ -141,10 +142,10 @@ function defaultCompare(a: unknown, b: unknown): number {
 function SortIcon({ order }: { order: SortOrder | undefined }) {
   return (
     <span className="ml-1.5 inline-flex shrink-0 flex-col items-center gap-0.5" aria-hidden>
-      <svg width="7" height="4" viewBox="0 0 7 4" className={cn(order === "ascend" ? "text-foreground" : "text-muted-foreground/45")}>
+      <svg width="7" height="4" viewBox="0 0 7 4" className={cn(order === "ascend" ? "text-foreground" : "text-quaternary-foreground")}>
         <path d="M3.5 0 7 4H0z" fill="currentColor" />
       </svg>
-      <svg width="7" height="4" viewBox="0 0 7 4" className={cn(order === "descend" ? "text-foreground" : "text-muted-foreground/45")}>
+      <svg width="7" height="4" viewBox="0 0 7 4" className={cn(order === "descend" ? "text-foreground" : "text-quaternary-foreground")}>
         <path d="M3.5 4 0 0h7z" fill="currentColor" />
       </svg>
     </span>
@@ -180,21 +181,21 @@ function TableBodyScroll({ x, y, scrollRef, insetTop = 0, children }: { x?: numb
 function sizeClasses(s: CanonicalSize) {
   if (s === "small") {
     return {
-      head: "h-8 px-2 text-base",
-      cell: "px-2 py-1 text-base",
+      head: "h-8 px-2 text-sm",
+      cell: "px-2 py-1 text-sm",
       check: "w-8 px-2",
     };
   }
   if (s === "large") {
     return {
-      head: "h-12 px-4 text-base",
-      cell: "px-4 py-3 text-base",
+      head: "h-12 px-4 text-sm",
+      cell: "px-4 py-3 text-sm",
       check: "w-12 px-4",
     };
   }
   return {
-    head: "h-10 px-3 text-base",
-    cell: "px-3 py-2 text-base",
+    head: "h-10 px-3 text-sm",
+    cell: "px-3 py-2 text-sm",
     check: "w-10 px-3",
   };
 }
@@ -393,8 +394,8 @@ export function Table<T extends object = Record<string, unknown>>({ columns = []
     const next = head ? Math.ceil(head.getBoundingClientRect().height) + 4 : 0;
     setThumbInset((prev) => (prev === next ? prev : next));
   }, [headSticky, showHeader, size, flexLayout]);
-  /** Opaque fill so a sticky header does not show body text, and every header matches. */
-  const headBg: CSSProperties = { backgroundColor: "var(--nonla-fill)" };
+  /** Header recedes (Cloudflare-style): page-colored band, muted labels, so the data reads first. Opaque so sticky headers cover rows. */
+  const headBg: CSSProperties = { backgroundColor: "var(--background)" };
 
   const colStyle = (col: ColumnType<T>, key: string): CSSProperties => {
     const measured = flexLayout?.cols[key];
@@ -407,10 +408,10 @@ export function Table<T extends object = Record<string, unknown>>({ columns = []
       {titleNode != null ? <div className="mb-3 text-sm font-medium text-foreground">{titleNode}</div> : null}
 
       <div className={cn(bordered && "overflow-hidden rounded-xl border border-border-secondary")}>
-      <Spin spinning={Boolean(loading)}>
+      <Spin spinning={Boolean(loading) && pageData.length > 0}>
         <div ref={containerRef} data-slot="table-container" className={cn("relative w-full", flexLayout ? "overflow-x-hidden" : "overflow-x-auto")} style={scroll?.x != null ? { overflowX: "auto" } : undefined}>
           <TableBodyScroll y={scroll?.y} x={scroll?.x} scrollRef={scrollBodyRef} insetTop={thumbInset}>
-            <table data-slot="table" className={cn("caption-bottom text-base", headSticky ? "border-separate border-spacing-0" : "border-collapse", flexLayout ? "w-full table-fixed" : wantsFlex ? "w-max" : "w-full")}>
+            <table data-slot="table" className={cn("caption-bottom text-sm", headSticky ? "border-separate border-spacing-0" : "border-collapse", flexLayout ? "w-full table-fixed" : wantsFlex ? "w-max" : "w-full")}>
               {flexLayout ? (
                 <colgroup>
                   {rowSelection ? <col style={{ width: flexLayout.selection }} /> : null}
@@ -421,10 +422,10 @@ export function Table<T extends object = Record<string, unknown>>({ columns = []
                 </colgroup>
               ) : null}
               {showHeader ? (
-                <thead data-slot="table-header" className={cn("[&_tr]:border-b [&_tr]:border-border-secondary", headSticky && "relative z-20")}>
+                <thead data-slot="table-header" className={cn("[&_tr]:border-b [&_tr]:border-border", headSticky && "relative z-20")}>
                   <tr data-slot="table-row" className="border-b border-border-secondary transition-colors hover:bg-transparent">
                     {rowSelection ? (
-                      <th data-slot="table-head" className={cn(sz.head, sz.check, "align-middle font-medium text-foreground", headSticky && "sticky top-0 z-10 border-b border-border-secondary", bordered && "border-b border-border-secondary")} style={{ ...(selectionColWidth != null ? { width: selectionColWidth } : undefined), ...headBg }}>
+                      <th data-slot="table-head" className={cn(sz.head, sz.check, "align-middle font-medium text-muted-foreground", headSticky && "sticky top-0 z-10 border-b border-border", bordered && "border-b border-border-secondary")} style={{ ...(selectionColWidth != null ? { width: selectionColWidth } : undefined), ...headBg }}>
                         <div className="flex items-center justify-center">
                           {rowSelection.type === "radio" ? null : (
                             <Checkbox
@@ -449,7 +450,7 @@ export function Table<T extends object = Record<string, unknown>>({ columns = []
                         <th
                           key={key}
                           data-slot="table-head"
-                          className={cn(sz.head, "align-middle font-medium text-foreground", headSticky && "sticky top-0 z-10 border-b border-border-secondary", flexLayout && flexWeight(col) > 0 ? "min-w-0" : "whitespace-nowrap", alignClass(col.align), bordered && "border-b border-border-secondary", sortable && "cursor-pointer select-none", col.className, headerExtra?.className)}
+                          className={cn(sz.head, "align-middle font-medium text-muted-foreground", headSticky && "sticky top-0 z-10 border-b border-border", flexLayout && flexWeight(col) > 0 ? "min-w-0" : "whitespace-nowrap", alignClass(col.align), bordered && "border-b border-border-secondary", sortable && "cursor-pointer select-none", col.className, headerExtra?.className)}
                           style={{
                             ...colStyle(col, key),
                             ...headBg,
@@ -469,10 +470,23 @@ export function Table<T extends object = Record<string, unknown>>({ columns = []
               ) : null}
 
               <tbody data-slot="table-body" className={cn("[&_tr:last-child]:border-0", headSticky && "relative z-0")}>
-                {pageData.length === 0 ? (
+                {loading && pageData.length === 0 ? (
+                  // First load: skeleton rows in the real column grid instead of a spinner over "No data".
+                  Array.from({ length: 5 }, (_, r) => (
+                    // biome-ignore lint/suspicious/noArrayIndexKey: static placeholder rows
+                    <tr key={`skeleton-${r}`} data-slot="table-row" className="border-b border-border-secondary">
+                      {Array.from({ length: colCount }, (_, c) => (
+                        // biome-ignore lint/suspicious/noArrayIndexKey: static placeholder cells
+                        <td key={c} data-slot="table-cell" className={cn(sz.cell, "align-middle")}>
+                          <span aria-hidden className="block h-2.5 animate-pulse rounded-full bg-muted" style={{ width: `${[72, 56, 64, 48, 60][(r + c) % 5]}%` }} />
+                        </td>
+                      ))}
+                    </tr>
+                  ))
+                ) : pageData.length === 0 ? (
                   <tr data-slot="table-row" className="border-b border-border-secondary">
                     <td data-slot="table-cell" colSpan={colCount} className={cn(sz.cell, "text-center align-middle")}>
-                      {locale?.emptyText ?? <Empty description="No data" className="py-10" />}
+                      {locale?.emptyText ?? <Empty bordered={false} icon={null} description="No data" className="py-10" />}
                     </td>
                   </tr>
                 ) : (
@@ -489,7 +503,7 @@ export function Table<T extends object = Record<string, unknown>>({ columns = []
                         key={key}
                         data-slot="table-row"
                         data-state={selected ? "selected" : undefined}
-                        className={cn("border-b border-border-secondary transition-colors hover:bg-muted/50 data-[state=selected]:bg-muted", inSelectionMode && !rowDisabled && "cursor-pointer", rowProps?.className, extraClass)}
+                        className={cn("border-b border-border-secondary transition-colors hover:bg-ink-hover data-[state=selected]:bg-ink-active", inSelectionMode && !rowDisabled && "cursor-pointer", rowProps?.className, extraClass)}
                         style={rowProps?.style}
                         onClick={inSelectionMode ? undefined : rowProps?.onClick}
                         onClickCapture={

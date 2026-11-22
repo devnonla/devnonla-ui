@@ -188,9 +188,9 @@ export function MermaidBlock({ children, className }: MermaidBlockProps) {
 
   if (error) {
     return (
-      <div className={cn("my-3 rounded-lg bg-brand/14 border border-destructive/30 p-4 text-xs text-destructive", className)}>
+      <div className={cn("my-3 rounded-lg bg-destructive-bg border border-destructive-border p-4 text-xs text-destructive", className)}>
         <p className="font-medium mb-1">Mermaid render error</p>
-        <pre className="whitespace-pre-wrap text-[11px] opacity-70">{error}</pre>
+        <pre className="whitespace-pre-wrap text-xs text-muted-foreground">{error}</pre>
       </div>
     );
   }
@@ -210,7 +210,7 @@ export function MermaidBlock({ children, className }: MermaidBlockProps) {
 
       <dialog
         ref={dialogRef}
-        className="inset-2.5 m-0 h-auto w-auto max-h-none max-w-none overflow-hidden rounded-xl border border-foreground/25 bg-card p-0 shadow-xl backdrop:bg-black/40 open:flex open:flex-col"
+        className="inset-2.5 m-0 h-auto w-auto max-h-none max-w-none overflow-hidden rounded-xl border border-border bg-card p-0 shadow-(--nonla-shadow) backdrop:bg-black/40 open:flex open:flex-col"
         onClose={resetView}
         onKeyDown={(e) => {
           if (e.key !== "Escape") return;
@@ -219,14 +219,14 @@ export function MermaidBlock({ children, className }: MermaidBlockProps) {
           closeFullscreen();
         }}
       >
-        <div className="absolute top-5 right-5 z-50 flex items-center gap-1.5">
+        <div className="absolute top-5 right-5 z-10 flex items-center gap-1.5">
           <Button size="small" icon={<Icon name="download" size={12} />} title="Download SVG" aria-label="Download SVG" onClick={downloadSvg} disabled={!svgContent} />
           <Button size="small" icon={<Icon name="minimize" size={12} />} title="Exit fullscreen" onClick={closeFullscreen}>
             Exit
           </Button>
         </div>
 
-        <div className="absolute bottom-5 left-1/2 z-50 flex -translate-x-1/2 items-center gap-2 rounded-full border border-border bg-card px-3 py-1.5 text-xs text-muted-foreground shadow-md select-none">
+        <div className="absolute bottom-5 left-1/2 z-10 flex -translate-x-1/2 items-center gap-2 rounded-full border border-border bg-card px-3 py-1.5 text-xs text-muted-foreground shadow-(--nonla-shadow) select-none">
           <span>{Math.round(zoom * 100)}%</span>
           {!isDefaultView ? (
             <Button type="text" size="small" onClick={resetView}>

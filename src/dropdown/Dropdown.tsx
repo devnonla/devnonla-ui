@@ -37,6 +37,7 @@ export type DropdownProps = {
   disabled?: boolean;
   /** Alias — accepted, no-op (Radix unmounts when closed). */
   destroyOnHidden?: boolean;
+  /** `overlay` goes on the menu panel (like `overlayClassName`); `root` on the trigger. */
   classNames?: { root?: string; overlay?: string };
 };
 
@@ -109,7 +110,7 @@ function MenuItems({ items, onClick, portal }: { items: (MenuItemType | null | u
   );
 }
 
-export function Dropdown({ menu, children, trigger = ["click"], open, onOpenChange, placement = "bottomLeft", className, overlayClassName, disabled }: DropdownProps) {
+export function Dropdown({ menu, children, trigger = ["click"], open, onOpenChange, placement = "bottomLeft", className, overlayClassName, disabled, classNames }: DropdownProps) {
   const { side, align } = placementToRadix(placement);
   const portal = usePopupContainer()?.();
   const hover = trigger.includes("hover");
@@ -130,7 +131,7 @@ export function Dropdown({ menu, children, trigger = ["click"], open, onOpenChan
 
   return (
     <DropdownMenu.Root open={isOpen} onOpenChange={setIsOpen} modal={!hover}>
-      <DropdownMenu.Trigger asChild disabled={disabled} onClick={click || contextMenu ? undefined : (e) => e.preventDefault()} onMouseEnter={hover && !disabled ? () => setIsOpen(true) : undefined} onMouseLeave={hover ? () => setIsOpen(false) : undefined} onContextMenu={handleContext}>
+      <DropdownMenu.Trigger asChild className={classNames?.root} disabled={disabled} onClick={click || contextMenu ? undefined : (e) => e.preventDefault()} onMouseEnter={hover && !disabled ? () => setIsOpen(true) : undefined} onMouseLeave={hover ? () => setIsOpen(false) : undefined} onContextMenu={handleContext}>
         {children}
       </DropdownMenu.Trigger>
       <DropdownMenu.Portal container={portal}>
@@ -138,7 +139,7 @@ export function Dropdown({ menu, children, trigger = ["click"], open, onOpenChan
           side={side}
           align={align === "center" ? "start" : align}
           sideOffset={4}
-          className={cn(menuContentClass, "nonla-popper", className, overlayClassName, menu?.className)}
+          className={cn(menuContentClass, "nonla-popper", className, overlayClassName, classNames?.overlay, menu?.className)}
           style={menu?.style}
           onMouseEnter={hover ? () => setIsOpen(true) : undefined}
           onMouseLeave={hover ? () => setIsOpen(false) : undefined}

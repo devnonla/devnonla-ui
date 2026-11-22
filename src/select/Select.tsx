@@ -14,6 +14,7 @@ import {
 } from "react";
 import { usePopupContainer } from "../app/context";
 import { menuItemClass } from "../dropdown/menuClasses";
+import { Icon } from "../icon/Icon";
 import { cn } from "../lib/cn";
 import { type ControlSize, controlFieldFocusBorder, controlFieldStyle, controlFieldSurface, controlFieldTransition, controlStatusClass, useControlSize } from "../lib/sizes";
 import { glassOverlayClass } from "../lib/surface";
@@ -21,9 +22,12 @@ import { glassOverlayClass } from "../lib/surface";
 export type SelectValue = string | number;
 
 export type SelectOptionConfig = {
+  /** Shown in the list and in the trigger. */
   label: ReactNode;
   value: SelectValue;
   disabled?: boolean;
+  /** Muted second line, in the list only (the trigger keeps one line). Search matches it too. */
+  description?: ReactNode;
 };
 
 export type SelectProps = {
@@ -44,9 +48,12 @@ export type SelectProps = {
   status?: "error" | "warning";
   className?: string;
   popupClassName?: string;
+  /** @deprecated Not parsed; pass `options`. Kept so antd-style markup type-checks. */
   children?: ReactNode;
   /** Alias of `onChange` for a single pick. */
   onSelect?: (value: SelectValue) => void;
+  /** Custom row content in the list (any height). The trigger still shows `label`. Extra fields you put on an option (email, role) come through. */
+  optionRender?: (option: SelectOptionConfig & Record<string, any>, info: { selected: boolean }) => ReactNode;
 };
 
 function Chevron() {
@@ -75,7 +82,7 @@ function textOf(node: ReactNode): string {
 
 function optionSearchText(opt: SelectOptionConfig, prop: string): string {
   if (prop === "value") return String(opt.value);
-  return textOf(opt.label) || String(opt.value);
+  return [textOf(opt.label) || String(opt.value), textOf(opt.description)].join(" ");
 }
 
 export const Select = forwardRef<HTMLButtonElement, SelectProps>(function Select(
@@ -94,6 +101,7 @@ export const Select = forwardRef<HTMLButtonElement, SelectProps>(function Select
     status,
     className,
     popupClassName,
+    optionRender,
   },
   ref,
 ) {
@@ -112,8 +120,9 @@ export const Select = forwardRef<HTMLButtonElement, SelectProps>(function Select
   const portal = usePopupContainer()?.();
 
   const searchable = Boolean(showSearch);
+  // Search what the user sees: the label (falls back to value when the label is not text).
   const filterProp =
-    typeof showSearch === "object" ? (showSearch.optionFilterProp ?? "value") : "value";
+    typeof showSearch === "object" ? (showSearch.optionFilterProp ?? "label") : "label";
 
   const selectedOpt = options.find((o) => o.value === selected);
 
@@ -243,6 +252,8 @@ export const Select = forwardRef<HTMLButtonElement, SelectProps>(function Select
   const showClear = allowClear && selected != null && selected !== "" && !disabled;
   const display = selectedOpt ? selectedOpt.label : selected != null && selected !== "" ? String(selected) : placeholder;
   const displayEmpty = !selectedOpt && (selected == null || selected === "");
+  // A rich label (icon + text) is an element: lay it out as a centered flex row, not inline on the text baseline.
+  const richDisplay = isValidElement(display);
   const activeId = open && filtered[active] ? `${listId}-opt-${active}` : undefined;
 
   const fieldClass = cn(
@@ -283,8 +294,9 @@ export const Select = forwardRef<HTMLButtonElement, SelectProps>(function Select
             }}
           >
             <div className="relative min-w-0 flex-1 overflow-hidden">
-              <span aria-hidden className={cn("block truncate", (open && query) || displayEmpty ? "invisible" : "")}>
-                {displayEmpty ? placeholder : display}
+              {/* While searching, the current pick fades to plain text (no icon), so the caret starts cleanly before it. */}
+              <span aria-hidden className={cn(richDisplay && !open ? "flex h-5 items-center overflow-hidden whitespace-nowrap" : "block truncate", (open && query) || displayEmpty ? "invisible" : open && "text-tertiary-foreground")}>
+                {displayEmpty ? placeholder : open ? textOf(display) || display : display}
               </span>
               <input
                 ref={searchRef}
@@ -307,42 +319,45 @@ export const Select = forwardRef<HTMLButtonElement, SelectProps>(function Select
                 }}
                 onKeyDown={onSearchKey}
                 className={cn(
-                  "absolute inset-0 w-full border-0 bg-transparent p-0 font-[inherit] leading-[inherit] text-inherit outline-none placeholder:text-quaternary-foreground",
+                  "absolute inset-0 w-full border-0 bg-transparent p-0 font-[inherit] leading-[inherit] text-inherit outline-none placeholder:text-tertiary-foreground",
                   !open && "caret-transparent",
                 )}
               />
             </div>
-            {showClear ? (
+            {/* One slot: the chevron, swapped for the clear button while hovered (no two icons side by side). */}
+            <span className="grid size-4 shrink-0 place-items-center">
+              {showClear ? (
+                <span
+                  data-select-affix=""
+                  role="button"
+                  tabIndex={-1}
+                  aria-label="Clear"
+                  className="pointer-events-none inline-flex size-4 cursor-pointer items-center justify-center rounded-full text-muted-foreground opacity-0 transition-opacity [grid-area:1/1] hover:text-foreground group-hover/select:pointer-events-auto group-hover/select:opacity-100"
+                  onPointerDown={(e) => {
+                    e.preventDefault();
+                    e.stopPropagation();
+                  }}
+                  onClick={(e) => {
+                    e.preventDefault();
+                    e.stopPropagation();
+                    commit(null);
+                  }}
+                >
+                  <ClearIcon />
+                </span>
+              ) : null}
               <span
                 data-select-affix=""
-                role="button"
-                tabIndex={-1}
-                aria-label="Clear"
-                className="inline-flex size-4 shrink-0 cursor-pointer items-center justify-center rounded-full text-muted-foreground opacity-0 transition-opacity hover:bg-ink-hover hover:text-foreground group-hover/select:opacity-100"
+                className={cn("inline-flex cursor-pointer items-center justify-center transition-opacity [grid-area:1/1]", showClear && "group-hover/select:opacity-0")}
                 onPointerDown={(e) => {
                   e.preventDefault();
                   e.stopPropagation();
-                }}
-                onClick={(e) => {
-                  e.preventDefault();
-                  e.stopPropagation();
-                  commit(null);
+                  if (disabled) return;
+                  setOpen((v) => !v);
                 }}
               >
-                <ClearIcon />
+                <Chevron />
               </span>
-            ) : null}
-            <span
-              data-select-affix=""
-              className="inline-flex shrink-0 cursor-pointer"
-              onPointerDown={(e) => {
-                e.preventDefault();
-                e.stopPropagation();
-                if (disabled) return;
-                setOpen((v) => !v);
-              }}
-            >
-              <Chevron />
             </span>
           </div>
         </PopoverPrimitive.Anchor>
@@ -358,24 +373,28 @@ export const Select = forwardRef<HTMLButtonElement, SelectProps>(function Select
             style={controlFieldStyle(resolvedSize)}
             onKeyDown={onTriggerKey}
           >
-            <span className={cn("min-w-0 flex-1 truncate", displayEmpty && "text-quaternary-foreground")}>{display}</span>
-            {showClear ? (
-              <span
-                role="button"
-                tabIndex={-1}
-                aria-label="Clear"
-                className="inline-flex size-4 shrink-0 cursor-pointer items-center justify-center rounded-full text-muted-foreground opacity-0 transition-opacity hover:bg-ink-hover hover:text-foreground group-hover/select:opacity-100"
-                onPointerDown={(e) => e.preventDefault()}
-                onClick={(e) => {
-                  e.preventDefault();
-                  e.stopPropagation();
-                  commit(null);
-                }}
-              >
-                <ClearIcon />
+            <span className={cn("min-w-0 flex-1", richDisplay ? "flex h-5 items-center overflow-hidden whitespace-nowrap" : "truncate", displayEmpty && "text-tertiary-foreground")}>{display}</span>
+            <span className="grid size-4 shrink-0 place-items-center">
+              {showClear ? (
+                <span
+                  role="button"
+                  tabIndex={-1}
+                  aria-label="Clear"
+                  className="pointer-events-none inline-flex size-4 cursor-pointer items-center justify-center rounded-full text-muted-foreground opacity-0 transition-opacity [grid-area:1/1] hover:text-foreground group-hover/select:pointer-events-auto group-hover/select:opacity-100"
+                  onPointerDown={(e) => e.preventDefault()}
+                  onClick={(e) => {
+                    e.preventDefault();
+                    e.stopPropagation();
+                    commit(null);
+                  }}
+                >
+                  <ClearIcon />
+                </span>
+              ) : null}
+              <span className={cn("inline-flex items-center justify-center transition-opacity [grid-area:1/1]", showClear && "group-hover/select:opacity-0")}>
+                <Chevron />
               </span>
-            ) : null}
-            <Chevron />
+            </span>
           </button>
         </PopoverPrimitive.Trigger>
       )}
@@ -426,7 +445,7 @@ export const Select = forwardRef<HTMLButtonElement, SelectProps>(function Select
                   data-highlighted={!opt.disabled && i === active && opt.value !== selected ? "" : undefined}
                   className={cn(
                     menuItemClass,
-                    "cursor-pointer transition-[background-color] duration-20 ease-in motion-reduce:transition-none data-highlighted:border-transparent data-highlighted:bg-ink-hover",
+                    "cursor-pointer transition-none data-highlighted:border-transparent data-highlighted:bg-ink-hover",
                     opt.disabled && "pointer-events-none opacity-40",
                     !opt.disabled && opt.value === selected && "border-transparent bg-ink-active text-foreground shadow-none",
                   )}
@@ -436,7 +455,17 @@ export const Select = forwardRef<HTMLButtonElement, SelectProps>(function Select
                     if (!opt.disabled) commit(opt.value);
                   }}
                 >
-                  {opt.label}
+                  {optionRender ? (
+                    <div className="min-w-0 flex-1">{optionRender(opt, { selected: opt.value === selected })}</div>
+                  ) : opt.description != null ? (
+                    <span className="flex min-w-0 flex-1 flex-col">
+                      <span className="truncate">{opt.label}</span>
+                      <span className="truncate text-xs leading-4 text-muted-foreground">{opt.description}</span>
+                    </span>
+                  ) : (
+                    <span className="min-w-0 flex-1 truncate">{opt.label}</span>
+                  )}
+                  {opt.value === selected ? <Icon name="check" size={14} className="shrink-0 text-foreground" aria-hidden /> : null}
                 </div>
               ))
             )}

@@ -107,7 +107,7 @@ export function Drawer({
         >
           {(title || closable || extra) && (
             <div className="flex items-center justify-between gap-3 border-b border-border px-5 py-4" style={styles?.header}>
-              <Dialog.Title className="m-0 min-w-0 flex-1 text-base font-semibold">{title}</Dialog.Title>
+              <Dialog.Title className="m-0 min-w-0 flex-1 text-lg font-semibold">{title}</Dialog.Title>
               {extra ? <div className="flex shrink-0 items-center gap-2">{extra}</div> : null}
               {closable ? (
                 <Dialog.Close className="text-muted-foreground hover:text-foreground text-lg leading-none" aria-label="Close">

@@ -44,12 +44,12 @@ function DiffText({ line }: { line: DiffLine }) {
 }
 
 function Gutter({ value, className }: { value?: number; className?: string }) {
-  return <span className={cn("w-10 shrink-0 select-none pr-2 text-right font-mono text-[11px] leading-5 text-quaternary-foreground tabular-nums", className)}>{value ?? ""}</span>;
+  return <span className={cn("w-10 shrink-0 select-none pr-2 text-right font-mono text-xs leading-5 text-quaternary-foreground tabular-nums", className)}>{value ?? ""}</span>;
 }
 
 function Mark({ kind }: { kind: DiffLine["kind"] }) {
   return (
-    <span aria-hidden className={cn("w-4 shrink-0 text-center font-mono text-[13px] leading-5", kind === "insert" && "text-success", kind === "delete" && "text-destructive")}>
+    <span aria-hidden className={cn("w-4 shrink-0 text-center font-mono text-sm leading-5", kind === "insert" && "text-success", kind === "delete" && "text-destructive")}>
       {marker(kind)}
     </span>
   );
@@ -57,7 +57,7 @@ function Mark({ kind }: { kind: DiffLine["kind"] }) {
 
 function LineBody({ line }: { line: DiffLine }) {
   return (
-    <span className="min-h-5 whitespace-pre pr-4 font-mono text-[13px] leading-5">
+    <span className="min-h-5 whitespace-pre pr-4 font-mono text-sm leading-5">
       <DiffText line={line} />
     </span>
   );
@@ -65,7 +65,7 @@ function LineBody({ line }: { line: DiffLine }) {
 
 function FoldButton({ count, onClick, span }: { count: number; onClick: () => void; span?: boolean }) {
   return (
-    <button type="button" className={cn("flex w-full items-center justify-center border-y border-border bg-muted/70 py-0.5 text-xs text-link hover:bg-muted", span && "col-span-2")} onClick={onClick}>
+    <button type="button" className={cn("flex w-full items-center justify-center border-y border-border bg-muted py-0.5 text-xs text-link hover:bg-(--nonla-fill-strong)", span && "col-span-2")} onClick={onClick}>
       Show {count} unchanged {count === 1 ? "line" : "lines"}
     </button>
   );

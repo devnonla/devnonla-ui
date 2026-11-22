@@ -1,5 +1,5 @@
 import { type ReactNode, useState } from "react";
-import { cn } from "../lib/cn";
+import { cn, focusRing } from "../lib/cn";
 
 export type AlertType = "success" | "info" | "warning" | "error";
 
@@ -17,10 +17,10 @@ export type AlertProps = {
 };
 
 const TYPE_STYLES: Record<AlertType, string> = {
-  success: "border-success/30 bg-success/10 text-foreground",
-  info: "border-link/30 bg-link/10 text-foreground",
-  warning: "border-warn/30 bg-warn/10 text-foreground",
-  error: "border-destructive/30 bg-destructive/10 text-foreground",
+  success: "border-success-border bg-success-bg text-foreground",
+  info: "border-link-border bg-link-bg text-foreground",
+  warning: "border-warn-border bg-warn-bg text-foreground",
+  error: "border-destructive-border bg-destructive-bg text-foreground",
 };
 
 const ICON_COLOR: Record<AlertType, string> = {
@@ -91,14 +91,14 @@ export function Alert({
       {showIcon ? <AlertIcon type={type} /> : null}
       <div className="min-w-0 flex-1 flex flex-col gap-0.5">
         {heading != null && heading !== "" ? <div className="font-medium leading-5">{heading}</div> : null}
-        {description != null && description !== "" ? <div className="leading-5 text-foreground/90">{description}</div> : null}
+        {description != null && description !== "" ? <div className="leading-5 text-foreground">{description}</div> : null}
         {children}
       </div>
       {canClose ? (
         <button
           type="button"
           aria-label="Close"
-          className="shrink-0 -mr-1 -mt-0.5 inline-flex size-6 cursor-pointer items-center justify-center rounded-md border-0 bg-transparent text-muted-foreground hover:text-foreground"
+          className={cn("shrink-0 -mr-1 -mt-0.5 inline-flex size-6 cursor-pointer items-center justify-center rounded-md border-0 bg-transparent text-muted-foreground hover:text-foreground", focusRing, "focus-visible:ring-offset-0")}
           onClick={handleClose}
         >
           ×

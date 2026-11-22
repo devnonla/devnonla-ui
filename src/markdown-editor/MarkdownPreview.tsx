@@ -78,7 +78,7 @@ function BlockEditor({
         });
       }}
       className={cn(
-        "block w-full resize-none overflow-hidden border-0 bg-transparent font-[inherit] text-foreground shadow-none outline-none ring-0 placeholder:text-quaternary-foreground focus:outline-none focus:ring-0",
+        "block w-full resize-none overflow-hidden border-0 bg-transparent font-[inherit] text-foreground shadow-none outline-none ring-0 placeholder:text-tertiary-foreground focus:outline-none focus:ring-0",
         // Match rendered paragraph rhythm so the block does not jump when editing starts.
         mono ? "p-0 font-mono text-(length:--md-code-size,var(--nonla-mono-text-size)) leading-(--md-code-leading,calc(var(--nonla-mono-text-size)*1.6))" : markdownParagraphClass,
         !autoSize && "h-full",

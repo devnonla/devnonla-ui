@@ -1,6 +1,6 @@
 import { type ReactNode, useState } from "react";
 import { Icon } from "../../icon/Icon";
-import { cn } from "../../lib/cn";
+import { cn, focusRing } from "../../lib/cn";
 import { Shimmer } from "../../shimmer/Shimmer";
 import { chatRowClass, chatToolLineClass } from "../chatRhythm";
 import { formatToolName, hasMeaningfulInput, prettyJson } from "../common/utils";
@@ -45,7 +45,7 @@ export function ChatToolCall({ toolName = "Tool", label, toolInput, toolOutput, 
     <div className={cn("nonla-chat-tool", chatRowClass, className)}>
       <div className="px-4">
         {expandable ? (
-          <button type="button" onClick={() => setOpen((v) => !v)} className={cn(chatToolLineClass, "group w-full cursor-pointer border-0 bg-transparent outline-none")}>
+          <button type="button" onClick={() => setOpen((v) => !v)} className={cn(chatToolLineClass, "group w-full cursor-pointer rounded-md border-0 bg-transparent", focusRing)}>
             {header}
           </button>
         ) : (
@@ -53,7 +53,7 @@ export function ChatToolCall({ toolName = "Tool", label, toolInput, toolOutput, 
         )}
 
         {open && expandable ? (
-          <div className={cn("mt-1.5 mb-1 overflow-hidden rounded-lg border font-mono text-sm", hasError ? "border-destructive/35 bg-destructive/6" : "border-border bg-card")}>
+          <div className={cn("mt-1.5 mb-1 overflow-hidden rounded-lg border font-mono text-sm", hasError ? "border-destructive-border bg-destructive-bg" : "border-border bg-card")}>
             {hasInput ? <pre className="m-0 max-h-27.5 overflow-y-auto px-3 py-1.5 break-all whitespace-pre-wrap font-normal leading-[1.65] text-muted-foreground">{prettyJson(toolInput)}</pre> : null}
             {running ? (
               <div className={cn("px-3 py-1.5 text-muted-foreground", hasInput && "border-t border-border")}>
@@ -61,7 +61,7 @@ export function ChatToolCall({ toolName = "Tool", label, toolInput, toolOutput, 
               </div>
             ) : null}
             {!isPending ? (
-              <pre className={cn("m-0 max-h-75 overflow-y-auto px-3 py-1.5 break-all whitespace-pre-wrap font-normal leading-[1.65]", hasInput && "border-t", hasError ? "border-destructive/35 text-destructive" : "border-border text-muted-foreground")}>
+              <pre className={cn("m-0 max-h-75 overflow-y-auto px-3 py-1.5 break-all whitespace-pre-wrap font-normal leading-[1.65]", hasInput && "border-t", hasError ? "border-destructive-border text-destructive" : "border-border text-muted-foreground")}>
                 {hasOutput ? prettyJson(toolOutput) : typeof toolError === "string" ? toolError : "Tool execution failed"}
               </pre>
             ) : null}

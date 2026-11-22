@@ -115,7 +115,7 @@ function ItemBtn({
       className={cn(
         "group inline-flex min-w-0 cursor-pointer items-center justify-center px-1.5 tabular-nums select-none",
         "transition-colors disabled:cursor-not-allowed disabled:opacity-40",
-        active ? "bg-brand font-medium text-(--nonla-text-on-solid)" : "text-muted-foreground hover:bg-ink-hover hover:text-foreground",
+        active ? "bg-selected font-medium text-on-selected" : "text-muted-foreground hover:bg-ink-hover hover:text-foreground",
         className,
       )}
       style={{
@@ -185,7 +185,7 @@ function MiniField({
         }
       }}
       className={cn(
-        "text-center tabular-nums text-foreground placeholder:text-quaternary-foreground",
+        "text-center tabular-nums text-foreground placeholder:text-tertiary-foreground",
         controlFieldSurface,
         controlFieldTransition,
         controlFieldFocusBorder,
@@ -562,7 +562,7 @@ function JumperField({
         }
       }}
       className={cn(
-        "text-center tabular-nums text-foreground placeholder:text-quaternary-foreground",
+        "text-center tabular-nums text-foreground placeholder:text-tertiary-foreground",
         controlFieldSurface,
         controlFieldTransition,
         controlFieldFocusBorder,

@@ -1,5 +1,5 @@
 import type { CSSProperties, ReactNode } from "react";
-import { cn } from "../lib/cn";
+import { cn, focusRing } from "../lib/cn";
 
 export type TagVariant = "soft" | "solid";
 
@@ -17,7 +17,7 @@ export type TagProps = {
   className?: string;
   onClose?: () => void;
   closable?: boolean;
-  /** Hide the leading status dot on soft colored tags. */
+  /** Leading status dot. On by default for soft colored tags; `false` hides it, `true` forces it. */
   dot?: boolean;
 };
 
@@ -42,8 +42,17 @@ const NAMED_VAR: Record<string, string> = {
   lime: "light-dark(#3d8f5c, #70b489)",
 };
 
-const SOFT = "bg-[color-mix(in_oklab,var(--nonla-tag)_12%,transparent)] text-[color-mix(in_oklab,var(--nonla-tag)_72%,black)]";
-const SOLID = "bg-(--nonla-tag) text-[var(--nonla-text-on-solid)]";
+const SOFT = "bg-[color-mix(in_oklab,var(--nonla-tag)_12%,transparent)] text-[color-mix(in_oklab,var(--nonla-tag)_72%,var(--nonla-text-main))]";
+const SOLID = "bg-[var(--nonla-tag-fill,var(--nonla-tag))] text-[var(--nonla-tag-ink,light-dark(#ffffff,#141413))]";
+
+/** Status roles: solid chips take the role fill and its label color. Presets: white in light, ink in dark (their dark tones are light). */
+const ROLE_SOLID: Record<string, { fill: string; ink: string }> = {
+  success: { fill: "var(--nonla-success-fill)", ink: "var(--nonla-text-on-success)" },
+  error: { fill: "var(--nonla-danger-fill)", ink: "var(--nonla-text-on-danger)" },
+  warning: { fill: "var(--nonla-warn-fill)", ink: "var(--nonla-text-on-warn)" },
+  processing: { fill: "var(--nonla-link)", ink: "var(--nonla-bg)" },
+  brand: { fill: "var(--nonla-brand)", ink: "var(--nonla-text-on-brand)" },
+};
 
 function resolveVariant(variant: TagProps["variant"]): TagVariant {
   if (variant === "solid") return "solid";
@@ -78,12 +87,12 @@ export function Tag({
   return (
     <span
       className={cn(
-        "inline-flex h-5.5 max-w-full items-center gap-1.5 rounded-full px-2.5 text-[11px] font-medium tracking-[0.01em]",
+        "inline-flex h-5.5 max-w-full items-center gap-1.5 rounded-full px-2.5 text-xs font-medium",
         isDefault && (solid ? "bg-foreground/10 text-foreground" : "bg-muted text-muted-foreground"),
         !isDefault && (solid ? SOLID : SOFT),
         className,
       )}
-      style={token ? ({ "--nonla-tag": token } as CSSProperties) : undefined}
+      style={token ? ({ "--nonla-tag": token, ...(ROLE_SOLID[color] && { "--nonla-tag-fill": ROLE_SOLID[color].fill, "--nonla-tag-ink": ROLE_SOLID[color].ink }) } as CSSProperties) : undefined}
     >
       {showDot ? (
         <span
@@ -97,7 +106,7 @@ export function Tag({
       {closable ? (
         <button
           type="button"
-          className="-mr-0.5 inline-flex size-3.5 shrink-0 items-center justify-center rounded-full text-current/55 transition-colors hover:bg-ink-hover hover:text-current"
+          className={cn("-mr-0.5 inline-flex size-3.5 shrink-0 cursor-pointer items-center justify-center rounded-full border-0 bg-transparent p-0 text-current/55 transition-colors hover:bg-ink-hover hover:text-current", focusRing, "focus-visible:ring-offset-0")}
           aria-label="Remove"
           onClick={onClose}
         >

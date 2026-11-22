@@ -42,13 +42,13 @@ export function MenuTrigger({ active, open, className, children, ...rest }: Menu
       aria-current={active ? "true" : undefined}
       className={cn(
         "inline-flex h-7 max-w-44 items-center gap-0.5 rounded-md border-0 bg-transparent px-2.5 text-sm font-medium leading-5 cursor-pointer",
-        active || open ? "bg-ink-active text-foreground" : "text-foreground/85 hover:bg-ink-hover hover:text-foreground",
+        active || open ? "bg-ink-active text-foreground" : "text-foreground hover:bg-ink-hover",
         className,
       )}
       {...rest}
     >
       <span className="min-w-0 truncate leading-5">{children}</span>
-      <Icon name="arrow-down" size={12} className={cn("shrink-0 transition-transform duration-150", open && "rotate-180")} />
+      <Icon name="arrow-down" size={12} className={cn("shrink-0 transition-transform duration-(--nonla-dur)", open && "rotate-180")} />
     </button>
   );
 }

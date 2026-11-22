@@ -51,11 +51,11 @@ function CalendarDayButton({ className, day, modifiers, children, ...props }: Da
       data-range-middle={modifiers.range_middle ? "true" : undefined}
       className={cn(
         "relative flex aspect-square size-full min-w-8 items-center justify-center rounded-md bg-transparent text-sm font-normal leading-none",
-        "transition-colors hover:bg-brand-50 focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-brand/55",
-        "data-[selected-single=true]:bg-brand-200 data-[selected-single=true]:text-foreground data-[selected-single=true]:hover:bg-brand-200",
-        "data-[range-start=true]:bg-brand-200 data-[range-start=true]:text-foreground data-[range-start=true]:hover:bg-brand-200 data-[range-start=true]:rounded-md",
-        "data-[range-end=true]:bg-brand-200 data-[range-end=true]:text-foreground data-[range-end=true]:hover:bg-brand-200 data-[range-end=true]:rounded-md",
-        "data-[range-middle=true]:bg-brand-50 data-[range-middle=true]:text-foreground data-[range-middle=true]:rounded-none",
+        "transition-colors hover:bg-ink-hover focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-focus-ring",
+        "data-[selected-single=true]:bg-selected data-[selected-single=true]:text-on-selected data-[selected-single=true]:hover:bg-selected",
+        "data-[range-start=true]:bg-selected data-[range-start=true]:text-on-selected data-[range-start=true]:hover:bg-selected data-[range-start=true]:rounded-md",
+        "data-[range-end=true]:bg-selected data-[range-end=true]:text-on-selected data-[range-end=true]:hover:bg-selected data-[range-end=true]:rounded-md",
+        "data-[range-middle=true]:bg-ink-active data-[range-middle=true]:text-foreground data-[range-middle=true]:rounded-none",
         defaultClassNames.day_button,
         className,
       )}
@@ -93,12 +93,12 @@ export function Calendar({
         nav: cn("absolute inset-x-0 top-0 flex w-full items-center justify-between gap-1", defaultClassNames.nav),
         button_previous: cn(
           "inline-flex size-(--cell-size) items-center justify-center rounded-md p-0 text-foreground select-none",
-          "hover:bg-brand-50 disabled:opacity-40",
+          "hover:bg-ink-hover disabled:opacity-40",
           defaultClassNames.button_previous,
         ),
         button_next: cn(
           "inline-flex size-(--cell-size) items-center justify-center rounded-md p-0 text-foreground select-none",
-          "hover:bg-brand-50 disabled:opacity-40",
+          "hover:bg-ink-hover disabled:opacity-40",
           defaultClassNames.button_next,
         ),
         month_caption: cn("flex h-(--cell-size) w-full items-center justify-center px-(--cell-size)", defaultClassNames.month_caption),
@@ -106,7 +106,7 @@ export function Calendar({
         dropdowns: cn("flex h-(--cell-size) w-full items-center justify-center gap-1.5 text-sm font-medium", defaultClassNames.dropdowns),
         month_grid: cn("w-full border-collapse", defaultClassNames.month_grid),
         weekdays: cn("flex", defaultClassNames.weekdays),
-        weekday: cn("flex-1 select-none rounded-md text-[0.8rem] font-normal text-muted-foreground", defaultClassNames.weekday),
+        weekday: cn("flex-1 select-none rounded-md text-xs font-normal text-muted-foreground", defaultClassNames.weekday),
         week: cn("mt-1.5 flex w-full", defaultClassNames.week),
         day: cn(
           "group/day relative aspect-square h-full w-full p-0 text-center select-none",
@@ -114,12 +114,12 @@ export function Calendar({
           defaultClassNames.day,
         ),
         today: cn(defaultClassNames.today),
-        outside: cn("text-muted-foreground/60 aria-selected:text-muted-foreground", defaultClassNames.outside),
+        outside: cn("text-tertiary-foreground aria-selected:text-muted-foreground", defaultClassNames.outside),
         disabled: cn("text-muted-foreground opacity-40", defaultClassNames.disabled),
         hidden: cn("invisible", defaultClassNames.hidden),
-        range_start: cn("rounded-l-md bg-brand-50", defaultClassNames.range_start),
-        range_middle: cn("rounded-none bg-brand-50", defaultClassNames.range_middle),
-        range_end: cn("rounded-r-md bg-brand-50", defaultClassNames.range_end),
+        range_start: cn("rounded-l-md bg-ink-active", defaultClassNames.range_start),
+        range_middle: cn("rounded-none bg-ink-active", defaultClassNames.range_middle),
+        range_end: cn("rounded-r-md bg-ink-active", defaultClassNames.range_end),
         ...classNames,
       }}
       components={{

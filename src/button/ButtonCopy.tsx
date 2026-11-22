@@ -1,6 +1,6 @@
 import { type ComponentProps, useEffect, useState } from "react";
 import { Icon } from "../icon/Icon";
-import { cn } from "../lib/cn";
+import { cn, focusRing } from "../lib/cn";
 import { type ControlSize, getSizeTokens, useControlSize } from "../lib/sizes";
 
 export type ButtonCopyProps = Omit<ComponentProps<"button">, "children" | "size"> & {
@@ -29,7 +29,7 @@ export function ButtonCopy({ text, getText, label = "Copy", className, onClick, 
       {...props}
       title={copied ? "Copied" : label}
       aria-label={copied ? "Copied" : label}
-      className={cn("inline-flex cursor-pointer shrink-0 items-center justify-center text-muted-foreground transition-colors duration-200 hover:text-foreground focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-brand/55", className)}
+      className={cn("inline-flex cursor-pointer shrink-0 items-center justify-center text-muted-foreground transition-colors hover:text-foreground", focusRing, className)}
       style={{ width: box, height: box }}
       onClick={async (e) => {
         onClick?.(e);

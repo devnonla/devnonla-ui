@@ -13,6 +13,8 @@ export type TabsItem = {
 
 export type TabsProps = {
   items: TabsItem[];
+  /** `line` (default): underline ink. `pill`: page tabs on a soft track, the active one raised (Cloudflare header style). */
+  variant?: "line" | "pill";
   activeKey?: string;
   defaultActiveKey?: string;
   onChange?: (key: string) => void;
@@ -82,7 +84,7 @@ function ScrollButton({ dir, onClick }: { dir: "left" | "right"; onClick: () => 
   );
 }
 
-export function Tabs({ items, activeKey, defaultActiveKey, onChange, className, style, "aria-label": ariaLabel = "Tabs" }: TabsProps) {
+export function Tabs({ items, activeKey, defaultActiveKey, onChange, className, style, "aria-label": ariaLabel = "Tabs", variant = "line" }: TabsProps) {
   const uid = useId();
 
   const [inner, setInner] = useState(() => firstEnabled(items, defaultActiveKey));
@@ -252,7 +254,7 @@ export function Tabs({ items, activeKey, defaultActiveKey, onChange, className, 
   return (
     <div className={cn("w-full min-w-0", className)} style={style}>
       <div className="relative">
-        <div aria-hidden className="pointer-events-none absolute inset-x-0 bottom-0 h-px bg-border" />
+        {variant === "line" ? <div aria-hidden className="pointer-events-none absolute inset-x-0 bottom-0 h-px bg-border" /> : null}
         <div
           ref={scrollerRef}
           className="relative overflow-x-auto overflow-y-hidden overscroll-x-contain touch-pan-y select-none [scrollbar-width:none] [-ms-overflow-style:none] [&::-webkit-scrollbar]:hidden [&::-webkit-scrollbar]:h-0 [&::-webkit-scrollbar]:w-0"
@@ -269,8 +271,8 @@ export function Tabs({ items, activeKey, defaultActiveKey, onChange, className, 
           onPointerCancel={endDrag}
           onClickCapture={onClickCapture}
         >
-          <div ref={rowRef} role="tablist" aria-label={ariaLabel} aria-orientation="horizontal" className="relative flex w-max gap-3" onKeyDown={onKeyDown}>
-            {ink ? <span aria-hidden className="pointer-events-none absolute bottom-0 left-0 z-1 h-0.5 rounded-t-xs bg-brand transition-[transform,width] duration-380 ease-[cubic-bezier(0.3,1.25,0.5,1)] motion-reduce:transition-none" style={{ width: ink.width, transform: `translateX(${ink.left}px)` }} /> : null}
+          <div ref={rowRef} role="tablist" aria-label={ariaLabel} aria-orientation="horizontal" className={cn("relative flex w-max", variant === "pill" ? "gap-0.5 rounded-lg bg-(--nonla-pill-track) p-0.5" : "gap-3")} onKeyDown={onKeyDown}>
+            {ink && variant === "line" ? <span aria-hidden className="pointer-events-none absolute bottom-0 left-0 z-1 h-0.5 rounded-t-xs bg-selected transition-[transform,width] duration-(--nonla-dur-slow) ease-(--nonla-ease-spring) motion-reduce:transition-none" style={{ width: ink.width, transform: `translateX(${ink.left}px)` }} /> : null}
             {items.map((item) => {
               const selected = item.key === active;
               return (
@@ -288,17 +290,18 @@ export function Tabs({ items, activeKey, defaultActiveKey, onChange, className, 
                   tabIndex={selected ? 0 : -1}
                   disabled={item.disabled}
                   className={cn(
-                    "relative z-10 inline-flex shrink-0 cursor-pointer items-center justify-center gap-1.5 whitespace-nowrap border-0 bg-transparent font-normal transition-colors select-none",
-                    "focus-visible:ring-brand/55 focus-visible:ring-2 focus-visible:outline-none focus-visible:ring-inset",
+                    "relative z-10 inline-flex shrink-0 cursor-pointer items-center justify-center gap-1.5 whitespace-nowrap border-0 bg-transparent font-medium transition-colors select-none",
+                    "focus-visible:ring-focus-ring focus-visible:ring-2 focus-visible:outline-none focus-visible:ring-inset",
                     "disabled:cursor-not-allowed disabled:opacity-40",
-                    selected ? "text-brand" : "text-(--nonla-text-main) hover:text-foreground",
+                    variant === "pill" && "rounded-md font-medium transition-[color,background-color,box-shadow]",
+                    variant === "pill" && selected && "bg-card shadow-(--nonla-pill-thumb-shadow)",
+                    selected ? "text-foreground" : "text-muted-foreground hover:text-foreground",
                   )}
-                  style={{
-                    height: TAB_HEIGHT,
-                    paddingLeft: 4,
-                    paddingRight: 4,
-                    fontSize: 14,
-                  }}
+                  style={
+                    variant === "pill"
+                      ? { height: TAB_HEIGHT - 8, paddingLeft: 10, paddingRight: 10, fontSize: 14 }
+                      : { height: TAB_HEIGHT, paddingLeft: 4, paddingRight: 4, fontSize: 14 }
+                  }
                   onClick={() => {
                     if (!item.disabled) select(item.key);
                   }}

@@ -1,5 +1,5 @@
 import { type ReactNode, useLayoutEffect, useRef, useState } from "react";
-import { cn } from "../lib/cn";
+import { cn, focusRing } from "../lib/cn";
 import { type ControlSize, controlHeightVar, controlRadiusVar, getSizeTokens, useControlSize } from "../lib/sizes";
 
 export type SegmentedOption<V extends string | number = string | number> = V | { label: ReactNode; value: V; disabled?: boolean; icon?: ReactNode };
@@ -24,7 +24,10 @@ type Thumb = { left: number; top: number; width: number; height: number };
 
 export function Segmented<V extends string | number = string | number>({ options, value, defaultValue, onChange, size, block, disabled, className }: SegmentedProps<V>) {
   const items = options.map((o) => norm(o));
-  const current = value ?? defaultValue ?? items[0]?.value;
+  // Uncontrolled when `value` is unset: keep the pick locally so a click moves the selection.
+  const [inner, setInner] = useState<V | undefined>(defaultValue);
+  const controlled = value !== undefined;
+  const current = (controlled ? value : inner) ?? items[0]?.value;
   const resolvedSize = useControlSize(size);
   const tok = getSizeTokens(resolvedSize);
   const itemPadX = Math.max(tok.paddingInline - 4, 6);
@@ -60,7 +63,7 @@ export function Segmented<V extends string | number = string | number>({ options
     <div
       ref={rootRef}
       className={cn(
-        "relative inline-flex w-fit max-w-full shrink-0 items-center gap-0.5 rounded-lg border border-solid border-border bg-muted p-0.5",
+        "relative inline-flex w-fit max-w-full shrink-0 items-center gap-0.5 rounded-lg bg-(--nonla-pill-track) p-0.5",
         block && "flex w-full",
         className,
       )}
@@ -71,7 +74,7 @@ export function Segmented<V extends string | number = string | number>({ options
       {thumb ? (
         <span
           aria-hidden
-          className="nonla-segmented-thumb pointer-events-none absolute top-0 left-0 border border-solid border-border bg-card transition-[transform,width,height] duration-380 ease-[cubic-bezier(0.3,1.25,0.5,1)] motion-reduce:transition-none"
+          className="nonla-segmented-thumb pointer-events-none absolute top-0 left-0 bg-card shadow-(--nonla-pill-thumb-shadow) transition-[transform,width,height] duration-(--nonla-dur-slow) ease-(--nonla-ease-spring) motion-reduce:transition-none"
           style={{
             width: thumb.width,
             height: thumb.height,
@@ -94,9 +97,12 @@ export function Segmented<V extends string | number = string | number>({ options
             aria-selected={active}
             disabled={disabled || item.disabled}
             className={cn(
-              "relative z-10 inline-flex cursor-pointer items-center justify-center gap-1.5 whitespace-nowrap border border-solid border-transparent transition-colors focus-visible:outline-none disabled:cursor-not-allowed disabled:opacity-45",
+              "relative z-10 inline-flex cursor-pointer items-center justify-center gap-1.5 whitespace-nowrap border-0 bg-transparent font-medium transition-colors disabled:cursor-not-allowed disabled:opacity-45",
+              focusRing,
+              "focus-visible:ring-offset-0",
               block ? "min-w-0 flex-1" : "shrink-0",
-              active ? "text-foreground" : "bg-transparent text-foreground hover:bg-ink-hover",
+              // Cloudflare-style: idle labels are muted and only brighten on hover; the raised thumb marks the pick.
+              active ? "text-foreground" : "text-muted-foreground hover:text-foreground",
             )}
             style={{
               height: `max(22px, calc(${controlHeightVar(resolvedSize)} - 4px))`,
@@ -105,7 +111,10 @@ export function Segmented<V extends string | number = string | number>({ options
               fontSize: tok.fontSize,
               borderRadius: `max(4px, calc(${radius} - 2px))`,
             }}
-            onClick={() => onChange?.(item.value)}
+            onClick={() => {
+              if (!controlled) setInner(item.value);
+              onChange?.(item.value);
+            }}
           >
             {item.icon}
             {item.label}

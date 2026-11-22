@@ -77,7 +77,7 @@ export function MarkdownTable({ children }: { children: ReactNode }) {
 
       <dialog
         ref={dialogRef}
-        className="inset-2.5 m-0 h-auto w-auto max-h-none max-w-none overflow-hidden rounded-xl border border-foreground/25 bg-card p-0 shadow-xl backdrop:bg-black/40 open:flex open:flex-col"
+        className="inset-2.5 m-0 h-auto w-auto max-h-none max-w-none overflow-hidden rounded-xl border border-border bg-card p-0 shadow-(--nonla-shadow) backdrop:bg-black/40 open:flex open:flex-col"
         onKeyDown={(e) => {
           if (e.key !== "Escape") return;
           e.preventDefault();
@@ -85,7 +85,7 @@ export function MarkdownTable({ children }: { children: ReactNode }) {
           closeFullscreen();
         }}
       >
-        <div className="absolute top-5 right-5 z-50 flex items-center gap-1">
+        <div className="absolute top-5 right-5 z-10 flex items-center gap-1">
           <Button size="small" className="bg-background" icon={<Icon name={copied ? "check" : "copy"} size={12} />} title={copied ? "Copied" : "Copy as Markdown"} aria-label={copied ? "Copied" : "Copy as Markdown"} onClick={copyMarkdown} />
           <Button size="small" className="bg-background" icon={<Icon name="minimize" size={12} />} title="Exit fullscreen" aria-label="Exit fullscreen" onClick={closeFullscreen} />
         </div>

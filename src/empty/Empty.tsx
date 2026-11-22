@@ -1,5 +1,6 @@
 import type { ReactNode } from "react";
 import { Card } from "../card/Card";
+import { Icon, isIconName } from "../icon/Icon";
 import { cn } from "../lib/cn";
 
 const LOGO_CONE = "M768 68 C752 68 640 145 439 300 C338 377 250 449 194 500 C172 519 150 540 134 560 C122 576 109 591 103 600 C99 613 100 628 101 640 A666 108 0 0 1 1433 640 C1434 628 1435 613 1431 600 C1425 591 1412 576 1400 560 C1384 540 1362 519 1340 500 C1284 449 1196 377 1095 300 C894 145 782 68 768 68Z";
@@ -32,19 +33,32 @@ function LogoMark() {
 }
 
 export type EmptyProps = {
+  /** Glyph above the title: an `Icon` name or any node. Defaults to the Nonla mark. `null` hides it. */
+  icon?: ReactNode;
+  /** Bold line, e.g. "No projects yet". */
+  title?: ReactNode;
+  /** Muted line under the title. */
   description?: ReactNode | null;
+  /** Call to action under the text, usually a primary `Button`. */
+  action?: ReactNode;
+  /** Extra content under the action. */
   children?: ReactNode;
+  /** Wrap in a `Card`. Turn off inside tables, panels, or cards. Default `true`. */
+  bordered?: boolean;
   className?: string;
 };
 
-export function Empty({ description = "No data", children, className }: EmptyProps) {
-  return (
-    <Card className="w-full">
-      <div role="status" className={cn("flex min-w-0 flex-col items-center justify-center gap-3 px-6 py-10 text-center", className)}>
-        <LogoMark />
-        {description != null ? <p className="m-0 max-w-sm text-sm text-muted-foreground">{description}</p> : null}
-        {children ? <div className="mt-2 flex flex-col items-center gap-2">{children}</div> : null}
-      </div>
-    </Card>
+/** Empty state (measured on Cloudflare): 36px ink icon, 20px title, muted line, then the action. */
+export function Empty({ icon, title, description = title == null ? "No data" : undefined, action, children, bordered = true, className }: EmptyProps) {
+  const glyph = icon === undefined ? <LogoMark /> : icon === null ? null : isIconName(icon) ? <Icon name={icon} size={36} className="text-foreground" /> : icon;
+  const body = (
+    <div role="status" className={cn("flex min-w-0 flex-col items-center justify-center px-6 py-10 text-center", className)}>
+      {glyph ? <div className="mb-4 flex items-center justify-center">{glyph}</div> : null}
+      {title != null && title !== "" ? <p className="m-0 text-xl leading-7 font-semibold text-foreground">{title}</p> : null}
+      {description != null && description !== "" ? <p className={cn("m-0 max-w-sm text-sm text-muted-foreground", title != null && "mt-1")}>{description}</p> : null}
+      {action ? <div className="mt-5 flex flex-wrap items-center justify-center gap-2">{action}</div> : null}
+      {children ? <div className="mt-3 flex flex-col items-center gap-2">{children}</div> : null}
+    </div>
   );
+  return bordered ? <Card className="w-full">{body}</Card> : body;
 }

@@ -31,9 +31,9 @@ export function ChatWelcome({ name, description, avatar, starters = [...DEFAULT_
     <div className={cn("nonla-chat-welcome flex flex-col items-center justify-center min-h-full w-full px-6 py-10 text-center", className)}>
       <div className="mb-5">{avatar ?? <DefaultAvatar name={name} />}</div>
 
-      <h2 className="m-0 text-[22px] font-semibold tracking-tight text-foreground leading-snug">Hi, I&apos;m {name}</h2>
+      <h2 className="m-0 text-xl font-semibold tracking-tight text-foreground leading-snug">Hi, I&apos;m {name}</h2>
 
-      {desc ? <p className="mt-2 mb-0 max-w-90 text-[13px] leading-relaxed text-tertiary-foreground line-clamp-2">{desc}</p> : <p className="mt-2 mb-0 max-w-[320px] text-[13px] leading-relaxed text-tertiary-foreground">Send a message to start working together.</p>}
+      {desc ? <p className="mt-2 mb-0 max-w-90 text-sm leading-relaxed text-tertiary-foreground line-clamp-2">{desc}</p> : <p className="mt-2 mb-0 max-w-[320px] text-sm leading-relaxed text-tertiary-foreground">Send a message to start working together.</p>}
 
       {starters.length > 0 && onStarter ? (
         <div className="mt-8 flex flex-wrap items-center justify-center gap-2 max-w-130">

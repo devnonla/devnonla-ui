@@ -290,7 +290,7 @@ function SplitterRoot({
                 >
                   <span
                     className={cn(
-                      "pointer-events-none absolute rounded-full transition-all",
+                      "pointer-events-none absolute rounded-full transition-[width,height,background-color]",
                       isVertical
                         ? "inset-x-0 top-1/2 h-px -translate-y-1/2 group-hover:h-[3px] group-focus-visible:h-[3px]"
                         : "inset-y-0 left-1/2 w-px -translate-x-1/2 group-hover:w-[3px] group-focus-visible:w-[3px]",

@@ -56,7 +56,7 @@ export function ReactCodeFrame({ title, icon, showHeader = true, code, className
               aria-expanded={open}
               aria-label={codeLabel}
               className={cn(
-                "inline-flex size-7 cursor-pointer items-center justify-center rounded-md transition-colors hover:bg-muted hover:text-foreground focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-brand/55",
+                "inline-flex size-7 cursor-pointer items-center justify-center rounded-md transition-colors hover:bg-ink-hover active:bg-ink-active hover:text-foreground focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-focus-ring",
                 open ? "bg-muted text-foreground" : "text-muted-foreground",
               )}
               onClick={() => setOpen((value) => !value)}

@@ -13,7 +13,7 @@ const FIELD_INSET: Record<CanonicalSize, string> = { small: "-4px", default: "-6
 const MULTILINE_MIN: Record<CanonicalSize, number> = { small: 56, default: 72, large: 96 };
 const GLASS_BORDER = 1;
 
-const fieldClass = (saving: boolean) => cn("relative z-1 m-0 w-full border-0 bg-transparent text-foreground placeholder:text-quaternary-foreground focus:outline-none", saving && "opacity-60");
+const fieldClass = (saving: boolean) => cn("relative z-1 m-0 w-full border-0 bg-transparent text-foreground placeholder:text-tertiary-foreground focus:outline-none", saving && "opacity-60");
 
 type Lock = {
   top: number;
@@ -225,7 +225,7 @@ function EditButton({ label, size, onClick }: { label: string; size: CanonicalSi
       aria-label={label}
       title={label}
       onClick={onClick}
-      className="inline-flex shrink-0 items-center justify-center rounded text-muted-foreground opacity-0 transition-opacity hover:bg-muted hover:text-foreground group-hover/edit:opacity-100 focus-visible:opacity-100"
+      className="inline-flex shrink-0 items-center justify-center rounded text-muted-foreground opacity-0 transition-opacity hover:bg-ink-hover active:bg-ink-active hover:text-foreground group-hover/edit:opacity-100 focus-visible:opacity-100"
       style={{ width: box, height: box }}
     >
       <Icon name="pen" size={tok.icon} />
@@ -320,7 +320,7 @@ function EditableKey({ value, editing, onStartEdit, onCancelEdit, onSave, placeh
     <div ref={rowRef} className="flex w-full min-w-0 items-center" style={{ minHeight: controlHeightVar(resolved) }}>
       <div className="group/edit inline-flex max-w-full items-center gap-1">
         <div ref={textRef} className={cn("min-w-0", editing && "invisible")} style={{ fontSize: tok.fontSize, lineHeight: `${tok.lineHeight}px`, minHeight: tok.lineHeight }}>
-          <code className="select-text font-mono font-semibold tracking-wide text-foreground">{value}</code>
+          <code className="select-text font-mono font-medium text-foreground">{value}</code>
         </div>
         {editing ? null : <EditButton label={editLabel} size={resolved} onClick={onStartEdit} />}
       </div>

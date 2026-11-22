@@ -25,7 +25,7 @@ export function FieldRepeaterItem({ index, remove, namePrefix, childItems, contr
           <button
             type="button"
             aria-label={collapsed ? "Expand item" : "Collapse item"}
-            className="inline-flex size-4 items-center justify-center rounded-[3px] border-0 bg-muted text-muted-foreground cursor-pointer p-0"
+            className="inline-flex size-4 items-center justify-center rounded-xs border-0 bg-muted text-muted-foreground cursor-pointer p-0"
             onClick={() => setCollapsed((v) => !v)}
           >
             <svg width="10" height="10" viewBox="0 0 12 12" fill="none" aria-hidden className={collapsed ? "-rotate-90" : undefined}>

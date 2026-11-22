@@ -160,7 +160,7 @@ const DEFAULT_CHIP_COLOR = "#c9841a";
 const NEUTRAL_CHIP_COLOR = "#71717a";
 const HEX_COLOR = /^#([0-9a-f]{3}|[0-9a-f]{4}|[0-9a-f]{6}|[0-9a-f]{8})$/i;
 
-const chipClass = "mx-px inline max-w-full truncate rounded-[4px] px-1 align-middle text-xs leading-4 text-white";
+const chipClass = "mx-px inline max-w-full truncate rounded-xs px-1 align-middle text-xs leading-4 text-white";
 
 function paintComposer(root: HTMLElement, parts: readonly ComposerPart[]) {
   const frag = document.createDocumentFragment();
@@ -525,8 +525,8 @@ export function ChatInput({ inputRef, generating = false, placeholder = "Message
           <div className="flex-1" />
 
           {generating ? (
-            <button type="button" onClick={onCancel} title="Stop" className="w-6 h-6 rounded-full bg-brand text-(--nonla-text-on-solid) flex items-center justify-center shrink-0 cursor-pointer hover:bg-brand/90 active:scale-95 transition-all duration-100 border-0">
-              <Icon name="stop" size={12} />
+            <button type="button" onClick={onCancel} title="Stop" className="w-6 h-6 rounded-full bg-brand text-(--nonla-text-on-brand) flex items-center justify-center shrink-0 cursor-pointer hover:bg-brand/90 active:scale-[0.97] transition-[background-color,transform] duration-(--nonla-dur-instant) border-0">
+              <Icon name="stop" size={16} />
               <span className="sr-only">Stop</span>
             </button>
           ) : (
@@ -535,7 +535,7 @@ export function ChatInput({ inputRef, generating = false, placeholder = "Message
               disabled={!canSend}
               onClick={handleSend}
               title="Send (Enter)"
-              className={cn("w-6 h-6 rounded-full flex items-center justify-center shrink-0 transition-all duration-100 border-0", canSend ? "bg-foreground text-background cursor-pointer" : "bg-border text-muted-foreground cursor-not-allowed opacity-50")}
+              className={cn("w-6 h-6 rounded-full flex items-center justify-center shrink-0 transition-[background-color,color,transform] duration-(--nonla-dur-instant) border-0", canSend ? "bg-foreground text-background cursor-pointer" : "bg-border text-muted-foreground cursor-not-allowed opacity-50")}
             >
               <Icon name="arrow-up" size={14} />
               <span className="sr-only">Send</span>

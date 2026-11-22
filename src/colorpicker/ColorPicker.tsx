@@ -388,7 +388,7 @@ function PresetGroup({
                 type="button"
                 title={color.toHexString()}
                 aria-label={color.toHexString()}
-                className={cn(CHECKERED, "size-5 cursor-pointer overflow-hidden rounded-sm border border-border", active && "ring-2 ring-brand ring-offset-1 ring-offset-background")}
+                className={cn(CHECKERED, "size-5 cursor-pointer overflow-hidden rounded-sm border border-border", active && "ring-2 ring-selected ring-offset-1 ring-offset-background")}
                 onClick={() => onPick(color)}
               >
                 <span className="block size-full" style={{ backgroundColor: color.toRgbString() }} />
@@ -594,7 +594,7 @@ export function ColorPicker({
         ) : (
           <button
             type="button"
-            className="inline-flex h-6 w-11 shrink-0 cursor-pointer items-center justify-between rounded-md border-0 bg-transparent px-0.5 text-[11px] font-medium text-muted-foreground hover:text-foreground"
+            className="inline-flex h-6 w-11 shrink-0 cursor-pointer items-center justify-between rounded-md border-0 bg-transparent px-0.5 text-xs font-medium text-muted-foreground hover:text-foreground"
             onClick={cycleFormat}
           >
             {format.toUpperCase()}

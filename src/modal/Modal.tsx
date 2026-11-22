@@ -195,9 +195,9 @@ function ModalView({
           >
             {(title || closable) && (
               <div className="nonla-modal-header flex shrink-0 items-center justify-between gap-3 bg-transparent px-4 py-3" style={styles?.header}>
-                <Dialog.Title className="nonla-modal-title m-0 text-[15px] leading-[1.4] font-semibold text-foreground">{title}</Dialog.Title>
+                <Dialog.Title className="nonla-modal-title m-0 text-lg leading-snug font-semibold text-foreground">{title}</Dialog.Title>
                 {closable ? (
-                  <Dialog.Close className="nonla-modal-close -mt-1 -mr-1.5 -mb-1 ml-0 inline-flex size-7 cursor-pointer items-center justify-center rounded-(--radius) border-0 bg-transparent text-[18px] leading-none text-muted-foreground hover:bg-muted hover:text-foreground" aria-label="Close">
+                  <Dialog.Close className="nonla-modal-close -mt-1 -mr-1.5 -mb-1 ml-0 inline-flex size-7 cursor-pointer items-center justify-center rounded-(--radius) border-0 bg-transparent text-[18px] leading-none text-muted-foreground hover:bg-ink-hover active:bg-ink-active hover:text-foreground" aria-label="Close">
                     ×
                   </Dialog.Close>
                 ) : null}

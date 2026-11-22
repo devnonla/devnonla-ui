@@ -51,7 +51,7 @@ export function ChatThinking({ thinking, duration = 0, streaming = false, classN
     >
       <summary className={cn(chatToolLineClass, "cursor-pointer list-none font-medium select-none [&::-webkit-details-marker]:hidden")}>
         <Shimmer active={streaming} className="text-muted-foreground">{label}</Shimmer>
-        <Icon name="arrow-right" size={12} className="shrink-0 opacity-0 text-muted-foreground transition-[opacity,transform] duration-150 group-hover/thinking:opacity-100 group-open/thinking:opacity-100 group-open/thinking:rotate-90" />
+        <Icon name="arrow-right" size={12} className="shrink-0 opacity-0 text-muted-foreground transition-[opacity,transform] group-hover/thinking:opacity-100 group-open/thinking:opacity-100 group-open/thinking:rotate-90" />
       </summary>
 
       <div ref={bodyRef} className="pt-2 max-h-40 min-w-0 overflow-y-auto overflow-x-hidden mb-2 text-sm">

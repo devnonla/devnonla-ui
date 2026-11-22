@@ -12,7 +12,7 @@ export type PopconfirmProps = {
   onCancel?: () => void;
   okText?: ReactNode;
   cancelText?: ReactNode;
-  okType?: "primary" | "default" | "dashed" | "link" | "text" | "danger";
+  okType?: "primary" | "default" | "link" | "text" | "danger";
   okButtonProps?: { danger?: boolean; type?: string; color?: string; variant?: string };
   cancelButtonProps?: Record<string, unknown>;
   /** Customize / hide the leading icon. Pass `null` to hide. */
@@ -90,7 +90,7 @@ export function Popconfirm({
             {showIcon ? <span className="nonla-popconfirm-icon">{resolvedIcon}</span> : null}
             <div className="min-w-0 flex-1">
               {title != null && title !== false ? <div className="text-sm font-medium leading-snug text-foreground">{title}</div> : null}
-              {description != null && description !== false ? <div className={cn("text-[13px] leading-snug text-muted-foreground", title != null && title !== false && "mt-1")}>{description}</div> : null}
+              {description != null && description !== false ? <div className={cn("text-sm leading-snug text-muted-foreground", title != null && title !== false && "mt-1")}>{description}</div> : null}
             </div>
           </div>
           <div className="mt-3 flex justify-end gap-2">
@@ -109,7 +109,7 @@ export function Popconfirm({
             ) : null}
             <Button
               size="small"
-              type={okBtnType as "primary" | "default" | "dashed" | "link" | "text"}
+              type={okBtnType as "primary" | "default" | "link" | "text"}
               danger={okDanger}
               loading={loading}
               onClick={async () => {

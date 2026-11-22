@@ -45,8 +45,8 @@ const timers = new Map<string, number>();
 function IconSuccess() {
   return (
     <svg width="16" height="16" viewBox="0 0 16 16" fill="none" aria-hidden>
-      <circle cx="8" cy="8" r="8" fill="var(--success)" />
-      <path d="M4.6 8.15L6.85 10.3L11.4 5.7" stroke="var(--nonla-bg)" strokeWidth="1.6" strokeLinecap="round" strokeLinejoin="round" />
+      <circle cx="8" cy="8" r="8" fill="var(--nonla-success-fill)" />
+      <path d="M4.6 8.15L6.85 10.3L11.4 5.7" stroke="var(--nonla-text-on-success)" strokeWidth="1.6" strokeLinecap="round" strokeLinejoin="round" />
     </svg>
   );
 }
@@ -54,8 +54,8 @@ function IconSuccess() {
 function IconError() {
   return (
     <svg width="16" height="16" viewBox="0 0 16 16" fill="none" aria-hidden>
-      <circle cx="8" cy="8" r="8" fill="var(--destructive)" />
-      <path d="M5.4 5.4L10.6 10.6M10.6 5.4L5.4 10.6" stroke="var(--nonla-text-on-solid)" strokeWidth="1.6" strokeLinecap="round" />
+      <circle cx="8" cy="8" r="8" fill="var(--nonla-danger-fill)" />
+      <path d="M5.4 5.4L10.6 10.6M10.6 5.4L5.4 10.6" stroke="var(--nonla-text-on-danger)" strokeWidth="1.6" strokeLinecap="round" />
     </svg>
   );
 }
@@ -64,7 +64,7 @@ function IconInfo() {
   return (
     <svg width="16" height="16" viewBox="0 0 16 16" fill="none" aria-hidden>
       <circle cx="8" cy="8" r="8" fill="var(--link)" />
-      <path d="M8 7.1V11.2M8 4.8V5.5" stroke="var(--nonla-text-on-solid)" strokeWidth="1.7" strokeLinecap="round" />
+      <path d="M8 7.1V11.2M8 4.8V5.5" stroke="var(--nonla-bg)" strokeWidth="1.7" strokeLinecap="round" />
     </svg>
   );
 }
@@ -72,8 +72,8 @@ function IconInfo() {
 function IconWarning() {
   return (
     <svg width="16" height="16" viewBox="0 0 16 16" fill="none" aria-hidden>
-      <circle cx="8" cy="8" r="8" fill="var(--warn)" />
-      <path d="M8 4.6V8.8M8 10.8V11.4" stroke="var(--nonla-bg)" strokeWidth="1.7" strokeLinecap="round" />
+      <circle cx="8" cy="8" r="8" fill="var(--nonla-warn-fill)" />
+      <path d="M8 4.6V8.8M8 10.8V11.4" stroke="var(--nonla-text-on-warn)" strokeWidth="1.7" strokeLinecap="round" />
     </svg>
   );
 }
@@ -111,7 +111,7 @@ function MessageList({ list }: { list: Active[] }) {
           className={cn(
             glassSurfaceClass,
             "nonla-message-item pointer-events-auto inline-flex items-center gap-2 rounded-(--radius) px-3 py-[9px] text-sm leading-[1.5714] will-change-[transform,opacity] animate-[nonla-message-in_var(--nonla-dur)_var(--nonla-ease-out)]",
-            item.leaving && "animate-[nonla-message-out_150ms_var(--nonla-ease-in)_forwards]",
+            item.leaving && "animate-[nonla-message-out_var(--nonla-dur-fast)_var(--nonla-ease-in)_forwards]",
             item.className,
           )}
           data-type={item.type}

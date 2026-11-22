@@ -16,5 +16,5 @@ export function ToolUiTrailing({
   if (running) return <ChatSpinner />;
   if (failed) return <Icon name="error" size={13} className="shrink-0 text-destructive" />;
   if (!chevron) return null;
-  return <Icon name="arrow-right" size={12} className={cn("shrink-0 opacity-0 transition-[opacity,transform] duration-150", chevronClassName)} />;
+  return <Icon name="arrow-right" size={12} className={cn("shrink-0 opacity-0 transition-[opacity,transform]", chevronClassName)} />;
 }

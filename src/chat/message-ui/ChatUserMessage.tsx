@@ -29,8 +29,8 @@ export function ChatUserMessage({ content, className }: ChatUserMessageProps) {
   return (
     <div
       className={cn(
-        "nonla-chat-user relative isolate mx-4 mt-8 mb-3 overflow-hidden rounded-xl border border-solid border-(--nonla-input) bg-muted-strong px-3 py-1.5",
-        "[.light:not(.dark)_&]:bg-sidebar [.light_.nonla-ui:not(.dark)_&]:bg-sidebar",
+        // Borderless wash and roomy padding, like Claude desktop. `bg-bar` is #f2f2f2 in light and follows the mode.
+        "nonla-chat-user relative isolate mx-4 mt-8 mb-3 overflow-hidden rounded-xl bg-bar px-4 py-2.5",
         className,
       )}
     >
@@ -55,7 +55,7 @@ export function ChatUserMessage({ content, className }: ChatUserMessageProps) {
           }}
           className="flex w-full cursor-pointer items-center justify-center border-0 bg-transparent pt-1 text-muted-foreground hover:text-foreground"
         >
-          <Icon name="arrow-down" size={12} className={cn("transition-transform duration-200", isExpanded && "rotate-180")} />
+          <Icon name="arrow-down" size={12} className={cn("transition-transform duration-(--nonla-dur)", isExpanded && "rotate-180")} />
         </button>
       ) : null}
     </div>

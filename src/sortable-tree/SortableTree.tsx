@@ -433,7 +433,7 @@ function FloatingDropLine({ root, hint }: { root: HTMLElement | null; hint: Drop
   const rect = faceRect(root, hint.overId);
   if (!rect) return null;
   const top = hint.edge === "top" ? rect.top : rect.bottom;
-  return <span aria-hidden className="pointer-events-none fixed z-1100 h-0.5 rounded-full bg-foreground" style={{ top: top - 1, left: rect.left + 6, width: Math.max(0, rect.width - 12) }} />;
+  return <span aria-hidden className="pointer-events-none fixed z-(--nonla-z-popup) h-0.5 rounded-full bg-foreground" style={{ top: top - 1, left: rect.left + 6, width: Math.max(0, rect.width - 12) }} />;
 }
 
 function SortableNode<T>({

@@ -7,6 +7,8 @@ import { OverlayScroll } from "../scroll/OverlayScroll";
 export type SidebarItemType = {
   key?: string;
   label?: ReactNode;
+  /** Muted second line under the label (context, owner, path). The row grows to two lines. */
+  description?: ReactNode;
   /** An `Icon` name, or a node. */
   icon?: ReactNode;
   disabled?: boolean;
@@ -46,7 +48,7 @@ function labelText(label: ReactNode) {
 }
 
 function matchesQuery(item: SidebarItemType, q: string) {
-  return labelText(item.label).toLowerCase().includes(q);
+  return `${labelText(item.label)} ${labelText(item.description)}`.toLowerCase().includes(q);
 }
 
 /** A group label stays when it matches, or when a later row matches before the next group. */
@@ -109,15 +111,17 @@ function SidebarList({
         if (item.type === "group") {
           if (item.label == null || item.label === "") return null;
           return (
-            <div key={key} className={cn("px-3 pb-1 pt-3 text-[11px] font-semibold uppercase tracking-wider text-tertiary-foreground not-first:mt-2", item.className)}>
+            <div key={key} className={cn("px-3 pb-1 pt-3 text-xs font-medium text-muted-foreground not-first:mt-2", item.className)}>
               {item.label}
             </div>
           );
         }
 
         const active = selected != null && key === selected;
+        const twoLine = item.description != null && item.description !== "";
         const className = cn(
-          "nonla-sidebar-item box-border flex h-(--nonla-height) w-full items-center gap-3 rounded-(--nonla-radius) border-0 bg-transparent px-3 text-left text-[14px] font-normal text-foreground no-underline transition-[background-color,box-shadow] duration-(--nonla-dur-fast) ease-(--nonla-ease-out) hover:not-aria-current:not-disabled:not-aria-disabled:bg-ink-hover hover:not-disabled:not-aria-disabled:shadow-none aria-current:bg-ink-active aria-current:shadow-none aria-[current=page]:bg-ink-active aria-[current=page]:shadow-none",
+          twoLine ? "min-h-(--nonla-height) py-1.5" : "h-(--nonla-height)",
+          "nonla-sidebar-item box-border flex w-full items-center gap-3 rounded-(--nonla-radius) border-0 bg-transparent px-3 text-left text-(length:--nonla-nav-text-size) font-medium text-foreground no-underline transition-[background-color,box-shadow] duration-(--nonla-dur-fast) ease-(--nonla-ease-out) hover:not-aria-current:not-disabled:not-aria-disabled:bg-ink-hover hover:not-disabled:not-aria-disabled:shadow-none aria-current:bg-ink-active aria-current:shadow-none aria-[current=page]:bg-ink-active aria-[current=page]:shadow-none",
           item.disabled ? "pointer-events-none cursor-not-allowed opacity-40" : "cursor-pointer",
           item.className,
         );
@@ -125,7 +129,14 @@ function SidebarList({
         const body = (
           <>
             <ItemIcon icon={item.icon} />
-            <span className="min-w-0 flex-1 truncate">{item.label}</span>
+            {twoLine ? (
+              <span className="flex min-w-0 flex-1 flex-col">
+                <span className="truncate">{item.label}</span>
+                <span className="truncate text-xs text-tertiary-foreground">{item.description}</span>
+              </span>
+            ) : (
+              <span className="min-w-0 flex-1 truncate">{item.label}</span>
+            )}
             {item.extra != null ? <span className="shrink-0 text-sm tabular-nums text-muted-foreground">{item.extra}</span> : null}
           </>
         );

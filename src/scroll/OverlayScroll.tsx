@@ -150,7 +150,7 @@ export function OverlayScroll({ visibility = "hover", scope = "scroll", autoHeig
 
   const thumbVisible = visibility === "always" || dragging || scrolling;
   const thumbClass = cn(
-    "absolute z-20 rounded-full bg-(--nonla-scrollbar-thumb) transition-opacity duration-150",
+    "absolute z-20 rounded-full bg-(--nonla-scrollbar-thumb) transition-opacity",
     scope === "table" ? "group-hover/table:bg-(--nonla-scrollbar-thumb-hover)" : "group-hover/scroll:bg-(--nonla-scrollbar-thumb-hover)",
     visibility === "always" || dragging
       ? "pointer-events-auto opacity-100"

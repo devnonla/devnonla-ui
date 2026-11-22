@@ -25,7 +25,7 @@ export function MarkdownSource({ value, onChange, readOnly, placeholder = "Write
     <OverlayScroll className="h-full bg-card" innerClassName="overflow-x-auto">
       <div className="relative flex min-h-full" style={{ width: `max(100%, calc(3.5rem + ${longest + 2}ch))` }}>
         <div aria-hidden className="pointer-events-none absolute inset-x-0 bg-ink-hover" style={{ top: PAD + active * LINE, height: LINE }} />
-        <div className="sticky left-0 z-20 w-12 shrink-0 select-none pt-2 text-right font-mono text-[12px] leading-5 text-quaternary-foreground">
+        <div className="sticky left-0 z-20 w-12 shrink-0 select-none pt-2 text-right font-mono text-xs leading-5 text-quaternary-foreground">
           {lines.map((_, index) => (
             // Line number is the row identity.
             // biome-ignore lint/suspicious/noArrayIndexKey: gutter row is the line number
@@ -63,7 +63,7 @@ export function MarkdownSource({ value, onChange, readOnly, placeholder = "Write
               setCursor(pos);
             });
           }}
-          className="relative z-10 block w-full resize-none overflow-hidden bg-transparent py-2 pr-4 font-mono text-[13px] leading-5 text-foreground outline-none placeholder:text-quaternary-foreground"
+          className="relative z-10 block w-full resize-none overflow-hidden bg-transparent py-2 pr-4 font-mono text-sm leading-5 text-foreground outline-none placeholder:text-tertiary-foreground"
           style={{ height: Math.max(lines.length, 1) * LINE + PAD * 2 }}
         />
       </div>
