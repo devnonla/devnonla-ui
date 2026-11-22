@@ -31,6 +31,27 @@ export default function Demo() {
 }
 ```
 
+## Pill
+
+`variant="pill"` puts page tabs on a soft track with the active one raised, like a header switcher between sibling pages.
+
+```live-react
+import { Tabs } from "devnonla-ui";
+
+export default function Demo() {
+  return (
+    <Tabs
+      variant="pill"
+      items={[
+        { key: "members", label: "All members" },
+        { key: "groups", label: "Groups" },
+        { key: "settings", label: "Settings" },
+      ]}
+    />
+  );
+}
+```
+
 ## Scroll
 
 A long row scrolls inside its container. Arrow buttons, the trackpad, and the mouse wheel move it. The active tab moves into view.
@@ -58,3 +79,28 @@ export default function Demo() {
   );
 }
 ```
+
+## API
+
+### Tabs
+
+| Property | Description | Type | Default |
+| --- | --- | --- | --- |
+| `items` | Tabs, in order | `TabItem[]` | — |
+| `variant` | `line` underlines the active tab; `pill` raises it on a soft track | `"line"` \| `"pill"` | `"line"` |
+| `activeKey` | Active tab key, controlled | `string` | — |
+| `defaultActiveKey` | Initial tab when uncontrolled | `string` | first enabled tab |
+| `onChange` | Fires with the key of the clicked tab | `(key: string) => void` | — |
+| `aria-label` | Accessible name of the tab list | `string` | `"Tabs"` |
+| `className` | Extra class on the root | `string` | — |
+| `style` | Inline style on the root | `CSSProperties` | — |
+
+### Tab item
+
+| Property | Description | Type | Default |
+| --- | --- | --- | --- |
+| `key` | Unique tab key | `string` | — |
+| `label` | Tab text | `ReactNode` | — |
+| `children` | Panel content shown while the tab is active | `ReactNode` | — |
+| `icon` | An `Icon` name, or a node | `ReactNode` | — |
+| `disabled` | Tab cannot be selected | `boolean` | `false` |

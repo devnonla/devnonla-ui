@@ -23,3 +23,10 @@ export default function Demo() {
   );
 }
 ```
+
+## API
+
+| Property | Description | Type | Default |
+| --- | --- | --- | --- |
+| `content` | Message text. Long text collapses with an expand toggle | `string` | — |
+| `className` | Class on the bubble | `string` | — |

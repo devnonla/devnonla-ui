@@ -56,3 +56,25 @@ export default function Demo() {
   );
 }
 ```
+
+## API
+
+### SortableTree
+
+| Property | Description | Type | Default |
+| --- | --- | --- | --- |
+| `items` | Tree to show. Ids must be unique across the tree. | `TreeItem[]` | — |
+| `onChange` | Called with the next tree after a drop that changed order. | `(items: TreeItem[]) => void` | — |
+| `onDragEnd` | Called with the rows whose index changed. Rows that stayed put are omitted. | `(updates: { id: string; index: number }[]) => void` | — |
+| `renderItem` | Custom row content. Defaults to `label`, then `id`. | `(item: TreeItem) => ReactNode` | — |
+| `className` | Extra class on the root. | `string` | — |
+
+### TreeItem
+
+| Property | Description | Type | Default |
+| --- | --- | --- | --- |
+| `id` | Unique id across the tree. | `string` | — |
+| `label` | Row text. Falls back to `id`. | `ReactNode` | — |
+| `children` | Nested rows. | `TreeItem[]` | — |
+| `disabled` | The row cannot be dragged. | `boolean` | — |
+| `data` | Your own payload, passed back through `renderItem` and `onChange`. | `T` | — |

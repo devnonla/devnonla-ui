@@ -27,7 +27,7 @@ import { AgentChatbox, AgentPanel } from "devnonla-ui/chat";
 <AgentChatbox send={({ text, signal }) => postTurn(text, signal)} title="Nova" />
 ```
 
-`toolbar` sits left of the composer. `toolUis` adds a card for a stream `toolName` (checked before builtins). `toolHooks` runs `onCall` / `onResult` for matching names.
+`toolbar` sits left of the composer. `toolUis` adds a card for a stream `toolName`. `toolHooks` runs `onCall` / `onResult` for matching names.
 
 The response is an [AG-UI](https://docs.ag-ui.com/concepts/events) SSE stream. The thread renders text, reasoning, and tool calls. `RUN_FINISHED` ends the turn and `RUN_ERROR` shows the error. Lifecycle, step, state, snapshot, activity, raw, and custom events are accepted and ignored.
 
@@ -47,9 +47,7 @@ These are the rows inside a surface. A custom layout imports them directly.
 
 ## Tool cards
 
-A tool row resolves in this order: your `toolUis`, then builtins, then `ChatToolCall`.
-
-Builtins: `nonla_web_fetch`, `nonla_get_current_time`, `nonla_read_skill`, `nonla_run_js`, plus a background-task card when the result is a task ref. `BackgroundTasksBar` lists tasks that are still running.
+A tool row resolves in this order: your `toolUis`, then a background-task card when the result is a task ref, then `ChatToolCall`. The kit ships no per-tool cards: tool names differ per agent, so the app registers its own through `toolUis`. `BackgroundTasksBar` lists tasks that are still running.
 
 ## Owning the thread
 

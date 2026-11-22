@@ -117,9 +117,9 @@ const CHAT_LEGACY: Record<string, string> = {
   "chat/thinking": "/chat/thinking",
   "chat-tool": "/chat/tool",
   "chat/tool": "/chat/tool",
-  "builtin-tools": "/chat/builtin-tools",
-  "chat-builtin-tools": "/chat/builtin-tools",
-  "chat/builtin-tools": "/chat/builtin-tools",
+  "builtin-tools": "/chat/tool",
+  "chat-builtin-tools": "/chat/tool",
+  "chat/builtin-tools": "/chat/tool",
   "chat-input": "/chat/input",
   "chat/input": "/chat/input",
 };

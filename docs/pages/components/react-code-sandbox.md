@@ -57,3 +57,14 @@ export default function Demo() {
   );
 }
 ```
+
+## API
+
+| Property | Description | Type | Default |
+| --- | --- | --- | --- |
+| `code` | Component source. It must `export default` a React component. | `string` | — |
+| `showHeader` | Shows a header bar above the result. | `boolean` | `false` |
+| `showCode` | Adds a Preview / Code switch to the header. Needs `showHeader`. | `boolean` | `true` |
+| `title` | Header text. | `ReactNode` | `"Sandbox"` |
+| `icon` | Header icon. `null` hides it. | `ReactNode` | — |
+| `className` | Extra class on the outer box. | `string` | — |

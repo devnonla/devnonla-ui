@@ -43,16 +43,16 @@ The parent owns editing. The pencil calls onStartEdit. Save calls onSave; Escape
 
 | Property | Description | Type | Default |
 | --- | --- | --- | --- |
-| display | Shown while idle. Hidden while the editor is open. | `ReactNode` | `-` |
-| editing | Whether the editor popover is open. | `boolean` | `-` |
-| onStartEdit | Called when the pencil is clicked. | `() => void` | `-` |
-| onCancelEdit | Called on Cancel, Escape, or an unchanged draft. | `() => void` | `-` |
-| initialValue | Draft loaded when editing starts. | `string` | `-` |
-| onSave | Called with the draft. Resolving closes the editor. | `(value: string) => Promise<void>` | `-` |
-| placeholder | Placeholder in the editor. | `string` | `-` |
+| display | Shown while idle. Hidden while the editor is open. | `ReactNode` | — |
+| editing | Whether the editor popover is open. | `boolean` | — |
+| onStartEdit | Called when the pencil is clicked. | `() => void` | — |
+| onCancelEdit | Called on Cancel, Escape, or an unchanged draft. | `() => void` | — |
+| initialValue | Draft loaded when editing starts. | `string` | — |
+| onSave | Called with the draft. Resolving closes the editor. | `(value: string) => Promise<void>` | — |
+| placeholder | Placeholder in the editor. | `string` | — |
 | type | Editor field. `textarea` saves with ⌘/Ctrl+Enter; Enter inserts a line. | `text` \| `password` \| `textarea` | `text` |
 | editLabel | Accessible name of the pencil. | `string` | `Edit value` |
-| minWidth | Minimum width of the editor, in px. | `number` | `-` |
+| minWidth | Minimum width of the editor, in px. | `number` | — |
 | size | Display size. `middle` and `medium` match `default`. `xs` matches `small`. | `small` \| `default` \| `large` | `default` |
 | allowEmpty | Allow saving an empty string. When `false`, empty shows “Value is required” and Save stays disabled. | `boolean` | `false` |
 
@@ -62,11 +62,11 @@ Edits an env-style key. The draft is uppercased. It must match `[A-Z][A-Z0-9_]*`
 
 | Property | Description | Type | Default |
 | --- | --- | --- | --- |
-| value | Current key, shown in monospace. | `string` | `-` |
-| editing | Whether the editor popover is open. | `boolean` | `-` |
-| onStartEdit | Called when the pencil is clicked. | `() => void` | `-` |
-| onCancelEdit | Called on Cancel, Escape, or an unchanged key. | `() => void` | `-` |
-| onSave | Called with the validated key. Resolving closes the editor. | `(key: string) => Promise<void>` | `-` |
+| value | Current key, shown in monospace. | `string` | — |
+| editing | Whether the editor popover is open. | `boolean` | — |
+| onStartEdit | Called when the pencil is clicked. | `() => void` | — |
+| onCancelEdit | Called on Cancel, Escape, or an unchanged key. | `() => void` | — |
+| onSave | Called with the validated key. Resolving closes the editor. | `(key: string) => Promise<void>` | — |
 | placeholder | Placeholder in the editor. | `string` | `VARIABLE_NAME` |
 | editLabel | Accessible name of the pencil. | `string` | `Edit key` |
 | size | Display size. `middle` and `medium` match `default`. `xs` matches `small`. | `small` \| `default` \| `large` | `default` |

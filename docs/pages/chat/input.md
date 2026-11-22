@@ -100,3 +100,22 @@ export default function Demo() {
 Pass `inputRef` to ChatInput, AgentPanel, or AgentChatbox, then call `insertChip` on the handle. The chip shows `label`. The message sends `value`, so keep the payload in your app and map it by `value`. `title` is the full text in a native tooltip on hover. `color` is the chip background as hex, default neutral gray `#71717a`. The composer focuses after insert and places the caret after the chip. The demo above uses this with the same composer as the `/` and `@` menus.
 
 Each trigger's `menu` follows the same rule. `ChatSuggestOption` takes `value` (sent) and an optional `label` (shown in the chip). `insert(value, label)` works the same way inside a custom menu. Chips from a trigger use that trigger's `color`, default amber `#c9841a`.
+
+## API
+
+| Property | Description | Type | Default |
+| --- | --- | --- | --- |
+| `onSend` | Fires with the message text on Enter or the send button | `(text: string) => void` | — |
+| `generating` | A turn is running. Locks the composer and shows Stop | `boolean` | `false` |
+| `onCancel` | Fires when Stop is pressed | `() => void` | — |
+| `placeholder` | Composer placeholder | `string` | `"Message…"` |
+| `triggers` | Markers that open a menu, such as `/` for commands and `@` for mentions | `ChatTrigger[]` | `[]` |
+| `inputRef` | Imperative handle, such as `insertChip` from a text selection | `Ref<ChatInputHandle>` | — |
+| `toolbar` | Node left of the send button, such as a model picker | `ReactNode` | — |
+| `onClear` | Shows a clear button that starts a new chat | `() => void` | — |
+| `disabled` | Locks the composer and dims it | `boolean` | `false` |
+| `defaultValue` | Initial text | `string` | `""` |
+| `autoFocus` | Focuses the composer on mount | `boolean` | `false` |
+| `focusSignal` | Clears and focuses the composer when it changes, such as a conversation id | `string \| null` | — |
+| `enableTypeToFocus` | Sends bare keypresses here when focus is elsewhere | `boolean` | `false` |
+| `className` | Class on the composer root | `string` | — |

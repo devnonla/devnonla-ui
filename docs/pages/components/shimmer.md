@@ -24,3 +24,13 @@ export default function Demo() {
   );
 }
 ```
+
+## API
+
+Other `<span>` attributes pass through.
+
+| Property | Description | Type | Default |
+| --- | --- | --- | --- |
+| `children` | Text to shimmer. | `ReactNode` | — |
+| `active` | Runs the sweep. `false` renders static text. | `boolean` | `true` |
+| `className` | Extra class on the span. | `string` | — |

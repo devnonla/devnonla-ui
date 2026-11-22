@@ -12,7 +12,7 @@ wide: true
 
 Full chat. The library calls `endpoint` and reads the SSE stream. Use [AgentChatbox](/chat/agent-chatbox) when the app must own send, resume, and stop. Reply text is `text-base`.
 
-The thread below is seeded so every chat surface is already on screen: user bubble, thinking, agent markdown, error, the generic tool card, each builtin tool, a background task, and the task bar above the composer. Some tools run back to back. Elsewhere a short reply sits between them.
+The thread below is seeded so every chat surface is already on screen: user bubble, thinking, agent markdown, error, generic tool cards, a background task, and the task bar above the composer. Some tools run back to back. Elsewhere a short reply sits between them.
 
 ```live-react
 import { AgentPanel, BackgroundTasksBar } from "devnonla-ui/chat";
@@ -157,7 +157,7 @@ export default function Demo() {
 | `toolbar` | Node left of the composer. | `ReactNode` | — |
 | `accessory` | Node above the composer. The demo puts `BackgroundTasksBar` here. | `ReactNode` | — |
 | `emptyState` | Replaces the welcome screen when the thread is empty. | `ReactNode` | — |
-| `toolUis` | Custom tool cards. Checked before builtins. | `AgentToolUI[]` | — |
+| `toolUis` | Custom tool cards by `toolName`. Unmatched tools use `ChatToolCall`. | `AgentToolUI[]` | — |
 | `toolHooks` | `onCall` / `onResult` for matching tool names. | `AgentToolHook[]` | — |
 | `scrollbar` | Overlay scrollbar. | `"hover"` \| `"always"` | `"hover"` |
 | `onGeneratingChange` | Fires when a turn starts or ends. | `(generating: boolean) => void` | — |

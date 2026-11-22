@@ -23,3 +23,12 @@ export default function Demo() {
   );
 }
 ```
+
+## API
+
+| Property | Description | Type | Default |
+| --- | --- | --- | --- |
+| `thinking` | Reasoning text. Empty renders nothing | `string` | — |
+| `streaming` | Still thinking. The label shimmers and counts seconds | `boolean` | `false` |
+| `duration` | Final duration in seconds, shown when not streaming | `number` | `0` |
+| `className` | Class on the root | `string` | — |

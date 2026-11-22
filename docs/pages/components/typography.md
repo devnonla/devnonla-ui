@@ -44,7 +44,7 @@ Title, Paragraph, Text, and Link share the decorations below.
 
 | Property | Description | Type | Default |
 | --- | --- | --- | --- |
-| `type` | Text color. Secondary sits quieter than the body. | `secondary` \| `success` \| `warning` \| `danger` | `-` |
+| `type` | Text color. Secondary sits quieter than the body. | `secondary` \| `success` \| `warning` \| `danger` | — |
 | `disabled` | Quieter still. On a link, drops `href` and blocks clicks. | `boolean` | `false` |
 | `mark` | Highlight with a mark. | `boolean` | `false` |
 | `code` | Wrap in inline code. | `boolean` | `false` |
@@ -76,6 +76,6 @@ Renders a link. Uses the shared decorations.
 
 | Property | Description | Type | Default |
 | --- | --- | --- | --- |
-| `href` | Anchor href. Dropped when `disabled`. | `string` | `-` |
-| `target` | Native target. | `string` | `-` |
-| `rel` | Native rel. When `target` is `_blank` and `rel` is omitted, uses `noreferrer noopener`. | `string` | `-` |
+| `href` | Anchor href. Dropped when `disabled`. | `string` | — |
+| `target` | Native target. | `string` | — |
+| `rel` | Native rel. When `target` is `_blank` and `rel` is omitted, uses `noreferrer noopener`. | `string` | — |

@@ -24,3 +24,16 @@ export default function Demo() {
   );
 }
 ```
+
+## API
+
+| Property | Description | Type | Default |
+| --- | --- | --- | --- |
+| `spinning` | Shows the indicator. | `boolean` | `true` |
+| `tip` | Text under the indicator. | `ReactNode` | — |
+| `size` | Indicator size. | `"small" \| "default" \| "large"` | — |
+| `variant` | Visual style. `agent` is the 3×3 snake for AI run states. | `"default" \| "agent"` | `"default"` |
+| `color` | Indicator hue. `neutral` stays gray in light and dark. | `"brand" \| "neutral"` | `"brand"` |
+| `indicator` | Replaces the built-in indicator. | `ReactNode` | — |
+| `children` | Content covered by a dimmed overlay while spinning. | `ReactNode` | — |
+| `className` | Extra class on the root. | `string` | — |
