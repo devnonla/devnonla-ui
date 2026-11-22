@@ -3,4 +3,19 @@ node_modules
 dist
 *.tsbuildinfo
 .DS_Store
-.cursor
+
+# AI agent files
+.claude/
+CLAUDE.md
+.cursor/
+.cursorrules
+.codex/
+.gemini/
+.agents/
+.aider*
+.windsurf/
+.continue/
+.github/copilot-instructions.md
+AGENTS.md
+GEMINI.md
+.colgrep/
