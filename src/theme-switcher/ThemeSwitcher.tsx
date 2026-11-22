@@ -42,7 +42,7 @@ export function ThemeSwitcher({ className }: ThemeSwitcherProps) {
             aria-label={option.label}
             onClick={() => setColorPreference(option.value)}
             className={cn(
-              "inline-flex size-5 items-center justify-center rounded-full border-0 bg-transparent p-0 cursor-pointer text-foreground/75",
+              "inline-flex size-5 items-center justify-center rounded-full border-0 bg-transparent p-0 cursor-pointer text-muted-foreground",
               selected ? "bg-ink-active text-foreground" : "hover:bg-ink-hover hover:text-foreground",
             )}
           >

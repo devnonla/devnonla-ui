@@ -91,7 +91,7 @@ export function controlStatusClass(status?: "error" | "warning"): string {
 }
 
 /** Focus surface fade — Input / Select / DatePicker / TimePicker. */
-export const controlFieldTransition = "transition-[background-color,border-color] duration-[var(--nonla-dur-fast,150ms)] ease-[var(--nonla-ease-out,cubic-bezier(0.16,1,0.3,1))] motion-reduce:transition-none";
+export const controlFieldTransition = "transition-[background-color,border-color] duration-(--nonla-dur-fast) ease-(--nonla-ease-out) motion-reduce:transition-none";
 
 /**
  * Outlined field. Resting stroke is `--input` (Cursor `--border-secondary`, ink at 12%).

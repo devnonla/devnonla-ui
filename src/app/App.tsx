@@ -1,5 +1,5 @@
 import * as TooltipPrimitive from "@radix-ui/react-tooltip";
-import { type ReactNode, useLayoutEffect, useMemo, useRef } from "react";
+import { type ReactNode, useLayoutEffect, useMemo, useRef, useState } from "react";
 import { cn } from "../lib/cn";
 import { type ControlSize, ControlSizeContext, normalizeSize } from "../lib/sizes";
 import { MessageHolder, message } from "../message/message";
@@ -22,20 +22,24 @@ export type AppProps = {
 /** Root host for NonlaUI — theme scope + message/modal holders. Mount once near app root. */
 export function App({ children, getPopupContainer, componentSize, className }: AppProps) {
   const hostRef = useRef<HTMLDivElement>(null);
+  // The host in state, not only a ref: the context changes once after mount, so components that read
+  // the popup container during their first render (Tooltip, ContextMenu) re-render and portal into the host.
+  const [host, setHost] = useState<HTMLDivElement | null>(null);
   const size = componentSize ? normalizeSize(componentSize) : undefined;
   const value = useMemo<NonlaAppConfig>(
     () => ({
-      getPopupContainer: getPopupContainer ?? (() => hostRef.current ?? document.body),
+      getPopupContainer: getPopupContainer ?? (() => host ?? hostRef.current ?? document.body),
       componentSize: size,
     }),
-    [getPopupContainer, size],
+    [getPopupContainer, size, host],
   );
 
   useLayoutEffect(() => {
-    const host = hostRef.current;
-    if (!host) return;
-    bindColorModeTarget(host);
-    initColorMode(host);
+    const el = hostRef.current;
+    if (!el) return;
+    setHost(el);
+    bindColorModeTarget(el);
+    initColorMode(el);
     return () => bindColorModeTarget(null);
   }, []);
 

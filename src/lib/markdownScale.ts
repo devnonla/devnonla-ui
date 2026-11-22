@@ -4,7 +4,8 @@ import type { CSSProperties } from "react";
  * One markdown scale. Body reads `--nonla-base-text-size` (`text-base`). Leading is 1.6.
  * Tables always use `text-base`.
  * Fenced code reads `--nonla-mono-text-size`, which is `text-sm`.
- * Inline code is `0.875em` of the surrounding text, so the chip stays inside the line.
+ * Inline code is `0.95em` of the surrounding text: Geist Mono has a shorter x-height than Inter, so at 0.95em
+ * its lowercase stands about 93% as tall as the body (0.875em was 85% and read small). The chip still fits the line.
  * Class fallbacks match these values when the variables are not set.
  */
 export const markdownScaleStyle = {
@@ -57,7 +58,7 @@ export const markdownScaleStyle = {
   "--md-code-my": "8px",
   "--md-code-size": "var(--nonla-mono-text-size)",
   "--md-code-leading": "calc(var(--nonla-mono-text-size) * 1.6)",
-  "--md-inline-size": "0.875em",
+  "--md-inline-size": "0.95em",
   "--md-item-pl": "4px",
   "--md-nest": "1.25rem",
 } as CSSProperties;
@@ -84,9 +85,10 @@ export const markdownBodyClass = "text-(length:--md-body-size,var(--nonla-base-t
 export const markdownParagraphClass = "nonla-typo m-0 my-(--md-p-my,1px) py-(--md-p-py,4px) text-(length:--md-body-size,var(--nonla-base-text-size,15px)) leading-(--md-p-leading,1.6) text-foreground";
 
 /**
- * Inline code. Smaller than the line, normal weight, with a light wash.
- * The wash is ink on whatever sits behind, so it stays visible on the page and on a card.
+ * Inline code. Slightly smaller than the line, normal weight, a 4% wash and a 6% hairline (inset, so the box size does not change).
+ * Both are ink on whatever sits behind, so the chip reads on the page, a card, and a chat bubble.
  * A token stays whole; the line breaks before it.
+ * Side padding 0.3em matches the space above the caps and below the baseline; the radius scales with the size (≈4px in body, more in headings).
  */
 export const markdownInlineCodeClass =
-  "nonla-inline-code rounded-[4px] bg-[color-mix(in_oklab,var(--nonla-text-main)_6%,transparent)] px-[0.25em] py-px align-baseline font-mono text-(length:--md-inline-size,0.875em) leading-none whitespace-nowrap";
+  "nonla-inline-code rounded-[0.3em] bg-(--nonla-inline-code-bg) shadow-[inset_0_0_0_1px_var(--nonla-inline-code-ring)] px-[0.3em] py-px align-baseline font-mono text-(length:--md-inline-size,0.95em) leading-none whitespace-nowrap";

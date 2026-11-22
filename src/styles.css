@@ -22,24 +22,47 @@
   color-scheme: dark;
 
   /* ── Config. Set these. `.nonla-ui.light` repeats the same keys. ───── */
-  --nonla-bg: #141413;
-  --nonla-text-main: #faf9f5;
-  --nonla-text-secondary: #b0aea5;
-  --nonla-text-tertiary: #87867f;
-  --nonla-text-quaternary: #73726c;
+  /* Neutral gray, the dark twin of light mode: page darkest, cards and sidebar one step up. */
+  --nonla-bg: #141414;
+  --nonla-text-main: #fafafa;
+  --nonla-text-secondary: #a3a3a3;
+  /* Placeholders, metadata, captions. AA on page, cards and wells. */
+  --nonla-text-tertiary: #8f8f8f;
+  /* Disabled only. */
+  --nonla-text-quaternary: #5c5c5c;
   --nonla-text-on-solid: #ffffff;
-  --nonla-brand: #f18d00;
-  --nonla-danger: #bf4d43;
-  --nonla-success: #629987; /* mineral */
-  --nonla-warn: #f1b467;
-  --nonla-link: #6a9bcc; /* sky */
+  /* Text on brand fills (primary button, solid brand tag). */
+  --nonla-text-on-brand: #141414;
+  /* Ink. Primary actions are neutral, like Claude desktop. Set a hue here to brand the kit. */
+  --nonla-brand: #fafafa;
+  /*
+   * Status roles. `--nonla-{role}` is text and icons (AA on the page and on its own tint).
+   * `-fill` is the solid behind a label, `--nonla-text-on-{role}` is that label.
+   * Dark: fills reuse the light role colors and take dark ink.
+   */
+  --nonla-danger: #f97066;
+  --nonla-success: #4fbf7f;
+  --nonla-warn: #f5b74f;
+  --nonla-link: #7aa7d9;
+  --nonla-danger-fill: var(--nonla-danger);
+  --nonla-success-fill: var(--nonla-success);
+  --nonla-warn-fill: var(--nonla-warn);
+  --nonla-text-on-danger: #141414;
+  --nonla-text-on-success: #141414;
+  --nonla-text-on-warn: #141414;
+  /* Solid fills hover and press toward this. Dark: the page, so ink labels keep contrast. */
+  --nonla-fill-shade: var(--nonla-bg);
+  /* Brand fill hovers toward this. Ink can't get darker, so it lifts toward the page (#191919 → #353535).
+     A saturated brand with white text may want #000 here instead. */
+  --nonla-brand-shade: var(--nonla-bg);
 
-  --nonla-sidebar: #1a1918;
-  --nonla-surface: #1f1e1d;
-  --nonla-bar: #262624;
-  --nonla-border: #2c2b29;
-  --nonla-border-secondary: #242322;
-  --nonla-input: rgb(250 249 245 / 14%);
+  --nonla-sidebar: #1c1c1c;
+  --nonla-surface: #1c1c1c;
+  --nonla-bar: #262626;
+  /* Alpha hairlines, same rule as light: outer 10%, inside a card 6%. */
+  --nonla-border: rgb(255 255 255 / 10%);
+  --nonla-border-secondary: rgb(255 255 255 / 6%);
+  --nonla-input: rgb(255 255 255 / 14%);
 
   --nonla-font: "Inter Variable", ui-sans-serif, -apple-system, system-ui, "Segoe UI Variable Display", "Segoe UI", Helvetica, "Apple Color Emoji", "Noto Sans Arabic", "Noto Sans Hebrew", Arial, sans-serif, "Segoe UI Emoji", "Segoe UI Symbol";
   --nonla-mono-font: "Geist Mono Variable", ui-monospace, SFMono-Regular, Menlo, Monaco, Consolas, "Courier New", monospace;
@@ -49,6 +72,12 @@
   --nonla-md-text-size: 16px;
   /* `text-sm`. Composer, tool lines, and errors use this. User bubbles use `text-base`. */
   --nonla-sm-text-size: 14px;
+  /* `text-xs`. Badges, tags, captions, line numbers. */
+  --nonla-xs-text-size: 12px;
+  /* `text-2xs`. Smallest: dense tool badges only. */
+  --nonla-2xs-text-size: 11px;
+  /* Navigation rows and tooltips (500 weight). Cloudflare uses 13px; set 13px for a denser look. */
+  --nonla-nav-text-size: 14px;
   /* Fenced code. Same size as `text-sm`. */
   --nonla-mono-text-size: var(--nonla-sm-text-size);
   --nonla-radius: 8px;
@@ -64,6 +93,25 @@
   /* Hover and pressed/selected. Sidebar, menus, selects, and buttons share these. */
   --nonla-ink-hover: color-mix(in oklab, var(--nonla-text-main) 6%, transparent);
   --nonla-ink-active: color-mix(in oklab, var(--nonla-text-main) 10%, transparent);
+  /* Default button fill on hover and press: the surface, one and two steps toward the ink. */
+  --nonla-btn-bg-hover: color-mix(in oklab, var(--nonla-surface) 95%, var(--nonla-text-main));
+  --nonla-btn-bg-active: color-mix(in oklab, var(--nonla-surface) 91%, var(--nonla-text-main));
+  /* Switch (measured on Cloudflare): full-height thumb on a pill track, a 1px ring instead of a border. */
+  --nonla-switch-track: color-mix(in oklab, var(--nonla-text-main) 16%, var(--nonla-bg));
+  --nonla-switch-ring: color-mix(in oklab, var(--nonla-text-main) 24%, var(--nonla-bg));
+  --nonla-switch-thumb: #e5e5e5;
+  /* Tooltip bubble: no border (the arrow has none either), a medium drop plus a faint ring for edges on dark. */
+  /* Tooltip (Cloudflare): a 1px outline, also drawn along the arrow's edge, plus a medium drop. */
+  --nonla-tooltip-border: var(--nonla-border);
+  /* The ring reads darker where the drop shadow sits under it (the bottom edge); the arrow edge has no shadow, so it is drawn stronger to match. */
+  --nonla-tooltip-arrow-edge: var(--nonla-border);
+  --nonla-tooltip-shadow: 0 0 0 1px var(--nonla-tooltip-border), 0 4px 12px rgb(0 0 0 / 40%);
+  /* Pill tracks (Segmented, Tabs pill): a faint well; the selected item is a raised surface like the default button. */
+  --nonla-pill-track: color-mix(in oklab, var(--nonla-text-main) 7%, var(--nonla-bg));
+  --nonla-pill-thumb-shadow: 0 0 0 1px var(--nonla-border), var(--nonla-btn-shadow);
+  /* Inline code: a faint wash plus a hairline, so the chip reads on page, card, and bubble without going gray. */
+  --nonla-inline-code-bg: color-mix(in oklab, var(--nonla-text-main) 4%, transparent);
+  --nonla-inline-code-ring: color-mix(in oklab, var(--nonla-text-main) 6%, transparent);
   --nonla-z-base: 0;
   --nonla-z-popup-base: 1000;
 
@@ -90,6 +138,11 @@
   --border-secondary: var(--nonla-border-secondary);
   --input: var(--nonla-input);
   --input-focus: var(--nonla-input-focus);
+  /* Keyboard focus ring for buttons, toggles, and icon buttons. Fields use `--input-focus` on the border. */
+  --nonla-focus-ring: color-mix(in oklab, var(--nonla-brand) 70%, transparent);
+  /* Selected state (checkbox, radio, switch, pagination, tabs, calendar). Ink, not brand: brand stays for primary actions. */
+  --nonla-selected: var(--nonla-text-main);
+  --nonla-text-on-selected: var(--nonla-bg);
 
   /* Brand scale — 500 is the knob. Tints sink into the surface; shades stay with the ink. */
   --brand-50: color-mix(in oklab, var(--nonla-brand) 8%, var(--nonla-surface));
@@ -101,6 +154,38 @@
   --brand-600: color-mix(in oklab, var(--nonla-brand) 82%, var(--nonla-text-main));
   --brand-700: color-mix(in oklab, var(--nonla-brand) 64%, var(--nonla-text-main));
   --brand-800: color-mix(in oklab, var(--nonla-brand) 48%, var(--nonla-text-main));
+  /*
+   * Role states. One rule for every role:
+   *   solid   fill → hover 10% toward --nonla-fill-shade → press 18%
+   *   tint    bg 10% → hover 16%, border 35%
+   */
+  --nonla-brand-fill-hover: color-mix(in oklab, var(--nonla-brand) 86%, var(--nonla-brand-shade));
+  --nonla-brand-fill-active: color-mix(in oklab, var(--nonla-brand) 78%, var(--nonla-brand-shade));
+  /* Solid buttons (measured on Cloudflare): a same-hue darker edge, a faint top highlight, and a 1px contact shadow. */
+  --nonla-brand-ring: color-mix(in oklab, var(--nonla-brand) 78%, #000);
+  --nonla-danger-ring: color-mix(in oklab, var(--nonla-danger-fill) 78%, #000);
+  --nonla-solid-shadow: inset 0 1px 0 rgb(255 255 255 / 12%), 0 1px 2px rgb(0 0 0 / 12%);
+  --nonla-brand-bg: color-mix(in oklab, var(--nonla-brand) 10%, transparent);
+  --nonla-brand-bg-hover: color-mix(in oklab, var(--nonla-brand) 16%, transparent);
+  --nonla-brand-border: color-mix(in oklab, var(--nonla-brand) 35%, transparent);
+  --nonla-danger-fill-hover: color-mix(in oklab, var(--nonla-danger-fill) 90%, var(--nonla-fill-shade));
+  --nonla-danger-fill-active: color-mix(in oklab, var(--nonla-danger-fill) 82%, var(--nonla-fill-shade));
+  --nonla-danger-bg: color-mix(in oklab, var(--nonla-danger-fill) 10%, transparent);
+  --nonla-danger-bg-hover: color-mix(in oklab, var(--nonla-danger-fill) 16%, transparent);
+  --nonla-danger-border: color-mix(in oklab, var(--nonla-danger-fill) 35%, transparent);
+  --nonla-success-fill-hover: color-mix(in oklab, var(--nonla-success-fill) 90%, var(--nonla-fill-shade));
+  --nonla-success-fill-active: color-mix(in oklab, var(--nonla-success-fill) 82%, var(--nonla-fill-shade));
+  --nonla-success-bg: color-mix(in oklab, var(--nonla-success-fill) 10%, transparent);
+  --nonla-success-bg-hover: color-mix(in oklab, var(--nonla-success-fill) 16%, transparent);
+  --nonla-success-border: color-mix(in oklab, var(--nonla-success-fill) 35%, transparent);
+  --nonla-warn-fill-hover: color-mix(in oklab, var(--nonla-warn-fill) 90%, var(--nonla-fill-shade));
+  --nonla-warn-fill-active: color-mix(in oklab, var(--nonla-warn-fill) 82%, var(--nonla-fill-shade));
+  --nonla-warn-bg: color-mix(in oklab, var(--nonla-warn-fill) 10%, transparent);
+  --nonla-warn-bg-hover: color-mix(in oklab, var(--nonla-warn-fill) 16%, transparent);
+  --nonla-warn-border: color-mix(in oklab, var(--nonla-warn-fill) 35%, transparent);
+  --nonla-link-bg: color-mix(in oklab, var(--nonla-link) 10%, transparent);
+  --nonla-link-bg-hover: color-mix(in oklab, var(--nonla-link) 16%, transparent);
+  --nonla-link-border: color-mix(in oklab, var(--nonla-link) 35%, transparent);
   --brand: var(--nonla-brand);
   --link: var(--nonla-link);
   --success: var(--nonla-success);
@@ -111,14 +196,31 @@
   --nonla-shadow: 0 16px 48px rgb(0 0 0 / 45%);
   /* Card edge. Dark adds a short drop; the ring is the border. */
   --nonla-card-shadow: 0 1px 2px rgb(0 0 0 / 32%), 0 0 0 1px var(--nonla-border);
+  /* Default button lift: a 1px contact shadow under a surface-filled button, so it sits a hair above the page. */
+  --nonla-btn-shadow: 0 1px 2px rgb(0 0 0 / 30%);
   --mask: rgb(0 0 0 / 56%);
 
-  /* Motion — shadcn-like ease-out-expo */
+  /*
+   * Motion. One curve family, four durations.
+   *   instant  100ms  press feedback, popup exit
+   *   fast     150ms  color/opacity (hover, focus), popup enter, modal exit   ← default for `transition-*`
+   *   base     200ms  small movement (chevrons, toggles, collapse), modal/toast enter, drawer exit
+   *   slow     300ms  large movement (drawer enter, sliding indicators)
+   * Enter and hover use ease-out. Exit uses ease-in and is one step shorter than enter.
+   * Sliding indicators (Tabs, Segmented) use the spring curve.
+   */
   --nonla-ease-out: cubic-bezier(0.16, 1, 0.3, 1);
   --nonla-ease-in: cubic-bezier(0.4, 0, 1, 1);
+  --nonla-ease-spring: cubic-bezier(0.3, 1.25, 0.5, 1);
+  --nonla-dur-instant: 100ms;
   --nonla-dur-fast: 150ms;
   --nonla-dur: 200ms;
   --nonla-dur-slow: 300ms;
+  /* Bare Tailwind `transition-*`, `ease-out`, and `ease-in` follow the tokens inside the host. */
+  --default-transition-duration: var(--nonla-dur-fast);
+  --default-transition-timing-function: var(--nonla-ease-out);
+  --ease-out: var(--nonla-ease-out);
+  --ease-in: var(--nonla-ease-in);
 
   --nonla-scrollbar-size: 6px;
   --nonla-scrollbar-thumb: color-mix(in oklab, var(--nonla-text-main) 22%, var(--nonla-bg));
@@ -127,6 +229,11 @@
   color: var(--foreground);
   font-family: var(--nonla-font);
   font-weight: 400;
+  /* Grayscale smoothing (macOS only; other platforms ignore it). Light-on-dark text stops looking bold. */
+  /* Slightly tight, like Inter in Claude desktop and Cloudflare. Code resets it below. */
+  letter-spacing: -0.01em;
+  -webkit-font-smoothing: antialiased;
+  -moz-osx-font-smoothing: grayscale;
   /* Size stays on the host, so `1rem` and Tailwind spacing do not shrink globally. */
   font-size: var(--nonla-base-text-size);
   line-height: 1.6;
@@ -136,29 +243,55 @@
 .nonla-ui.light {
   color-scheme: light;
 
-  /* Page is white. Text is warm stone, same family as dark. Sidebar and cards stay neutral-50. */
-  --nonla-bg: #ffffff; /* white */
-  --nonla-text-main: #1e1d1b;
-  --nonla-text-secondary: #564f48;
-  --nonla-text-tertiary: #6f6a63;
-  --nonla-text-quaternary: #8a847c;
-  --nonla-text-on-solid: #ffffff; /* white */
-  --nonla-brand: #f18d00;
-  --nonla-danger: #dc3b3b;
-  --nonla-success: #2f7d4a;
-  --nonla-warn: #a16207; /* yellow-700 */
-  --nonla-link: #3b6d99;
+  /* Neutral gray. Off-white page, white cards and sidebar, so layers separate by fill instead of borders. #f2f2f2 wells. */
+  --nonla-bg: #fafafa;
+  --nonla-text-main: #191919;
+  --nonla-text-secondary: #5e5e5e;
+  /* Placeholders, metadata, captions. Keeps 4.5:1 on the page and on #f2f2f2 wells. */
+  --nonla-text-tertiary: #6e6e6e;
+  /* Disabled only. */
+  --nonla-text-quaternary: #a3a3a3;
+  --nonla-text-on-solid: #ffffff;
+  --nonla-text-on-brand: #ffffff;
+  --nonla-brand: #191919;
+  --nonla-danger: #b42318;
+  --nonla-success: #116b34;
+  --nonla-warn: #93540a;
+  --nonla-link: #2a64a3;
+  --nonla-danger-fill: #d92d20;
+  --nonla-success-fill: #15803d;
+  --nonla-warn-fill: #f5a524;
+  --nonla-text-on-danger: #ffffff;
+  --nonla-text-on-success: #ffffff;
+  --nonla-text-on-warn: #191919;
+  /* Light: black, so white labels gain contrast on hover. */
+  --nonla-fill-shade: #000000;
 
-  --nonla-sidebar: #fafafa; /* neutral-50 */
-  --nonla-surface: #fafafa; /* neutral-50 */
-  --nonla-bar: #e5e5e5; /* neutral-200 */
-  --nonla-border: #e5e5e5; /* neutral-200 */
-  --nonla-border-secondary: #f5f5f5; /* neutral-100 */
+  --nonla-sidebar: #ffffff;
+  --nonla-surface: #ffffff;
+  --nonla-bar: #f2f2f2;
+  /* Alpha hairlines adapt to whatever they sit on. Outer edges 10%, dividers inside a card 6%. */
+  --nonla-border: rgb(0 0 0 / 10%);
+  --nonla-border-secondary: rgb(0 0 0 / 6%);
   --nonla-input: rgb(0 0 0 / 11%);
 
-  --mask: rgb(0 0 0 / 40%);
-  --nonla-shadow: 0 12px 32px rgb(0 0 0 / 12%);
-  --nonla-card-shadow: 0 0 0 1px var(--nonla-border);
+  /* Light: a pale wash (Cloudflare-style) so the page fades instead of going dark; the popup ring carries the edge. */
+  --mask: rgb(250 250 250 / 72%);
+  /* Popups already draw a 1px border; this is only the soft drop under them. */
+  --nonla-shadow: 0 10px 15px -3px rgb(0 0 0 / 10%), 0 4px 6px -4px rgb(0 0 0 / 10%);
+  --nonla-tooltip-border: rgb(0 0 0 / 10%);
+  --nonla-tooltip-arrow-edge: rgb(0 0 0 / 22%);
+  --nonla-tooltip-shadow: 0 0 0 1px var(--nonla-tooltip-border), 0 4px 6px -1px rgb(0 0 0 / 10%), 0 2px 4px -2px rgb(0 0 0 / 10%);
+  /* Card: hairline ring plus a 1px contact shadow. */
+  --nonla-card-shadow: 0 0 0 1px var(--nonla-border), 0 1px 2px rgb(0 0 0 / 5%);
+  --nonla-btn-shadow: 0 1px 2px rgb(0 0 0 / 5%);
+  --nonla-pill-track: color-mix(in oklab, var(--nonla-text-main) 4%, var(--nonla-bg));
+  --nonla-switch-track: color-mix(in oklab, var(--nonla-text-main) 10%, var(--nonla-bg));
+  --nonla-switch-ring: color-mix(in oklab, var(--nonla-text-main) 17%, var(--nonla-bg));
+  --nonla-switch-thumb: #ffffff;
+  /* Light rows hover and select softly, like Cloudflare (#f5f5f5): 4% and 6% ink instead of dark mode's 6% and 10%. */
+  --nonla-ink-hover: color-mix(in oklab, var(--nonla-text-main) 4%, transparent);
+  --nonla-ink-active: color-mix(in oklab, var(--nonla-text-main) 6%, transparent);
 }
 
 /* Tailwind utility names (`bg-card`, `text-brand`). Not config. */
@@ -190,6 +323,9 @@
   --color-border-secondary: var(--border-secondary);
   --color-input: var(--input);
   --color-input-focus: var(--input-focus);
+  --color-focus-ring: var(--nonla-focus-ring);
+  --color-selected: var(--nonla-selected);
+  --color-on-selected: var(--nonla-text-on-selected);
   --color-brand: var(--brand);
   --color-brand-50: var(--brand-50);
   --color-brand-100: var(--brand-100);
@@ -203,6 +339,37 @@
   --color-link: var(--link);
   --color-success: var(--success);
   --color-warn: var(--warn);
+  --color-brand-fill: var(--nonla-brand);
+  --color-brand-fill-hover: var(--nonla-brand-fill-hover);
+  --color-brand-fill-active: var(--nonla-brand-fill-active);
+  --color-on-brand: var(--nonla-text-on-brand);
+  --color-brand-bg: var(--nonla-brand-bg);
+  --color-brand-bg-hover: var(--nonla-brand-bg-hover);
+  --color-brand-border: var(--nonla-brand-border);
+  --color-destructive-fill: var(--nonla-danger-fill, var(--destructive));
+  --color-destructive-fill-hover: var(--nonla-danger-fill-hover);
+  --color-destructive-fill-active: var(--nonla-danger-fill-active);
+  --color-on-destructive: var(--nonla-text-on-danger);
+  --color-destructive-bg: var(--nonla-danger-bg);
+  --color-destructive-bg-hover: var(--nonla-danger-bg-hover);
+  --color-destructive-border: var(--nonla-danger-border);
+  --color-success-fill: var(--nonla-success-fill, var(--success));
+  --color-success-fill-hover: var(--nonla-success-fill-hover);
+  --color-success-fill-active: var(--nonla-success-fill-active);
+  --color-on-success: var(--nonla-text-on-success);
+  --color-success-bg: var(--nonla-success-bg);
+  --color-success-bg-hover: var(--nonla-success-bg-hover);
+  --color-success-border: var(--nonla-success-border);
+  --color-warn-fill: var(--nonla-warn-fill, var(--warn));
+  --color-warn-fill-hover: var(--nonla-warn-fill-hover);
+  --color-warn-fill-active: var(--nonla-warn-fill-active);
+  --color-on-warn: var(--nonla-text-on-warn);
+  --color-warn-bg: var(--nonla-warn-bg);
+  --color-warn-bg-hover: var(--nonla-warn-bg-hover);
+  --color-warn-border: var(--nonla-warn-border);
+  --color-link-bg: var(--nonla-link-bg);
+  --color-link-bg-hover: var(--nonla-link-bg-hover);
+  --color-link-border: var(--nonla-link-border);
   --color-tertiary-foreground: var(--tertiary-foreground);
   --color-quaternary-foreground: var(--quaternary-foreground);
   --color-ink-hover: var(--nonla-ink-hover);
@@ -219,6 +386,10 @@
   --spacing-field-lg: 40px;
   --spacing-field-nav: 32px;
 
+  --text-2xs: var(--nonla-2xs-text-size);
+  --text-2xs--line-height: calc(14 / 11);
+  --text-xs: var(--nonla-xs-text-size);
+  --text-xs--line-height: calc(16 / 12);
   --text-sm: var(--nonla-sm-text-size);
   --text-base: var(--nonla-base-text-size);
   --text-base--line-height: 1.6;
@@ -232,7 +403,7 @@
   --font-mono: var(--nonla-mono-font);
   --font-family-mono: var(--font-mono);
 
-  --animate-fadeIn: fadeIn 0.28s ease-out both;
+  --animate-fadeIn: fadeIn var(--nonla-dur) var(--nonla-ease-out) both;
 }
 
 @keyframes fadeIn {
@@ -290,7 +461,7 @@
 @keyframes nonla-modal-in {
   from {
     opacity: 0;
-    transform: translate(-50%, 0) scale(0.95);
+    transform: translate(-50%, 0) scale(0.96);
   }
   to {
     opacity: 1;
@@ -305,14 +476,14 @@
   }
   to {
     opacity: 0;
-    transform: translate(-50%, 0) scale(0.95);
+    transform: translate(-50%, 0) scale(0.96);
   }
 }
 
 @keyframes nonla-modal-in-centered {
   from {
     opacity: 0;
-    transform: translate(-50%, -50%) scale(0.95);
+    transform: translate(-50%, -50%) scale(0.96);
   }
   to {
     opacity: 1;
@@ -327,7 +498,7 @@
   }
   to {
     opacity: 0;
-    transform: translate(-50%, -50%) scale(0.95);
+    transform: translate(-50%, -50%) scale(0.96);
   }
 }
 
@@ -447,6 +618,29 @@
   }
 }
 
+/* Tooltip: scale from the trigger side and fade, both ways (Cloudflare: 0.9, 150ms). */
+@keyframes nonla-tooltip-in {
+  from {
+    opacity: 0;
+    transform: scale(0.9);
+  }
+  to {
+    opacity: 1;
+    transform: scale(1);
+  }
+}
+
+@keyframes nonla-tooltip-out {
+  from {
+    opacity: 1;
+    transform: scale(1);
+  }
+  to {
+    opacity: 0;
+    transform: scale(0.9);
+  }
+}
+
 @keyframes nonla-pop-out {
   from {
     opacity: 1;
@@ -461,7 +655,7 @@
 @keyframes nonla-message-in {
   from {
     opacity: 0;
-    transform: translateY(-8px) scale(0.98);
+    transform: translateY(-6px) scale(0.98);
   }
   to {
     opacity: 1;
@@ -529,6 +723,7 @@
 }
 
 .nonla-ui :is(pre, code, kbd, samp) {
+  letter-spacing: 0;
   font-family: var(--nonla-mono-font);
 }
 
@@ -633,3 +828,21 @@
   color: #b31d28;
   background-color: #ffeef0;
 }
+
+/* Switch. Track fill comes from `--sw-on` (checked) or `--nonla-switch-track`; the ring is the fill one step darker. */
+.nonla-ui .nonla-switch {
+  background-color: var(--nonla-switch-track);
+  box-shadow: 0 0 0 1px var(--nonla-switch-ring);
+}
+.nonla-ui .nonla-switch[data-state="checked"] {
+  background-color: var(--sw-on);
+  box-shadow: 0 0 0 1px color-mix(in oklab, var(--sw-on) 82%, #000);
+}
+.nonla-ui .nonla-switch-thumb {
+  background-color: var(--nonla-switch-thumb);
+  box-shadow: 0 0 1px 0.5px rgb(0 0 0 / 12%), 0 1px 2px rgb(0 0 0 / 8%);
+}
+.nonla-ui .nonla-switch[data-state="checked"] .nonla-switch-thumb {
+  background-color: var(--sw-thumb-on, #ffffff);
+}
+
