@@ -34,7 +34,7 @@ const documentClass = cn(
   "[&_li.task-list-item>.nonla-md-task-check]:absolute [&_li.task-list-item>.nonla-md-task-check]:top-1 [&_li.task-list-item>.nonla-md-task-check]:-left-5",
   /* Body paragraphs sit in separate blocks, so their margins do not collapse. Quote paragraphs share one block, so the next paragraph's top margin is doubled to land on that same gap. */
   "[&_blockquote]:my-(--md-quote-my,0px) [&_blockquote>p:not(:first-child)]:mt-[calc(var(--md-p-my,1px)*2)] [&_blockquote>p:not(:last-child)]:mb-0 [&_blockquote]:border-l-2 [&_blockquote]:border-border [&_blockquote]:pl-3 [&_blockquote]:text-foreground",
-  "[&_a]:text-link [&_a]:underline-offset-[3px] hover:[&_a]:underline",
+  "[&_a]:text-link [&_a]:underline [&_a]:decoration-link-border [&_a]:decoration-[1.5px] [&_a]:underline-offset-[3px] hover:[&_a]:decoration-link",
   "[&_hr]:hidden",
   "[&_strong]:font-(--md-strong-weight,600)",
   "[&_img]:my-(--md-img-my,4px) [&_img]:max-w-full [&_img]:rounded-lg",

@@ -23,7 +23,7 @@ function tableToMarkdown(table: HTMLTableElement): string {
 }
 
 const tableClass =
-  "w-max min-w-full border-separate border-spacing-0 text-sm [&_th]:whitespace-normal [&_td]:whitespace-normal [&_th]:wrap-normal [&_td]:wrap-normal [&_th]:border-b [&_th]:border-border-secondary [&_th]:px-4 [&_th]:py-1.5 [&_th]:text-left [&_th]:align-top [&_th]:font-medium [&_td]:border-b [&_td]:border-border-secondary [&_td]:px-4 [&_td]:py-1.5 [&_td]:align-top";
+  "w-max min-w-full border-separate border-spacing-0 text-sm [&_th]:whitespace-normal [&_td]:whitespace-normal [&_th]:wrap-normal [&_td]:wrap-normal [&_th]:border-b [&_th]:border-border-secondary [&_th]:px-4 [&_th]:py-1.5 [&_th]:text-left [&_th]:align-top [&_th]:font-medium [&_td]:border-b [&_td]:border-border-secondary/60 [&_tr:last-child_td]:border-b-0 [&_td]:px-4 [&_td]:py-1.5 [&_td]:align-top";
 
 export function MarkdownTable({ children }: { children: ReactNode }) {
   const tableRef = useRef<HTMLTableElement>(null);
@@ -62,14 +62,17 @@ export function MarkdownTable({ children }: { children: ReactNode }) {
 
   return (
     <>
-      <div className="group relative my-(--md-table-my,16px) max-w-full overflow-hidden rounded-xl border border-border bg-card">
-        <div className="absolute top-1.5 right-1.5 z-10 flex items-center gap-1 opacity-0 transition-opacity group-hover:opacity-100">
+      <div className="group relative my-(--md-table-my,16px) max-w-full">
+        {/* Actions sit on a page-colored strip the height of the header row, faded on the left, so header text under them is hidden cleanly instead of peeking between the buttons. */}
+        <div className="absolute top-0 right-0 z-10 flex items-center gap-1 bg-linear-to-r from-transparent to-background to-[16px] py-1 pr-1 pl-4 opacity-0 transition-opacity group-focus-within:opacity-100 group-hover:opacity-100">
           <Button size="small" className="bg-background" icon={<Icon name={copied ? "check" : "copy"} size={12} />} title={copied ? "Copied" : "Copy as Markdown"} aria-label={copied ? "Copied" : "Copy as Markdown"} onClick={copyMarkdown} />
           <Button size="small" className="bg-background" icon={<Icon name="maximize" size={12} />} title="Fullscreen" aria-label="Fullscreen" onClick={openFullscreen} />
         </div>
 
-        <OverlayScroll autoHeight visibility="hover" scope="table" innerClassName="overflow-x-auto">
-          <table ref={tableRef} className={`${tableClass} [&_tr:last-child_td]:border-b-0 [&_th]:max-w-[360px] [&_td]:max-w-[360px]`}>
+        {/* Bottom padding only while the horizontal thumb shows, so it never covers the last row. */}
+        <OverlayScroll autoHeight visibility="hover" scope="table" innerClassName="overflow-x-auto group-data-overflow-x/table:pb-2">
+          {/* The last header cell reserves room for the actions, so a table that fits never has its header covered. */}
+          <table ref={tableRef} className={`${tableClass} [&_th:first-child]:pl-0 [&_td:first-child]:pl-0 [&_th:last-child]:pr-18 [&_th]:max-w-[360px] [&_td]:max-w-[360px]`}>
             {children}
           </table>
         </OverlayScroll>

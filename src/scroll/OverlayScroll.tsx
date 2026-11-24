@@ -160,7 +160,7 @@ export function OverlayScroll({ visibility = "hover", scope = "scroll", autoHeig
   );
 
   return (
-    <div className={cn(scope === "table" ? "group/table" : "group/scroll", "relative min-h-0 min-w-0 w-full overflow-hidden", className)} style={style} data-scrolling={thumbVisible ? "true" : undefined}>
+    <div className={cn(scope === "table" ? "group/table" : "group/scroll", "relative min-h-0 min-w-0 w-full overflow-hidden", className)} style={style} data-scrolling={thumbVisible ? "true" : undefined} data-overflow-x={hThumb.shown ? "true" : undefined}>
       <div
         ref={setNode}
         onScroll={handleScroll}
