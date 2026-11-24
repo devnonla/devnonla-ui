@@ -80,14 +80,14 @@ function tokenAppearance(color: "default" | "primary" | "danger" | "link", varia
   if (variant === "nostyle") return "";
   const g = ghost && variant !== "text" && variant !== "link";
   if (color === "primary") {
-    if (variant === "solid" && !g) return "border-(--nonla-brand-ring) bg-brand-fill text-on-brand shadow-(--nonla-solid-shadow) hover:bg-brand-fill-hover active:bg-brand-fill-active";
+    if (variant === "solid" && !g) return "nonla-btn-brand border-transparent text-on-brand shadow-(--nonla-brand-shadow) active:scale-[0.99]";
     if (variant === "filled") return "bg-brand-bg text-brand border-transparent hover:bg-brand-bg-hover active:bg-brand-border";
     if (variant === "text" || variant === "icon") return "bg-transparent text-brand border-transparent hover:bg-brand-bg active:bg-brand-bg-hover";
     if (variant === "link") return "text-brand border-transparent underline-offset-4 hover:underline";
     return "bg-transparent text-brand border-brand hover:bg-brand-bg active:bg-brand-bg-hover";
   }
   if (color === "danger") {
-    if (variant === "solid" && !g) return "border-(--nonla-danger-ring) bg-destructive-fill text-on-destructive shadow-(--nonla-solid-shadow) hover:bg-destructive-fill-hover active:bg-destructive-fill-active";
+    if (variant === "solid" && !g) return "border-transparent bg-destructive-fill text-on-destructive hover:bg-destructive-fill-hover active:scale-[0.99] active:bg-destructive-fill-active";
     if (variant === "filled") return "bg-destructive-bg text-destructive border-transparent hover:bg-destructive-bg-hover active:bg-destructive-border";
     if (variant === "text" || variant === "icon") return "bg-transparent text-destructive border-transparent hover:bg-destructive-bg active:bg-destructive-bg-hover";
     if (variant === "link") return "text-destructive border-transparent underline-offset-4 hover:underline";
@@ -97,9 +97,10 @@ function tokenAppearance(color: "default" | "primary" | "danger" | "link", varia
   if (variant === "filled") return "bg-muted text-foreground border-transparent hover:bg-(--nonla-fill-strong) active:bg-ink-active";
   if (variant === "text") return "bg-transparent text-foreground border-transparent hover:bg-ink-hover active:bg-ink-active";
   if (variant === "icon") return "bg-transparent text-foreground border-transparent hover:bg-ink-hover active:bg-ink-active";
-  // Raised default (measured on Cloudflare): surface fill, hairline, 1px contact shadow. Hover darkens the fill a step, press a bit more.
+  // Raised default, the neutral twin of primary: a faint top-lit gradient, an edge that deepens toward the bottom, a soft drop.
+  // Fill and hover live in `.nonla-btn-raised` (styles.css).
   // No press scale on popup triggers (Radix sets `data-state`): the popup anchors to the trigger box and would jump with it.
-  return "nonla-btn-glass border-border bg-card text-foreground shadow-(--nonla-btn-shadow) transition-[background-color,transform] duration-(--nonla-dur-fast) ease-(--nonla-ease-out) hover:not-disabled:not-aria-disabled:bg-(--nonla-btn-bg-hover) active:not-disabled:not-aria-disabled:not-data-[state]:scale-[0.97] active:not-disabled:not-aria-disabled:bg-(--nonla-btn-bg-active) motion-reduce:transition-[background-color] motion-reduce:active:transform-none";
+  return "nonla-btn-raised border-transparent text-foreground shadow-(--nonla-btn-raised-shadow) active:not-disabled:not-aria-disabled:not-data-[state]:scale-[0.97] motion-reduce:active:transform-none";
 }
 
 function presetAppearance(variant: ButtonVariant, ghost: boolean): string {

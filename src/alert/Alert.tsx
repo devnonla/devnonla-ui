@@ -18,48 +18,45 @@ export type AlertProps = {
 
 const TYPE_STYLES: Record<AlertType, string> = {
   success: "border-success-border bg-success-bg text-foreground",
-  info: "border-link-border bg-link-bg text-foreground",
+  info: "border-info-border bg-info-bg text-foreground",
   warning: "border-warn-border bg-warn-bg text-foreground",
   error: "border-destructive-border bg-destructive-bg text-foreground",
 };
 
-const ICON_COLOR: Record<AlertType, string> = {
-  success: "text-success",
-  info: "text-link",
-  warning: "text-warn",
-  error: "text-destructive",
+/** Solid marks: the role fill, with the glyph cut out in that role's label color. Reads cleaner at 16px than thin outlines. */
+const ICON_TONE: Record<AlertType, { shape: string; stroke: string; dot: string }> = {
+  success: { shape: "fill-success-fill", stroke: "stroke-on-success", dot: "fill-on-success" },
+  info: { shape: "fill-info-fill", stroke: "stroke-on-info", dot: "fill-on-info" },
+  warning: { shape: "fill-warn-fill", stroke: "stroke-(--nonla-warn-mark)", dot: "fill-(--nonla-warn-mark)" },
+  error: { shape: "fill-destructive-fill", stroke: "stroke-on-destructive", dot: "fill-on-destructive" },
 };
 
 function AlertIcon({ type }: { type: AlertType }) {
-  const cls = cn("size-4 shrink-0 mt-0.5", ICON_COLOR[type]);
-  if (type === "success") {
-    return (
-      <svg className={cls} viewBox="0 0 16 16" fill="none" aria-hidden>
-        <circle cx="8" cy="8" r="7" stroke="currentColor" strokeWidth="1.5" />
-        <path d="M4.8 8.2L6.9 10.2L11.2 5.8" stroke="currentColor" strokeWidth="1.5" strokeLinecap="round" strokeLinejoin="round" />
-      </svg>
-    );
-  }
-  if (type === "error") {
-    return (
-      <svg className={cls} viewBox="0 0 16 16" fill="none" aria-hidden>
-        <circle cx="8" cy="8" r="7" stroke="currentColor" strokeWidth="1.5" />
-        <path d="M5.5 5.5L10.5 10.5M10.5 5.5L5.5 10.5" stroke="currentColor" strokeWidth="1.5" strokeLinecap="round" />
-      </svg>
-    );
-  }
-  if (type === "warning") {
-    return (
-      <svg className={cls} viewBox="0 0 16 16" fill="none" aria-hidden>
-        <path d="M8 2.2L14.2 13.2H1.8L8 2.2Z" stroke="currentColor" strokeWidth="1.5" strokeLinejoin="round" />
-        <path d="M8 6.2V9.2M8 11V11.4" stroke="currentColor" strokeWidth="1.5" strokeLinecap="round" />
-      </svg>
-    );
-  }
+  const tone = ICON_TONE[type];
   return (
-    <svg className={cls} viewBox="0 0 16 16" fill="none" aria-hidden>
-      <circle cx="8" cy="8" r="7" stroke="currentColor" strokeWidth="1.5" />
-      <path d="M8 7.2V11.2M8 4.8V5.4" stroke="currentColor" strokeWidth="1.5" strokeLinecap="round" />
+    <svg className="mt-0.5 size-4 shrink-0" viewBox="0 0 16 16" aria-hidden>
+      {type === "warning" ? (
+        // Triangle with soft corners (r 2.4), a touch inside the 16px box so it weighs the same as the discs.
+        <path className={tone.shape} d="M9.18 3.69L13.62 11.51Q14.8 13.6 12.4 13.6H3.6Q1.2 13.6 2.38 11.51L6.82 3.69Q8 1.6 9.18 3.69Z" />
+      ) : (
+        <circle className={tone.shape} cx="8" cy="8" r="7" />
+      )}
+      <g className={tone.stroke} fill="none" strokeWidth="1.5" strokeLinecap="round" strokeLinejoin="round">
+        {type === "success" ? <path d="M5.25 8.25L7.1 10L10.75 6.25" /> : null}
+        {type === "error" ? <path d="M5.9 5.9L10.1 10.1M10.1 5.9L5.9 10.1" /> : null}
+        {type === "warning" ? (
+          <>
+            <path strokeWidth="1.35" d="M8 6.2V8.9" />
+            <circle className={tone.dot} stroke="none" cx="8" cy="11.15" r="0.78" />
+          </>
+        ) : null}
+        {type === "info" ? (
+          <>
+            <circle className={tone.dot} stroke="none" cx="8" cy="4.9" r="0.9" />
+            <path d="M8 7.3V11.1" />
+          </>
+        ) : null}
+      </g>
     </svg>
   );
 }

@@ -32,29 +32,37 @@
   --nonla-text-quaternary: #5c5c5c;
   --nonla-text-on-solid: #ffffff;
   /* Text on brand fills (primary button, solid brand tag). */
-  --nonla-text-on-brand: #141414;
-  /* Ink. Primary actions are neutral, like Claude desktop. Set a hue here to brand the kit. */
-  --nonla-brand: #fafafa;
+  --nonla-text-on-brand: #ffffff;
+  /* Brand: the logo's brim orange (#dd7627, see `Logo`), so buttons and the mascot share one hue. Same in light and dark, white labels. */
+  --nonla-brand: #dd7627;
   /*
    * Status roles. `--nonla-{role}` is text and icons (AA on the page and on its own tint).
    * `-fill` is the solid behind a label, `--nonla-text-on-{role}` is that label.
-   * Dark: fills reuse the light role colors and take dark ink.
+   * Fills are the same in light and dark; danger takes a white label, success and warn take dark ink.
    */
-  --nonla-danger: #f97066;
-  --nonla-success: #4fbf7f;
-  --nonla-warn: #f5b74f;
-  --nonla-link: #7aa7d9;
-  --nonla-danger-fill: var(--nonla-danger);
-  --nonla-success-fill: var(--nonla-success);
-  --nonla-warn-fill: var(--nonla-warn);
-  --nonla-text-on-danger: #141414;
+  /* One family with the ember brand (oklch 68% .18 42): fills share its weight; hues spread so none reads as the brand.
+     danger 22 (crimson, redder than the orange) · success 150 · warn 75 (amber, yellower) · link 258 (#005cc5; dark #7db0f9, same hue, lighter). */
+  --nonla-danger: #f66c6d;
+  --nonla-success: #51c672;
+  --nonla-warn: #f9b64f;
+  --nonla-link: #7db0f9;
+  /* Info: a fresh blue of its own (alerts, "processing" tags). Links stay the calmer reading blue. */
+  --nonla-info: #6db0f4;
+  --nonla-info-fill: #2288e8;
+  --nonla-text-on-info: #ffffff;
+  --nonla-danger-fill: #e23242;
+  --nonla-success-fill: #37bb62;
+  --nonla-warn-fill: #f9ad26;
+  --nonla-text-on-danger: #ffffff;
   --nonla-text-on-success: #141414;
   --nonla-text-on-warn: #141414;
+  /* The "!" in the warning triangle: a deep brown of the amber, softer than black ink. */
+  --nonla-warn-mark: color-mix(in oklch, var(--nonla-warn-fill), #000 70%);
   /* Solid fills hover and press toward this. Dark: the page, so ink labels keep contrast. */
   --nonla-fill-shade: var(--nonla-bg);
-  /* Brand fill hovers toward this. Ink can't get darker, so it lifts toward the page (#191919 → #353535).
-     A saturated brand with white text may want #000 here instead. */
-  --nonla-brand-shade: var(--nonla-bg);
+  /* Brand fill hover brightens toward `-glow` (Cloudflare-style); press settles toward `-shade`. */
+  --nonla-brand-glow: #ffffff;
+  --nonla-brand-shade: #000000;
 
   --nonla-sidebar: #1c1c1c;
   --nonla-surface: #1c1c1c;
@@ -96,6 +104,12 @@
   /* Default button fill on hover and press: the surface, one and two steps toward the ink. */
   --nonla-btn-bg-hover: color-mix(in oklab, var(--nonla-surface) 95%, var(--nonla-text-main));
   --nonla-btn-bg-active: color-mix(in oklab, var(--nonla-surface) 91%, var(--nonla-text-main));
+  /* Raised default button: fill top → bottom, edge top → bottom (alpha, over the page), and its shadow. */
+  --nonla-btn-top: color-mix(in oklab, var(--nonla-surface) 94%, var(--nonla-text-main));
+  --nonla-btn-bottom: var(--nonla-surface);
+  --nonla-btn-edge-top: rgb(255 255 255 / 13%);
+  --nonla-btn-edge-bottom: rgb(255 255 255 / 8%);
+  --nonla-btn-raised-shadow: inset 0 1px 0 rgb(255 255 255 / 5%), 0 1px 1px rgb(0 0 0 / 16%);
   /* Switch (measured on Cloudflare): full-height thumb on a pill track, a 1px ring instead of a border. */
   --nonla-switch-track: color-mix(in oklab, var(--nonla-text-main) 16%, var(--nonla-bg));
   --nonla-switch-ring: color-mix(in oklab, var(--nonla-text-main) 24%, var(--nonla-bg));
@@ -159,10 +173,21 @@
    *   solid   fill → hover 10% toward --nonla-fill-shade → press 18%
    *   tint    bg 10% → hover 16%, border 35%
    */
-  --nonla-brand-fill-hover: color-mix(in oklab, var(--nonla-brand) 86%, var(--nonla-brand-shade));
-  --nonla-brand-fill-active: color-mix(in oklab, var(--nonla-brand) 78%, var(--nonla-brand-shade));
-  /* Solid buttons (measured on Cloudflare): a same-hue darker edge, a faint top highlight, and a 1px contact shadow. */
-  --nonla-brand-ring: color-mix(in oklab, var(--nonla-brand) 78%, #000);
+  --nonla-brand-fill-hover: color-mix(in oklab, var(--nonla-brand) 88%, var(--nonla-brand-glow));
+  --nonla-brand-fill-active: color-mix(in oklab, var(--nonla-brand) 92%, var(--nonla-brand-shade));
+  --nonla-brand-ring: color-mix(in oklab, var(--nonla-brand) 84%, #000);
+  /* Primary button, measured on Cloudflare ("emphasis"): a top-lit gradient (brand + 15% white → brand; hover lifts the top to +30%),
+     a 1px top highlight, a 1px edge that follows the same gradient 8% darker (so top, sides and bottom keep the same contrast against the fill), soft lit insets, and a short brand-tinted drop. */
+  --nonla-brand-top: color-mix(in oklch, var(--nonla-brand), #fff 15%);
+  --nonla-brand-top-hover: color-mix(in oklch, var(--nonla-brand), #fff 30%);
+  --nonla-brand-shadow:
+    inset 0 1px 0 var(--nonla-brand-top-hover),
+    inset 0 -1px 3px color-mix(in oklch, color-mix(in oklch, var(--nonla-brand), #fff 50%) 12%, transparent),
+    inset 0 4px 8px color-mix(in oklch, color-mix(in oklch, var(--nonla-brand), #fff 50%) 12%, transparent),
+    inset 0 1px 3px color-mix(in oklch, color-mix(in oklch, var(--nonla-brand), #fff 50%) 24%, transparent),
+    0 6px 10px -4px color-mix(in oklch, var(--nonla-brand) 24%, transparent),
+    0 2px 4px -1px color-mix(in oklch, var(--nonla-brand) 12%, transparent),
+    0 1px 1px -0.5px color-mix(in oklch, var(--nonla-brand) 12%, transparent);
   --nonla-danger-ring: color-mix(in oklab, var(--nonla-danger-fill) 78%, #000);
   --nonla-solid-shadow: inset 0 1px 0 rgb(255 255 255 / 12%), 0 1px 2px rgb(0 0 0 / 12%);
   --nonla-brand-bg: color-mix(in oklab, var(--nonla-brand) 10%, transparent);
@@ -186,6 +211,10 @@
   --nonla-link-bg: color-mix(in oklab, var(--nonla-link) 10%, transparent);
   --nonla-link-bg-hover: color-mix(in oklab, var(--nonla-link) 16%, transparent);
   --nonla-link-border: color-mix(in oklab, var(--nonla-link) 35%, transparent);
+  --nonla-info-bg: color-mix(in oklab, var(--nonla-info-fill) 10%, transparent);
+  --nonla-info-border: color-mix(in oklab, var(--nonla-info-fill) 32%, transparent);
+  /* Tree guide lines: a quiet ink, clearly stronger than a hairline so the branches read. */
+  --nonla-tree-line: color-mix(in oklab, var(--nonla-text-main) 32%, transparent);
   --brand: var(--nonla-brand);
   --link: var(--nonla-link);
   --success: var(--nonla-success);
@@ -197,7 +226,7 @@
   /* Card edge. Dark adds a short drop; the ring is the border. */
   --nonla-card-shadow: 0 1px 2px rgb(0 0 0 / 32%), 0 0 0 1px var(--nonla-border);
   /* Default button lift: a 1px contact shadow under a surface-filled button, so it sits a hair above the page. */
-  --nonla-btn-shadow: 0 1px 2px rgb(0 0 0 / 30%);
+  --nonla-btn-shadow: 0 1px 2px rgb(0 0 0 / 16%);
   --mask: rgb(0 0 0 / 56%);
 
   /*
@@ -253,16 +282,20 @@
   --nonla-text-quaternary: #a3a3a3;
   --nonla-text-on-solid: #ffffff;
   --nonla-text-on-brand: #ffffff;
-  --nonla-brand: #191919;
-  --nonla-danger: #b42318;
-  --nonla-success: #116b34;
-  --nonla-warn: #93540a;
-  --nonla-link: #2a64a3;
-  --nonla-danger-fill: #d92d20;
-  --nonla-success-fill: #15803d;
-  --nonla-warn-fill: #f5a524;
+  --nonla-brand: #dd7627;
+  /* Text roles: deeper steps of the same hues, AA (≥ 4.5:1) on white and the #fafafa page. */
+  --nonla-danger: #ce2739;
+  --nonla-success: #11813c;
+  --nonla-warn: #a2620e;
+  --nonla-link: #005cc5;
+  --nonla-info: #006cc4;
+  --nonla-info-fill: #2288e8;
+  --nonla-text-on-info: #ffffff;
+  --nonla-danger-fill: #e23242;
+  --nonla-success-fill: #37bb62;
+  --nonla-warn-fill: #f9ad26;
   --nonla-text-on-danger: #ffffff;
-  --nonla-text-on-success: #ffffff;
+  --nonla-text-on-success: #141414;
   --nonla-text-on-warn: #191919;
   /* Light: black, so white labels gain contrast on hover. */
   --nonla-fill-shade: #000000;
@@ -285,6 +318,11 @@
   /* Card: hairline ring plus a 1px contact shadow. */
   --nonla-card-shadow: 0 0 0 1px var(--nonla-border), 0 1px 2px rgb(0 0 0 / 5%);
   --nonla-btn-shadow: 0 1px 2px rgb(0 0 0 / 5%);
+  --nonla-btn-top: var(--nonla-surface);
+  --nonla-btn-bottom: color-mix(in oklab, var(--nonla-surface) 97.5%, var(--nonla-text-main));
+  --nonla-btn-edge-top: rgb(0 0 0 / 8%);
+  --nonla-btn-edge-bottom: rgb(0 0 0 / 12%);
+  --nonla-btn-raised-shadow: 0 1px 1px rgb(0 0 0 / 4%);
   --nonla-pill-track: color-mix(in oklab, var(--nonla-text-main) 4%, var(--nonla-bg));
   --nonla-switch-track: color-mix(in oklab, var(--nonla-text-main) 10%, var(--nonla-bg));
   --nonla-switch-ring: color-mix(in oklab, var(--nonla-text-main) 17%, var(--nonla-bg));
@@ -370,6 +408,11 @@
   --color-link-bg: var(--nonla-link-bg);
   --color-link-bg-hover: var(--nonla-link-bg-hover);
   --color-link-border: var(--nonla-link-border);
+  --color-info: var(--nonla-info);
+  --color-info-fill: var(--nonla-info-fill);
+  --color-info-bg: var(--nonla-info-bg);
+  --color-info-border: var(--nonla-info-border);
+  --color-on-info: var(--nonla-text-on-info);
   --color-tertiary-foreground: var(--tertiary-foreground);
   --color-quaternary-foreground: var(--quaternary-foreground);
   --color-ink-hover: var(--nonla-ink-hover);
@@ -616,6 +659,69 @@
     opacity: 1;
     transform: translateX(0) scale(1);
   }
+}
+
+/* Default button fill: a faint top-lit gradient in the padding box and an alpha edge that deepens toward the bottom in
+   the border box, so it sits a hair above the page like the primary. Hover and press darken both stops a step. */
+@property --nonla-btn-lit-top {
+  syntax: "<color>";
+  inherits: false;
+  initial-value: transparent;
+}
+
+@property --nonla-btn-lit-bottom {
+  syntax: "<color>";
+  inherits: false;
+  initial-value: transparent;
+}
+
+.nonla-ui .nonla-btn-raised {
+  --nonla-btn-lit-top: var(--nonla-btn-top);
+  --nonla-btn-lit-bottom: var(--nonla-btn-bottom);
+  background:
+    linear-gradient(to bottom, var(--nonla-btn-lit-top), var(--nonla-btn-lit-bottom)) padding-box,
+    linear-gradient(to bottom, var(--nonla-btn-edge-top), var(--nonla-btn-edge-bottom)) border-box;
+  transition:
+    --nonla-btn-lit-top var(--nonla-dur-fast) var(--nonla-ease-out),
+    --nonla-btn-lit-bottom var(--nonla-dur-fast) var(--nonla-ease-out),
+    transform var(--nonla-dur-fast) var(--nonla-ease-out);
+}
+
+.nonla-ui .nonla-btn-raised:not(:disabled, [aria-disabled="true"]):hover {
+  --nonla-btn-lit-top: var(--nonla-btn-bg-hover);
+  --nonla-btn-lit-bottom: color-mix(in oklab, var(--nonla-btn-bg-hover) 97.5%, var(--nonla-text-main));
+}
+
+.nonla-ui .nonla-btn-raised:not(:disabled, [aria-disabled="true"]):active {
+  --nonla-btn-lit-top: var(--nonla-btn-bg-active);
+  --nonla-btn-lit-bottom: var(--nonla-btn-bg-active);
+}
+
+/* Primary button fill: the lit gradient inside the padding box, and the same gradient 8% darker in the 1px border box,
+   so the edge tracks the fill (light at the top, deeper at the bottom) and no side reads heavier than another.
+   `--nonla-brand-lit` is registered so hover / press animate the gradient. */
+@property --nonla-brand-lit {
+  syntax: "<color>";
+  inherits: false;
+  initial-value: transparent;
+}
+
+.nonla-ui .nonla-btn-brand {
+  --nonla-brand-lit: var(--nonla-brand-top);
+  background:
+    linear-gradient(to bottom, var(--nonla-brand-lit), var(--nonla-brand)) padding-box,
+    linear-gradient(to bottom, color-mix(in oklch, var(--nonla-brand-lit), #000 8%), color-mix(in oklch, var(--nonla-brand), #000 8%)) border-box;
+  transition:
+    --nonla-brand-lit var(--nonla-dur-fast) var(--nonla-ease-out),
+    transform var(--nonla-dur-fast) var(--nonla-ease-out);
+}
+
+.nonla-ui .nonla-btn-brand:not(:disabled, [aria-disabled="true"]):hover {
+  --nonla-brand-lit: var(--nonla-brand-top-hover);
+}
+
+.nonla-ui .nonla-btn-brand:not(:disabled, [aria-disabled="true"]):active {
+  --nonla-brand-lit: var(--nonla-brand);
 }
 
 /* Tooltip: scale from the trigger side and fade, both ways (Cloudflare: 0.9, 150ms). */

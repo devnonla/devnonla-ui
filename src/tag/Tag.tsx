@@ -25,7 +25,7 @@ const NAMED_VAR: Record<string, string> = {
   success: "var(--success)",
   error: "var(--destructive)",
   warning: "var(--warn)",
-  processing: "var(--link)",
+  processing: "var(--nonla-info)",
   brand: "var(--brand)",
   blue: "light-dark(#3b7fc4, #7bafe9)",
   purple: "light-dark(#6d5bd0, #9386f2)",
@@ -50,7 +50,7 @@ const ROLE_SOLID: Record<string, { fill: string; ink: string }> = {
   success: { fill: "var(--nonla-success-fill)", ink: "var(--nonla-text-on-success)" },
   error: { fill: "var(--nonla-danger-fill)", ink: "var(--nonla-text-on-danger)" },
   warning: { fill: "var(--nonla-warn-fill)", ink: "var(--nonla-text-on-warn)" },
-  processing: { fill: "var(--nonla-link)", ink: "var(--nonla-bg)" },
+  processing: { fill: "var(--nonla-info-fill)", ink: "var(--nonla-text-on-info)" },
   brand: { fill: "var(--nonla-brand)", ink: "var(--nonla-text-on-brand)" },
 };
 

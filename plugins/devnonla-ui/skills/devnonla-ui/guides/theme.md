@@ -15,7 +15,9 @@ Tokens live on the `.nonla-ui` host that `<App>` renders, never on `:root`. Over
 | `--nonla-text-secondary` | `#5e5e5e` | `#a3a3a3` | supporting copy |
 | `--nonla-text-tertiary` | `#6e6e6e` | `#8f8f8f` | placeholders, captions (AA) |
 | `--nonla-text-quaternary` | `#a3a3a3` | `#5c5c5c` | disabled only |
-| `--nonla-brand` / `--nonla-text-on-brand` | `#191919` / `#fff` | `#fafafa` / `#141414` | primary button, focus ring |
+| `--nonla-brand` / `--nonla-text-on-brand` | `#dd7627` / `#fff` | `#dd7627` / `#fff` | primary button, focus ring |
+| `--nonla-{danger,success,warn}-fill` | `#e23242` / `#37bb62` / `#f9ad26` | same | solid fills; labels white / ink / ink |
+| `--nonla-danger` / `-success` / `-warn` / `-link` (text) | `#ce2739` / `#11813c` / `#a2620e` / `#005cc5` | `#f66c6d` / `#51c672` / `#f9b64f` / `#7db0f9` | AA text and icons |
 | `--nonla-danger`, `--nonla-success`, `--nonla-warn`, `--nonla-link` | AA text colors | | text and icons |
 | `--nonla-{danger,success,warn}-fill`, `--nonla-text-on-{role}` | | | solid fills and their label |
 | `--nonla-radius` | `8px` | | controls; `rounded`, `rounded-sm/lg` follow it |
@@ -25,15 +27,15 @@ Tokens live on the `.nonla-ui` host that `<App>` renders, never on `:root`. Over
 
 ## Brand color
 
-Primary is ink (Claude-desktop style). To brand it, set per mode:
+Primary is the logo orange `#dd7627` in both modes, with a white label. The primary button is a top-lit gradient (`--nonla-brand-top` → brand; hover lifts the top to `--nonla-brand-top-hover`), a 1px edge that is the same gradient 8% darker, and `--nonla-brand-shadow`. To rebrand, set per mode:
 
 | Token | Light example | Dark example | Why |
 |---|---|---|---|
 | `--nonla-brand` | `#4f46e5` | `#818cf8` | fill |
-| `--nonla-text-on-brand` | `#fff` | `#141414` | label, ≥ 4.5:1 on the fill |
-| `--nonla-brand-shade` | `#000` | (page, default) | where hover moves: darken a saturated light fill so white labels gain contrast |
+| `--nonla-text-on-brand` | `#fff` | `#141414` | label on the fill |
+| `--nonla-brand-glow` / `--nonla-brand-shade` | `#fff` / `#000` | | where hover / press move the fill |
 
-`--nonla-brand-shade` is where hover moves the fill: the page color (default) lifts ink; `#000` darkens a saturated light-mode brand so white labels gain contrast. Brand is for primary actions, focus and spinners only. Selected states use `--nonla-selected` (ink); don't point that at the brand.
+Brand is for primary actions, focus and spinners only. Selected states use `--nonla-selected` (ink); don't point that at the brand.
 
 ## Tailwind utilities (inside `.nonla-ui`)
 
