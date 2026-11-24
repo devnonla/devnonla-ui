@@ -5,6 +5,30 @@ All notable changes to this project will be documented in this file.
 The format is based on [Keep a Changelog](https://keepachangelog.com/en/1.1.0/),
 and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0.html).
 
+## [0.20.1] - 2026-11-24
+
+### Added
+
+- `Tree`: nested data (files, settings) with SVG guide lines from each parent's icon, click-to-open rows, arrow keys, controlled/uncontrolled `expandedKeys` and `selectedKeys`, `multiple`, `titleRender`, and `size`.
+- Info role tokens: `--nonla-info`, `--nonla-info-fill`, `--nonla-text-on-info` (utilities `info`, `info-fill`, `info-bg`, `info-border`, `on-info`).
+- `--nonla-tree-line`, `--nonla-brand-top`, `--nonla-brand-top-hover`, `--nonla-brand-shadow`, `--nonla-brand-glow`, and `--nonla-btn-{top,bottom,edge-top,edge-bottom,raised-shadow}`.
+
+### Changed
+
+- Brand is the logo orange `#dd7627` in both modes with a white label; the primary button is a top-lit gradient with a matching darker edge.
+- Default button is a raised, faintly top-lit surface with a gradient edge.
+- Status colors retuned (danger, success, warn, link). Light success fill now takes an ink label.
+- `Alert` icons are solid marks; `Alert type="info"` and `Tag color="processing"` use the info role instead of link.
+- `MarkdownViewer` tables drop the frame and background and keep light row lines; the first column aligns with the text. Links are underlined.
+
+### Fixed
+
+- `MarkdownViewer` tables: the horizontal scrollbar no longer covers the last row, and the copy/fullscreen buttons no longer overlap header text.
+
+### Upgrade notes
+
+- The primary color changed from ink to orange. To keep the old look, set `--nonla-brand` (and `--nonla-text-on-brand`) on `.nonla-ui` and `.nonla-ui.light`.
+
 ## [0.20.0] - 2026-11-22
 
 ### Added
@@ -608,6 +632,7 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 - Replace class `nonla-chat-shimmer` with `Shimmer` or `.nonla-shimmer`.
 - `resolveToolUI(toolName, extras?)` — second argument is optional; extra UIs are checked first.
 
+[0.20.1]: https://github.com/devnonla/devnonla-ui/compare/v0.20.0...v0.20.1
 [0.20.0]: https://github.com/devnonla/devnonla-ui/compare/v0.19.2...v0.20.0
 [0.19.2]: https://github.com/devnonla/devnonla-ui/compare/v0.19.1...v0.19.2
 [0.19.1]: https://github.com/devnonla/devnonla-ui/compare/v0.19.0...v0.19.1
