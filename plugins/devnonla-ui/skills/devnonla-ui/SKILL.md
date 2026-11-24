@@ -49,6 +49,7 @@ React 19 kit. Docs with live examples: https://devnonla.github.io/devnonla-ui/
 | Floating content | `Popover`, `Tooltip title`, `Dropdown` / `ContextMenu` / `Menu` |
 | Feedback | `message.success("Saved")` (also `error`, `info`, `warning`, `loading`); inline `Alert type` |
 | Resizable panes | `Splitter` + `SplitterPanel` |
+| Tree (files, nested settings) | `Tree treeData showLine` (SVG guide lines from each icon, click a row to open it, arrow keys) |
 | Tree / reorder | `SortableTree` |
 | Text and code | `Typography` (`Title`, `Text`, `Paragraph`, `Link`), `CodeBlock`, `MarkdownViewer` |
 | Icon | `Icon name size` (45 glyphs; stroke auto-scales) |
@@ -58,7 +59,7 @@ React 19 kit. Docs with live examples: https://devnonla.github.io/devnonla-ui/
 
 | Topic | Do | Don't |
 |---|---|---|
-| Actions | One `primary` per view; primary is ink, not a hue | Several primaries, brand-colored secondary buttons |
+| Actions | One `primary` (orange brand) per view | Several primaries, brand-colored secondary buttons |
 | Selected state | Neutral ink (Switch, Checkbox, tabs, nav) | Brand color for selection |
 | Text color | Foreground, `text-muted-foreground`, `text-tertiary-foreground` | Opacity on text, hex colors |
 | Text size | 15 body (`text-base`), 14 UI (`text-sm`), 12 captions (`text-xs`) | 13px or smaller UI text (Vietnamese diacritics) |
@@ -126,6 +127,7 @@ One short file per docs page: what it is and its API table. Read it before using
 | [Tag](references/tag.md) | Compact labels for status, filters, and metadata. |
 | [TimePicker](references/timepicker.md) | Make-style stepper — arrows, or click hour/minute to open a grid. |
 | [Tooltip](references/tooltip.md) | A simple text popup tip. |
+| [Tree](references/tree.md) | Show nested data, like files, settings, or an org chart. |
 | [Typography](references/typography.md) | Headings, paragraphs, and inline text. |
 <!-- references:components:end -->
 
