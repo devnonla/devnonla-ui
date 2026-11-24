@@ -19,3 +19,6 @@ CLAUDE.md
 AGENTS.md
 GEMINI.md
 .colgrep/
+
+# Local docs scratch pages (served at /preview/<name>, never committed)
+docs/pages/preview/drafts/

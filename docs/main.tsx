@@ -1,4 +1,5 @@
 import { App } from "@nonla-agents/ui";
+import type { ComponentType } from "react";
 import { createRoot } from "react-dom/client";
 import { BrowserRouter, Navigate, Route, Routes, useLocation } from "react-router-dom";
 import { DOCS, type DocRecord } from "./catalog";
@@ -9,6 +10,16 @@ import { MarkdownDoc } from "./MarkdownDoc";
 import { migrateLegacyLocation, resolveLegacyPath } from "./nav";
 import { InputWhitePage } from "./pages/preview/InputWhitePage";
 import { SortableTreePage } from "./pages/preview/SortableTreePage";
+
+/**
+ * Local scratch pages: `pages/preview/drafts/<Name>Page.tsx` is served at `/preview/<name>`.
+ * The folder is git-ignored, so a fresh clone (and CI) simply has none.
+ */
+const drafts = Object.entries(import.meta.glob<Record<string, ComponentType>>("./pages/preview/drafts/*.tsx", { eager: true })).flatMap(([file, mod]) => {
+  const name = file.match(/\/(\w+?)Page\.tsx$/)?.[1];
+  const Page = name ? mod[`${name}Page`] : undefined;
+  return name && Page ? [{ path: `preview/${name.replace(/[A-Z]/g, (c, i) => (i ? "-" : "") + c.toLowerCase())}`, Page }] : [];
+});
 
 migrateLegacyLocation();
 
@@ -36,6 +47,9 @@ function AppRoutes() {
   return (
     <Routes>
       <Route path="preview/input" element={<InputWhitePage />} />
+      {drafts.map(({ path, Page }) => (
+        <Route key={path} path={path} element={<Page />} />
+      ))}
       <Route path="preview/sortable-tree" element={<SortableTreePage />} />
       <Route path="docs" element={<Navigate to="/introduction" replace />} />
       <Route path="docs/*" element={<DocsPrefixRedirect />} />
