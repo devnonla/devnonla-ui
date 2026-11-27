@@ -1,4 +1,4 @@
-import { useLayoutEffect, useSyncExternalStore } from "react";
+import { useEffect, useSyncExternalStore } from "react";
 import { Segmented } from "../segmented/Segmented";
 import { getColorMode, initColorMode, type NonlaColorMode, setColorMode, subscribeColorMode } from "../theme";
 
@@ -14,7 +14,9 @@ export type ThemeToggleProps = {
 export function ThemeToggle({ className }: ThemeToggleProps) {
   const mode = useColorMode();
 
-  useLayoutEffect(() => {
+  // Passive effect: runs after `App`'s layout effect has bound the `.nonla-ui` host, so the first
+  // init reads and paints the host instead of `<html>`. Outside `App` it falls back to `<html>`.
+  useEffect(() => {
     initColorMode();
   }, []);
 

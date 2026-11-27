@@ -1,4 +1,4 @@
-import { useLayoutEffect, useSyncExternalStore } from "react";
+import { useEffect, useSyncExternalStore } from "react";
 import { Icon, type IconName } from "../icon/Icon";
 import { cn } from "../lib/cn";
 import { getColorPreference, initColorMode, type NonlaColorPreference, setColorPreference, subscribeColorPreference } from "../theme";
@@ -10,7 +10,7 @@ const OPTIONS: { value: NonlaColorPreference; label: string; icon: IconName }[] 
 ];
 
 export function useColorPreference(): NonlaColorPreference {
-  return useSyncExternalStore(subscribeColorPreference, getColorPreference, () => "dark");
+  return useSyncExternalStore(subscribeColorPreference, getColorPreference, () => "system");
 }
 
 export type ThemeSwitcherProps = {
@@ -21,7 +21,9 @@ export type ThemeSwitcherProps = {
 export function ThemeSwitcher({ className }: ThemeSwitcherProps) {
   const preference = useColorPreference();
 
-  useLayoutEffect(() => {
+  // Passive effect: runs after `App`'s layout effect has bound the `.nonla-ui` host, so the first
+  // init reads and paints the host instead of `<html>`. Outside `App` it falls back to `<html>`.
+  useEffect(() => {
     initColorMode();
   }, []);
 
