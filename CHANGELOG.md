@@ -5,6 +5,17 @@ All notable changes to this project will be documented in this file.
 The format is based on [Keep a Changelog](https://keepachangelog.com/en/1.1.0/),
 and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0.html).
 
+## [0.20.4] - 2026-11-27
+
+### Fixed
+
+- `ThemeSwitcher` and `ThemeToggle` inside `<App>` no longer read and paint `<html>` on first load; the theme initializes on the `.nonla-ui` host.
+- Overlays render on the server: `Tooltip`, `Popover`, `Popconfirm`, `Dropdown`, `ContextMenu`, `Select`, `DatePicker`, `TimePicker`, `ColorPicker`, `Modal`, `Drawer`, `CommandPalette` and `Table` no longer throw `document is not defined` during SSR.
+
+### Upgrade notes
+
+- `usePopupContainer()` now returns `() => HTMLElement | undefined`; it returns `undefined` when there is no `document` (SSR). Pass the result straight to a portal `container`, or fall back to `document.body` in client-only code.
+
 ## [0.20.3] - 2026-11-27
 
 ### Fixed
@@ -653,6 +664,7 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 - Replace class `nonla-chat-shimmer` with `Shimmer` or `.nonla-shimmer`.
 - `resolveToolUI(toolName, extras?)` — second argument is optional; extra UIs are checked first.
 
+[0.20.4]: https://github.com/devnonla/devnonla-ui/compare/v0.20.3...v0.20.4
 [0.20.3]: https://github.com/devnonla/devnonla-ui/compare/v0.20.2...v0.20.3
 [0.20.2]: https://github.com/devnonla/devnonla-ui/compare/v0.20.1...v0.20.2
 [0.20.1]: https://github.com/devnonla/devnonla-ui/compare/v0.20.0...v0.20.1
