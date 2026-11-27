@@ -40,7 +40,10 @@
     "docs": "cd docs && bun run dev",
     "build:esm": "rm -rf dist && bun build src/index.ts src/chat/index.ts src/markdown-editor/index.ts --outdir dist --root src --target browser --format esm --splitting --minify --external react --external react-dom --external react-hook-form --external 'react/*' --external 'react-dom/*'",
     "build:css": "tailwindcss -i src/standalone.css -o dist/nonla-ui.css --minify && mkdir -p dist/files && cp node_modules/@fontsource-variable/inter/files/* node_modules/@fontsource-variable/geist-mono/files/* dist/files/",
-    "build": "bun run build:esm && bun run build:css"
+    "build": "bun run build:esm && bun run build:css",
+    "check:pack": "publint --strict",
+    "smoke": "bun scripts/smoke-esm.ts",
+    "verify": "bun run typecheck && bunx biome check src && bun run build && bun run check:pack && bun run smoke"
   },
   "peerDependencies": {
     "react": ">=19",
@@ -76,10 +79,13 @@
     "@tailwindcss/cli": "^4.1.18",
     "@types/react": "^19.1.8",
     "@types/react-dom": "^19.1.6",
+    "playwright": "^1.65.1",
+    "publint": "^0.3.25",
     "react": "19.2.8",
     "react-dom": "19.2.8",
     "react-hook-form": "^7.87.0",
     "tailwindcss": "^4.1.18",
     "typescript": "~5.8.3"
-  }
+  },
+  "packageManager": "bun@1.4.3"
 }
