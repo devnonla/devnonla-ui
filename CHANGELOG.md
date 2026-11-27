@@ -5,6 +5,12 @@ All notable changes to this project will be documented in this file.
 The format is based on [Keep a Changelog](https://keepachangelog.com/en/1.1.0/),
 and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0.html).
 
+## [0.20.3] - 2026-11-27
+
+### Fixed
+
+- The prebuilt ESM bundle (`devnonla-ui/esm`, `/esm/chat`, `/esm/markdown`) in 0.20.2 shipped empty entry files. It is now built with Bun 1.4.3, and publishing stops if the bundle has no chunks.
+
 ## [0.20.2] - 2026-11-27
 
 ### Added
@@ -647,6 +653,7 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 - Replace class `nonla-chat-shimmer` with `Shimmer` or `.nonla-shimmer`.
 - `resolveToolUI(toolName, extras?)` — second argument is optional; extra UIs are checked first.
 
+[0.20.3]: https://github.com/devnonla/devnonla-ui/compare/v0.20.2...v0.20.3
 [0.20.2]: https://github.com/devnonla/devnonla-ui/compare/v0.20.1...v0.20.2
 [0.20.1]: https://github.com/devnonla/devnonla-ui/compare/v0.20.0...v0.20.1
 [0.20.0]: https://github.com/devnonla/devnonla-ui/compare/v0.19.2...v0.20.0
