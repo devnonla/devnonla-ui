@@ -63,12 +63,13 @@ ${JSON.stringify({
 <script type="module">
   import { createElement as h } from "react";
   import { createRoot } from "react-dom/client";
-  import { App, Button, Card, Input, Select, Switch, Tag } from "devnonla-ui";
+  import { App, Button, Card, Input, Select, Switch, Tag, ThemeSwitcher } from "devnonla-ui";
   import { MarkdownViewer } from "devnonla-ui/markdown";
   const chat = await import("devnonla-ui/chat");
   window.__chatExports = Object.keys(chat).length;
   createRoot(document.getElementById("root")).render(
     h(App, null, h("div", { style: { padding: 24, display: "grid", gap: 12, maxWidth: 520 } },
+      h(ThemeSwitcher),
       h(Card, { title: "Smoke" },
         h(Button, { type: "primary" }, "Primary"), h(Tag, { color: "success" }, "ok"), h(Switch, { defaultChecked: true })),
       h(Input, { placeholder: "Xin chào" }),
@@ -106,6 +107,9 @@ try {
 
   const host = await page.locator(".nonla-ui").first().getAttribute("class");
   if (!host?.includes("dark")) errors.push(`host should follow the OS (dark), got "${host}"`);
+  // ThemeSwitcher inside App must paint the host, not <html>.
+  const htmlClass = await page.evaluate(() => document.documentElement.className);
+  if (/\b(light|dark)\b/.test(htmlClass)) errors.push(`<html> got a color class ("${htmlClass}"); theme init ran before App bound its host`);
 
   for (const text of ["Smoke", "ok", "Alpha", "Heading"]) {
     if ((await page.getByText(text, { exact: true }).count()) === 0) errors.push(`text "${text}" not rendered`);

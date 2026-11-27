@@ -164,7 +164,8 @@ function EditorPopover({
   if (!lock || !isValidElement(children)) return null;
 
   const pad = POPUP_PAD[size];
-  const container = getContainer();
+  // `lock` is only set from a client event, so `document` exists here.
+  const container = getContainer() ?? document.body;
   const origin = containingOffset(container);
   const field = cloneElement(children, {
     ref: inputRef,

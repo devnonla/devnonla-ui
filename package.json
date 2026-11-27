@@ -43,7 +43,8 @@
     "build": "bun run build:esm && bun run build:css",
     "check:pack": "publint --strict",
     "smoke": "bun scripts/smoke-esm.ts",
-    "verify": "bun run typecheck && bunx biome check src && bun run build && bun run check:pack && bun run smoke"
+    "verify": "bun run typecheck && bunx biome check src && bun run smoke:ssr && bun run build && bun run check:pack && bun run smoke",
+    "smoke:ssr": "bun scripts/smoke-ssr.tsx"
   },
   "peerDependencies": {
     "react": ">=19",
