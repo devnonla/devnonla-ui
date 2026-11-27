@@ -15,7 +15,7 @@ jobs:
 
       - uses: oven-sh/setup-bun@v2
         with:
-          bun-version: "1.4.0"
+          bun-version: "1.4.3"
 
       - uses: actions/setup-node@v4
         with:
@@ -27,6 +27,10 @@ jobs:
       - run: bun run typecheck
 
       - run: bun run build
+
+      # Bun 1.4.0 emitted entry-only bundles (no chunks); fail before publishing one.
+      - name: Check ESM bundle
+        run: test "$(find dist -name '*.js' | wc -l)" -gt 10
 
       - name: Publish
         env:
