@@ -1,5 +1,5 @@
 /**
- * Paint `light` or `dark` on the Nonla host (`.nonla-ui`). Dark is the default.
+ * Paint `light` or `dark` on the Nonla host (`.nonla-ui`). With no saved choice it follows the OS (`system`).
  * The stored choice may be `system`, which follows the OS and still paints one of those two.
  *
  * `App` binds the host via `bindColorModeTarget`. Callers can still pass an explicit
@@ -17,7 +17,7 @@ export const NONLA_COLOR_MODE_KEY = "nonla-color-mode";
 
 const listeners = new Set<() => void>();
 let mode: NonlaColorMode = "dark";
-let preference: NonlaColorPreference = "dark";
+let preference: NonlaColorPreference = "system";
 let ready = false;
 let schemeQuery: MediaQueryList | null = null;
 let boundTarget: HTMLElement | null = null;
@@ -123,7 +123,7 @@ export function setColorMode(next: NonlaColorMode, target?: HTMLElement) {
   setColorPreference(next, target);
 }
 
-/** Apply the saved mode once. Falls back to dark. A stored `system` choice follows the OS. */
+/** Apply the saved mode once. Falls back to `system` (follows the OS). A stored `system` choice follows the OS. */
 export function initColorMode(target?: HTMLElement): NonlaColorMode {
   if (typeof document === "undefined") return mode;
   const el = colorTarget(target);
@@ -133,7 +133,7 @@ export function initColorMode(target?: HTMLElement): NonlaColorMode {
   }
   ready = true;
   const fromClass = modeFromClass(el) ?? modeFromClass(document.documentElement);
-  const next = readStored() ?? fromClass ?? "dark";
+  const next = readStored() ?? fromClass ?? "system";
   preference = next;
   if (next === "system") watchSystem();
   applyColorMode(resolved(next), el);

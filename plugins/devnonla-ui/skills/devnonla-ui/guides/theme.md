@@ -45,7 +45,7 @@ Use these instead of hex values so both modes work.
 
 ## Light / dark
 
-Dark is the default. `setColorPreference("light" | "dark" | "system")` stores the choice (`localStorage["nonla-color-mode"]`) and paints the host; `useColorPreference()` reads it; `ThemeSwitcher` is the ready control.
+With no saved choice the kit follows the OS (`system`). `setColorPreference("light" | "dark" | "system")` stores the choice (`localStorage["nonla-color-mode"]`) and paints the host; `useColorPreference()` reads it; `ThemeSwitcher` is the ready control.
 
 ## Motion
 
