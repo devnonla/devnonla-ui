@@ -1,0 +1,3 @@
+/* Precompiled entry for apps without Tailwind. `bun run build:css` -> dist/nonla-ui.css */
+@import "tailwindcss";
+@import "./styles.css";

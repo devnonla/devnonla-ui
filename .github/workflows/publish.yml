@@ -26,6 +26,8 @@ jobs:
 
       - run: bun run typecheck
 
+      - run: bun run build
+
       - name: Publish
         env:
           NPM_TOKEN: ${{ secrets.DEVNONLA_NPM_TOKEN }}
