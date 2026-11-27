@@ -19,6 +19,7 @@ React 19 kit. Docs with live examples: https://devnonla.github.io/devnonla-ui/
 | Install | `bun add devnonla-ui` (peers: react, react-dom ≥ 19, react-hook-form; Tailwind CSS v4) |
 | CSS | `@import "tailwindcss"; @import "devnonla-ui/styles.css";` |
 | Root | Wrap the tree once in `<App>` (tokens, theme, popups, `message`, `Modal.confirm`). Props: `componentSize`, `className`, `getPopupContainer` |
+| Remote (no bundler / no Tailwind) | Prebuilt ESM + CSS, see [guides/remote-esm.md](guides/remote-esm.md) |
 | Imports | Controls `devnonla-ui` · chat `devnonla-ui/chat` · markdown `devnonla-ui/markdown` |
 | Theme | Override `--nonla-*` on `.nonla-ui`. Never fork a component |
 
@@ -75,6 +76,7 @@ React 19 kit. Docs with live examples: https://devnonla.github.io/devnonla-ui/
 | Task | Read |
 |---|---|
 | Change colors, brand, radius, sizes, fonts, light/dark, motion | [guides/theme.md](guides/theme.md) — Config tokens and Tailwind classes |
+| Load the kit from a CDN or `<script type="module">`, host without Tailwind | [guides/remote-esm.md](guides/remote-esm.md) — `dist/` ESM, `nonla-ui.css`, import map |
 | Build an agent chat, tool cards, composer menus | [guides/chat.md](guides/chat.md) — AgentPanel vs AgentChatbox, `toolUis`, `toolHooks`, triggers |
 
 ## References
